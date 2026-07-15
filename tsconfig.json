@@ -1,0 +1,9 @@
+{
+  "files": [],
+  "references": [
+    { "path": "./packages/driver" },
+    { "path": "./packages/ui" },
+    { "path": "./apps/web" }
+  ]
+}
+
