@@ -339,3 +339,4 @@ export function createReplayDriver(
 }
 
 export { codingSessionFixture } from "./fixtures/coding-session";
+export * from "./session-driver";

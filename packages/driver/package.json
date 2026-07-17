@@ -6,6 +6,10 @@
     ".": {
       "types": "./src/index.ts",
       "import": "./src/index.ts"
+    },
+    "./mock": {
+      "types": "./src/mock.ts",
+      "import": "./src/mock.ts"
     }
   },
   "files": [
