@@ -16,6 +16,7 @@ export function Separator({
       {...props}
       aria-orientation={orientation}
       className={classNames("fraym-separator", `fraym-separator--${orientation}`, className)}
+      data-slot="separator"
     />
   );
 }

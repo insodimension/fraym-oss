@@ -1,21 +1,31 @@
-import type { SVGAttributes } from "react";
+import type { HTMLAttributes } from "react";
 
 import { classNames } from "./utils";
 
-export interface SpinnerProps extends SVGAttributes<SVGSVGElement> {
+export type SpinnerSize = "xs" | "sm" | "md" | "lg";
+export type SpinnerKind = "circular" | "dots" | "bars" | "pulse" | "orbit" | "bounce";
+export type SpinnerState = "running" | "idle" | "success" | "error";
+
+export interface SpinnerProps extends HTMLAttributes<HTMLSpanElement> {
+  kind?: SpinnerKind;
+  state?: SpinnerState;
+  size?: SpinnerSize;
   label?: string;
 }
 
-export function Spinner({ className, label = "Loading", ...props }: SpinnerProps) {
+export function Spinner({ kind = "circular", state = "running", size = "sm", className, label = "Loading", ...props }: SpinnerProps) {
+  const staticGlyph = state === "success" ? "✓" : state === "error" ? "!" : null;
   return (
-    <svg
+    <span
       {...props}
       aria-label={label}
-      className={classNames("fraym-spinner", className)}
+      className={classNames("fraym-spinner", `fraym-spinner--${kind}`, `fraym-spinner--${state}`, `fraym-spinner--${size}`, className)}
+      data-kind={kind}
+      data-slot="spinner"
+      data-state={state}
       role="status"
-      viewBox="0 0 24 24"
     >
-      <circle cx="12" cy="12" fill="none" r="9" stroke="currentColor" strokeWidth="3" />
-    </svg>
+      {staticGlyph ?? (kind === "circular" ? <span className="fraym-spinner__ring" /> : <><i /><i /><i /></>)}
+    </span>
   );
 }

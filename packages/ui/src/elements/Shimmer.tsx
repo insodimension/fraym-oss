@@ -2,8 +2,10 @@ import type { HTMLAttributes } from "react";
 
 import { classNames } from "./utils";
 
-export type ShimmerProps = HTMLAttributes<HTMLDivElement>;
+export interface ShimmerProps extends HTMLAttributes<HTMLSpanElement> {
+  active?: boolean;
+}
 
-export function Shimmer({ className, ...props }: ShimmerProps) {
-  return <div {...props} aria-hidden="true" className={classNames("fraym-shimmer", className)} />;
+export function Shimmer({ active = true, className, ...props }: ShimmerProps) {
+  return <span {...props} className={classNames("fraym-shimmer", active && "is-active", className)} data-slot="shimmer" />;
 }

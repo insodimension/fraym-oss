@@ -5,5 +5,5 @@ import { classNames } from "./utils";
 export type ScrollAreaProps = HTMLAttributes<HTMLDivElement>;
 
 export function ScrollArea({ className, ...props }: ScrollAreaProps) {
-  return <div {...props} className={classNames("fraym-scroll-area", className)} />;
+  return <div {...props} className={classNames("fraym-scroll-area", className)} data-slot="scroll-area" />;
 }
