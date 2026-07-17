@@ -22,7 +22,17 @@
     "./features": {
       "types": "./src/features/index.ts",
       "import": "./src/features/index.ts"
-    }
+    },
+    "./theme": {
+      "types": "./src/theme/index.ts",
+      "import": "./src/theme/index.ts"
+    },
+    "./theme.css": "./src/theme/theme.css",
+    "./fonts.css": "./src/theme/fonts.css",
+    "./aerogel.css": "./src/theme/aerogel.css",
+    "./architecture.css": "./src/theme/architecture.css",
+    "./cassette-futurism.css": "./src/theme/cassette-futurism.css",
+    "./liquid-glass.css": "./src/theme/liquid-glass.css"
   },
   "peerDependencies": {
     "react": "^19.0.0",
@@ -31,6 +41,9 @@
   "dependencies": {
     "@fontsource/ibm-plex-mono": "^5.2.7",
     "@fontsource/ibm-plex-sans": "^5.2.8",
+    "@fontsource/inter": "^5.2.8",
+    "@fontsource/jetbrains-mono": "^5.2.8",
+    "@fraym/config": "workspace:*",
     "@fraym/driver": "workspace:*",
     "mermaid": "^11.12.2"
   },

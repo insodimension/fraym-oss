@@ -1,0 +1,365 @@
+/* ============================================================
+   LIQUID GLASS — material layer (WebGL refraction)
+   ONE optics layer shared by the two refractive presets, matched on the
+   `[data-theme-preset^="liquid-glass"]` prefix:
+     · liquid-glass        — "Liquid Glass" (deep / graphite)
+     · liquid-glass-lumen  — "Liquid Glass Lumen" (brighter / luminous)
+   They differ only in the ambient FIELD intensity (set per-preset by
+   components/liquid-glass-runtime via <LiquidGlassBackdrop intensity>) and the
+   <html> base coat below; every other rule is identical.
+
+   Two halves make the material:
+     1. The AMBIENT FIELD is a live WebGL/canvas backdrop mounted by
+        <LiquidGlassRuntime> INSIDE the app shell (fraym-frame), a drifting
+        monochrome aurora that real refractive lenses (<LiquidGlassSurface>) bend.
+        It REPLACES the old CSS body-aurora — there is intentionally none here.
+     2. CSS OPTICS below: chrome + floating panels stay on backdrop-filter
+        ("lensing") so they refract LIVE content — complementary to the field.
+   The preset tokens (theme-presets/liquid-glass*.ts) are translucent, so the
+   field reads through every `bg-fr-bg` paint.
+   Motion: plain `animation`/`transition` only (global reduced-motion clamps
+   neutralize it); the WebGL field freezes itself via the motion setting.
+   ============================================================ */
+
+/* ---------- Canvas base coat (per preset) ----------
+   The in-shell WebGL field paints over this; it is the no-WebGL / pre-mount
+   fallback and the bottom-most layer. "Liquid Glass" runs deeper than "Lumen". */
+:root[data-theme-preset="liquid-glass"] {
+  background: #050507;
+}
+:root[data-theme-preset="liquid-glass-lumen"] {
+  background: #0a0a10;
+}
+:root[data-theme-preset="liquid-glass"][data-theme="light"],
+:root[data-theme-preset="liquid-glass-lumen"][data-theme="light"] {
+  background: #e7e7ea;
+}
+
+@keyframes lg-glass-in {
+  from {
+    opacity: 0;
+    transform: translateY(7px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes lg-modal-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* ---------- Chrome glass: rail + dock ---------- */
+[data-theme-preset^="liquid-glass"] [data-slot="session-rail"],
+[data-theme-preset^="liquid-glass"] [data-slot="right-dock"] {
+  backdrop-filter: blur(28px) saturate(0.9);
+  -webkit-backdrop-filter: blur(28px) saturate(0.9);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    inset -1px 0 0 rgba(255, 255, 255, 0.04);
+}
+
+[data-theme-preset^="liquid-glass"][data-theme="light"]
+  [data-slot="session-rail"],
+[data-theme-preset^="liquid-glass"][data-theme="light"]
+  [data-slot="right-dock"] {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.65),
+    inset -1px 0 0 rgba(255, 255, 255, 0.3);
+}
+
+/* ---------- Full-page lenses: route overlays ----------
+   Translucent-without-blur is illegible over the live session; these plates
+   cover real content so they need a heavy lens + boosted wash. */
+[data-theme-preset^="liquid-glass"] [data-slot="fraym-route-overlay"],
+[data-theme-preset^="liquid-glass"] [data-slot="plugins-page"] {
+  background-color: rgba(8, 8, 10, 0.72);
+  backdrop-filter: blur(48px) saturate(0.8);
+  -webkit-backdrop-filter: blur(48px) saturate(0.8);
+  animation: lg-modal-in 0.18s ease;
+}
+
+[data-theme-preset^="liquid-glass"][data-theme="light"]
+  [data-slot="fraym-route-overlay"],
+[data-theme-preset^="liquid-glass"][data-theme="light"]
+  [data-slot="plugins-page"] {
+  background-color: rgba(243, 243, 246, 0.8);
+}
+
+[data-theme-preset^="liquid-glass"]
+  [data-slot="fraym-route-overlay"]
+  [data-slot="settings-page"],
+[data-theme-preset^="liquid-glass"]
+  [data-slot="fraym-route-overlay"]
+  [data-slot="plugins-page"] {
+  background-color: transparent;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+/* ---------- Composer: floating glass capsule ----------
+   The lens lives on a ::before pseudo (not the element) so backdrop-filter never
+   becomes a containing block that re-anchors Fraym's in-place fixed menus. */
+[data-theme-preset^="liquid-glass"] [data-slot="composer"] {
+  background: transparent;
+}
+
+[data-theme-preset^="liquid-glass"] [data-slot="composer-field"] {
+  isolation: isolate;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.14),
+    inset 0 0 0 0.5px rgba(255, 255, 255, 0.06),
+    0 12px 40px rgba(0, 0, 0, 0.35);
+  transition:
+    box-shadow 220ms ease,
+    transform 220ms ease;
+}
+
+[data-theme-preset^="liquid-glass"] [data-slot="composer-field"]::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  backdrop-filter: blur(24px) saturate(0.9);
+  -webkit-backdrop-filter: blur(24px) saturate(0.9);
+}
+
+[data-theme-preset^="liquid-glass"] [data-slot="composer-field"]:focus-within {
+  transform: translateY(-1px);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.18),
+    0 0 0 4px var(--fr-accent-dim),
+    0 16px 50px rgba(0, 0, 0, 0.45);
+}
+
+[data-theme-preset^="liquid-glass"][data-theme="light"]
+  [data-slot="composer-field"] {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.75),
+    inset 0 0 0 0.5px rgba(255, 255, 255, 0.35),
+    0 12px 40px rgba(20, 20, 25, 0.14);
+}
+
+[data-theme-preset^="liquid-glass"][data-theme="light"]
+  [data-slot="composer-field"]:focus-within {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.85),
+    0 0 0 4px var(--fr-accent-dim),
+    0 16px 50px rgba(20, 20, 25, 0.2);
+}
+
+/* ---------- Floating panels: popovers, menus, palettes ----------
+   The PopoverPanel slots below (start-*, filter-menu, session-context-menu,
+   dock-switch-menu, knowledge-vault-menu, artifact-export-popover) are custom
+   data-slots that override the default `popover-panel`; list them so every
+   dropdown gets the lens. They are body-portaled row/search menus with no
+   fixed-positioned descendants, so they take the DIRECT backdrop-filter (like
+   selector-flyout) rather than the ::before pseudo. */
+[data-theme-preset^="liquid-glass"]
+  :is(
+    [data-slot="popover-panel"],
+    [data-slot="menu-panel"],
+    [data-slot="selector-menu"],
+    [data-slot="selector-flyout"],
+    [data-slot="user-menu"],
+    [data-slot="composer-slash-menu"],
+    [data-slot="context-popover"],
+    [data-slot="permission-menu"],
+    [data-slot="settings-dropdown"],
+    [data-slot="demo-file-dock"],
+    [data-slot="start-project-menu"],
+    [data-slot="start-work-menu"],
+    [data-slot="start-branch-menu"],
+    [data-slot="filter-menu"],
+    [data-slot="session-context-menu"],
+    [data-slot="dock-switch-menu"],
+    [data-slot="knowledge-vault-menu"],
+    [data-slot="artifact-export-popover"]
+  ) {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.16),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.04),
+    0 24px 70px rgba(0, 0, 0, 0.55);
+  animation: lg-glass-in 0.22s cubic-bezier(0.34, 1.3, 0.4, 1);
+}
+
+[data-theme-preset^="liquid-glass"]
+  :is(
+    [data-slot="popover-panel"],
+    [data-slot="menu-panel"],
+    [data-slot="selector-menu"],
+    [data-slot="user-menu"],
+    [data-slot="modal"],
+    [data-slot="context-popover"],
+    [data-slot="permission-menu"],
+    [data-slot="demo-file-dock"]
+  )::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  backdrop-filter: blur(32px) saturate(0.85);
+  -webkit-backdrop-filter: blur(32px) saturate(0.85);
+}
+
+[data-theme-preset^="liquid-glass"]
+  :is(
+    [data-slot="selector-flyout"],
+    [data-slot="composer-slash-menu"],
+    [data-slot="settings-dropdown"],
+    [data-slot="start-project-menu"],
+    [data-slot="start-work-menu"],
+    [data-slot="start-branch-menu"],
+    [data-slot="filter-menu"],
+    [data-slot="session-context-menu"],
+    [data-slot="dock-switch-menu"],
+    [data-slot="knowledge-vault-menu"],
+    [data-slot="artifact-export-popover"]
+  ) {
+  backdrop-filter: blur(32px) saturate(0.85);
+  -webkit-backdrop-filter: blur(32px) saturate(0.85);
+}
+
+[data-theme-preset^="liquid-glass"] [data-slot="modal"] {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.16),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.04),
+    0 32px 90px rgba(0, 0, 0, 0.6);
+  animation: lg-modal-in 0.2s ease;
+}
+
+[data-theme-preset^="liquid-glass"][data-theme="light"]
+  :is(
+    [data-slot="popover-panel"],
+    [data-slot="menu-panel"],
+    [data-slot="selector-menu"],
+    [data-slot="selector-flyout"],
+    [data-slot="user-menu"],
+    [data-slot="composer-slash-menu"],
+    [data-slot="modal"],
+    [data-slot="context-popover"],
+    [data-slot="permission-menu"],
+    [data-slot="settings-dropdown"],
+    [data-slot="demo-file-dock"],
+    [data-slot="start-project-menu"],
+    [data-slot="start-work-menu"],
+    [data-slot="start-branch-menu"],
+    [data-slot="filter-menu"],
+    [data-slot="session-context-menu"],
+    [data-slot="dock-switch-menu"],
+    [data-slot="knowledge-vault-menu"],
+    [data-slot="artifact-export-popover"]
+  ) {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.8),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.3),
+    0 24px 70px rgba(20, 20, 25, 0.18);
+}
+
+/* ---------- Thin glass: in-thread + utility cards ----------
+   No backdrop blur (dozens per thread); a single specular hairline sells it. */
+[data-theme-preset^="liquid-glass"]
+  :is(
+    [data-slot="tool-card"][data-density="spacious"],
+    [data-slot="tool-body-card"],
+    [data-slot="dock-split"],
+    [data-slot="model-catalog"],
+    [data-slot="diff-block"]
+  ) {
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+[data-theme-preset^="liquid-glass"][data-theme="light"]
+  :is(
+    [data-slot="tool-card"][data-density="spacious"],
+    [data-slot="tool-body-card"],
+    [data-slot="dock-split"],
+    [data-slot="model-catalog"],
+    [data-slot="diff-block"]
+  ) {
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.55);
+}
+
+/* ---------- Buttons ----------
+   Primary: polished-glass capsule derived from the live accent + a hover glint.
+   Outline/destructive: thin lens so content ghosts through. */
+:root[data-theme-preset^="liquid-glass"] {
+  --fr-accent-grad: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--fr-accent) 72%, white),
+    var(--fr-accent) 55%,
+    color-mix(in srgb, var(--fr-accent) 84%, black)
+  );
+  --fr-accent-grad-hover: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--fr-accent) 55%, white),
+    color-mix(in srgb, var(--fr-accent) 90%, white) 55%,
+    var(--fr-accent)
+  );
+}
+
+[data-theme-preset^="liquid-glass"]
+  [data-slot="button"][data-variant="default"] {
+  position: relative;
+  overflow: hidden;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.3),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.12),
+    0 4px 14px color-mix(in srgb, var(--fr-accent) 28%, transparent);
+}
+
+[data-theme-preset^="liquid-glass"]
+  [data-slot="button"][data-variant="default"]::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    105deg,
+    transparent 38%,
+    rgba(255, 255, 255, 0.35) 50%,
+    transparent 62%
+  );
+  background-size: 220% 100%;
+  background-position: 200% 0;
+  opacity: 0;
+  transition: opacity 150ms ease;
+}
+
+[data-theme-preset^="liquid-glass"]
+  [data-slot="button"][data-variant="default"]:hover::after {
+  opacity: 1;
+  animation: fr-shimmer-sweep 1.1s ease;
+}
+
+[data-theme-preset^="liquid-glass"]
+  [data-slot="button"]:is(
+    [data-variant="outline"],
+    [data-variant="destructive"]
+  ) {
+  backdrop-filter: blur(12px) saturate(0.9);
+  -webkit-backdrop-filter: blur(12px) saturate(0.9);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+[data-theme-preset^="liquid-glass"][data-theme="light"]
+  [data-slot="button"]:is(
+    [data-variant="outline"],
+    [data-variant="destructive"]
+  ) {
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+
+/* ---------- Scrollbars: floating pills ---------- */
+[data-theme-preset^="liquid-glass"] ::-webkit-scrollbar-thumb {
+  border-color: transparent;
+  background-clip: padding-box;
+}

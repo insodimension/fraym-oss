@@ -1,0 +1,58 @@
+{
+	"generated": "2026-06-09",
+	"generator": "scripts/export-theme-tokens.ts",
+	"source": "packages/ui/src/theme",
+	"default": "fraym",
+	"base": "base.tokens.json",
+	"note": "Resolved --fr-* values per theme. Build against token NAMES, not these values — every theme re-binds the same names. Regenerate with `bun run gen:themes`.",
+	"themes": [
+		{
+			"id": "fraym",
+			"name": "Fraym",
+			"note": "Default — dark + violet, the canonical identity (driven by theme.css)",
+			"file": "fraym.tokens.json"
+		},
+		{
+			"id": "cursor",
+			"name": "Cursor",
+			"note": "Warm editor · orange voltage",
+			"file": "cursor.tokens.json"
+		},
+		{
+			"id": "codex",
+			"name": "Codex",
+			"note": "OpenAI · monochrome near-black",
+			"file": "codex.tokens.json"
+		},
+		{
+			"id": "linear",
+			"name": "Linear",
+			"note": "Deep black · lavender",
+			"file": "linear.tokens.json"
+		},
+		{
+			"id": "raycast",
+			"name": "Raycast",
+			"note": "Inky command palette",
+			"file": "raycast.tokens.json"
+		},
+		{
+			"id": "warp",
+			"name": "Warp",
+			"note": "Warm charcoal terminal",
+			"file": "warp.tokens.json"
+		},
+		{
+			"id": "minimax",
+			"name": "MiniMax",
+			"note": "Bold dark · neon accent",
+			"file": "minimax.tokens.json"
+		},
+		{
+			"id": "vercel",
+			"name": "Vercel",
+			"note": "Black & white precision",
+			"file": "vercel.tokens.json"
+		}
+	]
+}

@@ -1,0 +1,23 @@
+/* ============================================================
+   FRAYM — SYSTEM-DESIGN / ARCHITECTURE THEME
+   A frozen semantic palette for the architecture diagrams shown on
+   the fraym-docs system-design pages. It layers on top of the base
+   Fraym theme (theme.css) and is deliberately PINNED — independent of
+   the selectable webapp accent — so the system-design look never
+   drifts. Consumed by fraym-docs (Diagram.tsx + docs.css).
+   ============================================================ */
+:root {
+  /* Secondary accent — runtime / metering (a cooler violet than --fr-accent). */
+  --fr-iris: #8f7bff;
+
+  /* Diagram edge palette — one color per semantic edge kind.
+	   contract/mcp/llm/add intentionally mirror the default
+	   accent/blue/warn/add but are pinned here so the diagrams keep a
+	   stable identity regardless of theme accent. */
+  --fr-diagram-contract: #b78cff; /* the SessionDriver contract */
+  --fr-diagram-mcp: #5b8cff; /* MCP · tools */
+  --fr-diagram-llm: #e0b15b; /* model providers */
+  --fr-diagram-meter: #8f7bff; /* metering · runtime */
+  --fr-diagram-add: #62c08a; /* realm · capability */
+  --fr-diagram-mute: #8a8a92; /* internal · in-process */
+}

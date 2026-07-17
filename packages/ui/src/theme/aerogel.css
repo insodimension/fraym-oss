@@ -1,0 +1,447 @@
+/* ============================================================
+   AEROGEL — material layer ("frozen smoke")
+   Scoped entirely to [data-theme-preset="aerogel"] (set on <html> by
+   settings-document-vars). The preset (theme-presets/aerogel.ts) supplies
+   translucent surface TOKENS; this file supplies the OPTICS:
+     · a near-still frozen-smoke backdrop with aerogel's faint Rayleigh blue
+     · frost lenses on chrome + floating panels — unlike liquid glass these
+       run saturate < 1 AND brightness > 1, so anything behind frost drifts
+       toward milky white (dry, matte) rather than smeared gloss
+     · crystalline edges: crisp full-perimeter 1px hairlines, no specular
+       gradients, no glint sweeps
+     · fast, dry entrance morphs — no overshoot, frost just sets
+   THE MATERIAL RULE (inherited from liquid-glass): any surface covering real
+   content must be a lens; translucency-without-blur only over the backdrop.
+   Scroll containers (overflow-y-auto) carry the filter DIRECTLY; non-scrolling
+   panels get a ::before pseudo-lens (backdrop-filter turns its carrier into a
+   containing block for fixed descendants — a pseudo has no descendants).
+   NOTE: theme.css @imports this file BEFORE its own rules, so every var
+   override here uses :root[data-theme-preset…] to out-specify theme.css :root.
+   Motion: plain `animation`/`transition` only, so the global reduced-motion
+   clamps in theme.css neutralize it automatically.
+   ============================================================ */
+
+/* ---------- Canvas base coat + frozen-smoke backdrop ----------
+   The preset's --fr-bg is LOW-ALPHA frost, so the smoke glows through every
+   bg-fr-bg paint in the app. Paint order (root stacking context): <html>
+   base coat → smoke pseudos (negative z-index) → body's translucent
+   --fr-bg wash → content. Blur on the smoke layers is static; only transform
+   animates (very slowly — frost barely moves), so they stay composited. */
+:root[data-theme-preset="aerogel"] {
+  background: #04070a;
+}
+
+:root[data-theme-preset="aerogel"][data-theme="light"] {
+  background: #e8edf1;
+}
+
+[data-theme-preset="aerogel"] body::before,
+[data-theme-preset="aerogel"] body::after {
+  content: "";
+  position: fixed;
+  inset: -25%;
+  z-index: -1;
+  pointer-events: none;
+}
+
+/* Frozen smoke: cold wisps suspended in near-black, with the faint blue cast
+   of real aerogel (Rayleigh scattering). Dimmer and stiller than the
+   liquid-glass aurora — frost hangs, it doesn't flow. */
+[data-theme-preset="aerogel"] body::before {
+  background:
+    radial-gradient(
+      40% 44% at 20% 24%,
+      rgba(168, 205, 232, 0.13),
+      transparent 70%
+    ),
+    radial-gradient(
+      34% 38% at 80% 14%,
+      rgba(210, 228, 240, 0.09),
+      transparent 70%
+    ),
+    radial-gradient(
+      42% 46% at 72% 78%,
+      rgba(120, 158, 188, 0.1),
+      transparent 70%
+    ),
+    radial-gradient(
+      36% 40% at 28% 84%,
+      rgba(186, 212, 230, 0.08),
+      transparent 70%
+    );
+  filter: blur(70px);
+  animation: ag-smoke-a 88s ease-in-out infinite alternate;
+}
+
+[data-theme-preset="aerogel"] body::after {
+  background:
+    radial-gradient(
+      30% 34% at 58% 40%,
+      rgba(225, 238, 246, 0.06),
+      transparent 70%
+    ),
+    radial-gradient(
+      28% 32% at 36% 60%,
+      rgba(96, 130, 156, 0.1),
+      transparent 70%
+    );
+  filter: blur(90px);
+  animation: ag-smoke-b 118s ease-in-out infinite alternate;
+}
+
+/* Light mode: pale ice-fog on a paper-white field. */
+[data-theme-preset="aerogel"][data-theme="light"] body::before {
+  background:
+    radial-gradient(
+      40% 44% at 20% 24%,
+      rgba(108, 142, 168, 0.13),
+      transparent 70%
+    ),
+    radial-gradient(
+      34% 38% at 80% 14%,
+      rgba(255, 255, 255, 0.55),
+      transparent 70%
+    ),
+    radial-gradient(
+      42% 46% at 72% 78%,
+      rgba(124, 156, 180, 0.11),
+      transparent 70%
+    ),
+    radial-gradient(
+      36% 40% at 28% 84%,
+      rgba(255, 255, 255, 0.42),
+      transparent 70%
+    );
+}
+
+[data-theme-preset="aerogel"][data-theme="light"] body::after {
+  background:
+    radial-gradient(
+      30% 34% at 58% 40%,
+      rgba(255, 255, 255, 0.38),
+      transparent 70%
+    ),
+    radial-gradient(
+      28% 32% at 36% 60%,
+      rgba(96, 130, 156, 0.08),
+      transparent 70%
+    );
+}
+
+@keyframes ag-smoke-a {
+  from {
+    transform: translate3d(-2%, -1.5%, 0) scale(1);
+  }
+  to {
+    transform: translate3d(2.5%, 2%, 0) scale(1.07);
+  }
+}
+
+@keyframes ag-smoke-b {
+  from {
+    transform: translate3d(2%, 1%, 0) scale(1.04);
+  }
+  to {
+    transform: translate3d(-2.5%, -2%, 0) scale(1.1);
+  }
+}
+
+/* ---------- Chrome frost: rail + dock ----------
+   Brightness > 1 whitens whatever sits behind — the frost reads dry/milky.
+   Edge = crisp crystalline hairline, not a specular catch-light. */
+[data-theme-preset="aerogel"] [data-slot="session-rail"],
+[data-theme-preset="aerogel"] [data-slot="right-dock"] {
+  backdrop-filter: blur(26px) saturate(0.7) brightness(1.06);
+  -webkit-backdrop-filter: blur(26px) saturate(0.7) brightness(1.06);
+  box-shadow:
+    inset 0 0 0 1px rgba(200, 230, 250, 0.05),
+    inset 0 1px 0 rgba(220, 240, 252, 0.09);
+}
+
+[data-theme-preset="aerogel"][data-theme="light"] [data-slot="session-rail"],
+[data-theme-preset="aerogel"][data-theme="light"] [data-slot="right-dock"] {
+  backdrop-filter: blur(26px) saturate(0.75);
+  -webkit-backdrop-filter: blur(26px) saturate(0.75);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.7);
+}
+
+/* ---------- Full-page frost: route overlays ----------
+   The settings/plugins route overlays cover the LIVE session, so they must
+   be a heavy lens (Material Rule). Heavier brightness push than the panels —
+   the session behind should fade to a pale ghost, like shapes under ice. */
+[data-theme-preset="aerogel"] [data-slot="fraym-route-overlay"],
+[data-theme-preset="aerogel"] [data-slot="plugins-page"] {
+  background-color: rgba(7, 11, 15, 0.74);
+  backdrop-filter: blur(44px) saturate(0.6) brightness(1.08);
+  -webkit-backdrop-filter: blur(44px) saturate(0.6) brightness(1.08);
+  animation: ag-set 0.16s ease-out;
+}
+
+[data-theme-preset="aerogel"][data-theme="light"]
+  [data-slot="fraym-route-overlay"],
+[data-theme-preset="aerogel"][data-theme="light"] [data-slot="plugins-page"] {
+  background-color: rgba(241, 246, 250, 0.82);
+  backdrop-filter: blur(44px) saturate(0.65);
+  -webkit-backdrop-filter: blur(44px) saturate(0.65);
+}
+
+/* The settings shell inside the overlay re-paints bg-fr-bg; keep it clear so
+   the overlay's single lens does the work (no double wash banding). */
+[data-theme-preset="aerogel"]
+  [data-slot="fraym-route-overlay"]
+  [data-slot="settings-page"],
+[data-theme-preset="aerogel"]
+  [data-slot="fraym-route-overlay"]
+  [data-slot="plugins-page"] {
+  background-color: transparent;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+/* ---------- Composer: frost slab ----------
+   Band goes transparent so the smoke flows beneath; the field is a frost
+   lens. No lift on focus — frost doesn't float; the focus ring sharpens. */
+[data-theme-preset="aerogel"] [data-slot="composer"] {
+  background: transparent;
+}
+
+/* Lens on a ::before pseudo, NOT the element (see Material Rule header):
+   backdrop-filter would make the field a containing block for the
+   fixed-positioned mode-chip pickers rendered inside it. */
+[data-theme-preset="aerogel"] [data-slot="composer-field"] {
+  isolation: isolate;
+  box-shadow:
+    inset 0 0 0 1px rgba(200, 230, 250, 0.1),
+    0 10px 34px rgba(0, 0, 0, 0.32);
+  transition: box-shadow 160ms ease;
+}
+
+[data-theme-preset="aerogel"] [data-slot="composer-field"]::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  backdrop-filter: blur(22px) saturate(0.7) brightness(1.06);
+  -webkit-backdrop-filter: blur(22px) saturate(0.7) brightness(1.06);
+}
+
+[data-theme-preset="aerogel"] [data-slot="composer-field"]:focus-within {
+  box-shadow:
+    inset 0 0 0 1px var(--fr-accent-line),
+    0 0 0 3px var(--fr-accent-dim),
+    0 12px 38px rgba(0, 0, 0, 0.38);
+}
+
+[data-theme-preset="aerogel"][data-theme="light"] [data-slot="composer-field"] {
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.55),
+    0 10px 34px rgba(22, 34, 43, 0.12);
+}
+
+[data-theme-preset="aerogel"][data-theme="light"]
+  [data-slot="composer-field"]:focus-within {
+  box-shadow:
+    inset 0 0 0 1px var(--fr-accent-line),
+    0 0 0 3px var(--fr-accent-dim),
+    0 12px 38px rgba(22, 34, 43, 0.16);
+}
+
+/* ---------- Floating panels: popovers, menus, palettes ----------
+   Heaviest frost — these hover over live content. Same ::before lens
+   technique as the composer field; the scroll-container group below carries
+   the filter directly instead. Crystalline rim replaces the utility
+   drop-shadows; entrance is a dry, fast settle (no overshoot). */
+[data-theme-preset="aerogel"]
+  :is(
+    [data-slot="popover-panel"],
+    [data-slot="menu-panel"],
+    [data-slot="selector-menu"],
+    [data-slot="selector-flyout"],
+    [data-slot="user-menu"],
+    [data-slot="composer-slash-menu"],
+    [data-slot="context-popover"],
+    [data-slot="permission-menu"],
+    [data-slot="settings-dropdown"],
+    [data-slot="demo-file-dock"]
+  ) {
+  box-shadow:
+    inset 0 0 0 1px rgba(200, 230, 250, 0.11),
+    0 20px 60px rgba(0, 0, 0, 0.5);
+  animation: ag-crystallize 0.14s ease-out;
+}
+
+[data-theme-preset="aerogel"]
+  :is(
+    [data-slot="popover-panel"],
+    [data-slot="menu-panel"],
+    [data-slot="selector-menu"],
+    [data-slot="user-menu"],
+    [data-slot="modal"],
+    [data-slot="context-popover"],
+    [data-slot="permission-menu"],
+    [data-slot="demo-file-dock"]
+  )::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  backdrop-filter: blur(30px) saturate(0.65) brightness(1.07);
+  -webkit-backdrop-filter: blur(30px) saturate(0.65) brightness(1.07);
+}
+
+/* Scroll-container panels (overflow-y-auto): an absolute pseudo would scroll
+   away with the content, so these carry the filter DIRECTLY — safe because
+   they only ever contain plain rows (tooltips portal out via radix). */
+[data-theme-preset="aerogel"]
+  :is(
+    [data-slot="selector-flyout"],
+    [data-slot="composer-slash-menu"],
+    [data-slot="settings-dropdown"]
+  ) {
+  backdrop-filter: blur(30px) saturate(0.65) brightness(1.07);
+  -webkit-backdrop-filter: blur(30px) saturate(0.65) brightness(1.07);
+}
+
+/* Modal centers itself with a utility translate, so its entrance animates
+   opacity only (a transform keyframe would clobber the centering). */
+[data-theme-preset="aerogel"] [data-slot="modal"] {
+  box-shadow:
+    inset 0 0 0 1px rgba(200, 230, 250, 0.11),
+    0 28px 80px rgba(0, 0, 0, 0.55);
+  animation: ag-set 0.16s ease-out;
+}
+
+[data-theme-preset="aerogel"][data-theme="light"]
+  :is(
+    [data-slot="popover-panel"],
+    [data-slot="menu-panel"],
+    [data-slot="selector-menu"],
+    [data-slot="selector-flyout"],
+    [data-slot="user-menu"],
+    [data-slot="composer-slash-menu"],
+    [data-slot="modal"],
+    [data-slot="context-popover"],
+    [data-slot="permission-menu"],
+    [data-slot="settings-dropdown"],
+    [data-slot="demo-file-dock"]
+  ) {
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.6),
+    0 20px 60px rgba(22, 34, 43, 0.16);
+}
+
+[data-theme-preset="aerogel"][data-theme="light"]
+  :is(
+    [data-slot="popover-panel"],
+    [data-slot="menu-panel"],
+    [data-slot="selector-menu"],
+    [data-slot="user-menu"],
+    [data-slot="modal"],
+    [data-slot="context-popover"],
+    [data-slot="permission-menu"],
+    [data-slot="demo-file-dock"]
+  )::before {
+  backdrop-filter: blur(30px) saturate(0.7);
+  -webkit-backdrop-filter: blur(30px) saturate(0.7);
+}
+
+[data-theme-preset="aerogel"][data-theme="light"]
+  :is(
+    [data-slot="selector-flyout"],
+    [data-slot="composer-slash-menu"],
+    [data-slot="settings-dropdown"]
+  ) {
+  backdrop-filter: blur(30px) saturate(0.7);
+  -webkit-backdrop-filter: blur(30px) saturate(0.7);
+}
+
+@keyframes ag-crystallize {
+  from {
+    opacity: 0;
+    transform: scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes ag-set {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* ---------- Thin frost: in-thread + utility cards ----------
+   No backdrop blur (these can appear dozens of times in a thread); the
+   translucent surface tokens already let the smoke tint them. A crisp
+   perimeter hairline sells the crystalline material. Scoped to real card
+   surfaces (spacious chassis + framed body card) — comfortable/compact
+   tool-card roots are chrome-less wrappers, and a perimeter ring there
+   reads as a phantom border around the whole tool. */
+[data-theme-preset="aerogel"]
+  :is(
+    [data-slot="tool-card"][data-density="spacious"],
+    [data-slot="tool-body-card"],
+    [data-slot="dock-split"],
+    [data-slot="model-catalog"],
+    [data-slot="diff-block"]
+  ) {
+  box-shadow: inset 0 0 0 1px rgba(200, 230, 250, 0.05);
+}
+
+[data-theme-preset="aerogel"][data-theme="light"]
+  :is(
+    [data-slot="tool-card"][data-density="spacious"],
+    [data-slot="tool-body-card"],
+    [data-slot="dock-split"],
+    [data-slot="model-catalog"],
+    [data-slot="diff-block"]
+  ) {
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.45);
+}
+
+/* ---------- Buttons ----------
+   Matte, dry, flat — no gloss gradient, no glint sweep (theme.css's default
+   --fr-accent-grad is already the flat accent). Primary gets a crisp
+   crystalline rim; outline/destructive a thin frost lens. */
+[data-theme-preset="aerogel"] [data-slot="button"][data-variant="default"] {
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.18),
+    0 2px 10px color-mix(in srgb, var(--fr-accent) 18%, transparent);
+}
+
+[data-theme-preset="aerogel"]
+  [data-slot="button"]:is(
+    [data-variant="outline"],
+    [data-variant="destructive"]
+  ) {
+  backdrop-filter: blur(10px) saturate(0.7) brightness(1.05);
+  -webkit-backdrop-filter: blur(10px) saturate(0.7) brightness(1.05);
+  box-shadow: inset 0 0 0 1px rgba(200, 230, 250, 0.07);
+}
+
+[data-theme-preset="aerogel"][data-theme="light"]
+  [data-slot="button"]:is(
+    [data-variant="outline"],
+    [data-variant="destructive"]
+  ) {
+  backdrop-filter: blur(10px) saturate(0.75);
+  -webkit-backdrop-filter: blur(10px) saturate(0.75);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.5);
+}
+
+/* ---------- Scrollbars: frost slivers ----------
+   Same fix as liquid-glass: the base theme frames thumbs with an opaque
+   bg-colored border; on frost that reads as a slab. */
+[data-theme-preset="aerogel"] ::-webkit-scrollbar-thumb {
+  border-color: transparent;
+  background-clip: padding-box;
+}

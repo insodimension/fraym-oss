@@ -66,3 +66,4 @@ export * from "./elements";
 export * from "./components";
 export * from "./registries";
 export * from "./features";
+export * from "./theme";

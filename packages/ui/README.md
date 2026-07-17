@@ -4,6 +4,7 @@
 
 - [Purpose](#purpose)
 - [Foundation](#foundation)
+- [Themes](#themes)
 - [Elements](#elements)
 - [Renderer registries](#renderer-registries)
 - [Shared components](#shared-components)
@@ -19,6 +20,10 @@
 ## Foundation
 
 The package exposes dark-first CSS custom-property tokens, typed token references, composable primitives, and an event-driven `Thread` that consumes `@fraym/driver` streams. `DESIGN.md` is the normative contract: graphite surface and text tiers, Fraym violet, IBM Plex typography, the 3/8/12/16/26 spacing ramp, and the 6/8/10/14 radius family are mirrored in `src/styles.css` and `src/tokens.ts`.
+
+## Themes
+
+`ThemeProvider` owns mode, named preset, accent, font pairing, and motion resolution for standalone hosts. Import `@fraym/ui/fonts.css` and `@fraym/ui/theme.css` once, then use `useTheme()` for runtime controls. Eleven named presets and the Fraym default share the same semantic `--fr-*` contract; the checked-in token catalog under `/themes` exposes the same resolved values to non-React tooling.
 
 ## Elements
 

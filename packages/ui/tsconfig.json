@@ -12,10 +12,11 @@
     "jsx": "react-jsx",
     "module": "ESNext",
     "moduleResolution": "Bundler",
+    "resolveJsonModule": true,
     "target": "ES2022",
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
     "types": ["bun"],
     "skipLibCheck": true
   },
-  "include": ["src"]
+  "include": ["src", "src/**/*.json"]
 }

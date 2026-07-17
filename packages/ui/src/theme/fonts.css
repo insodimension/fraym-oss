@@ -1,0 +1,36 @@
+/* Fraym webfonts — the families offered by the font picker (FONT_PRESETS) and the
+   brand theme presets (THEME_PRESETS).
+
+   The SELF-HOSTED families load via @fontsource from the app bundle with ZERO network
+   dependency — they render offline, in the desktop webview, and behind a CSP (a face is
+   downloaded only when an element uses it). These are the default pairing (IBM Plex Sans +
+   Mono) and the Codex preset pairing (Inter + JetBrains Mono).
+
+   The remaining opt-in families (Geist, Geist Mono, Newsreader, DM Sans, DM Mono) load from
+   Google Fonts, fetched only when a user selects a preset/theme that uses them. theme.css
+   only declares the family names — import this file once per app to load them.
+
+   ⚠ ORDER MATTERS: the remote `@import url(...)` MUST come BEFORE the local @fontsource
+   imports. The bundler inlines the @fontsource imports into `@font-face` rules, and CSS
+   requires every `@import` to precede all other statements — so a remote @import placed
+   AFTER the inlined @font-face blocks is invalid and breaks the entire stylesheet. */
+
+/* Remote opt-in families — FIRST (stays an @import, so it must precede the @font-face below). */
+@import url("https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=DM+Mono:wght@400;500&display=swap");
+
+/* Self-hosted families — inlined to @font-face by the bundler (woff2 fetched only when used).
+   Default pairing (IBM Plex) + the Codex pairing (Inter / JetBrains Mono). */
+@import "@fontsource/ibm-plex-sans/latin-400.css";
+@import "@fontsource/ibm-plex-sans/latin-500.css";
+@import "@fontsource/ibm-plex-sans/latin-600.css";
+@import "@fontsource/ibm-plex-sans/latin-700.css";
+@import "@fontsource/ibm-plex-mono/latin-400.css";
+@import "@fontsource/ibm-plex-mono/latin-500.css";
+@import "@fontsource/ibm-plex-mono/latin-600.css";
+@import "@fontsource/inter/latin-400.css";
+@import "@fontsource/inter/latin-500.css";
+@import "@fontsource/inter/latin-600.css";
+@import "@fontsource/inter/latin-700.css";
+@import "@fontsource/jetbrains-mono/latin-400.css";
+@import "@fontsource/jetbrains-mono/latin-500.css";
+@import "@fontsource/jetbrains-mono/latin-600.css";

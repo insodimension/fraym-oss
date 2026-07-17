@@ -1,0 +1,118 @@
+@import "../elements/streaming-markdown.css";
+@import "./liquid-glass.css";
+@import "./aerogel.css";
+@import "./cassette-futurism.css";
+
+:root,
+[data-theme="dark"] {
+  color-scheme: dark;
+  --fr-bg: #0b0b0d;
+  --fr-rail: #0f0f12;
+  --fr-surface: #151518;
+  --fr-surface-2: #1c1c20;
+  --fr-surface-3: #222227;
+  --fr-border: #27272c;
+  --fr-border-soft: #1b1b1f;
+  --fr-text: #ececee;
+  --fr-text-2-base: #9a9aa2;
+  --fr-text-3-base: #65656d;
+  --fr-accent: #b78cff;
+  --fr-accent-2: #a679ff;
+  --fr-accent-dim: rgb(183 140 255 / 14%);
+  --fr-accent-line: rgb(183 140 255 / 34%);
+  --fr-accent-ink: #1a1023;
+  --fr-add: #62c08a;
+  --fr-add-bg: rgb(98 192 138 / 12%);
+  --fr-del: #e07a86;
+  --fr-del-bg: rgb(224 122 134 / 10%);
+  --fr-warn: #e0b15b;
+  --fr-blue: #5b8cff;
+  --fr-iris: #8f7bff;
+  --fr-scrollbar-thumb: #34343a;
+  --fr-scrollbar-thumb-hover: #494951;
+  --fr-diff-bg: #0f0f12;
+  --fr-diff-add-code: #8cd4aa;
+  --fr-diff-del-code: #efa0aa;
+  --fr-diff-gutter: #65656d;
+  --fr-code-kw: #c0a4ff;
+  --fr-code-str: #8cd4aa;
+  --fr-code-path: #c8c2d8;
+  --fr-inline-code: #ececee;
+  --fr-provider-monochrome-logo-filter: brightness(0) invert(1);
+}
+
+[data-theme="light"] {
+  color-scheme: light;
+  --fr-bg: #f7f7f8;
+  --fr-rail: #f0f0f2;
+  --fr-surface: #ffffff;
+  --fr-surface-2: #f3f3f5;
+  --fr-surface-3: #e9e9ed;
+  --fr-border: #d5d5dc;
+  --fr-border-soft: #e6e6eb;
+  --fr-text: #1c1c20;
+  --fr-text-2-base: #55555e;
+  --fr-text-3-base: #73737d;
+  --fr-add: #267849;
+  --fr-add-bg: rgb(38 120 73 / 10%);
+  --fr-del: #b84454;
+  --fr-del-bg: rgb(184 68 84 / 8%);
+  --fr-warn: #835900;
+  --fr-blue: #315fba;
+  --fr-provider-monochrome-logo-filter: none;
+}
+
+:root {
+  --fr-font-primary: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+  --fr-font-secondary: var(--fr-font-primary);
+  --fr-font-mono: "IBM Plex Mono", ui-monospace, monospace;
+  --fr-text-2: var(--fr-text-2-base);
+  --fr-text-3: var(--fr-text-3-base);
+  --fraym-color-primary: var(--fr-accent);
+  --fraym-color-primary-strong: var(--fr-accent-2);
+  --fraym-color-on-primary: var(--fr-accent-ink);
+  --fraym-color-bg: var(--fr-bg);
+  --fraym-color-rail: var(--fr-rail);
+  --fraym-color-surface: var(--fr-surface);
+  --fraym-color-surface-2: var(--fr-surface-2);
+  --fraym-color-surface-3: var(--fr-surface-3);
+  --fraym-color-border: var(--fr-border);
+  --fraym-color-border-soft: var(--fr-border-soft);
+  --fraym-color-text: var(--fr-text);
+  --fraym-color-text-2: var(--fr-text-2);
+  --fraym-color-text-3: var(--fr-text-3);
+  --fraym-color-success: var(--fr-add);
+  --fraym-color-danger: var(--fr-del);
+  --fraym-color-warning: var(--fr-warn);
+  --fraym-color-info: var(--fr-blue);
+  --fraym-color-iris: var(--fr-iris);
+  --fraym-color-accent: var(--fr-accent);
+  --fraym-color-muted: var(--fr-text-2);
+  --fraym-color-accent-dim: var(--fr-accent-dim);
+  --fraym-color-accent-line: var(--fr-accent-line);
+  --fraym-color-diff-added-bg: var(--fr-add-bg);
+  --fraym-color-diff-added-text: var(--fr-add);
+  --fraym-color-diff-removed-bg: var(--fr-del-bg);
+  --fraym-color-diff-removed-text: var(--fr-del);
+  --fraym-font-sans: var(--fr-font-primary);
+  --fraym-font-mono: var(--fr-font-mono);
+}
+
+[data-motion="reduced"] *,
+[data-motion="reduced"] *::before,
+[data-motion="reduced"] *::after {
+  animation-duration: 1ms !important;
+  animation-iteration-count: 1 !important;
+  scroll-behavior: auto !important;
+  transition-duration: 1ms !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-motion="system"] *,
+  [data-motion="system"] *::before,
+  [data-motion="system"] *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 1ms !important;
+  }
+}
