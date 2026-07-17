@@ -1,0 +1,3 @@
+export interface SearchLine { readonly line?: number; readonly text: string; readonly match?: boolean }
+export interface SearchFileGroup { readonly path: string; readonly lines: readonly SearchLine[] }
+export function parseSearchDisplay(content: string): SearchFileGroup[] { const groups = new Map<string, SearchLine[]>(); for (const raw of content.split(/\r?\n/)) { const match = raw.match(/^(.+?):(\d+)(?::|-)(.*)$/); const path = match?.[1] ?? "Results"; const rows = groups.get(path) ?? []; rows.push({ ...(match ? { line: Number(match[2]), text: match[3] ?? "", match: true } : { text: raw }) }); groups.set(path, rows); } return [...groups].map(([path, lines]) => ({ path, lines })); }

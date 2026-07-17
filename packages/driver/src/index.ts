@@ -20,8 +20,81 @@ export interface EngineRecipeRecord { readonly id: string; readonly name?: strin
 export interface PluginConnectFormField { readonly id: string; readonly name?: string; readonly label: string; readonly type?: "text" | "password" | "email" | "url"; readonly placeholder?: string; readonly required?: boolean; readonly description?: string; readonly secret?: boolean; readonly help?: string; readonly helpUrl?: string; readonly helpUrlLabel?: string }
 export type PluginFixKind = "install" | "form" | "oauth" | "open-app" | "reconnect" | "agent";
 
-export interface HostUiRequest { readonly id: string; readonly kind: string; readonly title?: string; readonly message?: string; readonly payload?: unknown }
-export interface HostUiResponse { readonly requestId: string; readonly accepted: boolean; readonly value?: unknown }
+export type UsageStatus = "ok" | "warning" | "critical" | "exhausted";
+
+export interface ContextBreakdown {
+  readonly used: number;
+  readonly max: number;
+  readonly system?: number;
+  readonly conversation?: number;
+  readonly tools?: number;
+  readonly files?: number;
+  readonly remaining?: number;
+  readonly [key: string]: number | undefined;
+}
+
+export interface TaskItem {
+  readonly id: string;
+  readonly title: string;
+  readonly status: "pending" | "in_progress" | "completed" | "abandoned";
+}
+
+export interface TaskPhase {
+  readonly id: string;
+  readonly title: string;
+  readonly tasks: readonly TaskItem[];
+}
+
+export interface PermissionOption {
+  readonly optionId: string;
+  readonly name: string;
+  readonly kind: "allow_once" | "allow_always" | "reject_once" | "reject_always";
+}
+
+export interface HostUiSelectOption {
+  readonly label: string;
+  readonly description?: string;
+}
+
+export interface HostUiLocation {
+  readonly path: string;
+  readonly line?: number;
+}
+
+export interface HostUiRequest {
+  readonly id: string;
+  readonly requestId?: string;
+  readonly kind: "select" | "input" | "confirm" | "permission" | (string & {});
+  readonly title?: string;
+  readonly message?: string;
+  readonly payload?: unknown;
+  readonly options?: readonly (string | HostUiSelectOption | PermissionOption)[];
+  readonly toolName?: string;
+  readonly locations?: readonly HostUiLocation[];
+  readonly paths?: readonly string[];
+  readonly placeholder?: string;
+  readonly initialValue?: string;
+  readonly initialIndex?: number;
+  readonly checkedIndices?: readonly number[];
+  readonly selectionMarker?: "checkbox" | "radio";
+  readonly allowMultiple?: boolean;
+  readonly markableCount?: number;
+  readonly canNavigateBack?: boolean;
+  readonly canNavigateForward?: boolean;
+  readonly defaultValue?: boolean;
+  readonly meta?: Readonly<Record<string, unknown>>;
+}
+
+export interface HostUiResponse {
+  readonly requestId: string;
+  readonly accepted?: boolean;
+  readonly value?: unknown;
+  readonly values?: readonly string[];
+  readonly optionId?: string;
+  readonly confirmed?: boolean;
+  readonly cancelled?: boolean;
+  readonly navigate?: "back" | "forward";
+}
 
 export type ApprovalDecision = "approved" | "rejected";
 
