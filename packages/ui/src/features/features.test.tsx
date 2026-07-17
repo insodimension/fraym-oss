@@ -1,0 +1,53 @@
+import { describe, expect, test } from "bun:test";
+import { renderToStaticMarkup } from "react-dom/server";
+import { foldPasteAttachment } from "./composer/composer-core";
+import { contextBreakdownPercent, contextBreakdownToRows } from "./context-popover/context-popover";
+import { partitionBlocks } from "./message/messages/message-body";
+import { hostUiInstanceKey } from "./approvals/select-request-picker";
+import { anchorCompensationTop, nextPinnedState } from "./thread/message-thread-viewport";
+import { splitUserPastedText } from "./thread/thread-message";
+import { ToolMetadataRow } from "./tool-metadata";
+
+describe("chat surface contracts", () => {
+  test("round-trips neutral length-delimited paste sentinels", () => {
+    const attachment = { id: "paste-1", name: "notes.txt", text: "alpha\nbeta" };
+    expect(splitUserPastedText(foldPasteAttachment(attachment))).toEqual([
+      { type: "paste", text: "alpha\nbeta" },
+    ]);
+  });
+
+  test("keeps a pinned viewport stable through content shrink", () => {
+    expect(nextPinnedState({ top: 300, height: 700, clientHeight: 200, lastTop: 400, lastHeight: 800, threshold: 80, pinned: true })).toBe(true);
+    expect(nextPinnedState({ top: 300, height: 800, clientHeight: 200, lastTop: 400, lastHeight: 800, threshold: 80, pinned: true })).toBe(false);
+  });
+
+  test("restores an unpinned reader anchor only when it remains valid", () => {
+    expect(anchorCompensationTop({ pinned: false, desiredTop: 240, scrollTop: 180, scrollHeight: 600, clientHeight: 300 })).toBe(240);
+    expect(anchorCompensationTop({ pinned: false, desiredTop: 340, scrollTop: 180, scrollHeight: 600, clientHeight: 300 })).toBeNull();
+  });
+
+  test("partitions adjacent reasoning and tool blocks into one trace", () => {
+    expect(partitionBlocks([{ type: "text" }, { type: "reasoning" }, { type: "tool" }, { type: "text" }])).toEqual([
+      { kind: "prose", block: { type: "text" }, index: 0 },
+      { kind: "trace", entries: [{ block: { type: "reasoning" }, index: 1 }, { block: { type: "tool" }, index: 2 }] },
+      { kind: "prose", block: { type: "text" }, index: 3 },
+    ]);
+  });
+
+  test("derives context allocation rows and a clamped percentage", () => {
+    const breakdown = { used: 75, max: 100, system: 20, tools: 15 };
+    expect(contextBreakdownPercent(breakdown)).toBe(75);
+    expect(contextBreakdownToRows(breakdown).map((row) => row.name)).toEqual(["System", "Tools"]);
+  });
+
+  test("keeps checkbox host requests mounted across request-id refreshes", () => {
+    const base = { id: "one", requestId: "one", kind: "select" as const, title: "Choose", selectionMarker: "checkbox" as const, options: ["A", "B"] };
+    expect(hostUiInstanceKey(base)).toBe(hostUiInstanceKey({ ...base, id: "two", requestId: "two" }));
+  });
+
+  test("renders only visible tool metadata", () => {
+    const html = renderToStaticMarkup(<ToolMetadataRow items={[{ id: "path", label: "path", value: "index.ts" }, { id: "secret", label: "secret", value: "hidden", hidden: true }]} />);
+    expect(html).toContain("index.ts");
+    expect(html).not.toContain("hidden");
+  });
+});
