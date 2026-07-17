@@ -4,6 +4,7 @@ import { featureEntries } from "./features";
 import { tokenEntries } from "./tokens";
 import { toolEntries } from "./tools";
 import type { Entry } from "../entry";
+import { chatSurfaceEntries } from "./chat-surface";
 
 export const entries: readonly Entry[] = [
   ...tokenEntries,
@@ -11,4 +12,5 @@ export const entries: readonly Entry[] = [
   ...toolEntries,
   ...composerEntries,
   ...featureEntries,
+  ...chatSurfaceEntries,
 ];
