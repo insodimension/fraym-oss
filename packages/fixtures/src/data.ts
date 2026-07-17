@@ -34,7 +34,7 @@ export type WebSearchVariation =
   | "normal"
   | "answer-only"
   | "sources-only"
-  | "anthropic"
+  | "acme"
   | "perplexity"
   | "fallback"
   | "error";
@@ -400,7 +400,7 @@ export const SKILL_CARD_SAMPLES = Object.entries(SKILL_BODIES).map(
 export const NORMAL_OUTPUT = "A sourced answer with two references.";
 export const ANSWER_ONLY_OUTPUT = "A concise sourced answer.";
 export const SOURCES_ONLY_OUTPUT = "https://example.com/source";
-export const ANTHROPIC_OUTPUT = "Provider-formatted answer";
+export const ACME_OUTPUT = "Provider-formatted answer";
 export const PERPLEXITY_OUTPUT = "Search-formatted answer";
 export const FALLBACK_OUTPUT = "Fallback search result";
 export const ERROR_OUTPUT = "Search unavailable";
@@ -415,7 +415,7 @@ export const OUTPUT = variation<WebSearchVariation>(
     "normal",
     "answer-only",
     "sources-only",
-    "anthropic",
+    "acme",
     "perplexity",
     "fallback",
     "error",
