@@ -1,6 +1,6 @@
-export { Badge, type BadgeProps, type BadgeTone, type BadgeVariant } from "./Badge";
+export { Badge, type BadgeProps, type BadgeTone, type BadgeVariant, badgeVariants } from "./Badge";
 export { BranchName, type BranchNameProps } from "./BranchName";
-export { Button, type ButtonProps, type ButtonSize, type ButtonVariant } from "./Button";
+export { Button, type ButtonProps, type ButtonSize, type ButtonVariant, buttonVariants } from "./Button";
 export { Card, CardContent, CardFooter, CardHeader, type CardContentProps, type CardFooterProps, type CardHeaderProps, type CardProps } from "./Card";
 export { Checkbox, type CheckboxProps } from "./Checkbox";
 export { Code, highlightCode, type CodeProps } from "./Code";
@@ -11,8 +11,8 @@ export { ErrorBoundary, type ErrorBoundaryFallbackProps, type ErrorBoundaryProps
 export { Field, type FieldProps } from "./Field";
 export { FileMentionPill, FileMentionProvider, type FileMentionOpen, joinWorkspacePath, looksLikeFilePath, renderTextWithMentions, revealLabel, useFileMentionOpen, useFileMentionReveal } from "./FileMention";
 export { createFileIconElement, createImageIconElement, FileTypeIcon, type FileTypeIconProps, materialIconUrl, resolveMaterialIconName } from "./FileTypeIcon";
-export { IconButton, type IconButtonProps } from "./IconButton";
-export { Input, type InputProps, type InputSize, type InputVariant } from "./Input";
+export { IconButton, type IconButtonProps, type IconButtonVariant } from "./IconButton";
+export { Input, type InputProps, type InputSize, type InputVariant, inputVariants } from "./Input";
 export { Kbd, type KbdProps } from "./Kbd";
 export { Label, type LabelProps } from "./Label";
 export { useHoverCapable, useReducedMotion } from "./MediaQueries";
@@ -24,7 +24,7 @@ export { Modal, type ModalProps, PopoverDivider, PopoverHeading, PopoverPanel, t
 export { Radio, type RadioProps } from "./Radio";
 export { RollingNumber, type RollingNumberProps } from "./RollingNumber";
 export { ScrollArea, type ScrollAreaProps } from "./ScrollArea";
-export { Select, type SelectOption, type SelectProps } from "./Select";
+export { Select, type SelectOption, type SelectProps, selectVariants } from "./Select";
 export { Separator, type SeparatorProps } from "./Separator";
 export { Shimmer, type ShimmerProps } from "./Shimmer";
 export { Skeleton, SkeletonGroup, type SkeletonGroupProps, type SkeletonProps, SkeletonText, type SkeletonTextProps } from "./Skeleton";
@@ -34,7 +34,7 @@ export { StaticMarkdownLite, type StaticMarkdownLiteProps, parseSessionHref } fr
 export { parseStreamingMarkdown, StreamingMarkdown, type MarkdownBlock, type StreamingMarkdownProps } from "./StreamingMarkdown";
 export { Switch, type SwitchProps } from "./Switch";
 export { Tabs, TabsContent, type TabsContentProps, TabsList, type TabsProps, TabsTrigger, type TabsTriggerProps, type TabsVariant } from "./Tabs";
-export { Textarea, type TextareaProps, type TextareaResize, type TextareaVariant } from "./Textarea";
+export { Textarea, type TextareaProps, type TextareaResize, type TextareaVariant, textareaVariants } from "./Textarea";
 export { ThinkingDots, type ThinkingDotsProps } from "./ThinkingDots";
 export { Toggle, type ToggleProps } from "./Toggle";
 export { Tooltip, TooltipContent, TooltipProvider, type TooltipProps, TooltipTrigger } from "./Tooltip";

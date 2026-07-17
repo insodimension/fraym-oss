@@ -1,4 +1,4 @@
-import type { ButtonHTMLAttributes } from "react";
+import { cloneElement, isValidElement, type ButtonHTMLAttributes, type HTMLAttributes, type ReactElement } from "react";
 
 import { classNames } from "./utils";
 
@@ -10,33 +10,40 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   size?: ButtonSize;
   loading?: boolean;
   loadingText?: string;
+  asChild?: boolean;
+}
+
+export function buttonVariants({ variant = "default", size = "default", className }: Pick<ButtonProps, "variant" | "size" | "className"> = {}): string {
+  return classNames("fraym-button", `fraym-button--${variant}`, `fraym-button--${size}`, className);
 }
 
 export function Button({
   className,
   children,
+  asChild = false,
   disabled,
   loading = false,
   loadingText,
-  size = "md",
+  size = "default",
   type = "button",
-  variant = "ghost",
+  variant = "default",
   ...props
 }: ButtonProps) {
+  const shared = {
+    ...props,
+    "aria-busy": loading || undefined,
+    className: buttonVariants({ variant, size, className }),
+    "data-size": size,
+    "data-slot": "button",
+    "data-variant": variant,
+    disabled: disabled || loading,
+  };
+  if (asChild && isValidElement(children)) {
+    return cloneElement(children as ReactElement<HTMLAttributes<HTMLElement>>, shared);
+  }
   return (
     <button
-      {...props}
-      aria-busy={loading || undefined}
-      className={classNames(
-        "fraym-button",
-        `fraym-button--${variant}`,
-        `fraym-button--${size}`,
-        className,
-      )}
-      data-size={size}
-      data-slot="button"
-      data-variant={variant}
-      disabled={disabled || loading}
+      {...shared}
       type={type}
     >
       {loading ? <span aria-hidden="true" className="fraym-button__spinner" /> : null}

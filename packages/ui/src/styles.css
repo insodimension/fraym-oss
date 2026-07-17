@@ -436,6 +436,7 @@
 .fraym-input--surface,
 .fraym-select--surface,
 .fraym-textarea--surface { background: var(--fraym-color-surface); }
+.fraym-input--underline { background: transparent; border: 0; border-bottom: 1px solid var(--fraym-color-border); border-radius: 0; padding-inline: 0; }
 .fraym-input--sm,
 .fraym-select--sm { font-size: var(--fraym-type-body-sm); height: 30px; padding-block: 4px; }
 .fraym-input--lg,
@@ -453,6 +454,8 @@
 
 .fraym-checkbox { appearance: none; background: var(--fraym-color-surface-2); border: 1px solid var(--fraym-color-border); border-radius: 5px; cursor: pointer; height: 18px; margin: 0; width: 18px; }
 .fraym-checkbox:checked { background: var(--fraym-color-accent); border-color: var(--fraym-color-accent); }
+.fraym-checkbox[data-state="indeterminate"] { background: var(--fraym-color-accent); border-color: var(--fraym-color-accent); }
+.fraym-checkbox[data-state="indeterminate"]::after { background: var(--fraym-color-on-primary); content: ""; display: block; height: 2px; margin: 7px 3px; width: 10px; }
 .fraym-checkbox:checked::after { border: solid var(--fraym-color-on-primary); border-width: 0 2px 2px 0; content: ""; display: block; height: 8px; margin: 2px 0 0 6px; transform: rotate(45deg); width: 4px; }
 .fraym-checkbox:focus-visible,
 .fraym-radio:focus-visible,

@@ -6,8 +6,9 @@ export interface RadioProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>
   checked?: boolean;
   onCheckedChange?: (checked: boolean) => void;
   value?: string;
+  decorative?: boolean;
 }
 
-export function Radio({ checked = false, onCheckedChange, className, disabled, onClick, ...props }: RadioProps) {
-  return <button {...props} aria-checked={checked} className={classNames("fraym-radio", checked && "is-checked", className)} data-slot="radio" disabled={disabled} role="radio" type="button" onClick={(event) => { onClick?.(event); if (!event.defaultPrevented && !disabled) onCheckedChange?.(true); }}><span aria-hidden="true" /></button>;
+export function Radio({ checked = false, onCheckedChange, className, decorative = false, disabled, onClick, tabIndex, ...props }: RadioProps) {
+  return <button {...props} aria-checked={checked} className={classNames("fraym-radio", checked && "is-checked", decorative && "is-decorative", className)} data-slot="radio" data-state={checked ? "checked" : "unchecked"} disabled={disabled} role="radio" tabIndex={decorative ? -1 : tabIndex} type="button" onClick={decorative ? undefined : (event) => { onClick?.(event); if (!event.defaultPrevented && !disabled) onCheckedChange?.(!checked); }}><span aria-hidden="true" /></button>;
 }
