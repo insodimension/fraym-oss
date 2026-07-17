@@ -58,8 +58,10 @@ main {
   background: var(--fraym-color-surface-2);
   color: var(--fraym-color-text);
 }
-.web-source-note, .web-connection { align-items: center; display: flex; gap: var(--fraym-space-sm); }
+.web-source-note { align-items: center; display: flex; gap: var(--fraym-space-sm); }
 .web-source-note { color: var(--fraym-color-text-3); font-size: var(--fraym-type-body-sm); margin: 0; }
+.web-connection { align-items: end; display: grid; gap: var(--fraym-space-sm); grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto; }
+.web-connection__field { display: grid; gap: var(--fraym-space-xs); min-width: 0; }
 .web-connection label { white-space: nowrap; }
 .web-connection input {
   background: var(--fraym-color-surface-2);
@@ -71,7 +73,11 @@ main {
   height: 36px;
   min-width: 15rem;
   padding: var(--fraym-space-sm) var(--fraym-space-md);
+  width: 100%;
 }
+.web-connection__help { color: var(--fraym-color-text-3); font-size: var(--fraym-type-body-sm); grid-column: 1 / -1; margin: 0; }
+.web-acp-pending { border: 1px solid var(--fraym-color-border); border-radius: var(--fraym-radius-lg); display: grid; gap: var(--fraym-space-sm); margin-top: var(--fraym-space-lg); min-height: 28rem; padding: var(--fraym-space-lg); place-content: center; text-align: center; }
+.web-acp-pending p { color: var(--fraym-color-text-2); font-size: var(--fraym-type-body-md); margin: 0; }
 .web-connection input:focus-visible {
   border-color: var(--fraym-color-accent-line);
   box-shadow: 0 0 0 2px var(--fraym-color-accent-dim);
@@ -83,7 +89,8 @@ main {
 @media (max-width: 640px) {
   main { width: min(100% - var(--fraym-space-6), 760px); }
   .web-source-panel { align-items: stretch; flex-direction: column; padding-block: var(--fraym-space-md); }
-  .web-connection { align-items: stretch; flex-direction: column; }
+  .web-connection { align-items: stretch; grid-template-columns: 1fr; }
+  .web-connection .fraym-button, .web-connection__help { grid-column: 1; }
   .web-connection input { min-width: 0; width: 100%; }
   .web-source-note { align-items: flex-start; flex-direction: column; }
 }

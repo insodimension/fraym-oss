@@ -13,13 +13,15 @@
 ## Usage
 
 ```ts
-const driver = createAcpDriver("ws://localhost:5196");
+const driver = createAcpDriver("ws://localhost:5196", {
+  cwd: "D:/path/to/repo",
+});
 
 driver.subscribe(handleEvent);
 await driver.prompt("Inspect this workspace");
 ```
 
-The driver initializes the connection, opens one ACP session, forwards prompts and cancellations, and closes its socket when the final subscriber unsubscribes.
+The driver initializes the connection, opens one ACP session in the required `cwd`, forwards prompts and cancellations, and closes its socket when the final subscriber unsubscribes. The path is passed through unchanged to ACP's `session/new` request.
 
 ## Protocol mapping
 

@@ -45,7 +45,7 @@ interface AcpSocket {
 
 export interface AcpDriverOptions {
   /** Working directory passed to `session/new`. */
-  cwd?: string;
+  cwd: string;
   /** Overrides the WebSocket constructor for non-browser hosts and tests. */
   createSocket?: (url: string) => AcpSocket;
 }
@@ -137,7 +137,7 @@ function defaultSocket(url: string): AcpSocket {
  */
 export function createAcpDriver(
   url: string,
-  options: AcpDriverOptions = {},
+  options: AcpDriverOptions,
 ): AcpDriver {
   const listeners = new Set<AgentEventListener>();
   const pendingRequests = new Map<number, PendingRequest>();
@@ -492,7 +492,7 @@ export function createAcpDriver(
             throw new Error("The ACP agent did not negotiate protocol version 1.");
           }
           const created = await request("session/new", {
-            cwd: options.cwd ?? ".",
+            cwd: options.cwd,
             mcpServers: [],
           });
           if (!isRecord(created) || typeof created.sessionId !== "string") {

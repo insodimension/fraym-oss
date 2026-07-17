@@ -195,7 +195,8 @@ describe("createAcpDriver", () => {
     });
 
     const events: AgentEvent[] = [];
-    const driver = createAcpDriver(`ws://127.0.0.1:${server.port}`);
+    const cwd = "D:/projects/fraym";
+    const driver = createAcpDriver(`ws://127.0.0.1:${server.port}`, { cwd });
     const unsubscribe = driver.subscribe((event) => {
       events.push(event);
       if (event.type === "approval.request") {
@@ -215,7 +216,7 @@ describe("createAcpDriver", () => {
     const newSession = receivedRpc.find((message) => message.method === "session/new");
     const prompt = receivedRpc.find((message) => message.method === "session/prompt");
     expect(initialize?.params).toMatchObject({ protocolVersion: 1 });
-    expect(newSession?.params).toMatchObject({ cwd: ".", mcpServers: [] });
+    expect(newSession?.params).toEqual({ cwd, mcpServers: [] });
     expect(prompt?.params).toMatchObject({
       sessionId: "acp-session-1",
       prompt: [{ type: "text", text: "Inspect the event mapping" }],
@@ -277,7 +278,7 @@ describe("createAcpDriver", () => {
         },
       },
     });
-    const driver = createAcpDriver(`ws://127.0.0.1:${server.port}`);
+    const driver = createAcpDriver(`ws://127.0.0.1:${server.port}`, { cwd: "/workspace/fraym" });
     const unsubscribe = driver.subscribe(() => undefined);
     await waitFor(() => server.pendingWebSockets > 0);
     unsubscribe();

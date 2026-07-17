@@ -209,10 +209,12 @@ export const featureEntries = [
     Demo: AcpDriverDemo,
     knobs: [
       { prop: "url", label: "WebSocket URL", kind: "text", defaultValue: "ws://localhost:5196" },
+      { prop: "cwd", label: "Working directory", kind: "text", defaultValue: "D:/path/to/repo" },
     ],
     code: (values) => {
       const url = stringValue(values, "url", "ws://localhost:5196");
-      return `const driver = createAcpDriver("${url}");
+      const cwd = stringValue(values, "cwd", "D:/path/to/repo");
+      return `const driver = createAcpDriver("${url}", { cwd: "${cwd}" });
 
 <SessionThread
   source={driver}
@@ -225,7 +227,9 @@ export const featureEntries = [
       {
         title: "Open a live session",
         description: "The first subscriber initializes ACP and creates a session before prompts are sent.",
-        code: `const driver = createAcpDriver("ws://localhost:5196");
+        code: `const driver = createAcpDriver("ws://localhost:5196", {
+  cwd: "D:/path/to/repo",
+});
 const unsubscribe = driver.subscribe(handleEvent);`,
       },
       {
@@ -241,7 +245,7 @@ const unsubscribe = driver.subscribe(handleEvent);`,
     ],
     props: [
       { name: "url", type: "string", defaultValue: "required", description: "ACP WebSocket endpoint used for the JSON-RPC connection." },
-      { name: "options.cwd", type: "string", defaultValue: ".", description: "Working directory supplied to session/new." },
+      { name: "options.cwd", type: "string", defaultValue: "required", description: "Absolute working directory passed unchanged to session/new." },
       { name: "prompt", type: "(text) => Promise<void>", defaultValue: "method", description: "Sends a user turn through session/prompt." },
       { name: "respondToApproval", type: "(event) => void", defaultValue: "method", description: "Selects the matching ACP permission option." },
       { name: "cancel", type: "() => void", defaultValue: "method", description: "Cancels the active prompt turn." },

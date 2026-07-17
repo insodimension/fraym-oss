@@ -8,46 +8,70 @@ import "./styles.css";
 
 type SourceMode = "replay" | "acp";
 
+interface AcpConnection {
+  url: string;
+  cwd: string;
+  key: number;
+}
+
 const defaultAcpUrl = "ws://localhost:5196";
+
+function isAbsoluteCwd(value: string): boolean {
+  return /^(?:[A-Za-z]:[\\/]|\/)/.test(value);
+}
 
 function App() {
   const [mode, setMode] = useState<SourceMode>("replay");
   const [urlDraft, setUrlDraft] = useState(defaultAcpUrl);
-  const [activeUrl, setActiveUrl] = useState(defaultAcpUrl);
-  const [connectionKey, setConnectionKey] = useState(0);
+  const [cwdDraft, setCwdDraft] = useState("");
+  const [acpConnection, setAcpConnection] = useState<AcpConnection | null>(null);
   const replay = useMemo(
     () => createReplayDriver(codingSessionFixture, { delay: 260, loop: true }),
     [],
   );
   const acp = useMemo(
-    () => createAcpDriver(activeUrl),
-    [activeUrl, connectionKey],
+    () => acpConnection === null
+      ? null
+      : createAcpDriver(acpConnection.url, { cwd: acpConnection.cwd }),
+    [acpConnection],
   );
+  const cwdIsAbsolute = isAbsoluteCwd(cwdDraft);
 
   const connect = (event?: FormEvent) => {
     event?.preventDefault();
+    if (!cwdIsAbsolute) {
+      return;
+    }
     const nextUrl = urlDraft.trim() || defaultAcpUrl;
-    setActiveUrl(nextUrl);
+    setAcpConnection((current) => ({
+      url: nextUrl,
+      cwd: cwdDraft,
+      key: (current?.key ?? 0) + 1,
+    }));
     setMode("acp");
-    setConnectionKey((value) => value + 1);
   };
 
-  const source = mode === "replay" ? replay : acp;
-  const sessionProps: SessionThreadProps = {
-    source,
-    title: mode === "replay" ? "Coding agent replay" : "Live ACP agent",
-    model: mode === "replay" ? "fraym/replay" : "acp/live",
-    contextUsage: mode === "replay" ? 38 : 0,
-    ...(mode === "replay"
-      ? { onApprovalResponse: replay.respondToApproval }
+  const sessionProps: SessionThreadProps | null = mode === "replay"
+    ? {
+        source: replay,
+        title: "Coding agent replay",
+        model: "fraym/replay",
+        contextUsage: 38,
+        onApprovalResponse: replay.respondToApproval,
+      }
+    : acp === null
+      ? null
       : {
+          source: acp,
+          title: "Live ACP agent",
+          model: "acp/live",
+          contextUsage: 0,
           onApprovalResponse: acp.respondToApproval,
           onStop: acp.cancel,
           onSubmit: (submission) => {
             void acp.prompt(submission.value).catch(() => undefined);
           },
-        }),
-  };
+        };
 
   return (
     <main data-fraym-theme="dark">
@@ -62,21 +86,40 @@ function App() {
           <Button aria-pressed={mode === "replay"} onClick={() => setMode("replay")} size="sm" variant="ghost">
             Replay fixture
           </Button>
-          <Button aria-pressed={mode === "acp"} onClick={() => connect()} size="sm" variant="ghost">
+          <Button aria-pressed={mode === "acp"} onClick={() => setMode("acp")} size="sm" variant="ghost">
             Live ACP
           </Button>
         </div>
         {mode === "acp" ? (
           <form className="web-connection" onSubmit={connect}>
-            <label htmlFor="acp-url">WebSocket URL</label>
-            <input
-              id="acp-url"
-              onChange={(event) => setUrlDraft(event.currentTarget.value)}
-              spellCheck={false}
-              type="url"
-              value={urlDraft}
-            />
-            <Button size="sm" type="submit" variant="primary">Connect</Button>
+            <div className="web-connection__field">
+              <label htmlFor="acp-url">WebSocket URL</label>
+              <input
+                id="acp-url"
+                onChange={(event) => setUrlDraft(event.currentTarget.value)}
+                spellCheck={false}
+                type="url"
+                value={urlDraft}
+              />
+            </div>
+            <div className="web-connection__field">
+              <label htmlFor="acp-cwd">Working directory</label>
+              <input
+                aria-describedby="acp-cwd-help"
+                aria-invalid={cwdDraft.length > 0 && !cwdIsAbsolute}
+                id="acp-cwd"
+                onChange={(event) => setCwdDraft(event.currentTarget.value)}
+                placeholder="D:/path/to/repo"
+                required
+                spellCheck={false}
+                type="text"
+                value={cwdDraft}
+              />
+            </div>
+            <Button disabled={!cwdIsAbsolute} size="sm" type="submit" variant="primary">Connect</Button>
+            <p className="web-connection__help" id="acp-cwd-help">
+              Enter the absolute workspace path the ACP agent should open.
+            </p>
           </form>
         ) : (
           <p className="web-source-note">
@@ -86,7 +129,14 @@ function App() {
         )}
       </section>
 
-      <SessionThread key={`${mode}-${mode === "acp" ? connectionKey : "fixture"}`} {...sessionProps} />
+      {sessionProps === null ? (
+        <section aria-live="polite" className="web-acp-pending">
+          <span className="web-eyebrow">Live session</span>
+          <p>Provide an absolute working directory, then connect to start the ACP session.</p>
+        </section>
+      ) : (
+        <SessionThread key={`${mode}-${mode === "acp" ? acpConnection?.key : "fixture"}`} {...sessionProps} />
+      )}
     </main>
   );
 }
