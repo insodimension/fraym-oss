@@ -33,7 +33,7 @@ export function useAgentSession(source: AgentEventStream): AgentSessionSnapshot 
 
   return {
     state,
-    streaming: state.phase !== "done" && state.phase !== "error" && !stopped,
+    streaming: state.phase === "running" && !stopped,
     stop,
   };
 }

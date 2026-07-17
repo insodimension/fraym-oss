@@ -54,6 +54,21 @@ describe("reduceThreadEvent", () => {
     expect(state.error).toBe("The workspace is unavailable.");
   });
 
+  test("starts a new live turn when a user message follows completion", () => {
+    const completed = reduceThreadEvent(
+      { ...createThreadState(), sessionId, phase: "done" },
+      {
+        type: "user.message",
+        sessionId,
+        messageId: "user-next",
+        content: "One more thing",
+      },
+    );
+
+    expect(completed.phase).toBe("running");
+    expect(completed.waiting).toBe(true);
+  });
+
   test("accumulates each tool call input, output deltas, and terminal status", () => {
     const events: readonly AgentEvent[] = [
       { type: "session.start", sessionId },

@@ -156,6 +156,8 @@ export function reduceThreadEvent(
           { id: event.messageId, role: "user", content: event.content },
         ],
         items: [...current.items, { kind: "message", id: event.messageId }],
+        phase: "running",
+        error: null,
         waiting: true,
       };
 
