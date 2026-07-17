@@ -94,6 +94,11 @@ h1, h2, h3, h4, p { text-wrap: pretty; }
 .sink-inside > div + div { border-left: 1px solid var(--fraym-color-border-soft); padding-left: var(--fraym-space-xl); }
 .sink-inside span { color: var(--fraym-color-text); font-family: var(--fraym-font-mono); font-size: var(--fraym-type-heading-xl); font-weight: 600; }
 .sink-inside p { color: var(--fraym-color-text-2); font-size: var(--fraym-type-body-sm); margin: var(--fraym-space-xs) 0 0; }
+.sink-get-started { align-items: center; border-top: 1px solid var(--fraym-color-border); display: flex; gap: var(--fraym-space-xl); justify-content: space-between; padding: calc(var(--fraym-space-xl) * 2) 0 var(--fraym-space-xl); }
+.sink-get-started h2 { font-size: var(--fraym-type-heading-xl); letter-spacing: -0.01em; line-height: 1.15; margin: 0; }
+.sink-get-started p { color: var(--fraym-color-text-2); font-size: var(--fraym-type-body-md); line-height: 1.5; margin: var(--fraym-space-sm) 0 0; max-width: 46ch; }
+.sink-get-started__actions { align-items: center; display: flex; flex-wrap: wrap; gap: var(--fraym-space-sm); justify-content: flex-end; }
+.sink-install-chip { flex-shrink: 0; }
 
 .sink-entry { display: grid; gap: var(--fraym-space-xl); }
 .sink-entry-hero { margin-inline: auto; max-width: var(--sink-prose-max); padding: var(--fraym-space-xl) 0; width: 100%; }
@@ -243,6 +248,10 @@ h1, h2, h3, h4, p { text-wrap: pretty; }
   .sink-inside { grid-template-columns: 1fr; }
   .sink-inside > div { padding: var(--fraym-space-lg) 0; }
   .sink-inside > div + div { border-left: 0; border-top: 1px solid var(--fraym-color-border-soft); padding-left: 0; }
+  .sink-get-started { align-items: flex-start; flex-direction: column; padding-top: var(--fraym-space-xl); }
+  .sink-get-started__actions { align-items: stretch; flex-direction: column; justify-content: flex-start; width: 100%; }
+  .sink-get-started__actions > .fraym-button { justify-content: center; width: 100%; }
+  .sink-install-chip { align-items: center; flex-direction: row; justify-content: space-between; width: 100%; }
   .sink-import-chip { align-items: flex-start; flex-direction: column; max-width: 100%; }
   .sink-import-chip .fraym-code { max-width: 100%; overflow-x: auto; }
   .sink-stage__canvas { min-height: 24rem; padding: var(--fraym-space-lg); }
