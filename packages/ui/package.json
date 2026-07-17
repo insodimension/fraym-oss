@@ -10,6 +10,14 @@
     "./elements": {
       "types": "./src/elements/index.ts",
       "import": "./src/elements/index.ts"
+    },
+    "./components": {
+      "types": "./src/components/index.ts",
+      "import": "./src/components/index.ts"
+    },
+    "./registries": {
+      "types": "./src/registries/index.ts",
+      "import": "./src/registries/index.ts"
     }
   },
   "peerDependencies": {

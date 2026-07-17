@@ -5,6 +5,8 @@
 - [Purpose](#purpose)
 - [Foundation](#foundation)
 - [Elements](#elements)
+- [Renderer registries](#renderer-registries)
+- [Shared components](#shared-components)
 - [Tool renderers](#tool-renderers)
 - [Session surface](#session-surface)
 - [Approvals and reasoning](#approvals-and-reasoning)
@@ -22,6 +24,16 @@ The package exposes dark-first CSS custom-property tokens, typed token reference
 The `@fraym/ui/elements` entry point exposes the complete public primitive layer. It includes actions and feedback, native form controls, tabs and disclosure surfaces, settled and streaming Markdown, highlighted and plain code blocks, file mentions and file-type identity, animated counters, responsive capability hooks, diagrams, session boundaries, decorative interaction effects, refractive liquid-glass surfaces, and error recovery. The root `@fraym/ui` export re-exports the same elements for convenient composition.
 
 Elements stay host-neutral: file opening and reveal behavior enter through `FileMentionProvider`, async persistence enters through `OptimisticToggle`, and session navigation enters through `SessionNavigationProvider` or a local callback. Decorative effects honor reduced-motion preferences, Mermaid loads only when a diagram is rendered, and liquid-glass surfaces retain translucent fallbacks when their field or WebGL is unavailable.
+
+## Renderer registries
+
+The `@fraym/ui/registries` entry point owns the renderer contract. Tool renderers may return a body or a rich `ToolView` that controls card identity, badges, status, statistics, disclosure, and body treatment. Resolution checks the exact tool name, its normalized realm or MCP name, and finally the wildcard renderer. Nested providers merge unless `replace` is enabled.
+
+The same provider pattern powers message blocks, host-request/custom-message surfaces, and command tags. Message grouping, surface placement, and fallback behavior are exported as pure helpers so hosts can test their integrations without mounting the full thread. Generic installation, form, authorization, application-liveness, and conversational setup states live under the neutral `fix` catalog.
+
+## Shared components
+
+Reusable renderer-facing components are available from `@fraym/ui/components`: `DiffBlock`, `Collapsible`, coordinated menus, `ConfirmDialog`, `PageHeader`, filter pills, `InputGroup`, responsive `SelectorMenu`, `BottomSheet`, and `DockSplit`.
 
 ## Tool renderers
 

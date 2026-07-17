@@ -34,6 +34,7 @@ import {
 } from "../entry";
 import { additionalElementEntries } from "./element-additions";
 import { decorativeElementEntries } from "./decorative-elements";
+import { rendererContractEntries } from "./renderer-contract";
 
 function ButtonDemo({ values }: DemoProps) {
   const [runs, setRuns] = useState(0);
@@ -646,4 +647,4 @@ const originalElementEntries = baseElementEntries.map((entry): Entry => {
   };
 });
 
-export const elementEntries: readonly Entry[] = [...originalElementEntries, ...additionalElementEntries, ...decorativeElementEntries];
+export const elementEntries: readonly Entry[] = [...originalElementEntries, ...additionalElementEntries, ...decorativeElementEntries, ...rendererContractEntries];

@@ -62,3 +62,5 @@ export type {
 } from "./tool-renderers/types";
 export { tokens, type FraymColorToken, type FraymTokens } from "./tokens";
 export * from "./elements";
+export * from "./components";
+export * from "./registries";
