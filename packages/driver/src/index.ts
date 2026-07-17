@@ -27,6 +27,12 @@ export interface AssistantMessageDeltaEvent extends AgentEventBase {
   delta: string;
 }
 
+export interface ReasoningDeltaEvent extends AgentEventBase {
+  type: "reasoning.delta";
+  messageId: string;
+  delta: string;
+}
+
 export interface ToolCallStartEvent extends AgentEventBase {
   type: "tool_call.start";
   toolCallId: string;
@@ -74,6 +80,7 @@ export type AgentEvent =
   | SessionStartEvent
   | UserMessageEvent
   | AssistantMessageDeltaEvent
+  | ReasoningDeltaEvent
   | ToolCallStartEvent
   | ToolCallUpdateEvent
   | ToolCallEndEvent
@@ -106,6 +113,16 @@ export interface ReplayDriverOptions {
   delays?: readonly number[];
   /** Starts the recording again after its last event. */
   loop?: boolean;
+  /** Resolves approval gates without user input, for unattended replays. */
+  autoRespond?: {
+    decision?: ApprovalDecision;
+    delay?: number;
+  };
+}
+
+export interface ReplayDriver extends AgentEventStream {
+  /** Resolves a currently pending approval and resumes the recording. */
+  respondToApproval(response: ApprovalResponseEvent): void;
 }
 
 const defaultReplayDelay = 24;
@@ -123,15 +140,43 @@ function getDelay(options: ReplayDriverOptions, index: number): number {
 export function createReplayDriver(
   events: readonly AgentEvent[],
   options: ReplayDriverOptions = {},
-): AgentEventStream {
-  return {
+): ReplayDriver {
+  const responders = new Set<(response: ApprovalResponseEvent) => void>();
+
+  const driver: ReplayDriver = {
+    respondToApproval(response) {
+      for (const respond of responders) {
+        respond(response);
+      }
+    },
     subscribe(listener) {
       let cancelled = false;
       let timer: ReturnType<typeof setTimeout> | undefined;
       let index = 0;
+      let pendingApproval: ApprovalRequestEvent | undefined;
+
+      const clearTimer = () => {
+        if (timer !== undefined) {
+          clearTimeout(timer);
+          timer = undefined;
+        }
+      };
+
+      const finishCycle = () => {
+        if (!options.loop) {
+          return false;
+        }
+
+        index = 0;
+        return true;
+      };
 
       const scheduleNext = () => {
-        if (cancelled || events.length === 0) {
+        if (cancelled || pendingApproval !== undefined || events.length === 0) {
+          return;
+        }
+
+        if (index === events.length && !finishCycle()) {
           return;
         }
 
@@ -140,31 +185,66 @@ export function createReplayDriver(
             return;
           }
 
-          listener(events[index]!);
+          const event = events[index]!;
+          listener(event);
           index += 1;
 
-          if (index === events.length) {
-            if (!options.loop) {
-              return;
-            }
+          if (event.type === "approval.request") {
+            pendingApproval = event;
 
-            index = 0;
+            if (options.autoRespond !== undefined) {
+              timer = setTimeout(() => {
+                respond({
+                  type: "approval.response",
+                  sessionId: event.sessionId,
+                  approvalId: event.approvalId,
+                  decision: options.autoRespond?.decision ?? "approved",
+                });
+              }, Math.max(0, options.autoRespond.delay ?? defaultReplayDelay));
+            }
+            return;
           }
 
           scheduleNext();
         }, getDelay(options, index));
       };
 
+      const respond = (response: ApprovalResponseEvent) => {
+        if (
+          cancelled
+          || pendingApproval === undefined
+          || response.approvalId !== pendingApproval.approvalId
+        ) {
+          return;
+        }
+
+        clearTimer();
+        pendingApproval = undefined;
+        listener(response);
+
+        const recordedResponse = events[index];
+        if (
+          recordedResponse?.type === "approval.response"
+          && recordedResponse.approvalId === response.approvalId
+        ) {
+          index += 1;
+        }
+
+        scheduleNext();
+      };
+
+      responders.add(respond);
       scheduleNext();
 
       return () => {
         cancelled = true;
-        if (timer !== undefined) {
-          clearTimeout(timer);
-        }
+        responders.delete(respond);
+        clearTimer();
       };
     },
   };
+
+  return driver;
 }
 
 export { codingSessionFixture } from "./fixtures/coding-session";

@@ -67,4 +67,79 @@ describe("createReplayDriver", () => {
     expect(received).toHaveLength(1);
     expect(received[0]?.type).toBe("session.start");
   });
+
+  test("pauses at an approval until a response resumes it", async () => {
+    const gatedEvents: readonly AgentEvent[] = [
+      { type: "session.start", sessionId: "approval-test" },
+      {
+        type: "approval.request",
+        sessionId: "approval-test",
+        approvalId: "approval-1",
+        prompt: "Apply the patch?",
+      },
+      { type: "session.done", sessionId: "approval-test" },
+    ];
+    const received: AgentEvent[] = [];
+    const replay = createReplayDriver(gatedEvents, { delay: 1 });
+    replay.subscribe((event) => received.push(event));
+
+    await wait(50);
+    expect(received.map((event) => event.type)).toEqual([
+      "session.start",
+      "approval.request",
+    ]);
+
+    replay.respondToApproval({
+      type: "approval.response",
+      sessionId: "approval-test",
+      approvalId: "approval-1",
+      decision: "approved",
+    });
+    await wait(30);
+
+    expect(received.map((event) => event.type)).toEqual([
+      "session.start",
+      "approval.request",
+      "approval.response",
+      "session.done",
+    ]);
+  });
+
+  test("can auto-respond after a configured approval delay", async () => {
+    const gatedEvents: readonly AgentEvent[] = [
+      {
+        type: "approval.request",
+        sessionId: "auto-approval-test",
+        approvalId: "approval-1",
+        prompt: "Continue?",
+      },
+      { type: "session.done", sessionId: "auto-approval-test" },
+    ];
+    const received: AgentEvent[] = [];
+    const startedAt = performance.now();
+    let responseAt = 0;
+    const replay = createReplayDriver(gatedEvents, {
+      delay: 1,
+      autoRespond: { decision: "approved", delay: 15 },
+    });
+
+    await new Promise<void>((resolve) => {
+      replay.subscribe((event) => {
+        received.push(event);
+        if (event.type === "approval.response") {
+          responseAt = performance.now() - startedAt;
+        }
+        if (event.type === "session.done") {
+          resolve();
+        }
+      });
+    });
+
+    expect(received.map((event) => event.type)).toEqual([
+      "approval.request",
+      "approval.response",
+      "session.done",
+    ]);
+    expect(responseAt).toBeGreaterThanOrEqual(12);
+  });
 });
