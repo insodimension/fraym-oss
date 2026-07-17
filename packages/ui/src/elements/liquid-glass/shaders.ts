@@ -16,6 +16,7 @@ uniform vec2 u_mapOffset;
 uniform float u_radius;
 uniform float u_depth;
 uniform float u_refraction;
+uniform float u_blur;
 uniform float u_chroma;
 uniform float u_distortion;
 uniform float u_edge;
@@ -36,6 +37,14 @@ float roundedBox(vec2 point, vec2 halfSize, float radius) {
   return length(max(delta, 0.)) + min(max(delta.x, delta.y), 0.) - radius;
 }
 float grain(vec2 point) { return fract(sin(dot(point, vec2(12.9898, 78.233))) * 43758.5453); }
+vec3 glassSample(vec2 point, vec2 spread) {
+  vec3 center = texture2D(u_texture, point).rgb;
+  vec3 cross = texture2D(u_texture, point + vec2(spread.x, 0.)).rgb
+    + texture2D(u_texture, point - vec2(spread.x, 0.)).rgb
+    + texture2D(u_texture, point + vec2(0., spread.y)).rgb
+    + texture2D(u_texture, point - vec2(0., spread.y)).rgb;
+  return mix(center, (center * 2. + cross) / 6., clamp(u_blur, 0., 1.));
+}
 
 void main() {
   vec2 pixel = v_uv * u_resolution;
@@ -52,9 +61,10 @@ void main() {
   bend *= mix(1., .8, u_pressed);
   vec2 mapped = u_mapOffset + v_uv * u_mapScale;
   vec3 color;
-  color.r = texture2D(u_texture, mapped + bend * (1. + u_chroma)).r;
-  color.g = texture2D(u_texture, mapped + bend).g;
-  color.b = texture2D(u_texture, mapped + bend * (1. - u_chroma)).b;
+  vec2 blurSpread = vec2(.0035) * u_blur;
+  color.r = glassSample(mapped + bend * (1. + u_chroma), blurSpread).r;
+  color.g = glassSample(mapped + bend, blurSpread).g;
+  color.b = glassSample(mapped + bend * (1. - u_chroma), blurSpread).b;
   float luminance = dot(color, vec3(.2126, .7152, .0722));
   color = mix(vec3(luminance), color, 1. + u_saturation);
   color *= 1. - u_dark;

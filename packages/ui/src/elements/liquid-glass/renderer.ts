@@ -3,7 +3,7 @@ import { fragmentShader, vertexShader } from "./shaders";
 
 export interface LiquidGlassFieldSource { readonly canvas: HTMLCanvasElement; readonly backgroundEl: HTMLElement }
 
-const uniforms = ["resolution", "center", "size", "mapScale", "mapOffset", "radius", "depth", "refraction", "chroma", "distortion", "edge", "specular", "fresnel", "brightness", "saturation", "dark", "tintStrength", "tintColor", "tint", "opacity", "bevel", "pressed"] as const;
+const uniforms = ["resolution", "center", "size", "mapScale", "mapOffset", "radius", "depth", "refraction", "blur", "chroma", "distortion", "edge", "specular", "fresnel", "brightness", "saturation", "dark", "tintStrength", "tintColor", "tint", "opacity", "bevel", "pressed"] as const;
 type Uniform = typeof uniforms[number];
 
 export class LiquidGlassRenderer {
@@ -74,7 +74,7 @@ export class LiquidGlassRenderer {
     gl.uniform2f(this.locations.mapScale, rect.width / width, rect.height / height);
     gl.uniform2f(this.locations.mapOffset, (rect.left - background.left) / width, (background.bottom - rect.bottom) / height);
     gl.uniform1f(this.locations.radius, s.radius * ratio); gl.uniform1f(this.locations.depth, s.depth * ratio);
-    gl.uniform1f(this.locations.refraction, s.refraction); gl.uniform1f(this.locations.chroma, s.chromaticAberration);
+    gl.uniform1f(this.locations.refraction, s.refraction); gl.uniform1f(this.locations.blur, s.blur); gl.uniform1f(this.locations.chroma, s.chromaticAberration);
     gl.uniform1f(this.locations.distortion, s.distortion); gl.uniform1f(this.locations.edge, s.edgeHighlight);
     gl.uniform1f(this.locations.specular, s.specular); gl.uniform1f(this.locations.fresnel, s.fresnel);
     gl.uniform1f(this.locations.brightness, s.brightness); gl.uniform1f(this.locations.saturation, s.saturation);
