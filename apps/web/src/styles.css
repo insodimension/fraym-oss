@@ -9,7 +9,7 @@
 
 body {
   margin: 0;
-  min-height: 100vh;
+  min-height: 100dvh;
   min-width: 320px;
 }
 
@@ -28,6 +28,7 @@ main {
   letter-spacing: 0.06em;
   text-transform: uppercase;
 }
+.web-connection label { color: var(--fraym-color-text-2); }
 .web-hero h1 {
   font-size: var(--fraym-type-display);
   letter-spacing: -0.02em;

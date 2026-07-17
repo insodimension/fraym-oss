@@ -24,7 +24,7 @@ html[data-fraym-accent="coral"] { --fraym-color-accent: var(--sink-accent-coral)
 html[data-fraym-accent="blue"] { --fraym-color-accent: var(--sink-accent-blue); --fraym-color-primary: var(--sink-accent-blue); }
 html[data-fraym-accent="green"] { --fraym-color-accent: var(--sink-accent-green); --fraym-color-primary: var(--sink-accent-green); }
 html[data-fraym-accent="amber"] { --fraym-color-accent: var(--sink-accent-amber); --fraym-color-primary: var(--sink-accent-amber); }
-html[data-fraym-accent="mono"] { --fraym-color-accent: var(--fraym-color-text); --fraym-color-primary: var(--fraym-color-text); }
+html[data-fraym-accent="mono"] { --fraym-color-accent: var(--fraym-color-text); --fraym-color-on-primary: var(--fraym-color-bg); --fraym-color-primary: var(--fraym-color-text); }
 html[data-fraym-accent] { --fraym-color-primary-strong: color-mix(in srgb, var(--fraym-color-primary) 84%, var(--fraym-color-text)); }
 
 * { box-sizing: border-box; }
@@ -49,9 +49,10 @@ h1, h2, h3, h4, p { text-wrap: pretty; }
 .sink-segmented .fraym-button { min-height: 28px; padding: var(--fraym-space-xs) var(--fraym-space-sm); text-transform: capitalize; }
 .sink-segmented .fraym-button[aria-pressed="true"] { background: var(--fraym-color-surface-2); color: var(--fraym-color-text); }
 .sink-accents { gap: var(--fraym-space-sm); }
-.sink-accent { border: 2px solid var(--fraym-color-bg); border-radius: var(--fraym-radius-full); box-shadow: 0 0 0 1px var(--fraym-color-border); cursor: pointer; height: var(--fraym-space-lg); padding: 0; transition: transform var(--fraym-motion-fast), box-shadow var(--fraym-motion-fast); width: var(--fraym-space-lg); }
+.sink-accent { border: 2px solid var(--fraym-color-bg); border-radius: var(--fraym-radius-full); box-shadow: 0 0 0 1px var(--fraym-color-border); cursor: pointer; height: calc(var(--fraym-space-xl) + var(--fraym-space-xs)); padding: 0; transition: transform var(--fraym-motion-fast), box-shadow var(--fraym-motion-fast); width: calc(var(--fraym-space-xl) + var(--fraym-space-xs)); }
 .sink-accent:hover { transform: scale(1.12); }
 .sink-accent[aria-pressed="true"] { box-shadow: 0 0 0 2px var(--fraym-color-accent-line); transform: scale(1.12); }
+.sink-accent:focus-visible { outline: 2px solid var(--fraym-color-accent-line); outline-offset: 2px; }
 .sink-accent--violet { background: var(--sink-accent-violet); }
 .sink-accent--coral { background: var(--sink-accent-coral); }
 .sink-accent--blue { background: var(--sink-accent-blue); }
@@ -80,7 +81,7 @@ h1, h2, h3, h4, p { text-wrap: pretty; }
 .sink-main { grid-area: main; min-width: 0; overflow-x: hidden; }
 .sink-landing, .sink-entry { margin: 0 auto; max-width: var(--sink-content-max); padding: calc(var(--fraym-space-xl) * 2); width: 100%; }
 .sink-entry, .sink-docs, .sink-doc-block, .sink-props-wrap { min-width: 0; width: 100%; }
-.sink-entry-shell { min-width: 0; transition: padding-right var(--fraym-motion-normal); }
+.sink-entry-shell { min-width: 0; }
 .sink-entry-shell[data-dock-open="true"] { padding-right: var(--sink-dock-current-width); }
 .sink-intro-hero { align-content: center; display: grid; gap: var(--fraym-space-lg); min-height: 34rem; }
 .sink-intro-hero h1 { font-size: var(--fraym-type-display); font-weight: 600; letter-spacing: -0.02em; line-height: 1.05; margin: 0; max-width: 22ch; }
@@ -203,7 +204,7 @@ h1, h2, h3, h4, p { text-wrap: pretty; }
 .sink-scroll-demo { border: 1px solid var(--fraym-color-border); border-radius: var(--fraym-radius-lg); height: 10rem; min-width: min(25rem, 70vw); padding: var(--fraym-space-sm); }
 .sink-event-row { border-bottom: 1px solid var(--fraym-color-border-soft); color: var(--fraym-color-text-2); font-family: var(--fraym-font-mono); font-size: var(--fraym-type-caption); padding: var(--fraym-space-md); }
 .sink-shortcut-demo { border: 1px solid var(--fraym-color-border); border-radius: var(--fraym-radius-lg); outline: none; padding: var(--fraym-space-lg); }
-.sink-shortcut-demo:focus-visible { border-color: var(--fraym-color-accent-line); }
+.sink-shortcut-demo:focus-visible { border-color: var(--fraym-color-accent-line); outline: 2px solid var(--fraym-color-accent-line); outline-offset: 2px; }
 .sink-shortcut-demo p { margin-top: 0; }
 .sink-key-part { align-items: center; display: inline-flex; gap: var(--fraym-space-sm); }
 .sink-field-label { font-size: var(--fraym-type-label); font-weight: 500; }
