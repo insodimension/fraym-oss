@@ -22,6 +22,7 @@ export { GradualBlur, type GradualBlurCurve, type GradualBlurPosition, type Grad
 export { Input, type InputProps, type InputSize, type InputVariant, inputVariants } from "./Input";
 export { Kbd, type KbdProps } from "./Kbd";
 export { Label, type LabelProps } from "./Label";
+export * from "./liquid-glass";
 export { Magnet, type MagnetProps } from "./Magnet";
 export { useHoverCapable, useReducedMotion } from "./MediaQueries";
 export { formatMessageTime, type MessageAction, MessageActions, type MessageActionsProps } from "./MessageActions";
