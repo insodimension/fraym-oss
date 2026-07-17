@@ -1,4 +1,5 @@
 export * from "./tool-render";
+export * from "./feature-renderers";
 export * from "./tool-group-model";
 export * from "./read-group-model";
 export * from "./bodies/tool-args-preview";
