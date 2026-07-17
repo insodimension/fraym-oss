@@ -126,4 +126,53 @@ describe("reduceThreadEvent", () => {
       exitCode: 0,
     });
   });
+
+  test("accumulates reasoning deltas and settles the trace on the next event", () => {
+    const events: readonly AgentEvent[] = [
+      { type: "session.start", sessionId },
+      { type: "reasoning.delta", sessionId, messageId: "assistant-1", delta: "Inspect " },
+      { type: "reasoning.delta", sessionId, messageId: "assistant-1", delta: "the boundary." },
+    ];
+
+    const streaming = events.reduce(reduceThreadEvent, createThreadState());
+    expect(streaming.reasoning).toEqual([{
+      messageId: "assistant-1",
+      content: "Inspect the boundary.",
+      streaming: true,
+    }]);
+
+    const settled = reduceThreadEvent(streaming, {
+      type: "assistant.message.delta",
+      sessionId,
+      messageId: "assistant-1",
+      delta: "I found it.",
+    });
+    expect(settled.reasoning[0]?.streaming).toBe(false);
+    expect(settled.items).toEqual([
+      { kind: "reasoning", id: "assistant-1" },
+      { kind: "message", id: "assistant-1" },
+    ]);
+  });
+
+  test("resolves approvals without moving their place in the transcript", () => {
+    const requested = reduceThreadEvent(createThreadState(), {
+      type: "approval.request",
+      sessionId,
+      approvalId: "approval-1",
+      prompt: "Run the migration?",
+    });
+    const resolved = reduceThreadEvent(requested, {
+      type: "approval.response",
+      sessionId,
+      approvalId: "approval-1",
+      decision: "rejected",
+    });
+
+    expect(resolved.approvals).toEqual([{
+      id: "approval-1",
+      prompt: "Run the migration?",
+      decision: "rejected",
+    }]);
+    expect(resolved.items).toEqual([{ kind: "approval", id: "approval-1" }]);
+  });
 });

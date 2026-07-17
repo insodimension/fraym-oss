@@ -2,6 +2,8 @@ import "./styles.css";
 
 export { Thread, ThreadView, type ThreadProps, type ThreadViewProps } from "./Thread";
 export { SessionThread, type SessionThreadProps } from "./SessionThread";
+export { ApprovalCard, type ApprovalCardProps } from "./ApprovalCard";
+export { ReasoningRow, type ReasoningRowProps } from "./ReasoningRow";
 export {
   Composer,
   ContextUsage,
@@ -26,6 +28,9 @@ export {
   type ThreadMessageRole,
   type ThreadPhase,
   type ThreadState,
+  type ThreadApproval,
+  type ThreadItem,
+  type ThreadReasoning,
   type ThreadToolCall,
   type ToolCallState,
 } from "./thread-state";

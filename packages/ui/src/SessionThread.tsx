@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import type { AgentEventStream } from "@fraym/driver";
+import type { AgentEventStream, ApprovalResponseEvent } from "@fraym/driver";
 
 import {
   Composer,
@@ -27,6 +27,7 @@ export interface SessionThreadProps {
   onSubmit?: (submission: ComposerSubmission) => void;
   onStop?: () => void;
   onCommand?: (command: SlashCommand) => void;
+  onApprovalResponse?: (event: ApprovalResponseEvent) => void;
 }
 
 export function SessionThread({
@@ -37,6 +38,7 @@ export function SessionThread({
   contextUsage = 42,
   model = "Agent",
   onCommand,
+  onApprovalResponse,
   onStop,
   onSubmit,
   placeholder,
@@ -59,10 +61,16 @@ export function SessionThread({
     ...(onSubmit === undefined ? {} : { onSubmit }),
     ...(placeholder === undefined ? {} : { placeholder }),
   };
+  const threadProps = {
+    state: session.state,
+    title: `${title} transcript`,
+    ...(onApprovalResponse === undefined ? {} : { onApprovalResponse }),
+    ...(transcriptFooter === undefined ? {} : { transcriptFooter }),
+  };
 
   return (
     <section aria-label={title} className={classNames("fraym-session-thread", className)}>
-      <ThreadView state={session.state} title={`${title} transcript`} transcriptFooter={transcriptFooter} />
+      <ThreadView {...threadProps} />
       <Composer {...composerProps} />
     </section>
   );

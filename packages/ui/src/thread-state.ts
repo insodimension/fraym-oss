@@ -1,4 +1,4 @@
-import type { AgentEvent, ToolCallStatus } from "@fraym/driver";
+import type { AgentEvent, ApprovalDecision, ToolCallStatus } from "@fraym/driver";
 
 export type ThreadMessageRole = "user" | "assistant";
 
@@ -16,6 +16,24 @@ export interface ToolCallState {
   output: unknown;
 }
 
+export interface ThreadApproval {
+  id: string;
+  prompt: string;
+  decision: ApprovalDecision | null;
+}
+
+export interface ThreadReasoning {
+  messageId: string;
+  content: string;
+  streaming: boolean;
+}
+
+export type ThreadItem =
+  | { kind: "message"; id: string }
+  | { kind: "tool"; id: string }
+  | { kind: "approval"; id: string }
+  | { kind: "reasoning"; id: string };
+
 /** @deprecated Use ToolCallState. */
 export type ThreadToolCall = ToolCallState;
 
@@ -25,6 +43,9 @@ export interface ThreadState {
   sessionId: string | null;
   messages: readonly ThreadMessage[];
   toolCalls: readonly ToolCallState[];
+  approvals: readonly ThreadApproval[];
+  reasoning: readonly ThreadReasoning[];
+  items: readonly ThreadItem[];
   phase: ThreadPhase;
   error: string | null;
   waiting: boolean;
@@ -35,9 +56,25 @@ export function createThreadState(): ThreadState {
     sessionId: null,
     messages: [],
     toolCalls: [],
+    approvals: [],
+    reasoning: [],
+    items: [],
     phase: "idle",
     error: null,
     waiting: false,
+  };
+}
+
+function settleReasoning(state: ThreadState): ThreadState {
+  if (!state.reasoning.some((trace) => trace.streaming)) {
+    return state;
+  }
+
+  return {
+    ...state,
+    reasoning: state.reasoning.map((trace) =>
+      trace.streaming ? { ...trace, streaming: false } : trace,
+    ),
   };
 }
 
@@ -100,6 +137,8 @@ export function reduceThreadEvent(
   state: ThreadState,
   event: AgentEvent,
 ): ThreadState {
+  const current = event.type === "reasoning.delta" ? state : settleReasoning(state);
+
   switch (event.type) {
     case "session.start":
       return {
@@ -111,33 +150,35 @@ export function reduceThreadEvent(
 
     case "user.message":
       return {
-        ...state,
+        ...current,
         messages: [
-          ...state.messages,
+          ...current.messages,
           { id: event.messageId, role: "user", content: event.content },
         ],
+        items: [...current.items, { kind: "message", id: event.messageId }],
         waiting: true,
       };
 
     case "assistant.message.delta": {
-      const messageIndex = state.messages.findIndex(
+      const messageIndex = current.messages.findIndex(
         (message) => message.id === event.messageId,
       );
 
       if (messageIndex === -1) {
         return {
-          ...state,
+          ...current,
           messages: [
-            ...state.messages,
+            ...current.messages,
             { id: event.messageId, role: "assistant", content: event.delta },
           ],
+          items: [...current.items, { kind: "message", id: event.messageId }],
           waiting: false,
         };
       }
 
       return {
-        ...state,
-        messages: state.messages.map((message) =>
+        ...current,
+        messages: current.messages.map((message) =>
           message.id === event.messageId
             ? { ...message, content: `${message.content}${event.delta}` }
             : message,
@@ -146,11 +187,39 @@ export function reduceThreadEvent(
       };
     }
 
-    case "tool_call.start":
+    case "reasoning.delta": {
+      const existing = state.reasoning.find(
+        (trace) => trace.messageId === event.messageId,
+      );
+
+      if (existing === undefined) {
+        return {
+          ...state,
+          reasoning: [
+            ...state.reasoning,
+            { messageId: event.messageId, content: event.delta, streaming: true },
+          ],
+          items: [...state.items, { kind: "reasoning", id: event.messageId }],
+          waiting: false,
+        };
+      }
+
       return {
         ...state,
+        reasoning: state.reasoning.map((trace) =>
+          trace.messageId === event.messageId
+            ? { ...trace, content: `${trace.content}${event.delta}`, streaming: true }
+            : trace,
+        ),
+        waiting: false,
+      };
+    }
+
+    case "tool_call.start":
+      return {
+        ...current,
         toolCalls: [
-          ...state.toolCalls,
+          ...current.toolCalls,
           {
             id: event.toolCallId,
             name: event.toolName,
@@ -159,15 +228,16 @@ export function reduceThreadEvent(
             output: undefined,
           },
         ],
+        items: [...current.items, { kind: "tool", id: event.toolCallId }],
         waiting: true,
       };
 
     case "tool_call.update":
     case "tool_call.end":
       return {
-        ...state,
+        ...current,
         toolCalls: updateToolCall(
-          state.toolCalls,
+          current.toolCalls,
           event.toolCallId,
           event.status,
           event.output,
@@ -176,18 +246,36 @@ export function reduceThreadEvent(
       };
 
     case "session.done":
-      return { ...state, phase: "done", waiting: false };
+      return { ...current, phase: "done", waiting: false };
 
     case "session.error":
       return {
-        ...state,
+        ...current,
         error: event.message,
         phase: "error",
         waiting: false,
       };
 
     case "approval.request":
+      return {
+        ...current,
+        approvals: [
+          ...current.approvals,
+          { id: event.approvalId, prompt: event.prompt, decision: null },
+        ],
+        items: [...current.items, { kind: "approval", id: event.approvalId }],
+        waiting: false,
+      };
+
     case "approval.response":
-      return state;
+      return {
+        ...current,
+        approvals: current.approvals.map((approval) =>
+          approval.id === event.approvalId
+            ? { ...approval, decision: event.decision }
+            : approval,
+        ),
+        waiting: true,
+      };
   }
 }
