@@ -2,6 +2,7 @@ import "./styles.css";
 
 export { Thread, type ThreadProps } from "./Thread";
 export {
+  accumulateToolOutput,
   createThreadState,
   reduceThreadEvent,
   type ThreadMessage,
@@ -9,7 +10,34 @@ export {
   type ThreadPhase,
   type ThreadState,
   type ThreadToolCall,
+  type ToolCallState,
 } from "./thread-state";
+export { ToolCall, type ToolCallProps } from "./tool-renderers/ToolCall";
+export { ToolCard, type ToolCardProps } from "./tool-renderers/ToolCard";
+export {
+  createToolRendererRegistry,
+  normalizeToolName,
+  ToolRendererProvider,
+  useToolRendererRegistry,
+  type ToolRendererProviderProps,
+} from "./tool-renderers/registry";
+export {
+  BashToolRenderer,
+  builtInToolRenderers,
+  EditToolRenderer,
+  GenericToolRenderer,
+  LspToolRenderer,
+  ReadToolRenderer,
+  SearchToolRenderer,
+  TaskToolRenderer,
+  TodoToolRenderer,
+  WriteToolRenderer,
+} from "./tool-renderers/renderers";
+export type {
+  ToolRenderer,
+  ToolRendererMap,
+  ToolRendererRegistry,
+} from "./tool-renderers/types";
 export { tokens, type FraymColorToken, type FraymTokens } from "./tokens";
 export { Badge, type BadgeProps, type BadgeTone } from "./elements/Badge";
 export { Button, type ButtonProps, type ButtonSize, type ButtonVariant } from "./elements/Button";

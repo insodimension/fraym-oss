@@ -18,7 +18,7 @@ type ThemePreference = "dark" | "light" | "system";
 type ResolvedTheme = Exclude<ThemePreference, "system">;
 type Accent = "violet" | "coral" | "blue" | "green" | "amber" | "mono";
 
-const groupLabels: Record<EntryGroup, string> = { tokens: "Tokens", elements: "Elements", features: "Features" };
+const groupLabels: Record<EntryGroup, string> = { tokens: "Tokens", elements: "Elements", tools: "Tools", features: "Features" };
 const subgroupLabels: Record<ElementSubgroup, string> = { actions: "Actions", inputs: "Inputs", feedback: "Feedback", layout: "Layout", content: "Content" };
 const accents: readonly Accent[] = ["violet", "coral", "blue", "green", "amber", "mono"];
 
@@ -104,7 +104,7 @@ function Landing({ onSelect }: { onSelect: (id: string) => void }) {
       <section className="sink-intro-hero">
         <Badge tone="accent">Open source React UI for coding agents</Badge>
         <h1>Build the agent surface your product deserves.</h1>
-        <p>Fraym gives agentic products a typed, composable interface for streaming conversations, tools, approvals, and everything that follows.</p>
+        <p>Fraym gives agentic products a typed, composable interface for streaming conversations, tools, and approvals.</p>
         <div className="sink-demo-row"><Button variant="primary" onClick={() => onSelect("button")}>Explore elements</Button><Button variant="ghost" onClick={() => onSelect("streaming-thread")}>Watch the thread</Button></div>
       </section>
       <section className="sink-driver-story">
@@ -159,7 +159,7 @@ function EntryPage({ entry }: { entry: Entry }) {
         </aside>
       </section>
       <section className="sink-docs">
-        <div className="sink-docs__intro"><span className="sink-section-label">Reference</span><h2>Use {entry.title}</h2><p>Copy a starting point, then compose it with the rest of the Fraym surface.</p></div>
+        <div className="sink-docs__intro"><span className="sink-section-label">Reference</span><h2>Use {entry.title}.</h2><p>Copy a starting point, then compose it with the rest of the Fraym surface.</p></div>
         <section className="sink-doc-block"><div className="sink-doc-block__heading"><h3>Import</h3><CopyButton label="Copy import" value={entry.importCode} /></div><Code block language="tsx">{entry.importCode}</Code></section>
         <section className="sink-doc-block"><div className="sink-doc-block__heading"><h3>Examples</h3></div><div className="sink-example-list">{entry.examples.map((example) => <article className="sink-doc-example" key={example.title}><div><h4>{example.title}</h4><p>{example.description}</p></div><div><CopyButton label="Copy" value={example.code} /><Code block language="tsx">{example.code}</Code></div></article>)}</div></section>
         <section className="sink-doc-block"><div className="sink-doc-block__heading"><h3>Props</h3></div><div className="sink-props-wrap"><table className="sink-props"><thead><tr><th>Name</th><th>Type</th><th>Default</th><th>Description</th></tr></thead><tbody>{entry.props.map((prop) => <tr key={prop.name}><td><Code>{prop.name}</Code></td><td><Code>{prop.type}</Code></td><td>{prop.defaultValue}</td><td>{prop.description}</td></tr>)}</tbody></table></div></section>

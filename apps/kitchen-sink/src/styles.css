@@ -166,6 +166,7 @@ h1, h2, h3, h4, p { text-wrap: pretty; }
 .sink-demo-row--between { justify-content: space-between; }
 .sink-demo-feedback { color: var(--fraym-color-text-2); font-size: var(--fraym-type-body-sm); }
 .sink-demo-card { min-width: min(24rem, 100%); }
+.sink-tool-demo { width: min(100%, 42rem); }
 .sink-thread-demo { width: min(100%, 48rem); }
 .sink-thread-demo .fraym-thread { max-height: 28rem; }
 .sink-skeleton-stack { display: grid; gap: var(--fraym-space-sm); min-width: min(24rem, 70vw); }

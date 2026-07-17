@@ -7,10 +7,11 @@ import { initialKnobValues } from "../entry";
 import { createEntryDockFixture } from "../dock-fixtures";
 
 describe("kitchen sink entries", () => {
-  test("registers every current token, element, and feature entry exactly once", () => {
-    expect(entries).toHaveLength(19);
+  test("registers every current token, element, tool, and feature entry exactly once", () => {
+    expect(entries).toHaveLength(28);
     expect(new Set(entries.map((entry) => entry.id)).size).toBe(entries.length);
     expect(entries.filter((entry) => entry.group === "elements")).toHaveLength(17);
+    expect(entries.filter((entry) => entry.group === "tools")).toHaveLength(9);
   });
 
   test("renders every live demo and provides a usage snippet", () => {
@@ -50,6 +51,10 @@ describe("kitchen sink entries", () => {
       expect(fixture.some((event) => event.type === "assistant.message.delta")).toBe(true);
       expect(fixture.at(-1)?.type).toBe("session.done");
       expect(new Set(fixture.map((event) => event.sessionId)).size).toBe(1);
+      if (entry.group === "tools") {
+        expect(fixture.some((event) => event.type === "tool_call.start")).toBe(true);
+        expect(fixture.some((event) => event.type === "tool_call.end")).toBe(true);
+      }
     }
   });
 });

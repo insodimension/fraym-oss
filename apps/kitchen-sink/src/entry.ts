@@ -1,6 +1,6 @@
 import type { ComponentType } from "react";
 
-export const entryGroups = ["tokens", "elements", "features"] as const;
+export const entryGroups = ["tokens", "elements", "tools", "features"] as const;
 export type EntryGroup = (typeof entryGroups)[number];
 
 export const elementSubgroups = ["actions", "inputs", "feedback", "layout", "content"] as const;

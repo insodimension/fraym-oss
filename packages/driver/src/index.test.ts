@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
 
-import { isTerminalToolCallStatus } from "./index";
+import { codingSessionFixture, isTerminalToolCallStatus } from "./index";
 
 describe("isTerminalToolCallStatus", () => {
   test("distinguishes active and terminal tool calls", () => {
@@ -12,3 +12,14 @@ describe("isTerminalToolCallStatus", () => {
   });
 });
 
+describe("codingSessionFixture", () => {
+  test("records a complete nine-tool coding session", () => {
+    const starts = codingSessionFixture.filter((event) => event.type === "tool_call.start");
+    const ends = codingSessionFixture.filter((event) => event.type === "tool_call.end");
+
+    expect(starts).toHaveLength(9);
+    expect(ends).toHaveLength(9);
+    expect(new Set(starts.map((event) => event.toolCallId)).size).toBe(9);
+    expect(codingSessionFixture.at(-1)?.type).toBe("session.done");
+  });
+});

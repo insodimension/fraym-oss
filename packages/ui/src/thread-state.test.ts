@@ -53,4 +53,77 @@ describe("reduceThreadEvent", () => {
     expect(state.phase).toBe("error");
     expect(state.error).toBe("The workspace is unavailable.");
   });
+
+  test("accumulates each tool call input, output deltas, and terminal status", () => {
+    const events: readonly AgentEvent[] = [
+      { type: "session.start", sessionId },
+      {
+        type: "tool_call.start",
+        sessionId,
+        toolCallId: "bash-1",
+        toolName: "mcp__shell__bash",
+        input: { command: "bun test" },
+        status: "running",
+      },
+      {
+        type: "tool_call.update",
+        sessionId,
+        toolCallId: "bash-1",
+        status: "running",
+        output: "first chunk\n",
+      },
+      {
+        type: "tool_call.update",
+        sessionId,
+        toolCallId: "bash-1",
+        status: "running",
+        output: "second chunk",
+      },
+      {
+        type: "tool_call.end",
+        sessionId,
+        toolCallId: "bash-1",
+        status: "succeeded",
+      },
+    ];
+
+    const state = events.reduce(reduceThreadEvent, createThreadState());
+
+    expect(state.toolCalls).toEqual([{
+      id: "bash-1",
+      name: "mcp__shell__bash",
+      status: "succeeded",
+      input: { command: "bun test" },
+      output: "first chunk\nsecond chunk",
+    }]);
+  });
+
+  test("keeps tool output accumulation isolated by call id", () => {
+    const events: readonly AgentEvent[] = [
+      { type: "tool_call.start", sessionId, toolCallId: "one", toolName: "read", input: { path: "one.ts" }, status: "running" },
+      { type: "tool_call.start", sessionId, toolCallId: "two", toolName: "read", input: { path: "two.ts" }, status: "running" },
+      { type: "tool_call.update", sessionId, toolCallId: "one", status: "running", output: ["a"] },
+      { type: "tool_call.update", sessionId, toolCallId: "two", status: "running", output: ["b"] },
+      { type: "tool_call.update", sessionId, toolCallId: "one", status: "running", output: ["c"] },
+    ];
+
+    const state = events.reduce(reduceThreadEvent, createThreadState());
+    expect(state.toolCalls[0]?.output).toEqual(["a", "c"]);
+    expect(state.toolCalls[1]?.output).toEqual(["b"]);
+  });
+
+  test("accumulates structured output fields recursively", () => {
+    const events: readonly AgentEvent[] = [
+      { type: "tool_call.start", sessionId, toolCallId: "bash", toolName: "bash", input: {}, status: "running" },
+      { type: "tool_call.update", sessionId, toolCallId: "bash", status: "running", output: { stdout: "first\n", diagnostics: ["one"] } },
+      { type: "tool_call.end", sessionId, toolCallId: "bash", status: "succeeded", output: { stdout: "second", diagnostics: ["two"], exitCode: 0 } },
+    ];
+
+    const state = events.reduce(reduceThreadEvent, createThreadState());
+    expect(state.toolCalls[0]?.output).toEqual({
+      stdout: "first\nsecond",
+      diagnostics: ["one", "two"],
+      exitCode: 0,
+    });
+  });
 });

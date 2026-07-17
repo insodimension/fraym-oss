@@ -8,18 +8,23 @@ export interface ThreadMessage {
   content: string;
 }
 
-export interface ThreadToolCall {
+export interface ToolCallState {
   id: string;
   name: string;
   status: ToolCallStatus;
+  input: unknown;
+  output: unknown;
 }
+
+/** @deprecated Use ToolCallState. */
+export type ThreadToolCall = ToolCallState;
 
 export type ThreadPhase = "idle" | "running" | "done" | "error";
 
 export interface ThreadState {
   sessionId: string | null;
   messages: readonly ThreadMessage[];
-  toolCalls: readonly ThreadToolCall[];
+  toolCalls: readonly ToolCallState[];
   phase: ThreadPhase;
   error: string | null;
   waiting: boolean;
@@ -36,18 +41,58 @@ export function createThreadState(): ThreadState {
   };
 }
 
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+export function accumulateToolOutput(previous: unknown, next: unknown): unknown {
+  if (next === undefined) {
+    return previous;
+  }
+
+  if (typeof previous === "string" && typeof next === "string") {
+    return `${previous}${next}`;
+  }
+
+  if (Array.isArray(previous) && Array.isArray(next)) {
+    return [...previous, ...next];
+  }
+
+  if (isRecord(previous) && isRecord(next)) {
+    const accumulated: Record<string, unknown> = { ...previous };
+    for (const [key, value] of Object.entries(next)) {
+      accumulated[key] = key in previous
+        ? accumulateToolOutput(previous[key], value)
+        : value;
+    }
+    return accumulated;
+  }
+
+  return next;
+}
+
 function updateToolCall(
-  toolCalls: readonly ThreadToolCall[],
+  toolCalls: readonly ToolCallState[],
   toolCallId: string,
   status: ToolCallStatus,
-): readonly ThreadToolCall[] {
+  output: unknown,
+): readonly ToolCallState[] {
   const existingIndex = toolCalls.findIndex((toolCall) => toolCall.id === toolCallId);
   if (existingIndex === -1) {
-    return [...toolCalls, { id: toolCallId, name: "tool call", status }];
+    return [
+      ...toolCalls,
+      { id: toolCallId, name: "tool call", status, input: undefined, output },
+    ];
   }
 
   return toolCalls.map((toolCall) =>
-    toolCall.id === toolCallId ? { ...toolCall, status } : toolCall,
+    toolCall.id === toolCallId
+      ? {
+          ...toolCall,
+          status,
+          output: accumulateToolOutput(toolCall.output, output),
+        }
+      : toolCall,
   );
 }
 
@@ -110,6 +155,8 @@ export function reduceThreadEvent(
             id: event.toolCallId,
             name: event.toolName,
             status: event.status,
+            input: event.input,
+            output: undefined,
           },
         ],
         waiting: true,
@@ -119,7 +166,12 @@ export function reduceThreadEvent(
     case "tool_call.end":
       return {
         ...state,
-        toolCalls: updateToolCall(state.toolCalls, event.toolCallId, event.status),
+        toolCalls: updateToolCall(
+          state.toolCalls,
+          event.toolCallId,
+          event.status,
+          event.output,
+        ),
         waiting: event.type === "tool_call.end",
       };
 

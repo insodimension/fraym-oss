@@ -20,6 +20,10 @@ export const tokens = {
     warning: "var(--fraym-color-warning)",
     info: "var(--fraym-color-info)",
     iris: "var(--fraym-color-iris)",
+    diffAddedBg: "var(--fraym-color-diff-added-bg)",
+    diffAddedText: "var(--fraym-color-diff-added-text)",
+    diffRemovedBg: "var(--fraym-color-diff-removed-bg)",
+    diffRemovedText: "var(--fraym-color-diff-removed-text)",
   },
   type: {
     family: "var(--fraym-font-sans)",

@@ -2,13 +2,13 @@ import { useEffect, useReducer } from "react";
 
 import type { AgentEventStream } from "@fraym/driver";
 
-import { Badge } from "./elements/Badge";
 import { Card, CardContent } from "./elements/Card";
 import { ScrollArea } from "./elements/ScrollArea";
 import { StreamingMarkdown } from "./elements/StreamingMarkdown";
 import { ThinkingDots } from "./elements/ThinkingDots";
 import { classNames } from "./elements/utils";
 import { createThreadState, reduceThreadEvent } from "./thread-state";
+import { ToolCall } from "./tool-renderers/ToolCall";
 
 export interface ThreadProps {
   source: AgentEventStream;
@@ -40,9 +40,7 @@ export function Thread({ className, source, title = "Fraym thread" }: ThreadProp
 
           {state.toolCalls.map((toolCall) => (
             <div className="fraym-thread__tool-call" key={toolCall.id}>
-              <Badge tone={toolCall.status === "failed" ? "danger" : "accent"}>
-                Tool: {toolCall.name} / {toolCall.status}
-              </Badge>
+              <ToolCall call={toolCall} />
             </div>
           ))}
 
