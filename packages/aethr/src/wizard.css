@@ -1,0 +1,74 @@
+.aethr-wizard {
+  background: #07070a;
+  display: grid;
+  min-height: 28rem;
+  overflow: hidden;
+  position: relative;
+}
+.aethr-wizard > [data-slot="aethr"],
+.aethr-wizard > canvas {
+  height: 100%;
+  inset: 0;
+  position: absolute;
+  width: 100%;
+}
+.aethr-wizard__stage {
+  align-content: center;
+  display: grid;
+  gap: 1.25rem;
+  justify-items: center;
+  padding: 3rem;
+  position: relative;
+  z-index: 1;
+}
+.aethr-wizard input {
+  background: rgba(10, 10, 14, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 0.6rem;
+  color: #fff;
+  font: inherit;
+  padding: 0.8rem 1rem;
+  width: min(28rem, 100%);
+}
+.aethr-wizard__choices,
+.aethr-wizard__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  justify-content: center;
+}
+.aethr-wizard button {
+  background: rgba(20, 20, 26, 0.78);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 0.65rem;
+  color: #fff;
+  cursor: pointer;
+  display: grid;
+  gap: 0.15rem;
+  padding: 0.7rem 1rem;
+}
+.aethr-wizard button.is-primary {
+  background: #fff;
+  color: #111;
+}
+.aethr-wizard button[aria-pressed="true"] {
+  border-color: #fff;
+}
+.aethr-wizard button:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 3px;
+}
+.aethr-wizard button:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+.aethr-wizard button small,
+.aethr-wizard button em {
+  font-size: 0.72rem;
+  opacity: 0.7;
+}
+@media (prefers-reduced-motion: reduce) {
+  .aethr-wizard * {
+    scroll-behavior: auto !important;
+  }
+}

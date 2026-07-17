@@ -1,0 +1,30 @@
+.aethr-cine {
+  color: #fff;
+  display: grid;
+  gap: 0.6rem;
+  max-width: 52rem;
+  text-align: center;
+  text-shadow: 0 1px 18px rgba(0, 0, 0, 0.6);
+}
+.aethr-cine[data-align="left"] {
+  text-align: left;
+}
+.aethr-cine[data-align="right"] {
+  text-align: right;
+}
+.aethr-cine__caption {
+  font:
+    600 0.72rem/1.2 ui-monospace,
+    monospace;
+  letter-spacing: 0.12em;
+  margin: 0;
+  text-transform: uppercase;
+}
+.aethr-cine__line {
+  font:
+    500 clamp(1.5rem, 4vw, 3rem)/1.15 system-ui,
+    sans-serif;
+  letter-spacing: -0.025em;
+  margin: 0;
+  text-wrap: balance;
+}
