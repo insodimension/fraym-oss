@@ -301,6 +301,32 @@
 .fraym-tool-table__row > code { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
 .fraym-tool-key-values { display: grid; gap: 6px 12px; grid-template-columns: minmax(0, auto) 1fr; margin: 0; }
 .fraym-tool-key-values dd { color: var(--fraym-color-text); margin: 0; min-width: 0; overflow-wrap: anywhere; }
+.fraym-message-image { margin: 8px 0; }
+.fraym-message-image img { border-radius: 10px; display: block; max-height: 420px; max-width: 100%; object-fit: contain; }
+.fraym-message-image figcaption { color: var(--fraym-color-text-3); font-size: var(--fraym-type-caption); margin-top: 5px; }
+.fraym-message-notice,
+.fraym-message-retry { align-items: center; background: var(--fraym-color-surface-2); border: 1px solid var(--fraym-color-border-soft); border-radius: 10px; display: flex; gap: 8px; padding: 10px 12px; }
+.fraym-command-output { border-left: 1px solid var(--fraym-color-border-soft); color: var(--fraym-color-text-3); margin-block: 4px; padding-left: 10px; }
+.fraym-command-output pre { font: 400 var(--fraym-type-body-sm)/1.5 var(--fraym-font-mono); margin: 4px 0 0; white-space: pre-wrap; }
+.fraym-command-chip { align-items: center; background: transparent; border: 0; color: var(--fraym-color-text-2); cursor: pointer; display: inline-flex; gap: 6px; padding: 0; }
+.fraym-host-surface { max-width: 520px; width: 100%; }
+.fraym-host-surface .fraym-card__header p { color: var(--fraym-color-text-2); margin: 4px 0 0; }
+.fraym-fix-hint { align-items: center; background: var(--fraym-color-surface-2); border: 1px solid var(--fraym-color-border-soft); border-radius: 10px; display: flex; gap: 10px; padding: 10px 12px; }
+.fraym-fix-hint__icon { align-items: center; background: var(--fraym-color-surface-3); border-radius: 8px; color: var(--fraym-color-text-2); display: flex; flex: 0 0 28px; font: 600 var(--fraym-type-caption)/1 var(--fraym-font-mono); height: 28px; justify-content: center; }
+.fraym-fix-hint > span:last-child { display: flex; flex-direction: column; min-width: 0; }
+.fraym-fix-hint strong { color: var(--fraym-color-text); font-size: var(--fraym-type-body-sm); }
+.fraym-fix-hint small,
+.fraym-fix-form small { color: var(--fraym-color-text-3); line-height: 1.5; }
+.fraym-fix-error { background: color-mix(in srgb, var(--fraym-color-danger) 10%, transparent); border: 1px solid color-mix(in srgb, var(--fraym-color-danger) 35%, transparent); border-radius: 9px; color: var(--fraym-color-danger); font-size: var(--fraym-type-body-sm); padding: 8px 12px; }
+.fraym-fix-form { display: flex; flex-direction: column; gap: 10px; }
+.fraym-fix-form > label { color: var(--fraym-color-text-2); display: flex; flex-direction: column; font-size: var(--fraym-type-body-sm); gap: 4px; }
+.fraym-fix-form__control { align-items: center; display: flex; position: relative; }
+.fraym-fix-form__control input { padding-right: 52px; }
+.fraym-fix-form__control button { background: transparent; border: 0; color: var(--fraym-color-text-3); cursor: pointer; position: absolute; right: 8px; }
+.fraym-fix-oauth { background: var(--fraym-color-surface-2); border: 1px solid var(--fraym-color-border-soft); border-radius: 10px; display: flex; flex-direction: column; gap: 10px; padding: 10px 12px; }
+.fraym-fix-oauth > div { align-items: center; display: flex; gap: 8px; }
+.fraym-fix-oauth__manual { align-items: stretch !important; flex-direction: column; }
+.fraym-fix-oauth__toggle { align-self: flex-start; background: transparent; border: 0; color: var(--fraym-color-text-3); cursor: pointer; padding: 0; text-decoration: underline; text-underline-offset: 2px; }
 .fraym-tool-stack, .fraym-tool-generic, .fraym-tool-task { display: grid; gap: var(--fraym-space-md); }
 .fraym-tool-row { align-items: center; display: flex; flex-wrap: wrap; gap: var(--fraym-space-md); justify-content: space-between; }
 .fraym-tool-field { align-items: center; display: flex; gap: var(--fraym-space-sm); min-width: 0; }

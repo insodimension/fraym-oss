@@ -17,7 +17,7 @@ export interface PluginToolRendererDescriptor {
 }
 
 export interface EngineRecipeRecord { readonly id: string; readonly name?: string; readonly description?: string; readonly command?: string; readonly icon?: string }
-export interface PluginConnectFormField { readonly name: string; readonly label: string; readonly type?: "text" | "password" | "email" | "url"; readonly placeholder?: string; readonly required?: boolean; readonly description?: string }
+export interface PluginConnectFormField { readonly id: string; readonly name?: string; readonly label: string; readonly type?: "text" | "password" | "email" | "url"; readonly placeholder?: string; readonly required?: boolean; readonly description?: string; readonly secret?: boolean; readonly help?: string; readonly helpUrl?: string; readonly helpUrlLabel?: string }
 export type PluginFixKind = "install" | "form" | "oauth" | "open-app" | "reconnect" | "agent";
 
 export interface HostUiRequest { readonly id: string; readonly kind: string; readonly title?: string; readonly message?: string; readonly payload?: unknown }
