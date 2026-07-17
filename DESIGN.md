@@ -5,7 +5,7 @@ description: A calm, dense, dark-default agent surface with a single violet acce
 colors:
   primary: "#b78cff"
   primary-strong: "#a679ff"
-  on-primary: "#ffffff"
+  on-primary: "#0b0b0d"
   bg: "#0b0b0d"
   rail: "#0f0f12"
   surface: "#151518"
@@ -266,7 +266,7 @@ family of `sm` 6 / `md` 8 / `lg` 10 / `xl` 14 for cards, inputs, and bubbles. Th
 Borders and surface-tier shifts do the work; color is reserved for the accent and
 semantic signals.
 
-- **Buttons.** `button-primary` is a solid violet fill with `on-primary` text and
+- **Buttons.** `button-primary` is a solid violet fill with dark `on-primary` text and
   `label` type, `rounded.lg`; hover deepens to `primary-strong`. `button-ghost` is
   transparent with `text-2`, and on hover gains a `surface-2` fill and brightens to
   `text`. Most buttons are ghost; primary is for the one true action.

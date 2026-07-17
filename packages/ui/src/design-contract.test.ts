@@ -2,6 +2,7 @@ import { describe, expect, test } from "bun:test";
 
 const canonicalTokens = [
   ["--fraym-color-primary", "#b78cff"],
+  ["--fraym-color-on-primary", "#0b0b0d"],
   ["--fraym-color-bg", "#0b0b0d"],
   ["--fraym-color-surface", "#151518"],
   ["--fraym-color-surface-2", "#1c1c20"],

@@ -131,7 +131,7 @@ export function SearchToolRenderer(call: ToolCallState) {
             <Code>{file}</Code>
             {rows.map((row, index) => (
               <div className="fraym-tool-search-row" key={`${row.line ?? index}-${row.preview}`}>
-                <span className="fraym-tool-search-row__line">{row.line ?? "–"}</span>
+                <span className="fraym-tool-search-row__line">{row.line ?? "n/a"}</span>
                 <code>{row.preview}</code>
               </div>
             ))}
