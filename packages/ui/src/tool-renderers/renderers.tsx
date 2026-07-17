@@ -5,7 +5,7 @@ import { Button } from "../elements/Button";
 import { Code } from "../elements/Code";
 import type { ToolCallState } from "../thread-state";
 import { arrayField, isRecord, numberField, prettyValue, stringField } from "./data";
-import type { ToolRendererMap } from "./types";
+import type { ToolRendererMap } from "../registries/tool-renderer-registry";
 
 function MachineField({ label, value }: { label: string; value: string }) {
   return (

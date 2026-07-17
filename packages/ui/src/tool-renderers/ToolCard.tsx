@@ -5,6 +5,7 @@ import type { ToolCallStatus } from "@fraym/driver";
 import { Badge, type BadgeTone } from "../elements/Badge";
 import { classNames } from "../elements/utils";
 import type { ToolCallState } from "../thread-state";
+import type { ToolView } from "../registries/tool-renderer-registry";
 
 const statusTone: Record<ToolCallStatus, BadgeTone> = {
   pending: "neutral",
@@ -21,6 +22,7 @@ export interface ToolCardProps {
   expanded?: boolean;
   defaultExpanded?: boolean;
   onExpandedChange?: (expanded: boolean) => void;
+  view?: ToolView;
 }
 
 export function ToolCard({
@@ -30,8 +32,9 @@ export function ToolCard({
   defaultExpanded = call.status === "pending" || call.status === "running" || call.status === "failed",
   expanded,
   onExpandedChange,
+  view,
 }: ToolCardProps) {
-  const [internalExpanded, setInternalExpanded] = useState(defaultExpanded);
+  const [internalExpanded, setInternalExpanded] = useState(view?.defaultOpen ?? defaultExpanded);
   const userChangedDisclosure = useRef(false);
   const previousStatus = useRef(call.status);
   const isExpanded = expanded ?? internalExpanded;
@@ -61,15 +64,19 @@ export function ToolCard({
         type="button"
       >
         <span className="fraym-tool-card__identity">
-          <span className="fraym-tool-card__eyebrow">Tool</span>
-          <span className="fraym-tool-card__name">{call.name}</span>
+          {view?.headIcon ? <span className="fraym-tool-card__icon">{view.headIcon}</span> : null}
+          <span className="fraym-tool-card__labels">
+            {view?.header ?? <><span className="fraym-tool-card__eyebrow">{view?.kind ?? "tool"}</span><span className="fraym-tool-card__name">{view?.label ?? call.name}</span></>}
+          </span>
+          {view?.badges ? <span className="fraym-tool-card__badges">{view.badges}</span> : null}
         </span>
         <span className="fraym-tool-card__status">
-          <Badge tone={statusTone[call.status]}>{call.status}</Badge>
+          {view?.stat ? <span className="fraym-tool-card__stat">{view.stat}</span> : null}
+          <Badge tone={statusTone[view?.status ?? call.status]}>{view?.status ?? call.status}</Badge>
           <span aria-hidden="true" className="fraym-tool-card__chevron">›</span>
         </span>
       </button>
-      {isExpanded ? <div className="fraym-tool-card__body">{children}</div> : null}
+      {isExpanded ? <div className={classNames("fraym-tool-card__body", view?.bodyVariant && `fraym-tool-card__body--${view.bodyVariant}`)}>{children}</div> : null}
     </section>
   );
 }

@@ -1,6 +1,7 @@
+import type { ReactNode } from "react";
 import type { ToolCallState } from "../thread-state";
 import { GenericToolRenderer } from "./renderers";
-import { useToolRendererRegistry } from "./registry";
+import { isToolView, resolveToolRenderer, useToolRendererMap } from "../registries/tool-renderer-registry";
 import { ToolCard } from "./ToolCard";
 
 export interface ToolCallProps {
@@ -12,9 +13,13 @@ export interface ToolCallProps {
 }
 
 export function ToolCall({ call, className, expanded, defaultExpanded, onExpandedChange }: ToolCallProps) {
-  const renderer = useToolRendererRegistry().resolve(call.name);
+  const renderer = resolveToolRenderer(useToolRendererMap(), call.name);
+  const rendered = renderer?.(call);
+  const view = rendered !== undefined && isToolView(rendered) ? rendered : undefined;
+  const body: ReactNode = view ? view.body : rendered as ReactNode;
   const cardProps = {
     call,
+    ...(view === undefined ? {} : { view }),
     ...(className === undefined ? {} : { className }),
     ...(expanded === undefined ? {} : { expanded }),
     ...(defaultExpanded === undefined ? {} : { defaultExpanded }),
@@ -23,7 +28,7 @@ export function ToolCall({ call, className, expanded, defaultExpanded, onExpande
 
   return (
     <ToolCard {...cardProps}>
-      {renderer ? renderer(call) : <GenericToolRenderer {...call} />}
+      {body ?? <GenericToolRenderer {...call} />}
     </ToolCard>
   );
 }

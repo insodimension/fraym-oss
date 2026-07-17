@@ -1,0 +1,9 @@
+export type SlashIconName = "list" | "check" | "trash" | "pin" | "chat" | "loop" | "bolt" | "eye" | "bot" | "layers" | "refresh" | "gear" | "sliders" | "keyboard" | "grid" | "card" | "db" | "spark" | "chart" | "clock" | "download" | "copy" | "link" | "user" | "arrowUpRight" | "logout" | "globe" | "branch" | "git-branch" | "plus" | "minus" | "archive" | "send" | "play" | "edit" | "folder" | "orbit" | "code" | "book" | "shield" | "terminal" | "box" | "history" | "search" | "funnel" | "image" | "mic" | "sword" | "file";
+export interface SlashEntryRule { readonly match: string | readonly string[]; readonly icon: SlashIconName }
+export interface SlashEntryPolicy { readonly version: 1; readonly exact: Readonly<Record<string, SlashIconName>>; readonly rules: readonly SlashEntryRule[] }
+export const DEFAULT_SLASH_ENTRY_POLICY: SlashEntryPolicy = { version: 1, exact: {
+  plan: "list", "plan-review": "check", scratch: "trash", goal: "pin", loop: "loop", fast: "bolt", model: "bot", settings: "gear", setup: "sliders", hotkeys: "keyboard", todo: "grid", usage: "card", session: "card", context: "db", tools: "spark", stats: "chart", jobs: "clock", export: "download", copy: "copy", share: "link", browser: "globe", branch: "git-branch", fork: "git-branch", tree: "branch", new: "plus", fresh: "refresh", compact: "archive", handoff: "send", resume: "play", rename: "edit", retry: "refresh", exit: "logout", debug: "code", memory: "book", extensions: "bolt", agents: "bot", mcp: "shield", ssh: "terminal", plugins: "box",
+}, rules: [
+  { match: "skill:*schema*", icon: "code" }, { match: ["skill:*search*", "skill:*audit*"], icon: "search" }, { match: "skill:*image*", icon: "image" },
+  { match: "skill:*security*", icon: "shield" }, { match: "skill:*git*", icon: "git-branch" }, { match: "skill:*plugin*", icon: "box" }, { match: "skill:*", icon: "spark" },
+] };

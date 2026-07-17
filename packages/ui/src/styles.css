@@ -288,6 +288,19 @@
 .fraym-tool-card__chevron { color: var(--fraym-color-text-3); font-family: var(--fraym-font-mono); transform: rotate(0); transition: transform var(--fraym-motion-fast); }
 .fraym-tool-card--expanded .fraym-tool-card__chevron { transform: rotate(90deg); }
 .fraym-tool-card__body { padding: var(--fraym-space-md); }
+.fraym-tool-card__labels { display: flex; flex-direction: column; min-width: 0; }
+.fraym-tool-card__icon { color: var(--fraym-color-text-2); display: inline-flex; flex: none; }
+.fraym-tool-card__badges { align-items: center; display: flex; flex-wrap: wrap; gap: 5px; min-width: 0; }
+.fraym-tool-card__stat { color: var(--fraym-color-text-3); font: 400 var(--fraym-type-caption)/1 var(--fraym-font-mono); white-space: nowrap; }
+.fraym-tool-head__target { color: var(--fraym-color-text-2); font: 400 var(--fraym-type-caption)/1.25 var(--fraym-font-mono); max-width: 36ch; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.fraym-tool-card__body--terminal { background: color-mix(in srgb, black 24%, var(--fraym-color-surface)); }
+.fraym-tool-table { display: flex; flex-direction: column; gap: 6px; }
+.fraym-tool-table__row { background: var(--fraym-color-surface-2); border: 1px solid var(--fraym-color-border-soft); border-radius: 10px; display: grid; gap: 4px 12px; grid-template-columns: minmax(0, auto) 1fr; padding: 10px; }
+.fraym-tool-table__row > span,
+.fraym-tool-key-values dt { color: var(--fraym-color-text-3); font-size: var(--fraym-type-caption); }
+.fraym-tool-table__row > code { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.fraym-tool-key-values { display: grid; gap: 6px 12px; grid-template-columns: minmax(0, auto) 1fr; margin: 0; }
+.fraym-tool-key-values dd { color: var(--fraym-color-text); margin: 0; min-width: 0; overflow-wrap: anywhere; }
 .fraym-tool-stack, .fraym-tool-generic, .fraym-tool-task { display: grid; gap: var(--fraym-space-md); }
 .fraym-tool-row { align-items: center; display: flex; flex-wrap: wrap; gap: var(--fraym-space-md); justify-content: space-between; }
 .fraym-tool-field { align-items: center; display: flex; gap: var(--fraym-space-sm); min-width: 0; }
