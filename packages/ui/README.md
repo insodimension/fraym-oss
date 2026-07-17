@@ -19,9 +19,9 @@ The package exposes dark-first CSS custom-property tokens, typed token reference
 
 ## Elements
 
-The `@fraym/ui/elements` entry point exposes the complete public primitive layer. It includes actions and feedback, native form controls, tabs and disclosure surfaces, settled and streaming Markdown, highlighted and plain code blocks, file mentions and file-type identity, animated counters, responsive capability hooks, and error recovery. The root `@fraym/ui` export re-exports the same elements for convenient composition.
+The `@fraym/ui/elements` entry point exposes the complete public primitive layer. It includes actions and feedback, native form controls, tabs and disclosure surfaces, settled and streaming Markdown, highlighted and plain code blocks, file mentions and file-type identity, animated counters, responsive capability hooks, diagrams, session boundaries, decorative interaction effects, refractive liquid-glass surfaces, and error recovery. The root `@fraym/ui` export re-exports the same elements for convenient composition.
 
-Elements stay host-neutral: file opening and reveal behavior enter through `FileMentionProvider`, async persistence enters through `OptimisticToggle`, and session or product behavior remains outside the primitive tier.
+Elements stay host-neutral: file opening and reveal behavior enter through `FileMentionProvider`, async persistence enters through `OptimisticToggle`, and session navigation enters through `SessionNavigationProvider` or a local callback. Decorative effects honor reduced-motion preferences, Mermaid loads only when a diagram is rendered, and liquid-glass surfaces retain translucent fallbacks when their field or WebGL is unavailable.
 
 ## Tool renderers
 

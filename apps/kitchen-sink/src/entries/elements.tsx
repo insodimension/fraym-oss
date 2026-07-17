@@ -33,6 +33,7 @@ import {
   type Entry,
 } from "../entry";
 import { additionalElementEntries } from "./element-additions";
+import { decorativeElementEntries } from "./decorative-elements";
 
 function ButtonDemo({ values }: DemoProps) {
   const [runs, setRuns] = useState(0);
@@ -645,4 +646,4 @@ const originalElementEntries = baseElementEntries.map((entry): Entry => {
   };
 });
 
-export const elementEntries: readonly Entry[] = [...originalElementEntries, ...additionalElementEntries];
+export const elementEntries: readonly Entry[] = [...originalElementEntries, ...additionalElementEntries, ...decorativeElementEntries];

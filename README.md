@@ -55,7 +55,7 @@ agent harness -> AgentEvent stream -> SessionThread
 - A production composer with auto-growth, submit and stop states, slash commands, image attachments, action slots, and context usage.
 - A nested `ToolRendererProvider` registry with exact, normalized, and fallback resolution for namespaced tool names.
 - Built-in cards for read, edit, write, bash, search, todo, task, and LSP calls, plus a clean generic fallback.
-- Small composable elements including buttons, cards, badges, code, feedback, layout, input, and message metadata primitives.
+- Small composable elements including forms, diagrams, session boundaries, decorative effects, liquid-glass surfaces, code, feedback, layout, and message metadata primitives.
 - Design tokens exposed as CSS custom properties and typed TypeScript references, with dark and light theme sets.
 - A kitchen-sink showcase with live knobs, generated usage snippets, prop documentation, and a replay-backed agent context for every entry.
 
