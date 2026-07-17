@@ -443,6 +443,8 @@ export function createAcpDriver(
       resolveConnection = resolve;
       rejectConnection = reject;
     });
+    intentionalClose = false;
+    transportErrorReported = false;
     void connection.catch(() => undefined);
     try {
       socket = createSocket(url);
@@ -453,22 +455,32 @@ export function createAcpDriver(
       return connection;
     }
 
-    socket.addEventListener("message", (event) => handleMessage(event.data));
-    socket.addEventListener("error", () => {
+    const activeSocket = socket;
+
+    activeSocket.addEventListener("message", (event) => handleMessage(event.data));
+    activeSocket.addEventListener("error", () => {
       const failure = new Error(`Unable to connect to ACP at ${url}.`);
       rejectConnection?.(failure);
       rejectPending(failure);
       emitTransportError(failure.message);
     });
-    socket.addEventListener("close", () => {
+    activeSocket.addEventListener("close", () => {
       const failure = new Error("ACP connection closed unexpectedly.");
       rejectConnection?.(failure);
       rejectPending(failure);
       if (!intentionalClose) {
         emitTransportError(failure.message);
       }
+      if (socket === activeSocket) {
+        socket = null;
+        connection = null;
+        resolveConnection = null;
+        rejectConnection = null;
+        sessionId = null;
+        sessionStarted = false;
+      }
     });
-    socket.addEventListener("open", () => {
+    activeSocket.addEventListener("open", () => {
       void (async () => {
         try {
           const initialized = await request("initialize", {
@@ -505,13 +517,14 @@ export function createAcpDriver(
       void connect();
       return () => {
         listeners.delete(listener);
-        if (listeners.size === 0 && socket !== null) {
-          intentionalClose = true;
-          const failure = new Error("ACP subscription closed.");
-          rejectPending(failure);
-          socket.close(1000, "Fraym unsubscribed");
-          socket = null;
-        }
+        queueMicrotask(() => {
+          if (listeners.size === 0 && socket !== null) {
+            intentionalClose = true;
+            const failure = new Error("ACP subscription closed.");
+            rejectPending(failure);
+            socket.close(1000, "Fraym unsubscribed");
+          }
+        });
       };
     },
 

@@ -251,7 +251,8 @@ describe("createAcpDriver", () => {
   });
 
   test("closing the final subscription closes the WebSocket cleanly", async () => {
-    let closed = false;
+    let openCount = 0;
+    let closeCount = 0;
     const server = Bun.serve<SocketData>({
       port: 0,
       fetch(request, bunServer) {
@@ -260,7 +261,9 @@ describe("createAcpDriver", () => {
           : new Response("WebSocket required", { status: 426 });
       },
       websocket: {
-        open() {},
+        open() {
+          openCount += 1;
+        },
         message(socket, rawMessage) {
           const message = parseMessage(rawMessage);
           if (message.method === "initialize") {
@@ -270,7 +273,7 @@ describe("createAcpDriver", () => {
           }
         },
         close() {
-          closed = true;
+          closeCount += 1;
         },
       },
     });
@@ -278,7 +281,12 @@ describe("createAcpDriver", () => {
     const unsubscribe = driver.subscribe(() => undefined);
     await waitFor(() => server.pendingWebSockets > 0);
     unsubscribe();
-    await waitFor(() => closed);
+    await waitFor(() => closeCount === 1);
+
+    const unsubscribeAgain = driver.subscribe(() => undefined);
+    await waitFor(() => openCount === 2);
+    unsubscribeAgain();
+    await waitFor(() => closeCount === 2);
 
     server.stop(true);
   });
