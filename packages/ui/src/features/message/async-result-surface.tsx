@@ -1,0 +1,5 @@
+import type { ReactNode } from "react"; import type { SurfaceRenderInput } from "../../registries/surface-renderer-registry"; import { MessageSurface, surfaceText } from "./surface-messages";
+export interface AsyncJobLine { readonly id?: string; readonly status?: string; readonly text: string }
+export function parseAsyncResultJobs(raw: string): AsyncJobLine[] { return raw.split(/\r?\n/).filter(Boolean).map((text) => { const match = text.match(/^\[([^\]]+)]\s*(.*)$/); return match ? { status: match[1] ?? "unknown", text: match[2] ?? "" } : { text }; }); }
+export function AsyncResultSurface({ text }: { readonly text: string }) { const jobs = parseAsyncResultJobs(text); return <MessageSurface detail={<ul>{jobs.map((job, index) => <li key={index}>{job.status ? <strong>{job.status}</strong> : null} {job.text}</li>)}</ul>} label="Background results" tone="info" />; }
+export function renderAsyncResult(input: SurfaceRenderInput): ReactNode { return <AsyncResultSurface text={surfaceText(input)} />; }

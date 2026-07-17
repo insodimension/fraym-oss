@@ -1,0 +1,3 @@
+import type { ReactNode } from "react"; import { Shimmer } from "../../elements/Shimmer"; import { classNames } from "../../elements/utils";
+export interface WorkingTailProps { readonly presence?: ReactNode; readonly verb?: string; readonly streaming?: boolean; readonly reconnecting?: boolean; readonly show?: boolean; readonly className?: string }
+export function WorkingTail({ presence, verb = "Thinking", streaming, reconnecting = false, show = true, className }: WorkingTailProps) { if (!show) return null; return <div className={classNames("fraym-working-tail", className)} data-slot="working-tail">{presence}{streaming || reconnecting ? <Shimmer>{reconnecting ? "Reconnecting" : verb}…</Shimmer> : <span>{verb}</span>}</div>; }

@@ -2,8 +2,8 @@ import { createContext, type ReactNode, useContext, useMemo } from "react";
 
 export type KnownMessageBlockType = "text" | "tool" | "diff" | "actions" | "surface" | "reasoning" | "notice" | "retry" | "image" | "file" | "tokenUsage";
 export interface MessageBlock { readonly type: KnownMessageBlockType | (string & {}); readonly [key: string]: unknown }
-export interface MessageData { readonly role: "user" | "agent" | "assistant" | "divider"; readonly blocks: readonly MessageBlock[]; readonly id?: string; readonly timestamp?: string; readonly name?: string; readonly meta?: string; readonly customType?: string; readonly payload?: unknown }
-export interface MessageBlockContext { readonly index: number; readonly message: MessageData; readonly isLast?: boolean; readonly isStreaming?: boolean }
+export interface MessageData { readonly role: "user" | "agent" | "assistant" | "divider"; readonly blocks: readonly MessageBlock[]; readonly id?: string; readonly timestamp?: string; readonly name?: string; readonly meta?: string; readonly customType?: string; readonly payload?: unknown; readonly thinking?: boolean; readonly activity?: { readonly verb: string; readonly mode?: string; readonly energy?: number }; readonly variant?: "compacting" | "done" | "continuation"; readonly auto?: boolean; readonly freed?: number; readonly tokens?: number; readonly summary?: string; readonly toSessionId?: string; readonly reason?: string; readonly collapse?: "worked"; readonly turnStartedAt?: string; readonly turnDurationMs?: number }
+export interface MessageBlockContext { readonly index: number; readonly message: MessageData; readonly isLast?: boolean | undefined; readonly isStreaming?: boolean | undefined }
 export type MessageBlockRenderer = (block: MessageBlock, context: MessageBlockContext) => ReactNode;
 export type MessageBlockRendererMap = Readonly<Record<string, MessageBlockRenderer>>;
 const empty: MessageBlockRendererMap = Object.freeze({});

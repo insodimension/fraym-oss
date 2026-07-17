@@ -1,0 +1,5 @@
+import type { ReactNode } from "react"; import type { SurfaceRenderInput } from "../../registries/surface-renderer-registry"; import { MessageSurface, surfaceText } from "./surface-messages";
+export interface BackgroundTaskDispatchFields { readonly title: string; readonly detail?: string }
+export function resolveBackgroundTaskDispatch(input: SurfaceRenderInput): BackgroundTaskDispatchFields | null { const text = surfaceText(input).trim(); const detail = text.split(/\r?\n/).slice(1).join("\n"); return text ? { title: text.split(/\r?\n/)[0]!, ...(detail ? { detail } : {}) } : null; }
+export function BackgroundTaskDispatchSurface({ fields }: { readonly fields: BackgroundTaskDispatchFields }) { return <MessageSurface label="Background task" {...(fields.detail ? { text: fields.detail } : {})} title={fields.title} tone="info" />; }
+export function renderBackgroundTaskDispatch(input: SurfaceRenderInput): ReactNode { const fields = resolveBackgroundTaskDispatch(input); return fields ? <BackgroundTaskDispatchSurface fields={fields} /> : null; }
