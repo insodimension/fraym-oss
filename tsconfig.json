@@ -3,7 +3,7 @@
   "references": [
     { "path": "./packages/driver" },
     { "path": "./packages/ui" },
-    { "path": "./apps/web" }
+    { "path": "./apps/web" },
+    { "path": "./apps/kitchen-sink" }
   ]
 }
-

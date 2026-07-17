@@ -69,7 +69,7 @@ export const codingSessionFixture: readonly AgentEvent[] = [
     type: "assistant.message.delta",
     sessionId,
     messageId: "assistant-1",
-    delta: "Done — `GET /health` now returns a compact status payload.",
+    delta: "Done: `GET /health` now returns a compact status payload.",
   },
   { type: "session.done", sessionId },
 ];

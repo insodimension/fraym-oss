@@ -11,6 +11,22 @@
         "typescript": "^5.8.0",
       },
     },
+    "apps/kitchen-sink": {
+      "name": "@fraym/kitchen-sink",
+      "version": "0.0.0",
+      "dependencies": {
+        "@fraym/driver": "workspace:*",
+        "@fraym/ui": "workspace:*",
+        "react": "^19.0.0",
+        "react-dom": "^19.0.0",
+      },
+      "devDependencies": {
+        "@types/react": "^19.0.0",
+        "@types/react-dom": "^19.0.0",
+        "@vitejs/plugin-react": "latest",
+        "vite": "latest",
+      },
+    },
     "apps/web": {
       "name": "@fraym/web",
       "version": "0.0.0",
@@ -54,6 +70,8 @@
     "@emnapi/wasi-threads": ["@emnapi/wasi-threads@1.2.2", "", { "dependencies": { "tslib": "^2.4.0" } }, "sha512-c95qOXkHdydNKhscBTebqEC1CVAZpyqOfVfBzQ1qgzyl3gfeldUjIggDbIZgDKsHLgnsM+igH7TJ/eAasaVuMA=="],
 
     "@fraym/driver": ["@fraym/driver@workspace:packages/driver"],
+
+    "@fraym/kitchen-sink": ["@fraym/kitchen-sink@workspace:apps/kitchen-sink"],
 
     "@fraym/ui": ["@fraym/ui@workspace:packages/ui"],
 

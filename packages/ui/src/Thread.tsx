@@ -43,7 +43,7 @@ export function Thread({ className, source, title = "Fraym thread" }: ThreadProp
           {state.toolCalls.map((toolCall) => (
             <div className="fraym-thread__tool-call" key={toolCall.id}>
               <Badge tone={toolCall.status === "failed" ? "danger" : "accent"}>
-                Tool · {toolCall.name} · {toolCall.status}
+                Tool: {toolCall.name} / {toolCall.status}
               </Badge>
             </div>
           ))}
