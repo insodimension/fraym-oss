@@ -15,6 +15,12 @@ export interface SessionStartEvent extends AgentEventBase {
   type: "session.start";
 }
 
+export interface UserMessageEvent extends AgentEventBase {
+  type: "user.message";
+  messageId: string;
+  content: string;
+}
+
 export interface AssistantMessageDeltaEvent extends AgentEventBase {
   type: "assistant.message.delta";
   messageId: string;
@@ -66,6 +72,7 @@ export interface SessionErrorEvent extends AgentEventBase {
 
 export type AgentEvent =
   | SessionStartEvent
+  | UserMessageEvent
   | AssistantMessageDeltaEvent
   | ToolCallStartEvent
   | ToolCallUpdateEvent
@@ -85,3 +92,79 @@ export function isTerminalToolCallStatus(status: ToolCallStatus): boolean {
   return terminalToolCallStatuses.has(status);
 }
 
+export type AgentEventListener = (event: AgentEvent) => void;
+export type Unsubscribe = () => void;
+
+export interface AgentEventStream {
+  subscribe(listener: AgentEventListener): Unsubscribe;
+}
+
+export interface ReplayDriverOptions {
+  /** Delay before each event when `delays` does not provide one. */
+  delay?: number;
+  /** Per-event delays, in milliseconds. Values fall back to `delay`. */
+  delays?: readonly number[];
+  /** Starts the recording again after its last event. */
+  loop?: boolean;
+}
+
+const defaultReplayDelay = 24;
+
+function getDelay(options: ReplayDriverOptions, index: number): number {
+  const delay = options.delays?.[index] ?? options.delay ?? defaultReplayDelay;
+
+  return Math.max(0, delay);
+}
+
+/**
+ * Creates a deterministic, independently replayable AgentEvent stream.
+ * Each subscriber receives the full recording in order and can cancel safely.
+ */
+export function createReplayDriver(
+  events: readonly AgentEvent[],
+  options: ReplayDriverOptions = {},
+): AgentEventStream {
+  return {
+    subscribe(listener) {
+      let cancelled = false;
+      let timer: ReturnType<typeof setTimeout> | undefined;
+      let index = 0;
+
+      const scheduleNext = () => {
+        if (cancelled || events.length === 0) {
+          return;
+        }
+
+        timer = setTimeout(() => {
+          if (cancelled) {
+            return;
+          }
+
+          listener(events[index]!);
+          index += 1;
+
+          if (index === events.length) {
+            if (!options.loop) {
+              return;
+            }
+
+            index = 0;
+          }
+
+          scheduleNext();
+        }, getDelay(options, index));
+      };
+
+      scheduleNext();
+
+      return () => {
+        cancelled = true;
+        if (timer !== undefined) {
+          clearTimeout(timer);
+        }
+      };
+    },
+  };
+}
+
+export { codingSessionFixture } from "./fixtures/coding-session";

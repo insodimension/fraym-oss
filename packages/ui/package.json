@@ -11,6 +11,9 @@
   "peerDependencies": {
     "react": "^19.0.0"
   },
+  "dependencies": {
+    "@fraym/driver": "workspace:*"
+  },
   "devDependencies": {
     "@types/react": "^19.0.0",
     "react": "^19.0.0"
@@ -19,4 +22,3 @@
     "typecheck": "tsc --noEmit"
   }
 }
-
