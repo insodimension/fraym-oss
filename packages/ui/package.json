@@ -18,6 +18,10 @@
     "./registries": {
       "types": "./src/registries/index.ts",
       "import": "./src/registries/index.ts"
+    },
+    "./features": {
+      "types": "./src/features/index.ts",
+      "import": "./src/features/index.ts"
     }
   },
   "peerDependencies": {

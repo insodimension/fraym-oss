@@ -6,6 +6,6 @@ export * from "./thread";
 export * from "./thread-message";
 export * from "./thread-message-actions";
 export * from "./trace-group";
-export * from "./verber-status";
+export * from "./thread-status";
 export * from "./worked-for-group";
 export * from "./working-tail";

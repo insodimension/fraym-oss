@@ -1,6 +1,7 @@
 import "./styles.css";
 
 export { Thread, ThreadView, type ThreadProps, type ThreadViewProps } from "./Thread";
+export { ThreadMessage } from "./features/thread";
 export { SessionThread, type SessionThreadProps } from "./SessionThread";
 export { ApprovalCard, type ApprovalCardProps } from "./ApprovalCard";
 export { ReasoningRow, type ReasoningRowProps } from "./ReasoningRow";
@@ -24,7 +25,7 @@ export {
   accumulateToolOutput,
   createThreadState,
   reduceThreadEvent,
-  type ThreadMessage,
+  type ThreadMessage as ThreadStateMessage,
   type ThreadMessageRole,
   type ThreadPhase,
   type ThreadState,
@@ -64,3 +65,4 @@ export { tokens, type FraymColorToken, type FraymTokens } from "./tokens";
 export * from "./elements";
 export * from "./components";
 export * from "./registries";
+export * from "./features";
