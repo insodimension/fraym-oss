@@ -1,4 +1,4 @@
-import { useEffect, type CSSProperties, type HTMLAttributes, type ReactNode } from "react";
+import { useEffect, useRef, type CSSProperties, type DialogHTMLAttributes, type HTMLAttributes, type ReactNode } from "react";
 
 import { classNames } from "./utils";
 
@@ -15,10 +15,11 @@ export function popoverStyle(anchorRect: DOMRect | null | undefined, place: Plac
 export interface ScrimProps extends HTMLAttributes<HTMLDivElement> { dim?: boolean }
 export function Scrim({ dim = false, className, ...props }: ScrimProps) { return <div {...props} className={classNames("fraym-scrim", dim && "fraym-scrim--dim", className)} data-slot="scrim" />; }
 
-export interface ModalProps extends HTMLAttributes<HTMLDivElement> { onClose: () => void; placement?: "center" | "upper"; closeOnEscape?: boolean }
-export function Modal({ onClose, placement = "center", closeOnEscape = true, className, children, ...props }: ModalProps) {
-  useEffect(() => { if (!closeOnEscape) return; const close = (event: KeyboardEvent) => { if (event.key === "Escape" && !event.isComposing) onClose(); }; document.addEventListener("keydown", close); return () => document.removeEventListener("keydown", close); }, [closeOnEscape, onClose]);
-  return <><Scrim dim onClick={onClose} /><div {...props} aria-modal="true" className={classNames("fraym-modal", `fraym-modal--${placement}`, className)} data-slot="modal" role="dialog">{children}</div></>;
+export interface ModalProps extends DialogHTMLAttributes<HTMLDialogElement> { onClose: () => void; placement?: "center" | "upper"; closeOnEscape?: boolean }
+export function Modal({ onClose, placement = "center", closeOnEscape = true, className, children, role = "dialog", onClick, ...props }: ModalProps) {
+  const dialogRef = useRef<HTMLDialogElement>(null);
+  useEffect(() => { const dialog = dialogRef.current; if (!dialog) return; dialog.showModal(); return () => { if (dialog.open) dialog.close(); }; }, []);
+  return <dialog {...props} aria-modal="true" className={classNames("fraym-modal", `fraym-modal--${placement}`, className)} data-slot="modal" onCancel={(event) => { if (!closeOnEscape) { event.preventDefault(); return; } event.preventDefault(); onClose(); }} onClick={(event) => { onClick?.(event); if (event.defaultPrevented || event.target !== event.currentTarget) return; const rect = event.currentTarget.getBoundingClientRect(); if (event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom) onClose(); }} ref={dialogRef} role={role}>{children}</dialog>;
 }
 
 export interface PopoverPanelProps extends HTMLAttributes<HTMLDivElement> { width?: number; anchorRect?: DOMRect | null; place?: Placement }

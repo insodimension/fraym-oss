@@ -2,8 +2,8 @@ import type { ReactNode } from "react";
 import { classNames } from "../elements/utils";
 import { dotToneClass, type ComposerControlTone } from "./surface-kit";
 
-export function StatusDot({ tone, pulse, size = 7, className }: { readonly tone?: ComposerControlTone | "mute"; readonly pulse?: boolean; readonly size?: number; readonly className?: string }) {
-  return <span aria-hidden="true" className={classNames("fraym-status-dot", dotToneClass(tone), pulse && "is-pulsing", className)} data-slot="status-dot" style={{ height: size, width: size }} />;
+export function StatusDot({ tone, animated, size = 7, className }: { readonly tone?: ComposerControlTone | "mute"; readonly animated?: boolean; readonly size?: number; readonly className?: string }) {
+  return <span aria-hidden="true" className={classNames("fraym-status-dot", dotToneClass(tone), animated && "is-animated", className)} data-slot="status-dot" style={{ height: size, width: size }} />;
 }
 
 export function Meter({ value, total, tone = "accent", className, thickness = 6 }: { readonly value: number; readonly total: number; readonly tone?: ComposerControlTone | "mute"; readonly className?: string; readonly thickness?: number }) {
