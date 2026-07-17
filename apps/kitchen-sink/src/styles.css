@@ -25,7 +25,7 @@ html[data-fraym-accent="blue"] { --fraym-color-accent: var(--sink-accent-blue); 
 html[data-fraym-accent="green"] { --fraym-color-accent: var(--sink-accent-green); --fraym-color-primary: var(--sink-accent-green); }
 html[data-fraym-accent="amber"] { --fraym-color-accent: var(--sink-accent-amber); --fraym-color-primary: var(--sink-accent-amber); }
 html[data-fraym-accent="mono"] { --fraym-color-accent: var(--fraym-color-text); --fraym-color-on-primary: var(--fraym-color-bg); --fraym-color-primary: var(--fraym-color-text); }
-html[data-fraym-accent] { --fraym-color-primary-strong: color-mix(in srgb, var(--fraym-color-primary) 84%, var(--fraym-color-text)); }
+html[data-fraym-accent] { --fraym-color-primary-strong: color-mix(in srgb, var(--fraym-color-primary) 84%, var(--fraym-color-on-primary)); }
 
 * { box-sizing: border-box; }
 html { background: var(--fraym-color-bg); scroll-behavior: smooth; }
