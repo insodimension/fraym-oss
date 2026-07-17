@@ -47,6 +47,13 @@
       "name": "@fraym/driver",
       "version": "0.0.0",
     },
+    "packages/driver-acp": {
+      "name": "@fraym/driver-acp",
+      "version": "0.0.0",
+      "dependencies": {
+        "@fraym/driver": "workspace:*",
+      },
+    },
     "packages/ui": {
       "name": "@fraym/ui",
       "version": "0.0.0",
@@ -76,6 +83,8 @@
     "@fontsource/ibm-plex-sans": ["@fontsource/ibm-plex-sans@5.2.8", "", {}, "sha512-eztSXjDhPhcpxNIiGTgMebdLP9qS4rWkysuE1V7c+DjOR0qiezaiDaTwQE7bTnG5HxAY/8M43XKDvs3cYq6ZYQ=="],
 
     "@fraym/driver": ["@fraym/driver@workspace:packages/driver"],
+
+    "@fraym/driver-acp": ["@fraym/driver-acp@workspace:packages/driver-acp"],
 
     "@fraym/kitchen-sink": ["@fraym/kitchen-sink@workspace:apps/kitchen-sink"],
 

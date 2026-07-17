@@ -2,6 +2,7 @@
   "files": [],
   "references": [
     { "path": "./packages/driver" },
+    { "path": "./packages/driver-acp" },
     { "path": "./packages/ui" },
     { "path": "./apps/web" },
     { "path": "./apps/kitchen-sink" }
