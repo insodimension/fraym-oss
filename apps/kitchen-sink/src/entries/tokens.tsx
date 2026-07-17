@@ -2,35 +2,52 @@ import { Badge, Code, tokens, type FraymColorToken } from "@fraym/ui";
 
 import type { Entry } from "../entry";
 
-const colorEntries: ReadonlyArray<[FraymColorToken, string]> = [
-  ["bg", tokens.color.bg],
-  ["surface", tokens.color.surface],
-  ["border", tokens.color.border],
-  ["text", tokens.color.text],
-  ["muted", tokens.color.muted],
-  ["accent", tokens.color.accent],
-  ["success", tokens.color.success],
-  ["warning", tokens.color.warning],
-  ["danger", tokens.color.danger],
+const colorEntries: ReadonlyArray<[FraymColorToken, string, string]> = [
+  ["bg", tokens.color.bg, "--fraym-color-bg"],
+  ["rail", tokens.color.rail, "--fraym-color-rail"],
+  ["surface", tokens.color.surface, "--fraym-color-surface"],
+  ["surface2", tokens.color.surface2, "--fraym-color-surface-2"],
+  ["surface3", tokens.color.surface3, "--fraym-color-surface-3"],
+  ["border", tokens.color.border, "--fraym-color-border"],
+  ["borderSoft", tokens.color.borderSoft, "--fraym-color-border-soft"],
+  ["text", tokens.color.text, "--fraym-color-text"],
+  ["text2", tokens.color.text2, "--fraym-color-text-2"],
+  ["text3", tokens.color.text3, "--fraym-color-text-3"],
+  ["accent", tokens.color.accent, "--fraym-color-accent"],
+  ["success", tokens.color.success, "--fraym-color-success"],
+  ["warning", tokens.color.warning, "--fraym-color-warning"],
+  ["danger", tokens.color.danger, "--fraym-color-danger"],
+  ["info", tokens.color.info, "--fraym-color-info"],
+  ["iris", tokens.color.iris, "--fraym-color-iris"],
 ];
 
 const typeEntries = [
-  ["xs", tokens.type.xs],
-  ["sm", tokens.type.sm],
-  ["base", tokens.type.base],
-  ["lg", tokens.type.lg],
-  ["xl", tokens.type.xl],
+  ["display", tokens.type.display],
+  ["heading-xl", tokens.type.headingXl],
+  ["heading-lg", tokens.type.headingLg],
+  ["title", tokens.type.title],
+  ["body-md", tokens.type.bodyMd],
+  ["body-sm", tokens.type.bodySm],
+  ["label", tokens.type.label],
+  ["code", tokens.type.code],
+  ["caption", tokens.type.caption],
+  ["eyebrow", tokens.type.eyebrow],
 ] as const;
 
 const spaceEntries = [
-  ["1", tokens.space[1]],
-  ["2", tokens.space[2]],
-  ["3", tokens.space[3]],
-  ["4", tokens.space[4]],
-  ["5", tokens.space[5]],
-  ["6", tokens.space[6]],
-  ["8", tokens.space[8]],
-  ["10", tokens.space[10]],
+  ["xs", tokens.space.xs],
+  ["sm", tokens.space.sm],
+  ["md", tokens.space.md],
+  ["lg", tokens.space.lg],
+  ["xl", tokens.space.xl],
+] as const;
+
+const radiusEntries = [
+  ["sm", tokens.radius.sm],
+  ["md", tokens.radius.md],
+  ["lg", tokens.radius.lg],
+  ["xl", tokens.radius.xl],
+  ["full", tokens.radius.full],
 ] as const;
 
 function TokensDemo() {
@@ -39,14 +56,14 @@ function TokensDemo() {
       <section aria-labelledby="color-tokens-heading">
         <div className="sink-demo-heading">
           <h3 id="color-tokens-heading">Color</h3>
-          <Badge tone="accent">9 semantic roles</Badge>
+          <Badge tone="accent">16 semantic roles</Badge>
         </div>
         <div className="sink-palette">
-          {colorEntries.map(([name, value]) => (
+          {colorEntries.map(([name, value, variable]) => (
             <div className="sink-swatch" key={name}>
               <div className="sink-swatch__color" style={{ background: value }} />
               <strong>{name}</strong>
-              <Code>{`--fraym-color-${name}`}</Code>
+              <Code>{variable}</Code>
             </div>
           ))}
         </div>
@@ -76,6 +93,18 @@ function TokensDemo() {
           ))}
         </div>
       </section>
+
+      <section aria-labelledby="radius-tokens-heading">
+        <h3 id="radius-tokens-heading">Radius family</h3>
+        <div className="sink-radius-scale">
+          {radiusEntries.map(([name, value]) => (
+            <div className="sink-radius-row" key={name} style={{ borderRadius: value }}>
+              <Code>{name}</Code>
+              <span>{value}</span>
+            </div>
+          ))}
+        </div>
+      </section>
     </div>
   );
 }
@@ -95,7 +124,7 @@ export const tokenEntries = [
 
 const style = {
   color: tokens.color.text,
-  gap: tokens.space[4],
+  gap: tokens.space.lg,
   borderRadius: tokens.radius.md,
 };`,
     examples: [
@@ -104,7 +133,7 @@ const style = {
         description: "Use the TypeScript export when a component needs token values inline.",
         code: `const panelStyle = {
   background: tokens.color.surface,
-  padding: tokens.space[6],
+  padding: tokens.space.xl,
 };`,
       },
       {
@@ -118,8 +147,8 @@ const style = {
     ],
     props: [
       { name: "color", type: "FraymColorTokens", defaultValue: "dark set", description: "Semantic surface, text, accent, and status colors." },
-      { name: "type", type: "FraymTypeTokens", defaultValue: "system", description: "Sans family and a compact interface type scale." },
-      { name: "space", type: "FraymSpaceTokens", defaultValue: "4px base", description: "Shared spacing rhythm for layout and components." },
+      { name: "type", type: "FraymTypeTokens", defaultValue: "IBM Plex", description: "Sans UI levels and Mono machine-data levels." },
+      { name: "space", type: "FraymSpaceTokens", defaultValue: "3 / 8 / 12 / 16 / 26", description: "Shared cockpit spacing rhythm." },
     ],
   },
 ] satisfies readonly Entry[];

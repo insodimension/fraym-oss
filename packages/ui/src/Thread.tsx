@@ -28,15 +28,13 @@ export function Thread({ className, source, title = "Fraym thread" }: ThreadProp
           {state.messages.map((message) => (
             <article className={`fraym-thread__message fraym-thread__message--${message.role}`} key={message.id}>
               <span className="fraym-thread__role">{message.role}</span>
-              <Card>
-                <CardContent>
+              <div className="fraym-thread__content">
                   {message.role === "assistant" ? (
                     <StreamingMarkdown>{message.content}</StreamingMarkdown>
                   ) : (
                     <p>{message.content}</p>
                   )}
-                </CardContent>
-              </Card>
+              </div>
             </article>
           ))}
 

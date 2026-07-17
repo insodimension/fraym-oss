@@ -4,6 +4,7 @@ import { renderToStaticMarkup } from "react-dom/server";
 
 import { entries } from "./index";
 import { initialKnobValues } from "../entry";
+import { createEntryDockFixture } from "../dock-fixtures";
 
 describe("kitchen sink entries", () => {
   test("registers every current token, element, and feature entry exactly once", () => {
@@ -39,5 +40,16 @@ describe("kitchen sink entries", () => {
     expect(code).toContain('size="lg"');
     expect(code).toContain("disabled");
     expect(code).toContain("Delete session");
+  });
+
+  test("provides an ordered contextual AgentEvent replay for every entry", () => {
+    for (const entry of entries) {
+      const fixture = createEntryDockFixture(entry);
+      expect(fixture[0]?.type).toBe("session.start");
+      expect(fixture[1]?.type).toBe("user.message");
+      expect(fixture.some((event) => event.type === "assistant.message.delta")).toBe(true);
+      expect(fixture.at(-1)?.type).toBe("session.done");
+      expect(new Set(fixture.map((event) => event.sessionId)).size).toBe(1);
+    }
   });
 });

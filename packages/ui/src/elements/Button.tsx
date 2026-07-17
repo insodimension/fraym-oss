@@ -14,7 +14,7 @@ export function Button({
   className,
   size = "md",
   type = "button",
-  variant = "primary",
+  variant = "ghost",
   ...props
 }: ButtonProps) {
   return (

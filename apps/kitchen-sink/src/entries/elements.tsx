@@ -102,7 +102,7 @@ function CardDemo({ values }: DemoProps) {
         <p>The agent wants to update two TypeScript files.</p>
       </CardContent>
       {showFooter ? <CardFooter className="sink-demo-row">
-        <Button size="sm" onClick={() => setApproved(true)}>Approve</Button>
+        <Button size="sm" variant="primary" onClick={() => setApproved(true)}>Approve</Button>
         <Badge tone={approved ? "success" : "warning"}>
           {approved ? "Approved" : "Waiting"}
         </Badge>
@@ -350,7 +350,7 @@ const baseElementEntries = [
     group: "elements",
     description: "Action hierarchy with primary, secondary, ghost, danger, size, and disabled states.",
     Demo: ButtonDemo,
-    code: `<Button onClick={runAgent}>Run agent</Button>
+    code: `<Button variant="primary" onClick={runAgent}>Run agent</Button>
 <Button variant="secondary">Reset</Button>
 <Button variant="danger">Stop</Button>`,
   },
@@ -382,7 +382,7 @@ const baseElementEntries = [
     code: `<Card>
   <CardHeader>Workspace change</CardHeader>
   <CardContent>Two files will change.</CardContent>
-  <CardFooter><Button>Approve</Button></CardFooter>
+  <CardFooter><Button variant="primary">Approve</Button></CardFooter>
 </Card>`,
   },
   {
@@ -584,7 +584,7 @@ function codeFor(id: string, values: DemoProps["values"]): string {
     }
     case "icon-button": return `<IconButton label="Pin message" variant="${stringValue(values, "variant", "secondary")}" size="${stringValue(values, "size", "md")}"${booleanValue(values, "disabled") ? " disabled" : ""}>P</IconButton>`;
     case "badge": return `<Badge tone="${stringValue(values, "tone", "neutral")}">${stringValue(values, "label", "Tool complete")}</Badge>`;
-    case "card": return `<Card>\n  <CardHeader>${stringValue(values, "title", "Workspace change")}</CardHeader>\n  <CardContent>Two files will change.</CardContent>${booleanValue(values, "showFooter", true) ? "\n  <CardFooter><Button>Approve</Button></CardFooter>" : ""}\n</Card>`;
+    case "card": return `<Card>\n  <CardHeader>${stringValue(values, "title", "Workspace change")}</CardHeader>\n  <CardContent>Two files will change.</CardContent>${booleanValue(values, "showFooter", true) ? "\n  <CardFooter><Button variant=\"primary\">Approve</Button></CardFooter>" : ""}\n</Card>`;
     case "code": return booleanValue(values, "block", true) ? `<Code block language="${stringValue(values, "language", "ts")}">{source}</Code>` : `<Code>createReplayDriver()</Code>`;
     case "streaming-markdown": return `<StreamingMarkdown>{assistantText}</StreamingMarkdown>`;
     case "spinner": return booleanValue(values, "visible", true) ? `<Spinner label="${stringValue(values, "label", "Running tool")}" />` : `{loading ? <Spinner /> : null}`;
@@ -604,7 +604,7 @@ function codeFor(id: string, values: DemoProps["values"]): string {
 
 const propsById: Record<string, Entry["props"]> = {
   button: [
-    { name: "variant", type: '"primary" | "secondary" | "ghost" | "danger"', defaultValue: '"primary"', description: "Visual action hierarchy." },
+    { name: "variant", type: '"primary" | "secondary" | "ghost" | "danger"', defaultValue: '"ghost"', description: "Ghost-first action hierarchy; reserve primary for the one true action." },
     { name: "size", type: '"sm" | "md"', defaultValue: '"md"', description: "Control height and horizontal padding." },
     { name: "disabled", type: "boolean", defaultValue: "false", description: "Prevents interaction and communicates unavailability." },
   ],

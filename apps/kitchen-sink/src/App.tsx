@@ -12,6 +12,7 @@ import {
   type KnobValue,
 } from "./entry";
 import { entries } from "./entries";
+import { DemoDock } from "./DemoDock";
 
 type ThemePreference = "dark" | "light" | "system";
 type ResolvedTheme = Exclude<ThemePreference, "system">;
@@ -104,7 +105,7 @@ function Landing({ onSelect }: { onSelect: (id: string) => void }) {
         <Badge tone="accent">Open source React UI for coding agents</Badge>
         <h1>Build the agent surface your product deserves.</h1>
         <p>Fraym gives agentic products a typed, composable interface for streaming conversations, tools, approvals, and everything that follows.</p>
-        <div className="sink-demo-row"><Button onClick={() => onSelect("button")}>Explore elements</Button><Button variant="secondary" onClick={() => onSelect("streaming-thread")}>Watch the thread</Button></div>
+        <div className="sink-demo-row"><Button variant="primary" onClick={() => onSelect("button")}>Explore elements</Button><Button variant="ghost" onClick={() => onSelect("streaming-thread")}>Watch the thread</Button></div>
       </section>
       <section className="sink-driver-story">
         <div><span className="sink-section-label">The driver pattern</span><h2>One event contract. Any harness.</h2></div>
@@ -134,18 +135,22 @@ function KnobControl({ knob, onChange, value }: { knob: Knob; onChange: (value: 
 
 function EntryPage({ entry }: { entry: Entry }) {
   const [values, setValues] = useState<Record<string, KnobValue>>(() => initialKnobValues(entry.knobs));
+  const [dockOpen, setDockOpen] = useState(true);
   useEffect(() => setValues(initialKnobValues(entry.knobs)), [entry]);
   const Demo = entry.Demo;
   const generatedCode = entry.code(values);
   const update = (prop: string, value: KnobValue) => setValues((current) => ({ ...current, [prop]: value }));
 
   return (
-    <article className="sink-entry">
+    <article className="sink-entry" data-dock-open={dockOpen}>
       <header className="sink-entry-hero">
         <span className="sink-entry-tier">{entry.tier}</span>
         <h1>{entry.title}</h1>
         <p>{entry.description}</p>
-        <div className="sink-import-chip"><Code>{entry.importCode}</Code><CopyButton label="Copy" value={entry.importCode} /></div>
+        <div className="sink-entry-hero__actions">
+          <div className="sink-import-chip"><Code>{entry.importCode}</Code><CopyButton label="Copy" value={entry.importCode} /></div>
+          <Button aria-expanded={dockOpen} data-dock-toggle size="sm" variant="ghost" onClick={() => setDockOpen((value) => !value)}>{dockOpen ? "Hide live context" : "Show live context"}</Button>
+        </div>
       </header>
       <section className="sink-lab" aria-label={`${entry.title} playground`}>
         <div className="sink-stage"><div className="sink-stage__canvas"><Demo values={values} /></div><div className="sink-stage__code"><span>Generated usage</span><CopyButton label="Copy code" value={generatedCode} /><Code block language="tsx">{generatedCode}</Code></div></div>
@@ -159,6 +164,7 @@ function EntryPage({ entry }: { entry: Entry }) {
         <section className="sink-doc-block"><div className="sink-doc-block__heading"><h3>Examples</h3></div><div className="sink-example-list">{entry.examples.map((example) => <article className="sink-doc-example" key={example.title}><div><h4>{example.title}</h4><p>{example.description}</p></div><div><CopyButton label="Copy" value={example.code} /><Code block language="tsx">{example.code}</Code></div></article>)}</div></section>
         <section className="sink-doc-block"><div className="sink-doc-block__heading"><h3>Props</h3></div><div className="sink-props-wrap"><table className="sink-props"><thead><tr><th>Name</th><th>Type</th><th>Default</th><th>Description</th></tr></thead><tbody>{entry.props.map((prop) => <tr key={prop.name}><td><Code>{prop.name}</Code></td><td><Code>{prop.type}</Code></td><td>{prop.defaultValue}</td><td>{prop.description}</td></tr>)}</tbody></table></div></section>
       </section>
+      {dockOpen ? <DemoDock entry={entry} onClose={() => setDockOpen(false)} values={values} /> : null}
     </article>
   );
 }
@@ -179,6 +185,16 @@ export function App() {
     return () => media.removeEventListener("change", sync);
   }, []);
 
+  useEffect(() => {
+    const root = document.documentElement;
+    root.dataset.fraymTheme = resolvedTheme;
+    root.dataset.fraymAccent = accent;
+    return () => {
+      delete root.dataset.fraymTheme;
+      delete root.dataset.fraymAccent;
+    };
+  }, [accent, resolvedTheme]);
+
   const navigate = (id: string | null) => {
     setSelectedId(id);
     window.history.replaceState(null, "", id ? `#${id}` : window.location.pathname);
@@ -186,7 +202,7 @@ export function App() {
   };
 
   return (
-    <div className="sink-site" data-fraym-accent={accent} data-fraym-theme={resolvedTheme}>
+    <div className="sink-site">
       <header className="sink-topbar"><Button className="sink-brand" variant="ghost" onClick={() => navigate(null)}><span className="sink-brand-mark">F</span><span><strong>Fraym</strong><small>Component system</small></span></Button><ThemeControls accent={accent} onAccent={setAccent} onTheme={setTheme} theme={theme} /></header>
       <Catalog activeId={selectedId} onHome={() => navigate(null)} onSelect={(id) => navigate(id)} query={query} setQuery={setQuery} />
       <main className="sink-main">{selected ? <EntryPage entry={selected} key={selected.id} /> : <Landing onSelect={(id) => navigate(id)} />}</main>
