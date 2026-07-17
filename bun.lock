@@ -32,6 +32,7 @@
       "version": "0.0.0",
       "dependencies": {
         "@fraym/driver": "workspace:*",
+        "@fraym/driver-acp": "workspace:*",
         "@fraym/ui": "workspace:*",
         "react": "^19.0.0",
         "react-dom": "^19.0.0",
