@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import type { ApprovalDecision } from "@fraym/driver";
 import { codingSessionFixture, createReplayDriver } from "@fraym/driver";
-import { ApprovalCard, Badge, Button, ReasoningRow, SessionThread } from "@fraym/ui";
+import { ApprovalCard, Badge, Button, Code, ReasoningRow, Separator, SessionThread } from "@fraym/ui";
 
 import { booleanValue, numberValue, stringValue, type Entry, type DemoProps } from "../entry";
 
@@ -67,6 +67,39 @@ function ReasoningDemo({ values }: DemoProps) {
         streaming,
       }}
     />
+  );
+}
+
+const acpMappings = [
+  ["agent_message_chunk", "assistant.message.delta"],
+  ["agent_thought_chunk", "reasoning.delta"],
+  ["tool_call / update", "tool_call.start / update / end"],
+  ["request_permission", "approval.request / response"],
+] as const;
+
+function AcpDriverDemo({ values }: DemoProps) {
+  const url = stringValue(values, "url", "ws://localhost:5196");
+  return (
+    <div className="sink-acp-driver">
+      <div className="sink-acp-driver__connection">
+        <div>
+          <span className="sink-eyebrow">ACP v1 WebSocket</span>
+          <strong>Ready for a live agent</strong>
+        </div>
+        <Badge tone="accent">JSON-RPC</Badge>
+      </div>
+      <Code>{url}</Code>
+      <Separator />
+      <div className="sink-acp-driver__map">
+        {acpMappings.map(([source, target]) => (
+          <div className="sink-acp-driver__row" key={source}>
+            <Code>{source}</Code>
+            <span aria-hidden="true">→</span>
+            <Code>{target}</Code>
+          </div>
+        ))}
+      </div>
+    </div>
   );
 }
 
@@ -164,6 +197,54 @@ export const featureEntries = [
       { name: "expanded", type: "boolean", defaultValue: "undefined", description: "Controlled disclosure state." },
       { name: "defaultExpanded", type: "boolean", defaultValue: "false", description: "Initial uncontrolled disclosure state." },
       { name: "onExpandedChange", type: "(expanded) => void", defaultValue: "undefined", description: "Receives disclosure changes." },
+    ],
+  },
+  {
+    id: "acp-driver",
+    title: "ACP driver",
+    group: "features",
+    tier: "Driver",
+    description: "Connect the Fraym event contract to any ACP v1 agent over a bidirectional JSON-RPC WebSocket.",
+    importCode: `import { createAcpDriver } from "@fraym/driver-acp"`,
+    Demo: AcpDriverDemo,
+    knobs: [
+      { prop: "url", label: "WebSocket URL", kind: "text", defaultValue: "ws://localhost:5196" },
+    ],
+    code: (values) => {
+      const url = stringValue(values, "url", "ws://localhost:5196");
+      return `const driver = createAcpDriver("${url}");
+
+<SessionThread
+  source={driver}
+  onSubmit={({ value }) => void driver.prompt(value)}
+  onStop={driver.cancel}
+  onApprovalResponse={driver.respondToApproval}
+/>`;
+    },
+    examples: [
+      {
+        title: "Open a live session",
+        description: "The first subscriber initializes ACP and creates a session before prompts are sent.",
+        code: `const driver = createAcpDriver("ws://localhost:5196");
+const unsubscribe = driver.subscribe(handleEvent);`,
+      },
+      {
+        title: "Complete the conversation loop",
+        description: "Use the same driver for composer prompts, cancellation, and inline approval decisions.",
+        code: `<SessionThread
+  source={driver}
+  onSubmit={({ value }) => void driver.prompt(value)}
+  onStop={driver.cancel}
+  onApprovalResponse={driver.respondToApproval}
+/>`,
+      },
+    ],
+    props: [
+      { name: "url", type: "string", defaultValue: "required", description: "ACP WebSocket endpoint used for the JSON-RPC connection." },
+      { name: "options.cwd", type: "string", defaultValue: ".", description: "Working directory supplied to session/new." },
+      { name: "prompt", type: "(text) => Promise<void>", defaultValue: "method", description: "Sends a user turn through session/prompt." },
+      { name: "respondToApproval", type: "(event) => void", defaultValue: "method", description: "Selects the matching ACP permission option." },
+      { name: "cancel", type: "() => void", defaultValue: "method", description: "Cancels the active prompt turn." },
     ],
   },
 ] satisfies readonly Entry[];

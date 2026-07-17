@@ -25,6 +25,7 @@ const prompts: Readonly<Record<string, string>> = {
   composer: "Give me a composer for a precise follow-up with image context.",
   "approval-card": "Apply the proposed patch after you finish reviewing it.",
   "reasoning-row": "Think through the safest way to extend this event stream.",
+  "acp-driver": "Connect this conversation surface to my local ACP agent.",
   "tool-read": "Open the session reducer so I can understand the event flow.",
   "tool-edit": "Update the server to read its port from the environment.",
   "tool-write": "Add a focused regression test for session startup.",

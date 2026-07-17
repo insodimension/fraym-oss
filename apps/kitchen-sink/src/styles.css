@@ -176,6 +176,15 @@ h1, h2, h3, h4, p { text-wrap: pretty; }
 .sink-tool-demo { width: min(100%, 42rem); }
 .sink-thread-demo { width: min(100%, 48rem); }
 .sink-thread-demo .fraym-session-thread { max-height: 36rem; }
+.sink-acp-driver { display: grid; gap: var(--fraym-space-md); width: min(100%, 42rem); }
+.sink-acp-driver__connection { align-items: center; display: flex; justify-content: space-between; }
+.sink-acp-driver__connection > div { display: grid; gap: var(--fraym-space-sm); }
+.sink-acp-driver__connection strong { font-size: var(--fraym-type-title); }
+.sink-acp-driver > .fraym-code { justify-self: start; }
+.sink-acp-driver__map { display: grid; gap: var(--fraym-space-xs); }
+.sink-acp-driver__row { align-items: center; display: grid; gap: var(--fraym-space-md); grid-template-columns: minmax(0, 0.8fr) auto minmax(0, 1fr); }
+.sink-acp-driver__row > span { color: var(--fraym-color-text-3); font-family: var(--fraym-font-mono); }
+.sink-acp-driver__row .fraym-code { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .sink-skeleton-stack { display: grid; gap: var(--fraym-space-sm); min-width: min(24rem, 70vw); }
 .sink-skeleton-line { height: var(--fraym-space-md); width: 100%; }
 .sink-skeleton-line--short { width: 35%; }

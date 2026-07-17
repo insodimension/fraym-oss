@@ -15,7 +15,7 @@ describe("kitchen sink entries", () => {
   });
 
   test("registers every current token, element, tool, and feature entry exactly once", () => {
-    expect(entries).toHaveLength(31);
+    expect(entries).toHaveLength(32);
     expect(new Set(entries.map((entry) => entry.id)).size).toBe(entries.length);
     expect(entries.filter((entry) => entry.group === "elements")).toHaveLength(17);
     expect(entries.filter((entry) => entry.group === "tools")).toHaveLength(9);
@@ -26,7 +26,7 @@ describe("kitchen sink entries", () => {
       const values = initialKnobValues(entry.knobs);
       expect(() => renderToStaticMarkup(createElement(entry.Demo, { values }))).not.toThrow();
       expect(entry.code(values).trim().length).toBeGreaterThan(0);
-      expect(entry.importCode).toContain("@fraym/ui");
+      expect(entry.importCode).toContain("@fraym/");
       expect(entry.examples.length).toBeGreaterThanOrEqual(2);
       expect(entry.props.length).toBeGreaterThan(0);
     }
