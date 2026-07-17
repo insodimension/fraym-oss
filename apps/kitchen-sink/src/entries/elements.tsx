@@ -32,6 +32,7 @@ import {
   type DemoProps,
   type Entry,
 } from "../entry";
+import { additionalElementEntries } from "./element-additions";
 
 function ButtonDemo({ values }: DemoProps) {
   const [runs, setRuns] = useState(0);
@@ -626,7 +627,7 @@ const propsById: Record<string, Entry["props"]> = {
   "message-usage": [{ name: "inputTokens", type: "number", defaultValue: "undefined", description: "Input token count, compactly formatted." }, { name: "outputTokens", type: "number", defaultValue: "undefined", description: "Output token count, compactly formatted." }],
 };
 
-export const elementEntries = baseElementEntries.map((entry): Entry => {
+const originalElementEntries = baseElementEntries.map((entry): Entry => {
   const componentNames = entry.id === "card" ? "Card, CardHeader, CardContent, CardFooter" : entry.title;
   const subgroup = subgroupById[entry.id];
   return {
@@ -643,3 +644,5 @@ export const elementEntries = baseElementEntries.map((entry): Entry => {
     props: propsById[entry.id] ?? [],
   };
 });
+
+export const elementEntries: readonly Entry[] = [...originalElementEntries, ...additionalElementEntries];
