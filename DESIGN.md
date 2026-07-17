@@ -252,7 +252,7 @@ Hierarchy comes from two devices:
    surface against its neighbor.
 
 The only "glow" is the **accent**: focus rings and live/working states use an
-`accent-dim` ring (and a gentle pulse), never a colored shadow. Popovers sit on
+`accent-dim` ring (and a gentle breathing animation), never a colored shadow. Popovers sit on
 `surface` with a border and the faintest shadow for separation — keep it subtle.
 
 ## Shapes

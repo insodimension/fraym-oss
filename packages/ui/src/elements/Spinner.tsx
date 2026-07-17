@@ -3,7 +3,7 @@ import type { HTMLAttributes } from "react";
 import { classNames } from "./utils";
 
 export type SpinnerSize = "xs" | "sm" | "md" | "lg";
-export type SpinnerKind = "circular" | "dots" | "bars" | "pulse" | "orbit" | "bounce";
+export type SpinnerKind = "circular" | "dots" | "bars" | "ping" | "orbit" | "bounce";
 export type SpinnerState = "running" | "idle" | "success" | "error";
 
 export interface SpinnerProps extends HTMLAttributes<HTMLSpanElement> {

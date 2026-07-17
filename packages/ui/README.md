@@ -4,6 +4,7 @@
 
 - [Purpose](#purpose)
 - [Foundation](#foundation)
+- [Elements](#elements)
 - [Tool renderers](#tool-renderers)
 - [Session surface](#session-surface)
 - [Approvals and reasoning](#approvals-and-reasoning)
@@ -15,6 +16,12 @@
 ## Foundation
 
 The package exposes dark-first CSS custom-property tokens, typed token references, composable primitives, and an event-driven `Thread` that consumes `@fraym/driver` streams. `DESIGN.md` is the normative contract: graphite surface and text tiers, Fraym violet, IBM Plex typography, the 3/8/12/16/26 spacing ramp, and the 6/8/10/14 radius family are mirrored in `src/styles.css` and `src/tokens.ts`.
+
+## Elements
+
+The `@fraym/ui/elements` entry point exposes the complete public primitive layer. It includes actions and feedback, native form controls, tabs and disclosure surfaces, settled and streaming Markdown, highlighted and plain code blocks, file mentions and file-type identity, animated counters, responsive capability hooks, and error recovery. The root `@fraym/ui` export re-exports the same elements for convenient composition.
+
+Elements stay host-neutral: file opening and reveal behavior enter through `FileMentionProvider`, async persistence enters through `OptimisticToggle`, and session or product behavior remains outside the primitive tier.
 
 ## Tool renderers
 

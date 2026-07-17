@@ -183,10 +183,10 @@
 .fraym-spinner { animation: fraym-spin var(--fraym-motion-slow) linear infinite; color: var(--fraym-color-accent); height: 20px; width: 20px; }
 @keyframes fraym-spin { to { transform: rotate(360deg); } }
 .fraym-thinking-dots { align-items: center; color: var(--fraym-color-text-3); display: inline-flex; gap: var(--fraym-space-xs); }
-.fraym-thinking-dots span { animation: fraym-thinking-pulse var(--fraym-motion-slow) ease-in-out infinite; background: currentColor; border-radius: var(--fraym-radius-full); height: var(--fraym-space-sm); width: var(--fraym-space-sm); }
+.fraym-thinking-dots span { animation: fraym-thinking-breathe var(--fraym-motion-slow) ease-in-out infinite; background: currentColor; border-radius: var(--fraym-radius-full); height: var(--fraym-space-sm); width: var(--fraym-space-sm); }
 .fraym-thinking-dots span:nth-child(2) { animation-delay: var(--fraym-motion-fast); }
 .fraym-thinking-dots span:nth-child(3) { animation-delay: var(--fraym-motion-normal); }
-@keyframes fraym-thinking-pulse { 50% { opacity: 0.35; } }
+@keyframes fraym-thinking-breathe { 50% { opacity: 0.35; } }
 .fraym-skeleton, .fraym-shimmer { background: var(--fraym-color-surface-2); border-radius: var(--fraym-radius-md); min-height: var(--fraym-space-lg); overflow: hidden; position: relative; }
 .fraym-shimmer::after, .fraym-skeleton::after { animation: fraym-shimmer var(--fraym-motion-slow) ease-in-out infinite; background: color-mix(in srgb, var(--fraym-color-surface-3) 75%, transparent); content: ""; inset: 0; position: absolute; transform: translateX(-100%); }
 @keyframes fraym-shimmer { to { transform: translateX(100%); } }
@@ -382,8 +382,8 @@
 .fraym-spinner i { background: currentColor; border-radius: 999px; display: block; height: 22%; margin: 0 7%; width: 22%; }
 .fraym-spinner--dots i { animation: fraym-spinner-fade .9s ease-in-out infinite; }
 .fraym-spinner--bars i { animation: fraym-spinner-bars .8s ease-in-out infinite; border-radius: 2px; height: 65%; width: 14%; }
-.fraym-spinner--pulse i:first-child { animation: fraym-spinner-pulse 1s ease-out infinite; height: 55%; width: 55%; }
-.fraym-spinner--pulse i:not(:first-child) { display: none; }
+.fraym-spinner--ping i:first-child { animation: fraym-spinner-radiate 1s ease-out infinite; height: 55%; width: 55%; }
+.fraym-spinner--ping i:not(:first-child) { display: none; }
 .fraym-spinner--orbit { animation: fraym-spin .9s linear infinite; border: 1px solid color-mix(in srgb, currentColor 30%, transparent); border-radius: 50%; }
 .fraym-spinner--orbit i:first-child { position: absolute; transform: translateY(-160%); }
 .fraym-spinner--orbit i:not(:first-child) { display: none; }
@@ -395,7 +395,7 @@
 .fraym-spinner--error { color: var(--fraym-color-danger); }
 @keyframes fraym-spinner-fade { 50% { opacity: .2; } }
 @keyframes fraym-spinner-bars { 50% { transform: scaleY(.35); } }
-@keyframes fraym-spinner-pulse { to { opacity: 0; transform: scale(1.8); } }
+@keyframes fraym-spinner-radiate { to { opacity: 0; transform: scale(1.8); } }
 @keyframes fraym-spinner-bounce { to { transform: translateY(-35%); } }
 .fraym-thinking-dots { font-size: var(--fraym-type-body-md); gap: 10px; }
 .fraym-thinking-dots > span { animation: none; background: transparent; border-radius: 0; height: auto; width: auto; }
