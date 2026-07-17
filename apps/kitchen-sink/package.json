@@ -9,8 +9,14 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@fraym/aethr": "workspace:*",
+    "@fraym/config": "workspace:*",
     "@fraym/driver": "workspace:*",
+    "@fraym/driver-test": "workspace:*",
+    "@fraym/fixtures": "workspace:*",
     "@fraym/ui": "workspace:*",
+    "@fraym/verber": "workspace:*",
+    "@fraym/vibr": "workspace:*",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },

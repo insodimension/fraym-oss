@@ -58,6 +58,8 @@ agent harness -> AgentEvent stream -> SessionThread
 - Typed message blocks, custom surfaces, scroll pinning, trace grouping, host approvals, permission modes, and context breakdowns exposed as reusable feature modules.
 - Small composable elements including forms, diagrams, session boundaries, decorative effects, liquid-glass surfaces, code, feedback, layout, and message metadata primitives.
 - Design tokens exposed as CSS custom properties and typed TypeScript references, with dark and light theme sets.
+- A standalone theme provider with named presets, accent inheritance, font pairings, reduced-motion handling, and portable JSON token catalogs.
+- Workspace packages for validated UI configuration, deterministic fixtures, driver conformance, working-language resolution, animated presence, and cinematic ambient scenes.
 - A kitchen-sink showcase with live knobs, generated usage snippets, prop documentation, and a replay-backed agent context for every entry.
 
 ## Explore the kitchen sink

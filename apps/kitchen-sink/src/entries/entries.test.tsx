@@ -6,6 +6,7 @@ import { entries } from "./index";
 import { initialKnobValues } from "../entry";
 import { createEntryDockFixture } from "../dock-fixtures";
 import { clampDockWidth } from "../DemoDock";
+import { ThemeProvider } from "@fraym/ui";
 
 describe("kitchen sink entries", () => {
   test("clamps persisted dock widths to the supported range", () => {
@@ -15,16 +16,26 @@ describe("kitchen sink entries", () => {
   });
 
   test("registers every current token, element, tool, and feature entry exactly once", () => {
-    expect(entries).toHaveLength(131);
+    expect(entries).toHaveLength(138);
     expect(new Set(entries.map((entry) => entry.id)).size).toBe(entries.length);
-    expect(entries.filter((entry) => entry.group === "elements")).toHaveLength(78);
+    expect(entries.filter((entry) => entry.group === "elements")).toHaveLength(
+      78,
+    );
     expect(entries.filter((entry) => entry.group === "tools")).toHaveLength(9);
   });
 
   test("renders every live demo and provides a usage snippet", () => {
     for (const entry of entries) {
       const values = initialKnobValues(entry.knobs);
-      expect(() => renderToStaticMarkup(createElement(entry.Demo, { values }))).not.toThrow();
+      expect(() =>
+        renderToStaticMarkup(
+          createElement(
+            ThemeProvider,
+            null,
+            createElement(entry.Demo, { values }),
+          ),
+        ),
+      ).not.toThrow();
       expect(entry.code(values).trim().length).toBeGreaterThan(0);
       expect(entry.importCode).toContain("@fraym/");
       expect(entry.examples.length).toBeGreaterThanOrEqual(2);
@@ -55,12 +66,18 @@ describe("kitchen sink entries", () => {
       const fixture = createEntryDockFixture(entry);
       expect(fixture[0]?.type).toBe("session.start");
       expect(fixture[1]?.type).toBe("user.message");
-      expect(fixture.some((event) => event.type === "assistant.message.delta")).toBe(true);
+      expect(
+        fixture.some((event) => event.type === "assistant.message.delta"),
+      ).toBe(true);
       expect(fixture.at(-1)?.type).toBe("session.done");
       expect(new Set(fixture.map((event) => event.sessionId)).size).toBe(1);
       if (entry.group === "tools") {
-        expect(fixture.some((event) => event.type === "tool_call.start")).toBe(true);
-        expect(fixture.some((event) => event.type === "tool_call.end")).toBe(true);
+        expect(fixture.some((event) => event.type === "tool_call.start")).toBe(
+          true,
+        );
+        expect(fixture.some((event) => event.type === "tool_call.end")).toBe(
+          true,
+        );
       }
     }
   });

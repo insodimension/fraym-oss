@@ -1,8 +1,14 @@
 {
   "files": [],
   "references": [
+    { "path": "./packages/config" },
     { "path": "./packages/driver" },
     { "path": "./packages/driver-acp" },
+    { "path": "./packages/driver-test" },
+    { "path": "./packages/fixtures" },
+    { "path": "./packages/verber" },
+    { "path": "./packages/vibr" },
+    { "path": "./packages/aethr" },
     { "path": "./packages/ui" },
     { "path": "./apps/web" },
     { "path": "./apps/kitchen-sink" }
