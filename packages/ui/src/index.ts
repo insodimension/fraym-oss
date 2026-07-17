@@ -1,6 +1,23 @@
 import "./styles.css";
 
-export { Thread, type ThreadProps } from "./Thread";
+export { Thread, ThreadView, type ThreadProps, type ThreadViewProps } from "./Thread";
+export { SessionThread, type SessionThreadProps } from "./SessionThread";
+export {
+  Composer,
+  ContextUsage,
+  type ComposerAttachment,
+  type ComposerProps,
+  type ComposerSubmission,
+} from "./Composer";
+export {
+  filterSlashCommands,
+  getComposerKeyAction,
+  slashQuery,
+  type ComposerKeyAction,
+  type ComposerKeyInput,
+  type SlashCommand,
+} from "./composer-state";
+export { useAgentSession, type AgentSessionSnapshot } from "./useAgentSession";
 export {
   accumulateToolOutput,
   createThreadState,

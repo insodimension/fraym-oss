@@ -1,4 +1,4 @@
-import { useEffect, useReducer } from "react";
+import type { ReactNode } from "react";
 
 import type { AgentEventStream } from "@fraym/driver";
 
@@ -7,20 +7,22 @@ import { ScrollArea } from "./elements/ScrollArea";
 import { StreamingMarkdown } from "./elements/StreamingMarkdown";
 import { ThinkingDots } from "./elements/ThinkingDots";
 import { classNames } from "./elements/utils";
-import { createThreadState, reduceThreadEvent } from "./thread-state";
+import type { ThreadState } from "./thread-state";
 import { ToolCall } from "./tool-renderers/ToolCall";
+import { useAgentSession } from "./useAgentSession";
 
 export interface ThreadProps {
   source: AgentEventStream;
   title?: string;
   className?: string;
+  transcriptFooter?: ReactNode;
 }
 
-export function Thread({ className, source, title = "Fraym thread" }: ThreadProps) {
-  const [state, dispatch] = useReducer(reduceThreadEvent, undefined, createThreadState);
+export interface ThreadViewProps extends Omit<ThreadProps, "source"> {
+  state: ThreadState;
+}
 
-  useEffect(() => source.subscribe(dispatch), [source]);
-
+export function ThreadView({ className, state, title = "Fraym thread", transcriptFooter }: ThreadViewProps) {
   return (
     <section aria-label={title} className={classNames("fraym-thread", className)}>
       <ScrollArea className="fraym-thread__scroll-area">
@@ -58,8 +60,21 @@ export function Thread({ className, source, title = "Fraym thread" }: ThreadProp
               </CardContent>
             </Card>
           ) : null}
+
+          {transcriptFooter ? <div className="fraym-thread__footer">{transcriptFooter}</div> : null}
         </div>
       </ScrollArea>
     </section>
   );
+}
+
+export function Thread({ className, source, title, transcriptFooter }: ThreadProps) {
+  const { state } = useAgentSession(source);
+  const viewProps = {
+    state,
+    ...(className === undefined ? {} : { className }),
+    ...(title === undefined ? {} : { title }),
+    ...(transcriptFooter === undefined ? {} : { transcriptFooter }),
+  };
+  return <ThreadView {...viewProps} />;
 }

@@ -5,6 +5,7 @@
 - [Purpose](#purpose)
 - [Foundation](#foundation)
 - [Tool renderers](#tool-renderers)
+- [Session surface](#session-surface)
 
 ## Purpose
 
@@ -17,3 +18,7 @@ The package exposes dark-first CSS custom-property tokens, typed token reference
 ## Tool renderers
 
 `ToolRendererProvider` adds typed tool-name renderers without coupling the thread to a harness. Providers merge when nested; resolution checks the exact name, a normalized lowercase name without `realm/` or `mcp__server__` prefixes, then the `"*"` fallback. Fraym ships read, edit, write, bash, search, todo, task, LSP, and generic fallback bodies inside the shared `ToolCard` disclosure shell.
+
+## Session surface
+
+`SessionThread` is the complete reusable conversation surface: the event-driven transcript, registered tool renderers, and the production `Composer` in one component. The composer supports auto-growth, Enter and Shift+Enter semantics, stop state while streaming, keyboard-navigable slash commands, pasted or dropped image previews, action slots, and a compact context-usage indicator. `Thread` remains available as the lower-level transcript-only primitive.

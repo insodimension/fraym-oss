@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, type CSSProperties } from "react";
 import { Badge, Button, Code, ScrollArea, Separator, Textarea } from "@fraym/ui";
 
 import {
@@ -12,7 +12,7 @@ import {
   type KnobValue,
 } from "./entry";
 import { entries } from "./entries";
-import { DemoDock } from "./DemoDock";
+import { clampDockWidth, DemoDock } from "./DemoDock";
 
 type ThemePreference = "dark" | "light" | "system";
 type ResolvedTheme = Exclude<ThemePreference, "system">;
@@ -136,13 +136,22 @@ function KnobControl({ knob, onChange, value }: { knob: Knob; onChange: (value: 
 function EntryPage({ entry }: { entry: Entry }) {
   const [values, setValues] = useState<Record<string, KnobValue>>(() => initialKnobValues(entry.knobs));
   const [dockOpen, setDockOpen] = useState(true);
+  const [dockWidth, setDockWidth] = useState(() => {
+    if (typeof window === "undefined") return 380;
+    const stored = Number(window.localStorage.getItem("fraym:sink:dock-width"));
+    return clampDockWidth(Number.isFinite(stored) && stored > 0 ? stored : 380);
+  });
   useEffect(() => setValues(initialKnobValues(entry.knobs)), [entry]);
+  useEffect(() => window.localStorage.setItem("fraym:sink:dock-width", String(dockWidth)), [dockWidth]);
   const Demo = entry.Demo;
   const generatedCode = entry.code(values);
   const update = (prop: string, value: KnobValue) => setValues((current) => ({ ...current, [prop]: value }));
 
+  const shellStyle = { "--sink-dock-current-width": `${dockWidth}px` } as CSSProperties;
+
   return (
-    <article className="sink-entry" data-dock-open={dockOpen}>
+    <div className="sink-entry-shell" data-dock-open={dockOpen} style={shellStyle}>
+    <article className="sink-entry">
       <header className="sink-entry-hero">
         <span className="sink-entry-tier">{entry.tier}</span>
         <h1>{entry.title}</h1>
@@ -164,8 +173,9 @@ function EntryPage({ entry }: { entry: Entry }) {
         <section className="sink-doc-block"><div className="sink-doc-block__heading"><h3>Examples</h3></div><div className="sink-example-list">{entry.examples.map((example) => <article className="sink-doc-example" key={example.title}><div><h4>{example.title}</h4><p>{example.description}</p></div><div><CopyButton label="Copy" value={example.code} /><Code block language="tsx">{example.code}</Code></div></article>)}</div></section>
         <section className="sink-doc-block"><div className="sink-doc-block__heading"><h3>Props</h3></div><div className="sink-props-wrap"><table className="sink-props"><thead><tr><th>Name</th><th>Type</th><th>Default</th><th>Description</th></tr></thead><tbody>{entry.props.map((prop) => <tr key={prop.name}><td><Code>{prop.name}</Code></td><td><Code>{prop.type}</Code></td><td>{prop.defaultValue}</td><td>{prop.description}</td></tr>)}</tbody></table></div></section>
       </section>
-      {dockOpen ? <DemoDock entry={entry} onClose={() => setDockOpen(false)} values={values} /> : null}
     </article>
+      {dockOpen ? <DemoDock entry={entry} onClose={() => setDockOpen(false)} onWidthChange={setDockWidth} values={values} width={dockWidth} /> : null}
+    </div>
   );
 }
 

@@ -5,10 +5,17 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { entries } from "./index";
 import { initialKnobValues } from "../entry";
 import { createEntryDockFixture } from "../dock-fixtures";
+import { clampDockWidth } from "../DemoDock";
 
 describe("kitchen sink entries", () => {
+  test("clamps persisted dock widths to the supported range", () => {
+    expect(clampDockWidth(120)).toBe(320);
+    expect(clampDockWidth(506)).toBe(506);
+    expect(clampDockWidth(1200)).toBe(720);
+  });
+
   test("registers every current token, element, tool, and feature entry exactly once", () => {
-    expect(entries).toHaveLength(28);
+    expect(entries).toHaveLength(29);
     expect(new Set(entries.map((entry) => entry.id)).size).toBe(entries.length);
     expect(entries.filter((entry) => entry.group === "elements")).toHaveLength(17);
     expect(entries.filter((entry) => entry.group === "tools")).toHaveLength(9);

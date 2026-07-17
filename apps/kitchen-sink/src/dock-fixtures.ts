@@ -22,6 +22,7 @@ const prompts: Readonly<Record<string, string>> = {
   "message-actions": "Add the usual actions beneath the agent response.",
   "message-usage": "Show the token usage for this completed turn.",
   "streaming-thread": "Replay a complete coding-agent turn in this surface.",
+  composer: "Give me a composer for a precise follow-up with image context.",
   "tool-read": "Open the session reducer so I can understand the event flow.",
   "tool-edit": "Update the server to read its port from the environment.",
   "tool-write": "Add a focused regression test for session startup.",

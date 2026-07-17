@@ -1,7 +1,7 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { codingSessionFixture, createReplayDriver } from "@fraym/driver";
-import { Thread } from "@fraym/ui";
+import { SessionThread } from "@fraym/ui";
 
 import "./styles.css";
 
@@ -20,7 +20,7 @@ createRoot(root).render(
         <h1>Agent UI playground</h1>
         <p>A replayed coding-agent session, rendered from the typed driver stream.</p>
       </header>
-      <Thread source={replay} />
+      <SessionThread contextUsage={38} model="fraym/replay" source={replay} title="Coding agent replay" />
     </main>
   </StrictMode>,
 );
