@@ -52,9 +52,10 @@ agent harness -> AgentEvent stream -> SessionThread
 
 - `SessionThread`, the complete reusable conversation surface with the transcript and composer together.
 - Streaming assistant Markdown, collapsible reasoning traces, inline approvals, errors, and user message rows.
-- A production composer with auto-growth, submit and stop states, slash commands, image attachments, action slots, and context usage.
+- A production composer with auto-growth, submit and stop states, slash commands, file mentions, image and text-file attachments, neutral paste disclosures, session drafts, action slots, and context usage.
 - A nested `ToolRendererProvider` registry with exact, normalized, and fallback resolution for namespaced tool names.
 - Built-in cards for read, edit, write, bash, search, todo, task, and LSP calls, plus a clean generic fallback.
+- Typed message blocks, custom surfaces, scroll pinning, trace grouping, host approvals, permission modes, and context breakdowns exposed as reusable feature modules.
 - Small composable elements including forms, diagrams, session boundaries, decorative effects, liquid-glass surfaces, code, feedback, layout, and message metadata primitives.
 - Design tokens exposed as CSS custom properties and typed TypeScript references, with dark and light theme sets.
 - A kitchen-sink showcase with live knobs, generated usage snippets, prop documentation, and a replay-backed agent context for every entry.

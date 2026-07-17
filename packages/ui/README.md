@@ -7,6 +7,7 @@
 - [Elements](#elements)
 - [Renderer registries](#renderer-registries)
 - [Shared components](#shared-components)
+- [Chat feature modules](#chat-feature-modules)
 - [Tool renderers](#tool-renderers)
 - [Session surface](#session-surface)
 - [Approvals and reasoning](#approvals-and-reasoning)
@@ -35,13 +36,21 @@ The same provider pattern powers message blocks, host-request/custom-message sur
 
 Reusable renderer-facing components are available from `@fraym/ui/components`: `DiffBlock`, `Collapsible`, coordinated menus, `ConfirmDialog`, `PageHeader`, filter pills, `InputGroup`, responsive `SelectorMenu`, `BottomSheet`, and `DockSplit`.
 
+## Chat feature modules
+
+The `@fraym/ui/features` entry point contains the complete host-neutral chat surface contract. Thread and message modules compose typed blocks through the renderer registries, preserve scroll position while a turn streams or collapses, group adjacent work traces, and expose message actions without binding to a session store. Tool-card and tool-metadata modules provide the shared body, expansion, grouping, and density policies consumed by registry renderers.
+
+The composer accepts controlled or local drafts, slash commands, file mentions, image attachments, ordinary file attachments, and length-delimited `[[paste:...]]` disclosures. Session-keyed draft helpers preserve unsent work across remounts. Optional goal, quota, context, and permission surfaces consume typed props and callbacks; hosts supply their own data rather than importing a product runtime.
+
+Host UI requests use one approval pipeline across modal, docked, and phone-sheet placements. Select, input, confirm, permission, and typed-field requests share the same response contract, while unknown request kinds retain a safe fallback. Permission menus and context breakdowns are responsive standalone features and do not require the complete thread.
+
 ## Tool renderers
 
 `ToolRendererProvider` adds typed tool-name renderers without coupling the thread to a harness. Providers merge when nested; resolution checks the exact name, a normalized lowercase name without `realm/` or `mcp__server__` prefixes, then the `"*"` fallback. Fraym ships read, edit, write, bash, search, todo, task, LSP, and generic fallback bodies inside the shared `ToolCard` disclosure shell.
 
 ## Session surface
 
-`SessionThread` is the complete reusable conversation surface: the event-driven transcript, registered tool renderers, and the production `Composer` in one component. The composer supports auto-growth, Enter and Shift+Enter semantics, stop state while streaming, keyboard-navigable slash commands, pasted or dropped image previews, action slots, and a compact context-usage indicator. `Thread` remains available as the lower-level transcript-only primitive.
+`SessionThread` is the complete reusable conversation surface: the event-driven transcript, registered tool renderers, and the production `Composer` in one component. The composer supports auto-growth, Enter and Shift+Enter semantics, stop state while streaming, keyboard-navigable slash commands, image and text-file attachments, neutral large-paste disclosures, action slots, and a compact context-usage indicator. `Thread` remains available as the lower-level transcript-only primitive.
 
 ## Approvals and reasoning
 
