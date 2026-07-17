@@ -547,6 +547,52 @@
 .fraym-error-boundary__panel > pre { background: var(--fraym-color-surface-2); border: 1px solid var(--fraym-color-border-soft); border-radius: var(--fraym-radius-md); color: var(--fraym-color-text-2); max-height: 160px; overflow: auto; padding: 10px; white-space: pre-wrap; }
 .fraym-error-boundary__panel > div { display: flex; gap: 8px; margin-top: 16px; }
 
+/* Decorative elements */
+.fraym-chroma-grid,
+.fraym-click-spark,
+.fraym-dot-grid,
+.fraym-electric-border,
+.fraym-glare-hover,
+.fraym-gradient-text,
+.fraym-gradual-blur,
+.fraym-star-border { position: relative; }
+.fraym-chroma-grid__layer,
+.fraym-dot-grid__pattern,
+.fraym-dot-grid__glow,
+.fraym-glare-hover__layer { inset: 0; pointer-events: none; position: absolute; }
+.fraym-chroma-grid__layer { border-radius: inherit; inset: 0; pointer-events: none; position: absolute; transition: opacity 500ms ease; z-index: 2; }
+.fraym-chroma-grid__rest { z-index: 3; }
+.fraym-click-spark__canvas { height: 100%; inset: 0; pointer-events: none; position: absolute; width: 100%; }
+.fraym-dot-grid { isolation: isolate; overflow: hidden; }
+.fraym-dot-grid__pattern { background-image: radial-gradient(circle, color-mix(in srgb, var(--fraym-color-text) 13%, transparent) 1px, transparent 1px); background-size: 16px 16px; z-index: -2; }
+.fraym-dot-grid__glow { background: radial-gradient(circle at 50% 15%, color-mix(in srgb, var(--fraym-color-accent) 12%, transparent), transparent 58%); z-index: -1; }
+.fraym-magnet { display: inline-block; position: relative; }
+.fraym-noise-overlay { image-rendering: pixelated; inset: 0; pointer-events: none; position: absolute; }
+.fraym-gradual-blur { height: 100%; pointer-events: none; width: 100%; }
+.fraym-gradual-blur__stack { height: 100%; position: relative; width: 100%; }
+.fraym-gradual-blur__layer { inset: 0; position: absolute; }
+.fraym-glare-hover { overflow: hidden; position: relative; }
+.fraym-glare-hover__layer { z-index: 1; }
+.fraym-gradient-text { align-items: center; display: inline-flex; isolation: isolate; max-width: max-content; }
+.fraym-gradient-text--bordered { border-radius: 999px; padding: 7px 14px; }
+.fraym-gradient-text__rim { border-radius: inherit; inset: 0; overflow: hidden; position: absolute; z-index: -1; }
+.fraym-gradient-text__rim::after { background: var(--fraym-color-surface); border-radius: inherit; content: ""; inset: 2px; position: absolute; }
+.fraym-gradient-text__content,
+.fraym-shiny-text { background-clip: text; -webkit-background-clip: text; color: transparent; -webkit-text-fill-color: transparent; }
+.fraym-shiny-text { display: inline-block; }
+.fraym-star-border { display: inline-block; isolation: isolate; overflow: hidden; }
+.fraym-star-border__star { border-radius: 50%; height: 50%; opacity: .7; position: absolute; width: 300%; z-index: 0; }
+.fraym-star-border__star--upper { left: -250%; top: -12px; }
+.fraym-star-border__star--lower { bottom: -12px; right: -250%; }
+.fraym-star-border__content { background: var(--fraym-color-surface); border: 1px solid var(--fraym-color-border-soft); border-radius: inherit; display: block; position: relative; z-index: 1; }
+.fraym-electric-border { border-radius: var(--electric-radius); isolation: isolate; }
+.fraym-electric-border__filter { height: 0; position: absolute; width: 0; }
+.fraym-electric-border__edge { border: var(--electric-width) solid var(--electric-color); border-radius: inherit; box-sizing: border-box; inset: 0; pointer-events: none; position: absolute; }
+.fraym-electric-border__edge--near { border-color: color-mix(in srgb, var(--electric-color) 60%, transparent); }
+.fraym-electric-border__edge--far { opacity: .6; }
+.fraym-electric-border__bloom { background: linear-gradient(-30deg, var(--electric-color), transparent, var(--electric-color)); border-radius: inherit; filter: blur(32px); inset: 0; opacity: .3; pointer-events: none; position: absolute; transform: scale(1.05); z-index: -1; }
+.fraym-electric-border__content { border-radius: inherit; position: relative; z-index: 1; }
+
 @media (prefers-reduced-motion: reduce) {
   .fraym-spinner__ring,
   .fraym-spinner i,
