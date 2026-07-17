@@ -3,6 +3,7 @@ import { createRoot } from "react-dom/client";
 
 import { App } from "./App";
 import "./styles.css";
+import "./index.css";
 import "@fraym/ui/fonts.css";
 import "@fraym/ui/theme.css";
 import "@fraym/vibr/avatars.css";
