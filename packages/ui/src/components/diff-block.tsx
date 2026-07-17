@@ -1,0 +1,8 @@
+import type { ReactNode } from "react";
+import { classNames } from "../elements/utils";
+export type DiffLineKind = "ctx" | "add" | "del";
+export interface DiffLine { readonly kind: DiffLineKind; readonly lineNo: string; readonly code: string }
+export interface DiffBlockProps { readonly path: string; readonly added: number; readonly deleted?: number; readonly isNew?: boolean; readonly lines: readonly DiffLine[]; readonly className?: string }
+const keywords = new Set(["import", "from", "const", "let", "export", "async", "function", "return", "if", "new", "await", "class", "type", "interface"]);
+function codeTokens(code: string): ReactNode[] { return code.split(/(\b[\w$]+\b|'[^']*')/g).map((part, index) => part.startsWith("'") ? <span className="fraym-diff-block__string" key={index}>{part}</span> : keywords.has(part) ? <span className="fraym-diff-block__keyword" key={index}>{part}</span> : part); }
+export function DiffBlock({ path, added, deleted = 0, isNew, lines, className }: DiffBlockProps) { return <div className={classNames("fraym-diff-block", className)} data-slot="diff-block"><div className="fraym-diff-block__head"><span aria-hidden="true">▧</span><span>{path}</span>{isNew ? <span className="fraym-diff-block__new">new</span> : null}<span className="fraym-diff-block__stats"><span>+{added}</span>{deleted > 0 ? <span>−{deleted}</span> : null}</span></div><div className="fraym-diff-block__code">{lines.map((line, index) => <div className={classNames("fraym-diff-block__line", `is-${line.kind}`)} key={`${line.lineNo}-${index}`}><span>{line.lineNo}</span><code>{codeTokens(line.code)}</code></div>)}</div></div>; }

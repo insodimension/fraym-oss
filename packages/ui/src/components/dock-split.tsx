@@ -1,0 +1,4 @@
+import type { MouseEventHandler, ReactNode } from "react";
+import { classNames } from "../elements/utils";
+export interface DockSplitProps { readonly label: ReactNode; readonly onToggle?: MouseEventHandler<HTMLButtonElement>; readonly onCaret?: MouseEventHandler<HTMLButtonElement>; readonly className?: string }
+export function DockSplit({ label, onToggle, onCaret, className }: DockSplitProps) { return <div className={classNames("fraym-dock-split", className)} data-slot="dock-split"><button className="fraym-dock-split__main" data-slot="dock-split-main" onClick={onToggle} type="button"><span aria-hidden="true">▣</span>{label}</button><button aria-label="Open dock menu" className="fraym-dock-split__caret" data-slot="dock-split-caret" onClick={onCaret} type="button"><span aria-hidden="true">⌄</span></button></div>; }
