@@ -11,6 +11,18 @@ export const codingSessionFixture: readonly AgentEvent[] = [
     content: "Add request rate limiting to the API, cover it with a test, and make sure the workspace stays clean.",
   },
   {
+    type: "reasoning.delta",
+    sessionId,
+    messageId: "assistant-1",
+    delta: "I need to understand the server boundary and existing test conventions. ",
+  },
+  {
+    type: "reasoning.delta",
+    sessionId,
+    messageId: "assistant-1",
+    delta: "I will inspect before changing anything.",
+  },
+  {
     type: "assistant.message.delta",
     sessionId,
     messageId: "assistant-1",
@@ -102,6 +114,12 @@ export const codingSessionFixture: readonly AgentEvent[] = [
     sessionId,
     messageId: "assistant-1",
     delta: "The app export is already testable. I’ll add a local middleware with no new runtime dependency.\n\n",
+  },
+  {
+    type: "approval.request",
+    sessionId,
+    approvalId: "apply-rate-limit",
+    prompt: "Apply the rate-limit middleware and add its regression test?",
   },
   {
     type: "tool_call.start",

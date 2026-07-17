@@ -20,6 +20,8 @@ describe("codingSessionFixture", () => {
     expect(starts).toHaveLength(9);
     expect(ends).toHaveLength(9);
     expect(new Set(starts.map((event) => event.toolCallId)).size).toBe(9);
+    expect(codingSessionFixture.some((event) => event.type === "reasoning.delta")).toBe(true);
+    expect(codingSessionFixture.some((event) => event.type === "approval.request")).toBe(true);
     expect(codingSessionFixture.at(-1)?.type).toBe("session.done");
   });
 });

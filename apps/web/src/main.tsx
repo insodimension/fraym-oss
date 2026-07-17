@@ -20,7 +20,13 @@ createRoot(root).render(
         <h1>Agent UI playground</h1>
         <p>A replayed coding-agent session, rendered from the typed driver stream.</p>
       </header>
-      <SessionThread contextUsage={38} model="fraym/replay" source={replay} title="Coding agent replay" />
+      <SessionThread
+        contextUsage={38}
+        model="fraym/replay"
+        onApprovalResponse={replay.respondToApproval}
+        source={replay}
+        title="Coding agent replay"
+      />
     </main>
   </StrictMode>,
 );

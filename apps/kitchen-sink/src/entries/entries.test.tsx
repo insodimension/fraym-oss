@@ -15,7 +15,7 @@ describe("kitchen sink entries", () => {
   });
 
   test("registers every current token, element, tool, and feature entry exactly once", () => {
-    expect(entries).toHaveLength(29);
+    expect(entries).toHaveLength(31);
     expect(new Set(entries.map((entry) => entry.id)).size).toBe(entries.length);
     expect(entries.filter((entry) => entry.group === "elements")).toHaveLength(17);
     expect(entries.filter((entry) => entry.group === "tools")).toHaveLength(9);

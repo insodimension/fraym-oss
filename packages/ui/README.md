@@ -6,6 +6,7 @@
 - [Foundation](#foundation)
 - [Tool renderers](#tool-renderers)
 - [Session surface](#session-surface)
+- [Approvals and reasoning](#approvals-and-reasoning)
 
 ## Purpose
 
@@ -22,3 +23,7 @@ The package exposes dark-first CSS custom-property tokens, typed token reference
 ## Session surface
 
 `SessionThread` is the complete reusable conversation surface: the event-driven transcript, registered tool renderers, and the production `Composer` in one component. The composer supports auto-growth, Enter and Shift+Enter semantics, stop state while streaming, keyboard-navigable slash commands, pasted or dropped image previews, action slots, and a compact context-usage indicator. `Thread` remains available as the lower-level transcript-only primitive.
+
+## Approvals and reasoning
+
+`SessionThread` renders `approval.request` events as inline decision cards and forwards the resulting typed `approval.response` through `onApprovalResponse`. Resolved cards remain in the chronological transcript as compact records. Streamed `reasoning.delta` events accumulate by message ID in a muted, collapsed `ReasoningRow`; the active row shows a thinking indicator and the complete trace remains expandable.

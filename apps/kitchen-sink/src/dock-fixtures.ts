@@ -23,6 +23,8 @@ const prompts: Readonly<Record<string, string>> = {
   "message-usage": "Show the token usage for this completed turn.",
   "streaming-thread": "Replay a complete coding-agent turn in this surface.",
   composer: "Give me a composer for a precise follow-up with image context.",
+  "approval-card": "Apply the proposed patch after you finish reviewing it.",
+  "reasoning-row": "Think through the safest way to extend this event stream.",
   "tool-read": "Open the session reducer so I can understand the event flow.",
   "tool-edit": "Update the server to read its port from the environment.",
   "tool-write": "Add a focused regression test for session startup.",
@@ -109,10 +111,24 @@ export function createEntryDockFixture(entry: Entry): readonly AgentEvent[] {
       output: dockTool.output,
     },
   ];
+  const conversationEvents: readonly AgentEvent[] = entry.id === "approval-card"
+    ? [{
+        type: "approval.request",
+        sessionId,
+        approvalId: `${sessionId}-approval`,
+        prompt: "Apply the reviewed patch to the workspace?",
+      }]
+    : entry.id === "reasoning-row"
+      ? [
+          { type: "reasoning.delta", sessionId, messageId, delta: "The event contract should stay framework agnostic. " },
+          { type: "reasoning.delta", sessionId, messageId, delta: "I can accumulate the trace in the UI reducer and keep it collapsed by default." },
+        ]
+      : [];
 
   return [
     ...opening,
     ...toolEvents,
+    ...conversationEvents,
     {
       type: "assistant.message.delta",
       sessionId,

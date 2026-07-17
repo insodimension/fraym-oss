@@ -36,7 +36,10 @@ export function DemoDock({ entry, onClose, onWidthChange, values, width }: DemoD
   const [replayId, setReplayId] = useState(0);
   const fixture = useMemo(() => createEntryDockFixture(entry), [entry]);
   const source = useMemo(
-    () => createReplayDriver(fixture, { delay: replayDelays[speed] }),
+    () => createReplayDriver(fixture, {
+      delay: replayDelays[speed],
+      autoRespond: { decision: "approved", delay: replayDelays[speed] * 2 },
+    }),
     [fixture, replayId, speed],
   );
   const Demo = entry.Demo;
@@ -93,6 +96,7 @@ export function DemoDock({ entry, onClose, onWidthChange, values, width }: DemoD
         contextUsage={38}
         key={`${entry.id}-${replayId}-${speed}`}
         model="fraym/replay"
+        onApprovalResponse={source.respondToApproval}
         onCommand={(command) => { if (command.name === "replay") setReplayId((value) => value + 1); }}
         source={source}
         title={`${entry.title} contextual replay`}
