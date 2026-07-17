@@ -103,8 +103,8 @@ function Landing({ onSelect }: { onSelect: (id: string) => void }) {
     <div className="sink-landing">
       <section className="sink-intro-hero">
         <Badge tone="accent">Open source React UI for coding agents</Badge>
-        <h1>Turn agent events into a complete React interface.</h1>
-        <p>Fraym gives agentic products a typed, composable interface for streaming conversations, tools, and approvals.</p>
+        <h1>Render complete agent sessions from one typed event stream.</h1>
+        <p>Fraym gives React products composable UI for streaming conversations, tools, and approvals.</p>
       </section>
       <section className="sink-driver-story">
         <div><span className="sink-section-label">The driver pattern</span><h2>One event contract. Any harness.</h2></div>
@@ -121,7 +121,7 @@ function Landing({ onSelect }: { onSelect: (id: string) => void }) {
           <p>Watch one typed stream render messages, reasoning, tools, and an approval.</p>
         </div>
         <div className="sink-get-started__actions">
-          <Button variant="primary" onClick={() => onSelect("streaming-thread")}>Open live thread</Button>
+          <Button variant="primary" onClick={() => onSelect("streaming-thread")}>Watch live thread</Button>
           <div className="sink-import-chip sink-install-chip">
             <Code>npm i @fraym/ui</Code>
             <CopyButton label="Copy" value="npm i @fraym/ui" />
