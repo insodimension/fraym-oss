@@ -8,8 +8,10 @@ export { ClickSpark, type ClickSparkEasing, type ClickSparkProps } from "./Click
 export { Code, highlightCode, type CodeProps } from "./Code";
 export { CodeBlock, type CodeBlockProps, canSyntaxHighlight, HighlightedCode, type HighlightedCodeProps, MAX_FILE_HIGHLIGHT_CHARS, MAX_HIGHLIGHT_CHARS } from "./CodeBlock";
 export { CollapseRegion, type CollapseRegionProps } from "./CollapseRegion";
+export { CompactionSplit, type CompactionSplitProps } from "./CompactionSplit";
 export { CopyButton, type CopyButtonProps } from "./CopyButton";
 export { DotGridBackdrop, type DotGridBackdropProps } from "./DotGridBackdrop";
+export { DiagramTag, type DiagramTagProps, type DiagramTagTone } from "./DiagramTag";
 export { ElectricBorder, type ElectricBorderProps } from "./ElectricBorder";
 export { ErrorBoundary, type ErrorBoundaryFallbackProps, type ErrorBoundaryProps } from "./ErrorBoundary";
 export { Field, type FieldProps } from "./Field";
@@ -24,6 +26,7 @@ export { Kbd, type KbdProps } from "./Kbd";
 export { Label, type LabelProps } from "./Label";
 export * from "./liquid-glass";
 export { Magnet, type MagnetProps } from "./Magnet";
+export { MermaidDiagram, type MermaidDiagramProps } from "./MermaidDiagram";
 export { useHoverCapable, useReducedMotion } from "./MediaQueries";
 export { formatMessageTime, type MessageAction, MessageActions, type MessageActionsProps } from "./MessageActions";
 export { formatTokenCount, MessageUsage, type MessageUsageProps, type TurnUsageLike } from "./MessageUsage";
@@ -34,6 +37,8 @@ export { Modal, type ModalProps, PopoverDivider, PopoverHeading, PopoverPanel, t
 export { Radio, type RadioProps } from "./Radio";
 export { RollingNumber, type RollingNumberProps } from "./RollingNumber";
 export { ScrollArea, type ScrollAreaProps } from "./ScrollArea";
+export { continuationLabel, SessionContinuationSplit, type SessionContinuationSplitProps } from "./SessionContinuationSplit";
+export { type OpenSession, SessionLink, type SessionLinkProps, SessionNavigationProvider, type SessionTarget, useSessionNavigation } from "./SessionLink";
 export { Select, type SelectOption, type SelectProps, selectVariants } from "./Select";
 export { Separator, type SeparatorProps } from "./Separator";
 export { ShinyText, type ShinyTextProps } from "./ShinyText";

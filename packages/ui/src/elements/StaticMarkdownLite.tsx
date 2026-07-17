@@ -2,6 +2,7 @@ import { Fragment, memo, type ReactNode, useMemo } from "react";
 
 import { CodeBlock } from "./CodeBlock";
 import { FileMentionPill, looksLikeFilePath, renderTextWithMentions } from "./FileMention";
+import { SessionLink } from "./SessionLink";
 import { classNames } from "./utils";
 
 export interface StaticMarkdownLiteProps { text: string; className?: string }
@@ -32,8 +33,9 @@ function inline(text: string, keyPrefix: string): ReactNode[] {
     } else if (token.startsWith("[")) {
       const link = /^\[([^\]]+)\]\(([^)]+)\)$/.exec(token);
       const href = link?.[2] ?? "";
+      const session = parseSessionHref(href);
       const safe = /^(https?:|mailto:|#|\/)/i.test(href);
-      nodes.push(safe ? <a href={href} key={`${keyPrefix}-${start}`} rel="noopener noreferrer" target={/^https?:/i.test(href) ? "_blank" : undefined}>{link?.[1]}</a> : <span key={`${keyPrefix}-${start}`}>{link?.[1]}</span>);
+      nodes.push(session ? <SessionLink key={`${keyPrefix}-${start}`} label={link?.[1] ?? "Open session"} {...session} /> : safe ? <a href={href} key={`${keyPrefix}-${start}`} rel="noopener noreferrer" target={/^https?:/i.test(href) ? "_blank" : undefined}>{link?.[1]}</a> : <span key={`${keyPrefix}-${start}`}>{link?.[1]}</span>);
     } else if (token.startsWith("**")) nodes.push(<strong key={`${keyPrefix}-${start}`}>{inline(token.slice(2, -2), `${keyPrefix}-b${start}`)}</strong>);
     else if (token.startsWith("~~")) nodes.push(<del key={`${keyPrefix}-${start}`}>{inline(token.slice(2, -2), `${keyPrefix}-d${start}`)}</del>);
     else if (token.startsWith("*")) nodes.push(<em key={`${keyPrefix}-${start}`}>{inline(token.slice(1, -1), `${keyPrefix}-e${start}`)}</em>);

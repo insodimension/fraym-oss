@@ -605,6 +605,41 @@
 .fraym-liquid-glass__button:disabled { cursor: default; opacity: .4; pointer-events: none; }
 .fraym-liquid-glass__button-lens { inset: 0; position: absolute; z-index: -1; }
 .fraym-liquid-glass__button > span { position: relative; }
+.fraym-diagram-tag { font: 600 10px/1 var(--fraym-font-mono); letter-spacing: .06em; margin-right: .45rem; }
+.fraym-diagram-tag--accent { color: var(--fraym-color-accent); }
+.fraym-diagram-tag--iris { color: var(--fraym-color-iris); }
+.fraym-diagram-tag--blue { color: var(--fraym-color-info); }
+.fraym-diagram-tag--green { color: var(--fraym-color-success); }
+.fraym-diagram-tag--warn { color: var(--fraym-color-warning); }
+.fraym-diagram-tag--muted { color: var(--fraym-color-text-3); }
+.fraym-context-split { display: flex; flex-direction: column; gap: 4px; }
+.fraym-context-split__row,
+.fraym-continuation-split { align-items: center; display: flex; gap: 16px; }
+.fraym-context-split__line { background: var(--fraym-color-border-soft); flex: 1; height: 1px; }
+.fraym-context-split__line.is-done { background: var(--fraym-color-accent-line); }
+.fraym-context-split__label,
+.fraym-continuation-split__label { color: var(--fraym-color-text-3); flex: none; font: 400 var(--fraym-type-caption)/1.4 var(--fraym-font-mono); white-space: nowrap; }
+.fraym-context-split__summary { color: color-mix(in srgb, var(--fraym-color-text-3) 70%, transparent); display: -webkit-box; font: 400 var(--fraym-type-caption)/1.4 var(--fraym-font-mono); -webkit-line-clamp: 2; -webkit-box-orient: vertical; margin: 0 auto; max-width: 42rem; overflow: hidden; padding-inline: 32px; text-align: center; }
+.fraym-continuation-split__label { align-items: center; display: flex; gap: 8px; }
+.fraym-continuation-split__label > svg,
+.fraym-session-link > svg { fill: none; height: 12px; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.5; width: 12px; }
+.fraym-session-link { gap: 4px; height: 24px; padding-inline: 8px; }
+.fraym-session-link__fallback { color: var(--fraym-color-text-2); }
+.fraym-mermaid { margin-block: 8px; position: relative; }
+.fraym-mermaid__expand { align-items: center; backdrop-filter: blur(8px); background: color-mix(in srgb, var(--fraym-color-surface-2) 90%, transparent); border: 1px solid var(--fraym-color-border); border-radius: 6px; color: var(--fraym-color-text-2); cursor: pointer; display: flex; font: 400 var(--fraym-type-eyebrow)/1 var(--fraym-font-sans); gap: 4px; padding: 5px 8px; position: absolute; right: 6px; top: 6px; z-index: 1; }
+.fraym-mermaid__expand:hover { color: var(--fraym-color-text); }
+.fraym-mermaid__expand svg { fill: none; height: 12px; stroke: currentColor; stroke-width: 1.5; width: 12px; }
+.fraym-mermaid__diagram { display: grid; max-height: 340px; min-height: 120px; overflow: auto; place-items: center; }
+.fraym-mermaid__diagram svg { display: block; height: auto; max-width: 100% !important; width: auto !important; }
+.fraym-mermaid--loading { animation: fraym-soft-blink 1.5s ease-in-out infinite; background: var(--fraym-color-surface-2); border-radius: 8px; height: 80px; }
+.fraym-mermaid--error { background: var(--fraym-color-surface-2); border-radius: 8px; padding: 8px 12px; }
+.fraym-mermaid--error strong { color: var(--fraym-color-danger); font-size: var(--fraym-type-caption); }
+.fraym-mermaid--error pre { color: var(--fraym-color-text-2); font: 400 var(--fraym-type-caption)/1.5 var(--fraym-font-mono); margin: 4px 0 0; overflow-x: auto; }
+.fraym-mermaid__lightbox { align-items: center; backdrop-filter: blur(4px); background: rgb(0 0 0 / .85); display: flex; inset: 0; justify-content: center; padding: 24px; position: fixed; z-index: 2000; }
+.fraym-mermaid__close { align-items: center; background: rgb(255 255 255 / .1); border: 0; border-radius: 999px; color: white; cursor: pointer; display: flex; font-size: 24px; height: 36px; justify-content: center; position: absolute; right: 16px; top: 16px; width: 36px; z-index: 1; }
+.fraym-mermaid__pan { background: var(--fraym-color-surface); border-radius: 10px; cursor: grab; height: 92vh; overflow: auto; padding: 24px; touch-action: none; width: 96vw; }
+.fraym-mermaid__pan:active { cursor: grabbing; }
+.fraym-mermaid__pan svg { height: auto; max-width: none !important; width: auto !important; }
 
 @media (prefers-reduced-motion: reduce) {
   .fraym-spinner__ring,
