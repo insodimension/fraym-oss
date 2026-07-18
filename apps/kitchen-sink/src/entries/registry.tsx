@@ -1,5 +1,7 @@
 import type { TierDef } from "../showcase/types";
-import { componentsEntries, elementsEntries, featuresEntries, pagesEntries, tokenEntries } from "./showcase-catalog";
+import { componentsEntries } from "./components";
+import { elementsEntries } from "./elements";
+import { featuresEntries } from "./features";
 import { guideEntries } from "./guide";
 import { tokensEntries } from "./tokens";
 
@@ -14,7 +16,7 @@ export const TIERS: readonly TierDef[] = [
 		id: "tokens",
 		label: "Tokens",
 		intro: "Design values — color, type, space. Knows nothing about components.",
-		entries: [...tokensEntries, ...tokenEntries],
+		entries: tokensEntries,
 	},
 	{
 		id: "elements",
@@ -34,5 +36,4 @@ export const TIERS: readonly TierDef[] = [
 		intro: "Domain-aware product surfaces, most bound to the session driver.",
 		entries: featuresEntries,
 	},
-	{ id: "pages", label: "Pages", intro: "Full screens assembled from features.", entries: pagesEntries },
 ];
