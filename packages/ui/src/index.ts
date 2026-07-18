@@ -1,6 +1,5 @@
 import "./styles.css";
 
-export * from "./backgrounds";
 export { Icon, type IconProps, toolIconNode } from "./icons/icon";
 export { type IconName, iconPaths } from "./icons/paths";
 export { cn } from "./lib/cn";

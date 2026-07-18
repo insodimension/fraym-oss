@@ -12,11 +12,11 @@ describe("kitchen sink entries", () => {
 		expect(TIERS.map(tier => [tier.id, tier.entries.length])).toEqual([
 			["guide", 7],
 			["tokens", 4],
-			["elements", 60],
+			["elements", 42],
 			["components", 9],
 			["features", 42],
 		]);
-		expect(entries).toHaveLength(122);
+		expect(entries).toHaveLength(104);
 		expect(new Set(entries.map(entry => entry.id)).size).toBe(entries.length);
 	});
 

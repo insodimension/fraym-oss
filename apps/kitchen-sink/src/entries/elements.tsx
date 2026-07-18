@@ -56,15 +56,10 @@ import { useControls } from "../showcase/controls";
 import { Demo, Note } from "../showcase/demo";
 import type { EntryDocs } from "../showcase/docs";
 import { type ShowcaseEntry, withGroup } from "../showcase/types";
-import { backgroundsEntries } from "./backgrounds";
 import { borderEffectsEntries } from "./border-effects-entry";
 import { chromaGridEntries } from "./chroma-grid-entry";
-import { ditherWaveEntries } from "./dither-wave-entry";
 import { interactiveBitsEntries } from "./interactive-bits-entry";
-import { lightningChromeEntries } from "./lightning-chrome-entry";
 import { liquidGlassEntries } from "./liquid-glass-entry";
-import { orbParticlesEntries } from "./orb-particles-entry";
-import { silkWaveEntries } from "./silk-wave-entry";
 import { textShineEntries } from "./text-shine-entry";
 
 function ButtonEntry() {
@@ -2906,11 +2901,4 @@ export const elementsEntries: readonly ShowcaseEntry[] = [
 		...interactiveBitsEntries,
 	]),
 	...withGroup("Material", liquidGlassEntries),
-	...withGroup("Backgrounds", [
-		...backgroundsEntries,
-		...silkWaveEntries,
-		...ditherWaveEntries,
-		...lightningChromeEntries,
-		...orbParticlesEntries,
-	]),
 ];
