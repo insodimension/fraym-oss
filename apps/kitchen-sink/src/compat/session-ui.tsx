@@ -1,12 +1,11 @@
 import type { AgentEvent, AgentEventStream, SessionDriver, SessionDriverEvent, SessionRef } from "@fraym/driver";
 import {
-	Composer as PublicComposer,
+	Composer,
 	GoalComposerSurface,
 	MessageBlockProvider,
 	Thread as PublicThread,
 	ToolDisplaySettingsProvider,
 	ToolRendererProvider,
-	type ComposerProps as PublicComposerProps,
 	type FraymDensity,
 	type MessageBlockRendererMap,
 	type ToolDefaultOpen,
@@ -21,7 +20,7 @@ import {
 } from "react";
 import { cn, Icon, type IconName } from "./ui";
 
-export { GoalComposerSurface, MessageBlockProvider, ToolDisplaySettingsProvider, ToolRendererProvider };
+export { Composer, GoalComposerSurface, MessageBlockProvider, ToolDisplaySettingsProvider, ToolRendererProvider };
 export type { FraymDensity, IconName, MessageBlockRendererMap, ToolDefaultOpen, ToolDisplaySettings, ToolRendererMap };
 export { cn, Icon };
 
@@ -107,12 +106,4 @@ type ConnectedThreadProps = Omit<React.ComponentProps<typeof PublicThread>, "sou
 export function ConnectedMessageThread({ presence: _presence, verberProfile: _profile, ...props }: ConnectedThreadProps) {
 	const { source } = useSession();
 	return <PublicThread source={source} {...props} />;
-}
-
-type ComposerProps = Omit<PublicComposerProps, "onSubmit"> & {
-	readonly onSubmit?: (value: string) => void;
-};
-
-export function Composer({ onSubmit, ...props }: ComposerProps) {
-	return <PublicComposer {...props} onSubmit={(submission) => onSubmit?.(submission.value)} />;
 }

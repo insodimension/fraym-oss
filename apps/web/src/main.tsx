@@ -68,8 +68,8 @@ function App() {
           contextUsage: 0,
           onApprovalResponse: acp.respondToApproval,
           onStop: acp.cancel,
-          onSubmit: (submission) => {
-            void acp.prompt(submission.value).catch(() => undefined);
+          onSubmit: (value) => {
+            void acp.prompt(value).catch(() => undefined);
           },
         };
 
