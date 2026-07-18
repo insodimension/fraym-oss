@@ -1,4 +1,4 @@
-import { STATE_TOKENS, SURFACE_TOKENS, TEXT_TOKENS } from "../fixtures/token-fixtures";
+import { STATE_TOKENS, SURFACE_TOKENS, TEXT_TOKENS } from "../fixtures";
 import { Demo } from "../showcase/demo";
 import type { EntryDocs } from "../showcase/docs";
 import type { ShowcaseEntry } from "../showcase/types";

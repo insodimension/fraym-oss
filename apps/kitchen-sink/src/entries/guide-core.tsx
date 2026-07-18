@@ -1,5 +1,4 @@
-import { CodeBlock } from "@fraym/ui";
-import { cn, Icon } from "../compat/ui";
+import { CodeBlock, cn, Icon } from "@fraym/ui";
 import type { ComponentType, ReactNode } from "react";
 import { useEffect, useState } from "react";
 import type { ShowcaseEntry } from "../showcase/types";
