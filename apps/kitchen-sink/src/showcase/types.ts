@@ -66,8 +66,3 @@ export interface TierDef {
 	readonly intro: string;
 	readonly entries: readonly ShowcaseEntry[];
 }
-
-/** Stamp a sub-group label onto a cluster of entries (consumed by the nav's grouped view). */
-export function withGroup(group: string, entries: readonly ShowcaseEntry[]): ShowcaseEntry[] {
-	return entries.map(entry => ({ ...entry, group }));
-}

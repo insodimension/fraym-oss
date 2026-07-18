@@ -34,8 +34,6 @@ export interface OpenFilePayload {
 	readonly path: string;
 }
 
-export type SessionContextValue = Record<string, unknown>;
-
 interface SessionValue {
 	readonly source: AgentEventStream;
 	readonly sendMessage: (value: string) => Promise<void>;
@@ -79,8 +77,6 @@ export function ConnectedMessageThread({ presence: _presence, verberProfile: _pr
 	const { source } = useSession();
 	return <PublicThread source={source} {...props} />;
 }
-
-export const Thread = ConnectedMessageThread;
 
 type ComposerProps = Omit<PublicComposerProps, "onSubmit"> & {
 	readonly onSubmit?: (value: string) => void;

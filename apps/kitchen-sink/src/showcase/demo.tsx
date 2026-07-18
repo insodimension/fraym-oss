@@ -57,8 +57,3 @@ export function Cell({ label, children }: { readonly label?: string; readonly ch
 		</div>
 	);
 }
-
-/** A small caption above a sub-group inside a preview. */
-export function Note({ children }: { readonly children: ReactNode }) {
-	return <p className="fr-eyebrow">{children}</p>;
-}

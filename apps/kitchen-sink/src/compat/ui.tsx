@@ -13,7 +13,7 @@ import {
 } from "react";
 import { extendTailwindMerge } from "tailwind-merge";
 import { fraymBrandMarkUrl } from "./brand-asset";
-import { iconPaths } from "./icon-paths";
+import { iconPaths, type IconName } from "./icon-paths";
 
 const twMerge = extendTailwindMerge({
 	extend: {
@@ -39,7 +39,7 @@ export function cn(...inputs: ClassValue[]) {
 	return twMerge(clsx(inputs));
 }
 
-export type IconName = keyof typeof iconPaths;
+export type { IconName };
 export interface IconProps extends SVGAttributes<SVGSVGElement> {
 	readonly name: IconName;
 	readonly size?: number;
