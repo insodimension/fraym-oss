@@ -145,7 +145,7 @@ export function CinematicWizard({
                 key={chip.id}
                 onClick={() =>
                   setSelected((current) =>
-                    new Set(current).has(chip.id)
+                    current.includes(chip.id)
                       ? current.filter((id) => id !== chip.id)
                       : [...current, chip.id],
                   )

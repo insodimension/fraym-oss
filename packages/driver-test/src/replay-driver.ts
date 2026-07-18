@@ -152,7 +152,11 @@ export function createReplayDriverHarness(
       const set = listeners.get(ref.sessionId) ?? new Set();
       set.add(listener);
       listeners.set(ref.sessionId, set);
-      return () => set.delete(listener);
+      return () => {
+        const removed = set.delete(listener);
+        if (!set.size) listeners.delete(ref.sessionId);
+        return removed;
+      };
     },
   };
   return {
