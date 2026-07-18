@@ -12,11 +12,6 @@ import type { EntryDocs } from "./docs";
 
 export type Tier = "guide" | "tokens" | "elements" | "components" | "features" | "pages";
 
-// Driver/ref types derived from SessionProvider so the app needs no direct
-// @fraym/driver dependency.
-type DemoDriver = SessionDriver;
-type DemoSessionRef = SessionRef;
-
 /**
  * Live-conversation demo for an entry, consumed by the shared Demo Dock.
  * Declaring this on an entry makes it verifiable in a real, interactive thread —
@@ -24,8 +19,8 @@ type DemoSessionRef = SessionRef;
  */
 export interface EntryDemo {
 	/** Stable factory — re-minted on Replay / speed change / entry switch. `speed` is a delay multiplier (1 = authored, <1 faster, >1 slower). */
-	readonly createDriver: (opts?: { speed?: number }) => DemoDriver;
-	readonly sessionRef: DemoSessionRef;
+	readonly createDriver: (opts?: { speed?: number }) => SessionDriver;
+	readonly sessionRef: SessionRef;
 	/** Scope this entry's tool renderer(s) to the dock thread only. */
 	readonly renderers?: ToolRendererMap;
 	/** Override message-block renderers in the dock thread (e.g. render `read` as a full card via the `tool` block). */
