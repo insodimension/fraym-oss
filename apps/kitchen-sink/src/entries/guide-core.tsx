@@ -893,9 +893,6 @@ function ArchitectureBody() {
 					<C>@fraym/vibr</C> — animated presence and avatars.
 				</li>
 				<li>
-					<C>@fraym/aethr</C> — the cinematic onboarding wizard.
-				</li>
-				<li>
 					<C>@fraym/verber</C> — the agent working-status phrase resolver.
 				</li>
 				<li>

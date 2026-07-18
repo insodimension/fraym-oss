@@ -9,7 +9,6 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@fraym/aethr": "workspace:*",
     "@fraym/config": "workspace:*",
     "@fraym/driver": "workspace:*",
     "@fraym/driver-test": "workspace:*",

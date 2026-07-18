@@ -8,7 +8,6 @@
     { "path": "./packages/fixtures" },
     { "path": "./packages/verber" },
     { "path": "./packages/vibr" },
-    { "path": "./packages/aethr" },
     { "path": "./packages/ui" },
     { "path": "./apps/web" },
     { "path": "./apps/kitchen-sink" }
