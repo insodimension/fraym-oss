@@ -5,17 +5,16 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { entries } from "./index";
 import { initialKnobValues } from "../entry";
 import { createEntryDockFixture } from "../dock-fixtures";
-import { clampDockWidth } from "../demo-dock-utils";
 import { ThemeProvider } from "@fraym/ui";
-import { entriesForTier, tierIds } from "../catalog";
+import {
+  componentsEntries,
+  elementsEntries,
+  featuresEntries,
+  pagesEntries,
+  tokenEntries,
+} from "./showcase-catalog";
 
 describe("kitchen sink entries", () => {
-  test("clamps persisted dock widths to the supported range", () => {
-    expect(clampDockWidth(120)).toBe(320);
-    expect(clampDockWidth(506)).toBe(506);
-    expect(clampDockWidth(1200)).toBe(720);
-  });
-
   test("registers every current token, element, tool, and feature entry exactly once", () => {
     expect(entries).toHaveLength(138);
     expect(new Set(entries.map((entry) => entry.id)).size).toBe(entries.length);
@@ -26,12 +25,18 @@ describe("kitchen sink entries", () => {
   });
 
   test("re-homes every existing entry into exactly one shell tier", () => {
-    const tieredEntries = tierIds.flatMap((tier) => entriesForTier(tier));
+    const tieredEntries = [
+      ...tokenEntries,
+      ...elementsEntries,
+      ...componentsEntries,
+      ...featuresEntries,
+      ...pagesEntries,
+    ];
     expect(tieredEntries).toHaveLength(entries.length);
     expect(new Set(tieredEntries.map((entry) => entry.id)).size).toBe(
       entries.length,
     );
-    expect(entriesForTier("pages").map((entry) => entry.id)).toEqual([
+    expect(pagesEntries.map((entry) => entry.id)).toEqual([
       "streaming-thread",
     ]);
   });

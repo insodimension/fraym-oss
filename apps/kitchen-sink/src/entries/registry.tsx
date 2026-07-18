@@ -1,5 +1,5 @@
 import type { TierDef } from "../showcase/types";
-import { componentsEntries, elementsEntries, featuresEntries, ossTokenEntries, pagesEntries } from "./oss-showcase";
+import { componentsEntries, elementsEntries, featuresEntries, pagesEntries, tokenEntries } from "./showcase-catalog";
 import { guideEntries } from "./guide";
 import { tokensEntries } from "./tokens";
 
@@ -14,7 +14,7 @@ export const TIERS: readonly TierDef[] = [
 		id: "tokens",
 		label: "Tokens",
 		intro: "Design values — color, type, space. Knows nothing about components.",
-		entries: [...tokensEntries, ...ossTokenEntries],
+		entries: [...tokensEntries, ...tokenEntries],
 	},
 	{
 		id: "elements",

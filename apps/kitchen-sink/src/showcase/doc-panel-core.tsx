@@ -1,6 +1,6 @@
 import { CodeBlock } from "@fraym/ui";
 import { cn, Icon } from "../compat/ui";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { EntryDocs } from "./docs";
 
 type DocSectionId = "import" | "anatomy" | "examples" | "api";
@@ -234,7 +234,7 @@ function DocExamplesSection({ examples }: { readonly examples: EntryDocs["exampl
 		<DocSection id="examples" title="Examples" description="Copy-pasteable patterns and variant combinations.">
 			<div className="flex flex-col gap-5">
 				{examples.map((example, i) => (
-					<div key={`${example.label}-${i}`} className="rounded-lg border border-fr-border-soft bg-fr-bg p-3">
+					<div key={`${example.label}-${example.code}`} className="rounded-lg border border-fr-border-soft bg-fr-bg p-3">
 						<div className="mb-3 flex items-center justify-between gap-3">
 							<span className="fr-eyebrow">{example.label}</span>
 							<span className="font-secondary text-fr-2xs text-fr-text-3">example {i + 1}</span>
@@ -284,6 +284,17 @@ function DocPanelSections({ docs }: { readonly docs: EntryDocs }) {
 export function DocPanel({ docs }: { readonly docs: EntryDocs }) {
 	const [copied, setCopied] = useState(false);
 	const [copyFailed, setCopyFailed] = useState(false);
+	const resetTimers = useRef(new Set<number>());
+	useEffect(() => () => {
+		for (const timer of resetTimers.current) window.clearTimeout(timer);
+	}, []);
+	const scheduleReset = useCallback((reset: () => void, delay: number) => {
+		const timer = window.setTimeout(() => {
+			resetTimers.current.delete(timer);
+			reset();
+		}, delay);
+		resetTimers.current.add(timer);
+	}, []);
 	const navItems = useMemo<readonly DocSectionLink[]>(() => {
 		const items: DocSectionLink[] = [
 			{ id: "import", label: "Import" },
@@ -300,14 +311,14 @@ export function DocPanel({ docs }: { readonly docs: EntryDocs }) {
 			.then(() => {
 				setCopyFailed(false);
 				setCopied(true);
-				setTimeout(() => setCopied(false), 2000);
+				scheduleReset(() => setCopied(false), 2000);
 			})
 			.catch(() => {
 				setCopied(false);
 				setCopyFailed(true);
-				setTimeout(() => setCopyFailed(false), 2500);
+				scheduleReset(() => setCopyFailed(false), 2500);
 			});
-	}, [docs]);
+	}, [docs, scheduleReset]);
 
 	return (
 		<div className="flex gap-8">

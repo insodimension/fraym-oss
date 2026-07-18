@@ -103,10 +103,6 @@ export function FraymBrandMark({
 	);
 }
 
-export function LiquidGlassRuntime() {
-	return null;
-}
-
 interface KitchenSettings {
 	readonly accentStyle: "solid" | "gradient";
 	readonly fontPreset: string;
@@ -146,6 +142,13 @@ function applySettings(next: KitchenSettings) {
 }
 
 function setConfig(next: KitchenSettings) {
+	if (
+		config.accentStyle === next.accentStyle &&
+		config.fontPreset === next.fontPreset &&
+		config.uiFont === next.uiFont &&
+		config.codeFont === next.codeFont &&
+		config.themePreset === next.themePreset
+	) return;
 	config = next;
 	applySettings(config);
 	for (const listener of listeners) listener();

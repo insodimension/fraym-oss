@@ -2,12 +2,13 @@ import { createReplayDriver } from "@fraym/driver";
 import { createElement, type ComponentType } from "react";
 import { createEntryDockFixture } from "../dock-fixtures";
 import type { Entry, Knob } from "../entry";
-import { initialKnobValues } from "../entry";
-import { entries } from "./index";
 import { Demo } from "../showcase/demo";
 import { useControls, type ControlsSchema } from "../showcase/controls";
 import type { EntryDocs } from "../showcase/docs";
 import type { ShowcaseEntry, Tier } from "../showcase/types";
+import { entries } from "./index";
+
+type CatalogTier = Exclude<Tier, "guide">;
 
 const componentIds = new Set([
 	"diff-block", "collapsible", "menu", "confirm-dialog", "page-header",
@@ -17,7 +18,7 @@ const componentIds = new Set([
 	"waiting-for-app", "oauth-popup", "approval-card", "reasoning-row",
 ]);
 
-function tierFor(entry: Entry): Exclude<Tier, "guide"> {
+function tierFor(entry: Entry): CatalogTier {
 	if (entry.id === "theme-engine" || entry.group === "tokens") return "tokens";
 	if (entry.id === "streaming-thread") return "pages";
 	if (componentIds.has(entry.id)) return "components";
@@ -40,15 +41,15 @@ function control(knob: Knob): ControlsSchema[string] {
 }
 
 function schemaFor(entry: Entry): ControlsSchema {
-	return Object.fromEntries(entry.knobs.map((knob) => [knob.prop, control(knob)]));
+	return Object.fromEntries(entry.knobs.map(knob => [knob.prop, control(knob)]));
 }
 
 function docsFor(entry: Entry): EntryDocs {
 	return {
 		import: entry.importCode,
 		anatomy: entry.description,
-		examples: entry.examples.map((example) => ({ label: example.title, code: example.code })),
-		api: entry.props.map((prop) => ({
+		examples: entry.examples.map(example => ({ label: example.title, code: example.code })),
+		api: entry.props.map(prop => ({
 			name: prop.name,
 			type: prop.type,
 			default: prop.defaultValue,
@@ -63,47 +64,52 @@ function packagePath(entry: Entry): string {
 
 function componentFor(entry: Entry): ComponentType {
 	const schema = schemaFor(entry);
-	return function OssEntryDemo() {
+	const importPath = packagePath(entry);
+	return function EntryDemo() {
 		const controls = useControls(schema);
-		const values = entry.knobs.length ? controls.values : initialKnobValues(entry.knobs);
 		return (
 			<Demo
 				summary={entry.description}
-				importPath={packagePath(entry)}
+				importPath={importPath}
 				controls={entry.knobs.length ? controls.panel : undefined}
 				stage="center"
 			>
-				{createElement(entry.Demo, { values })}
+				{createElement(entry.Demo, { values: controls.values })}
 			</Demo>
 		);
 	};
 }
 
-const showcaseEntries = entries.map<ShowcaseEntry>((entry) => ({
-	id: entry.id,
-	name: entry.title,
-	group: entry.tier,
-	Component: componentFor(entry),
-	docs: docsFor(entry),
-	demo: {
-		createDriver: ({ speed = 1 } = {}) => createReplayDriver(createEntryDockFixture(entry), {
-			delay: Math.max(20, Math.round(220 * speed)),
-			autoRespond: { decision: "approved", delay: Math.max(40, Math.round(440 * speed)) },
-		}),
-		sessionRef: `showcase:${entry.id}`,
-		title: `${entry.title} in context`,
-	},
-}));
-
-function select(tier: Exclude<Tier, "guide">) {
-	return showcaseEntries.filter((entry) => {
-		const source = entries.find((candidate) => candidate.id === entry.id);
-		return source ? tierFor(source) === tier : false;
-	});
+function showcaseEntry(entry: Entry): ShowcaseEntry {
+	return {
+		id: entry.id,
+		name: entry.title,
+		group: entry.tier,
+		Component: componentFor(entry),
+		docs: docsFor(entry),
+		demo: {
+			createDriver: ({ speed = 1 } = {}) => createReplayDriver(createEntryDockFixture(entry), {
+				delay: Math.max(20, Math.round(220 * speed)),
+				autoRespond: { decision: "approved", delay: Math.max(40, Math.round(440 * speed)) },
+			}),
+			sessionRef: `showcase:${entry.id}`,
+			title: `${entry.title} in context`,
+		},
+	};
 }
 
-export const ossTokenEntries = select("tokens");
-export const elementsEntries = select("elements");
-export const componentsEntries = select("components");
-export const featuresEntries = select("features");
-export const pagesEntries = select("pages");
+const entriesByTier: Record<CatalogTier, ShowcaseEntry[]> = {
+	tokens: [],
+	elements: [],
+	components: [],
+	features: [],
+	pages: [],
+};
+
+for (const entry of entries) entriesByTier[tierFor(entry)].push(showcaseEntry(entry));
+
+export const tokenEntries = entriesByTier.tokens;
+export const elementsEntries = entriesByTier.elements;
+export const componentsEntries = entriesByTier.components;
+export const featuresEntries = entriesByTier.features;
+export const pagesEntries = entriesByTier.pages;

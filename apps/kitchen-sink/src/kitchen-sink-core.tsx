@@ -10,7 +10,7 @@ import {
 	THEME_PRESETS,
 	useTheme,
 } from "@fraym/ui/theme";
-import { cn, FraymBrandMark, Icon, LiquidGlassRuntime, useSettings } from "./compat/ui";
+import { cn, FraymBrandMark, Icon, useSettings } from "./compat/ui";
 import {
 	type Dispatch,
 	type MouseEvent as ReactMouseEvent,
@@ -77,30 +77,13 @@ function groupEntries(entries: readonly ShowcaseEntry[]): { group?: string; item
 }
 
 // Font dropdown options — the "Theme default" row names + previews the active theme's font.
-function themeDefaultFontLabel(themeFont: ThemeFont | undefined): string {
-	if (!themeFont) return "Theme default";
-	return `Theme default · ${fontFamilyLabel(themeFont.primary)}`;
-}
-
-function themeDefaultFontNote(themeFont: ThemeFont | undefined): string {
-	return themeFont ? "follows the active theme" : "follows the theme";
-}
-
-function themeDefaultPrimary(themeFont: ThemeFont | undefined): string {
-	return themeFont?.primary ?? "";
-}
-
-function themeDefaultMono(themeFont: ThemeFont | undefined): string {
-	return themeFont?.mono ?? "";
-}
-
 function themeDefaultFontOption(themeFont: ThemeFont | undefined): KitchenFontOption {
 	return {
 		id: "",
-		label: themeDefaultFontLabel(themeFont),
-		note: themeDefaultFontNote(themeFont),
-		primary: themeDefaultPrimary(themeFont),
-		mono: themeDefaultMono(themeFont),
+		label: themeFont ? `Theme default · ${fontFamilyLabel(themeFont.primary)}` : "Theme default",
+		note: themeFont ? "follows the active theme" : "follows the theme",
+		primary: themeFont?.primary ?? "",
+		mono: themeFont?.mono ?? "",
 	};
 }
 
@@ -325,10 +308,12 @@ function useFilteredTiers(query: string): readonly TierDef[] {
 	return useMemo(() => {
 		const needle = query.trim().toLowerCase();
 		if (!needle) return TIERS;
-		return TIERS.map(tier => ({
-			...tier,
-			entries: tier.entries.filter(entry => entry.name.toLowerCase().includes(needle)),
-		})).filter(tier => tier.entries.length > 0);
+		const tiers: TierDef[] = [];
+		for (const tier of TIERS) {
+			const entries = tier.entries.filter(entry => entry.name.toLowerCase().includes(needle));
+			if (entries.length > 0) tiers.push({ ...tier, entries });
+		}
+		return tiers;
 	}, [query]);
 }
 
@@ -348,16 +333,21 @@ function useOpenTiers(activeTierId: Tier | undefined) {
 }
 
 function useDockResize(setDockWidth: Dispatch<SetStateAction<number>>) {
+	const cleanupRef = useRef<(() => void) | null>(null);
+	useEffect(() => () => cleanupRef.current?.(), []);
 	return (event: ReactMouseEvent) => {
 		event.preventDefault();
+		cleanupRef.current?.();
 		const onMove = (moveEvent: MouseEvent) =>
 			setDockWidth(Math.min(720, Math.max(340, window.innerWidth - moveEvent.clientX)));
-		const onUp = () => {
+		const cleanup = () => {
 			document.removeEventListener("mousemove", onMove);
-			document.removeEventListener("mouseup", onUp);
+			document.removeEventListener("mouseup", cleanup);
+			cleanupRef.current = null;
 		};
+		cleanupRef.current = cleanup;
 		document.addEventListener("mousemove", onMove);
-		document.addEventListener("mouseup", onUp);
+		document.addEventListener("mouseup", cleanup);
 	};
 }
 
@@ -751,7 +741,6 @@ export function KitchenSink({
 	return (
 		<TooltipProvider delayDuration={200}>
 			<div className="relative isolate flex h-screen min-h-0 flex-col bg-fr-bg font-primary text-fr-text">
-				<LiquidGlassRuntime />
 				<KitchenHeader
 					mode={mode}
 					accent={accent}

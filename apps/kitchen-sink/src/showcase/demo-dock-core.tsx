@@ -7,16 +7,12 @@ import {
 	Icon,
 	type IconName,
 	MessageBlockProvider,
-	type OpenDiffPayload,
-	type OpenFilePayload,
 	SessionProvider,
 	ToolDisplaySettingsProvider,
 	ToolRendererProvider,
 	useSession,
-	WorkbenchDockProvider,
 } from "../compat/session-ui";
 import { type ReactNode, useEffect, useMemo, useState } from "react";
-import { DiffPanelOverlay } from "./diff-panel-overlay";
 import { useToolConfig } from "./tool-config";
 import type { EntryDemo } from "./types";
 
@@ -205,53 +201,18 @@ function DemoThreadBody({
 	demo,
 	view,
 	values,
-	onOpenDiff,
-	onOpenFile,
 }: {
 	readonly demo: EntryDemo;
 	readonly view: string;
 	readonly values: Record<string, unknown>;
-	readonly onOpenDiff: (payload: OpenDiffPayload) => void;
-	readonly onOpenFile: (payload: OpenFilePayload) => void;
 }) {
 	return (
-		<WorkbenchDockProvider commands={{ openDiff: onOpenDiff, openFile: onOpenFile }}>
-			<ToolDisplaySettingsProvider settings={{ ...demoDisplaySettings(view), ...demo.threadSettings }}>
-				<DemoRendererProviders demo={demo}>
-					<BaseDemoThread demo={demo} view={view} values={values} />
-				</DemoRendererProviders>
-			</ToolDisplaySettingsProvider>
-		</WorkbenchDockProvider>
+		<ToolDisplaySettingsProvider settings={{ ...demoDisplaySettings(view), ...demo.threadSettings }}>
+			<DemoRendererProviders demo={demo}>
+				<BaseDemoThread demo={demo} view={view} values={values} />
+			</DemoRendererProviders>
+		</ToolDisplaySettingsProvider>
 	);
-}
-function DemoFileOverlay({
-	panelFile,
-	onClose,
-}: {
-	readonly panelFile: OpenFilePayload | null;
-	readonly onClose: () => void;
-}) {
-	return panelFile ? (
-		<div
-			data-slot="demo-file-dock"
-			className="absolute inset-y-0 right-0 z-50 flex w-[420px] max-w-[88%] flex-col border-l border-fr-border bg-fr-bg shadow-2xl"
-		>
-			<div className="flex flex-none items-center gap-2 border-b border-fr-border-soft px-3 py-2">
-				<Icon name="folder" size={14} className="text-fr-accent" />
-				<span className="truncate font-secondary text-fr-sm text-fr-text">{panelFile.path}</span>
-				<button
-					type="button"
-					onClick={onClose}
-					className="ml-auto rounded p-1 text-fr-text-3 transition-colors hover:text-fr-text-2"
-				>
-					<Icon name="x" size={14} />
-				</button>
-			</div>
-			<div className="min-h-0 flex-1 overflow-auto p-3 font-secondary text-fr-xs text-fr-text-3">
-				Files dock would open <span className="text-fr-text">{panelFile.path}</span> in the real shell.
-			</div>
-		</div>
-	) : null;
 }
 
 function useDemoSessionDriver(demo: EntryDemo, speed: string, nonce: number) {
@@ -263,8 +224,6 @@ function useDemoSessionDriver(demo: EntryDemo, speed: string, nonce: number) {
 export function DemoDock({ demo, entryName, onClose }: DemoDockProps) {
 	const [nonce, setNonce] = useState(0);
 	const [speed, setSpeed] = useState(() => localStorage.getItem("ks-demo-speed") ?? "medium");
-	const [panelDiff, setPanelDiff] = useState<OpenDiffPayload | null>(null);
-	const [panelFile, setPanelFile] = useState<OpenFilePayload | null>(null);
 	useEffect(() => {
 		localStorage.setItem("ks-demo-speed", speed);
 	}, [speed]);
@@ -279,18 +238,8 @@ export function DemoDock({ demo, entryName, onClose }: DemoDockProps) {
 			<DemoDockHeader title={demo.title ?? entryName} onReplay={() => setNonce(n => n + 1)} onClose={onClose} />
 			<DemoSpeedBar speed={speed} onSpeedChange={setSpeed} />
 			<SessionProvider key={streamKey} driver={driver} sessionRef={demo.sessionRef}>
-				<DemoThreadBody
-					demo={demo}
-					view={view}
-					values={values}
-					onOpenDiff={setPanelDiff}
-					onOpenFile={setPanelFile}
-				/>
+				<DemoThreadBody demo={demo} view={view} values={values} />
 			</SessionProvider>
-			{panelDiff ? (
-				<DiffPanelOverlay payload={panelDiff} onClose={() => setPanelDiff(null)} placement="absolute" />
-			) : null}
-			<DemoFileOverlay panelFile={panelFile} onClose={() => setPanelFile(null)} />
 		</div>
 	);
 }
