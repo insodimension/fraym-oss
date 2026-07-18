@@ -1,31 +1,187 @@
-.fraym-streaming-markdown {
-  overflow-wrap: anywhere;
+/* Shiki code-block token colors.
+ *
+ * `@streamdown/code` emits each token's color as CSS custom properties
+ * (`--sdm-c` for the light theme, `--shiki-dark` for dark) and *also* attaches
+ * Tailwind arbitrary-utility classes (`text-[var(--sdm-c,inherit)]`) to read
+ * them. Those utilities only exist if Tailwind scans streamdown's dist via an
+ * `@source` directive, and the dark variant only fires for Tailwind's `.dark`
+ * convention — neither of which holds here (Fraym themes via `data-theme`).
+ *
+ * So we apply the vars directly. This makes highlighting work in any consumer
+ * with zero app-level Tailwind config. Scoped to the explicit
+ * `fr-streaming-markdown` wrapper to avoid host Tailwind parser quirks around
+ * substring attribute selectors. */
+.fr-streaming-markdown pre code span[style] {
+	color: var(--sdm-c, inherit);
 }
 
-.fraym-streaming-markdown > .fraym-static-markdown > :first-child { margin-top: 0; }
-.fraym-streaming-markdown > .fraym-static-markdown > :last-child { margin-bottom: 0; }
-.fraym-streaming-markdown p { margin: 0 0 14px; text-wrap: pretty; }
-.fraym-streaming-markdown h1,
-.fraym-streaming-markdown h2,
-.fraym-streaming-markdown h3,
-.fraym-streaming-markdown h4 { color: var(--fraym-color-text); font-weight: 600; line-height: 1.3; margin: 16px 0 8px; text-wrap: balance; }
-.fraym-streaming-markdown h1 { font-size: 16px; }
-.fraym-streaming-markdown h2 { font-size: 15px; }
-.fraym-streaming-markdown h3,
-.fraym-streaming-markdown h4 { font-size: var(--fraym-type-body-md); margin-top: 12px; }
-.fraym-streaming-markdown ul,
-.fraym-streaming-markdown ol { margin: 6px 0 14px; padding-left: 20px; }
-.fraym-streaming-markdown li { margin-bottom: 6px; padding-left: 4px; }
-.fraym-streaming-markdown li::marker { color: var(--fraym-color-text-3); }
-.fraym-streaming-markdown a { color: var(--fraym-color-accent); text-decoration: underline; text-underline-offset: 2px; }
-.fraym-streaming-markdown blockquote { border-left: 2px solid var(--fraym-color-border-soft); color: var(--fraym-color-text-2); margin: 8px 0; padding-left: 12px; }
-.fraym-streaming-markdown hr { border: 0; border-top: 1px solid var(--fraym-color-border-soft); margin: 12px 0; }
-.fraym-streaming-markdown :not(pre) > code { background: var(--fraym-color-surface-2); border-radius: 5px; color: var(--fraym-color-text); font-family: var(--fraym-font-mono); font-size: var(--fraym-type-body-sm); padding: 1px 6px; }
-.fraym-streaming-markdown table { border-collapse: collapse; font-size: var(--fraym-type-body-sm); margin: 8px 0; width: 100%; }
-.fraym-streaming-markdown th,
-.fraym-streaming-markdown td { border-bottom: 1px solid var(--fraym-color-border-soft); padding: 6px 10px; text-align: left; vertical-align: top; }
-.fraym-streaming-markdown th { border-color: var(--fraym-color-border); color: var(--fraym-color-text-2); font-weight: 500; }
-.fraym-streaming-markdown img { border: 1px solid var(--fraym-color-border-soft); border-radius: var(--fraym-radius-md); display: block; margin: 8px 0; max-height: 440px; max-width: 100%; }
-.fraym-streaming-markdown.is-animating { animation: fraym-markdown-arrive 180ms cubic-bezier(.22, 1, .36, 1); }
-@keyframes fraym-markdown-arrive { from { opacity: .72; } to { opacity: 1; } }
-@media (prefers-reduced-motion: reduce) { .fraym-streaming-markdown.is-animating { animation: none; } }
+[data-theme=dark] .fr-streaming-markdown pre code span[style] {
+	color: var(--shiki-dark, var(--sdm-c, inherit));
+}
+
+/* Same dual-theme switch for non-Streamdown shiki consumers (DiffViewer codeCell).
+ * Tokens carry `--sdm-c` (light) + `--shiki-dark` (dark) as vars — NOT a direct `color`
+ * (an inline color would beat these rules) — exactly like the Streamdown spans above. */
+.fr-shiki-code span[style] {
+	color: var(--sdm-c, inherit);
+}
+[data-theme=dark] .fr-shiki-code span[style] {
+	color: var(--shiki-dark, var(--sdm-c, inherit));
+}
+
+/* Thread-markdown emphasis (bold / headings) — user-controlled via the Appearance
+ * settings `mdBoldWeight` + `mdBoldColor`, which settings-environment writes to these
+ * CSS vars. Defaults: semibold (600) + inherit (theme text) = the crisp default that
+ * reads well in light. Users who find bold too heavy/bright (esp. on dark) lower the
+ * weight and pick a softer/accent color. Unlayered → beats the PROSE font-semibold utility. */
+.fr-streaming-markdown :is(strong, b, h1, h2, h3) {
+	font-weight: var(--fr-md-bold-weight, 600);
+	color: var(--fr-md-bold-color, var(--fr-text));
+}
+
+/* Thread prose body — DARK mode only: dim the theme text toward a softer off-white so
+ * long reads are calm (the preset's full --fr-text glares on near-black). Light mode keeps
+ * the crisp full text. Emphasis above stays at full --fr-text, so bold still pops vs the body. */
+[data-theme=dark] .fr-streaming-markdown {
+	color: color-mix(in oklab, var(--fr-text), var(--fr-bg) 5%);
+}
+
+/* Reasoning trace stays the dim "thinking" gray in EVERY theme — body AND its bold/headings.
+ * The off-white body rule (above) is for the assistant MESSAGE prose, and the emphasis rule
+ * forces bold to --fr-md-bold-color / full --fr-text — both outrank the reasoning
+ * `text-fr-text-3` utility. Restore the muted gray with higher-specificity, reasoning-scoped
+ * rules (theme-neutral: --fr-text-3 is muted in light and dark alike). Bold keeps its weight
+ * (from the emphasis rule); only the color is dimmed, so it reads as gray-bold. */
+[data-slot="reasoning-block"] .fr-streaming-markdown,
+[data-slot="reasoning-block"] .fr-streaming-markdown :is(strong, b, h1, h2, h3) {
+	color: var(--fr-text-3);
+}
+
+/* Default prose code-block: ONE clean card. Streamdown emits nested chrome
+ * (code-block card → code-block-body → pre), and our PROSE pre styling stacked a
+ * third bordered box on top — a triple-nested box-in-box. Collapse it to a single
+ * Fraym-themed surface so a fenced block reads as one card in chat + reasoning
+ * prose. Excludes the `fr-code-bare` consumers (tool bodies) via :not(). */
+.fr-streaming-markdown:not(.fr-code-bare) [data-streamdown="code-block"] {
+	margin: 0.5rem 0;
+	padding: 0;
+	border: 1px solid var(--fr-border-soft);
+	border-radius: 8px;
+	background: var(--fr-surface-2);
+	overflow: hidden;
+}
+.fr-streaming-markdown:not(.fr-code-bare) [data-streamdown="code-block-header"] {
+	padding: 5px 12px;
+	border-bottom: 1px solid var(--fr-border-soft);
+	color: var(--fr-text-3);
+	font-size: 11px;
+}
+.fr-streaming-markdown:not(.fr-code-bare) [data-streamdown="code-block-body"] {
+	padding: 0;
+	border: 0;
+	border-radius: 0;
+	background: transparent;
+}
+.fr-streaming-markdown:not(.fr-code-bare) [data-streamdown="code-block"] pre {
+	margin: 0;
+	padding: 10px 12px;
+	border: 0;
+	border-radius: 0;
+	background: transparent;
+}
+
+/* Two different <code> DOM shapes flow through this wrapper, needing OPPOSITE display
+ * rules on the direct-child spans of <code>:
+ *
+ * 1. Settled/lite path (StaticMarkdownLite → HighlightedCode, and other flat emitters):
+ *    a FLAT run of per-token spans with real "\n" text nodes between source lines. The
+ *    <pre>'s `white-space: pre` breaks on those newlines, so token spans stay INLINE —
+ *    `display: block` here would stack every token vertically. */
+.fr-streaming-markdown pre code > span {
+	display: inline;
+}
+
+/* 2. Streamdown's code body (streamdown 2.5.0 `code-block-body`, used while STREAMING —
+ *    both the plain fallback and the Shiki-highlighted body): each direct-child span of
+ *    <code> is a LINE wrapper (token spans nested inside), with NO "\n" text between
+ *    lines — only an empty line carries a literal "\n" child (which gives it height
+ *    under `white-space: pre`). Line breaks come entirely from each line span being a
+ *    block. Upstream does this via a `block` Tailwind utility in its un-scanned dist,
+ *    and only when lineNumbers is on — so without this rule (and with rule 1 above
+ *    matching the same spans) every code line joined into ONE long line mid-stream,
+ *    snapping correct only once the settled lite renderer took over. Higher
+ *    specificity than rule 1 → wins inside Streamdown bodies. */
+.fr-streaming-markdown [data-streamdown="code-block-body"] code > span {
+	display: block;
+}
+
+/* Bare-code modifier: strip Streamdown's code-block chrome (outer card margin/
+ * padding/border, the language-label header, and the inner body padding/border)
+ * so a single fenced code block can be embedded inside a host surface — e.g. a
+ * tool body's `.tool-body.term` card — without a double box or a stray language
+ * caption. Keeps Shiki token colors + the line-number gutter intact. Pass
+ * `className="fr-code-bare"` to <StreamingMarkdown>. */
+.fr-code-bare [data-streamdown="code-block"] {
+	margin: 0;
+	padding: 0;
+	gap: 0;
+	border: 0;
+	border-radius: 0;
+	background: transparent;
+}
+.fr-code-bare [data-streamdown="code-block-header"] {
+	display: none;
+}
+.fr-code-bare [data-streamdown="code-block-body"] {
+	padding: 0;
+	border: 0;
+	border-radius: 0;
+	background: transparent;
+}
+.fr-code-bare pre {
+	margin: 0;
+	padding: 0;
+}
+
+/* Line-number gutter fallback. Streamdown's lineNumbers utilities
+ * (before:content-[counter(line)], before:w-6, …) live in its dist, which
+ * Fraym's Tailwind @source does not scan — so, exactly like the --sdm-c colors
+ * above, we supply the CSS directly. Active only when Streamdown emits its
+ * `fr-code-lines` marker class (i.e. lineNumbers is on); each rendered line is
+ * a direct child span of <code>. */
+.fr-code-lines pre code {
+	counter-reset: line var(--fr-code-start, 0);
+}
+.fr-code-lines pre code > span::before {
+	content: counter(line);
+	counter-increment: line;
+	display: inline-block;
+	box-sizing: border-box;
+	/* Match the DiffViewer gutter (w-[46px] pr-2.5 border-r) + codeCell pl-3.5 so read/write
+	 * code aligns identically to edit's diff rows — the shared frame, shared gutter geometry. */
+	width: 46px;
+	padding-right: 0.625rem;
+	margin-right: 0.875rem;
+	border-right: 1px solid var(--fr-border-soft);
+	text-align: right;
+	color: var(--fr-text-3);
+	user-select: none;
+}
+
+/* Streamdown wraps every table in TWO nested bordered/rounded divs — the outer
+ * [data-streamdown="table-wrapper"] (rounded-lg border) AND an inner scroll div
+ * (rounded-md border) — which read as a doubled frame. Flatten to ONE clean
+ * frame: drop the inner box's border + radius, keep the outer wrapper. */
+.fr-streaming-markdown [data-streamdown="table-wrapper"] > div {
+	border-width: 0;
+	border-radius: 0;
+}
+
+/* Inline-code pills stay ATOMIC inside table cells. A table's columns are narrow, so
+ * letting a pill wrap chops short tokens mid-word (`title` → `tit`/`le`). Keep each pill
+ * on one line; the table's own scroll wrapper (above) absorbs any horizontal overflow.
+ * Unlayered → wins over the `break-words` prose utility, scoped to table cells only so
+ * paragraph inline code can still wrap a genuinely long token. */
+.fr-streaming-markdown :is(td, th) code {
+	white-space: nowrap;
+}

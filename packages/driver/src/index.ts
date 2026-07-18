@@ -347,3 +347,12 @@ export function createReplayDriver(
 
 export { codingSessionFixture } from "./fixtures/coding-session";
 export * from "./session-driver";
+
+export interface TurnUsage {
+	readonly input: number;
+	readonly output: number;
+	readonly cacheRead: number;
+	readonly cacheWrite: number;
+	readonly ttftMs?: number;
+	readonly durationMs?: number;
+}

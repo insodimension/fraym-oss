@@ -529,6 +529,10 @@
 	50% { box-shadow: 0 0 0 4px var(--fr-accent-dim); }
 }
 
+@keyframes fr-soft-fade {
+	50% { opacity: 0.5; }
+}
+
 /* Kanban drop preview: a slot GAP opens to mini-card height, displacing the
  * stack below it — the drag's landing place, not a hairline. */
 @keyframes fr-slot-open {
