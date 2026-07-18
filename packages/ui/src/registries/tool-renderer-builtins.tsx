@@ -3,6 +3,7 @@ import { Fragment, type ReactNode } from "react";
 import { Badge } from "../elements/badge";
 import { CodeBlock } from "../elements/code-block";
 import { prettyValue } from "../tool-renderers/data";
+import { toToolStatus } from "../tool-renderers/call-adapter";
 import { asText, readField, readResultContentText } from "./default-renderer-utils";
 import type { ToolRenderer, ToolView } from "./tool-renderer-registry";
 
@@ -11,7 +12,7 @@ function structured(output: unknown) { return record(output) && "details" in out
 function records(output: unknown): readonly Record<string, unknown>[] | undefined { const value = structured(output); if (Array.isArray(value)) return value.filter(record); if (record(value)) { const list = Object.values(value).find(Array.isArray); return Array.isArray(list) ? list.filter(record) : [value]; } return undefined; }
 function badges(config: PluginToolRendererDescriptor, input: unknown): ReactNode { if (!config.badges || !record(input)) return null; return config.badges.map(field => { const value = input[field]; return typeof value === "string" || typeof value === "number" || typeof value === "boolean" ? <Badge key={field} tone="accent">{String(value).slice(0, 40)}</Badge> : null; }); }
 function stat(output: unknown) { const value = structured(output); if (Array.isArray(value)) return `${value.length} item${value.length === 1 ? "" : "s"}`; if (record(value)) { for (const [key, item] of Object.entries(value)) if (Array.isArray(item)) return `${item.length} ${key}`; } return undefined; }
-function frame(config: PluginToolRendererDescriptor, call: Parameters<ToolRenderer>[0], body: ReactNode, resultStat?: string): ToolView { return { label: config.title ?? config.match, badges: badges(config, call.input), ...(resultStat ? { stat: resultStat } : {}), status: call.status, body }; }
+function frame(config: PluginToolRendererDescriptor, call: Parameters<ToolRenderer>[0], body: ReactNode, resultStat?: string): ToolView { return { label: config.title ?? config.match, badges: badges(config, call.input), ...(resultStat ? { stat: resultStat } : {}), status: toToolStatus(call), body }; }
 function fallback(call: Parameters<ToolRenderer>[0]) { const text = readResultContentText(call.output) ?? asText(call.output); return text ? <pre className="fraym-tool-terminal">{text}</pre> : <span className="fraym-tool-note">Done.</span>; }
 
 export function makeTableToolRenderer(config: PluginToolRendererDescriptor): ToolRenderer { return call => { const rows = records(call.output); if (!rows) return frame(config, call, fallback(call)); const columns = config.columns?.length ? config.columns : Object.keys(rows[0] ?? {}); return frame(config, call, <div className="fraym-tool-table">{rows.length ? rows.map((row, index) => <div className="fraym-tool-table__row" key={index}>{columns.map(column => <Fragment key={column}><span>{column}</span><code>{typeof row[column] === "string" ? row[column] : prettyValue(row[column])}</code></Fragment>)}</div>) : <span className="fraym-tool-note">No results.</span>}</div>, `${rows.length} ${rows.length === 1 ? "row" : "rows"}`); }; }

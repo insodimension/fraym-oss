@@ -51,18 +51,8 @@ export {
   useToolRendererRegistry,
   type ToolRendererProviderProps,
 } from "./tool-renderers/registry";
-export {
-  BashToolRenderer,
-  builtInToolRenderers,
-  EditToolRenderer,
-  GenericToolRenderer,
-  LspToolRenderer,
-  ReadToolRenderer,
-  SearchToolRenderer,
-  TaskToolRenderer,
-  TodoToolRenderer,
-  WriteToolRenderer,
-} from "./tool-renderers/renderers";
+export { EditToolRenderer, ReadToolRenderer, WriteToolRenderer } from "./tool-renderers/file-renderers";
+export { TaskToolRenderer } from "./tool-renderers/task-renderer";
 export type {
   ToolRenderer,
   ToolRendererMap,

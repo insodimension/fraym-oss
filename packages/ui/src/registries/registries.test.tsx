@@ -11,9 +11,27 @@ describe("renderer contracts", () => {
   test("resolves normalized tools into rich views", () => {
     const renderer = resolveToolRenderer({}, "mcp__files__read");
     expect(renderer).toBe(DEFAULT_TOOL_RENDERERS.read);
-    const result = renderer?.({ id: "call-1", name: "mcp__files__read", status: "succeeded", input: { path: "README.md" }, output: { content: "hello" } });
+    const result = renderer?.({ callId: "call-1", toolName: "mcp__files__read", status: "success", input: { path: "README.md" }, output: { content: "hello" } });
     expect(result !== undefined && isToolView(result)).toBe(true);
     if (result !== undefined && isToolView(result)) expect(result.kind).toBe("read");
+  });
+
+  test("uses dedicated rich views for showcase tool cards", () => {
+    const calls = [
+      { callId: "goal-1", toolName: "goal", status: "success", input: { action: "show" }, output: { content: "Goal active" } },
+      { callId: "bash-1", toolName: "bash", status: "success", input: { command: "bun test" }, output: { content: "4 pass" } },
+      { callId: "ssh-1", toolName: "ssh", status: "success", input: { host: "example.test", command: "uptime" }, output: { content: "up 2 days" } },
+      { callId: "job-1", toolName: "job", status: "success", input: { action: "list" }, output: { details: { jobs: [] } } },
+      { callId: "eval-1", toolName: "eval", status: "success", input: { code: "2 + 2" }, output: { content: "4" } },
+    ] as const;
+
+    for (const call of calls) {
+      const renderer = resolveToolRenderer(DEFAULT_TOOL_RENDERERS, call.toolName);
+      expect(renderer).not.toBe(DEFAULT_TOOL_RENDERERS["*"]);
+      const result = renderer?.(call);
+      expect(result !== undefined && isToolView(result)).toBe(true);
+      if (result !== undefined && isToolView(result)) expect(result.body).not.toBeNull();
+    }
   });
 
   test("groups adjacent reasoning and tool blocks only when a run has multiple entries", () => {

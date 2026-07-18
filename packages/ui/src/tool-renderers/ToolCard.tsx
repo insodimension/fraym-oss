@@ -11,12 +11,15 @@ import { toolIconNode } from "../icons/icon";
 
 type BadgeTone = NonNullable<BadgeProps["tone"]>;
 
-const statusTone: Record<ToolCallStatus, BadgeTone> = {
+const statusTone: Record<ToolCallStatus | NonNullable<ToolView["status"]>, BadgeTone> = {
   pending: "mute",
   running: "accent",
   succeeded: "add",
   failed: "del",
   cancelled: "warn",
+  success: "add",
+  error: "del",
+  warn: "warn",
 };
 
 export interface ToolCardProps {
@@ -27,7 +30,7 @@ export interface ToolCardProps {
   defaultExpanded?: boolean;
   onExpandedChange?: (expanded: boolean) => void;
   view?: ToolView;
-  kind?: string;
+  kind?: ToolView["kind"];
   status?: "pending" | "success" | "error" | "warn";
   stat?: string;
   label?: ReactNode;
@@ -50,8 +53,9 @@ export function ToolCard({
   icon,
 }: ToolCardProps) {
   const resolvedStatus: ToolCallStatus = status === "success" ? "succeeded" : status === "error" ? "failed" : status === "warn" ? "cancelled" : status ?? call?.status ?? "pending";
+  const resolvedViewStatus: NonNullable<ToolView["status"]> = status ?? (resolvedStatus === "succeeded" ? "success" : resolvedStatus === "failed" ? "error" : resolvedStatus === "cancelled" ? "warn" : "pending");
   const resolvedCall = call ?? { id: String(label ?? kind ?? "tool"), name: String(label ?? kind ?? "tool"), status: resolvedStatus, input: undefined, output: undefined };
-  const resolvedView: ToolView | undefined = view ?? (kind || status || stat || label || icon ? { ...(kind === undefined ? {} : { kind }), status: resolvedStatus, ...(stat === undefined ? {} : { stat }), ...(label === undefined ? {} : { label }), ...(icon ? { headIcon: toolIconNode(icon, 14) } : {}), body: children ?? null } : undefined);
+  const resolvedView: ToolView | undefined = view ?? (kind || status || stat || label || icon ? { ...(kind === undefined ? {} : { kind }), status: resolvedViewStatus, ...(stat === undefined ? {} : { stat }), ...(label === undefined ? {} : { label }), ...(icon ? { headIcon: toolIconNode(icon, 14) } : {}), body: children ?? null } : undefined);
   const resolvedDefaultExpanded = defaultExpanded ?? (resolvedCall.status === "pending" || resolvedCall.status === "running" || resolvedCall.status === "failed");
   const [internalExpanded, setInternalExpanded] = useState(resolvedView?.defaultOpen ?? resolvedDefaultExpanded);
   const userChangedDisclosure = useRef(false);
