@@ -1,0 +1,219 @@
+.nebula,
+.smiley {
+  --accent: var(--fr-accent);
+  --accent-2: var(--fr-accent-2);
+}
+
+.smiley {
+  --blue: var(--fr-blue);
+  --text-2: var(--fr-text-2);
+  --warn: var(--fr-warn);
+}
+
+/* ===== Nebula -- soft blurred morphing blobs ===== */
+.nebula{--nb1:var(--accent);--nb2:var(--accent-2);--nb3:color-mix(in srgb,var(--accent) 48%,#a6ecff);--nb4:color-mix(in srgb,var(--accent) 18%,#fff);--big:200px;--disp:26px;--nbk:1;
+  position:relative;width:var(--disp);height:var(--disp);flex:none;overflow:visible}
+.nebula .nb-stage{position:absolute;top:50%;left:50%;width:var(--big);height:var(--big);
+  transform:translate(-50%,-50%) scale(calc(var(--disp)/var(--big)));transform-origin:center;
+  filter:drop-shadow(0 0 9px color-mix(in srgb,var(--nb1) 55%,transparent));transition:filter 1.1s ease}
+.nebula svg{width:100%;height:100%;display:block;overflow:visible}
+.nebula .blob{animation:nbRotate 25s infinite alternate ease-in-out;transform-origin:50% 50%;opacity:.7;transition:opacity .8s ease}
+.nebula .blob path{animation:nb1 5s infinite alternate cubic-bezier(.45,.2,.55,.8);transform-origin:50% 50%;transform:scale(.8);transition:fill 1.1s ease}
+.nebula .blob.alt{animation-direction:alternate-reverse;opacity:.3}
+.nebula .blob-1 path{fill:var(--nb1);filter:blur(11px)}
+.nebula .blob-2{animation-duration:18s;animation-direction:alternate-reverse}
+.nebula .blob-2 path{fill:var(--nb2);animation-name:nb2;animation-duration:7s;filter:blur(8px);transform:scale(.78)}
+.nebula .blob-2.alt{animation-direction:alternate}
+.nebula .blob-3{animation-duration:23s}
+.nebula .blob-3 path{fill:var(--nb3);animation-name:nb3;animation-duration:6s;filter:blur(6px);transform:scale(.76)}
+.nebula .blob-4{animation-duration:31s;animation-direction:alternate-reverse;opacity:.9}
+.nebula .blob-4 path{fill:var(--nb4);animation-name:nb4;animation-duration:10s;filter:blur(52px);transform:scale(.5)}
+.nebula .blob-4.alt{animation-direction:alternate;opacity:.8}
+@keyframes nb1{0%{d:path("M 100 600 q 0 -500, 500 -500 t 500 500 t -500 500 T 100 600 z")}30%{d:path("M 100 600 q -50 -400, 500 -500 t 450 550 t -500 500 T 100 600 z")}70%{d:path("M 100 600 q 0 -400, 500 -500 t 400 500 t -500 500 T 100 600 z")}100%{d:path("M 150 600 q 0 -600, 500 -500 t 500 550 t -500 500 T 150 600 z")}}
+@keyframes nb2{0%{d:path("M 100 600 q 0 -400, 500 -500 t 400 500 t -500 500 T 100 600 z")}40%{d:path("M 150 600 q 0 -600, 500 -500 t 500 550 t -500 500 T 150 600 z")}80%{d:path("M 100 600 q -50 -400, 500 -500 t 450 550 t -500 500 T 100 600 z")}100%{d:path("M 100 600 q 100 -600, 500 -500 t 400 500 t -500 500 T 100 600 z")}}
+@keyframes nb3{0%{d:path("M 100 600 q -50 -400, 500 -500 t 450 550 t -500 500 T 100 600 z")}35%{d:path("M 150 600 q 0 -600, 500 -500 t 500 550 t -500 500 T 150 600 z")}75%{d:path("M 100 600 q 100 -600, 500 -500 t 400 500 t -500 500 T 100 600 z")}100%{d:path("M 100 600 q 0 -400, 500 -500 t 400 500 t -500 500 T 100 600 z")}}
+@keyframes nb4{0%{d:path("M 150 600 q 0 -600, 500 -500 t 500 550 t -500 500 T 150 600 z")}30%{d:path("M 100 600 q 100 -600, 500 -500 t 400 500 t -500 500 T 100 600 z")}70%{d:path("M 100 600 q -50 -400, 500 -500 t 450 550 t -500 500 T 100 600 z")}100%{d:path("M 150 600 q 0 -600, 500 -500 t 500 550 t -500 500 T 150 600 z")}}
+@keyframes nbRotate{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+/* intent: palette shift (color transitions; morph never stops) */
+.nebula:not([data-state="idle"])[data-mode="search"],.nebula:not([data-state="idle"])[data-mode="read"]{--nb1:#5b8cff;--nb2:#3aa0ff;--nb3:#a8e6ff;--nb4:#e6f3ff}
+.nebula:not([data-state="idle"])[data-mode="run"]{--nb1:#ff6b6b;--nb2:#ff9d5c;--nb3:#ffd28a;--nb4:#fff2e6}
+.nebula:not([data-state="idle"])[data-mode="edit"]{--nb1:var(--accent);--nb2:var(--accent-2);--nb3:color-mix(in srgb,var(--accent) 48%,#e0b0ff);--nb4:color-mix(in srgb,var(--accent) 18%,#fff)}
+.nebula:not([data-state="idle"])[data-mode="skill"],.nebula:not([data-state="idle"])[data-mode="mcp"]{--nb1:#3fd98a;--nb2:#5bd4a0;--nb3:#cfeeb0;--nb4:#ecfff2}
+@media (prefers-reduced-motion: reduce){ .nebula .blob,.nebula .blob path{animation:none!important} }
+
+/* ===================================================================
+ * Smiley -- an emoji face that wears the session's emotion.
+ * Expression is chosen purely from data-state x data-mode (the blob
+ * pattern); --sm-energy (0-1) scales speed and beads sweat. Every feature
+ * variant lives in the SVG; these rules just reveal the right ones.
+ * =================================================================== */
+.smiley{position:relative;width:20px;height:20px;flex:none;display:block;line-height:0;
+  --sm-energy:0;--sm-ink:#1c1206;--sm-tongue:#e07a86;
+  animation:sm-float calc(4.6s - var(--sm-energy)*1.6s) ease-in-out infinite}
+.smiley .sm-svg{display:block;overflow:visible;
+  filter:drop-shadow(0 0 4px color-mix(in srgb,var(--warn) 50%,transparent))}
+.sm-face{fill:url(#sm-face-fill);stroke:color-mix(in srgb,var(--warn) 62%,#000);stroke-width:1.1}
+
+/* eyes: pupils by default, a slow shared blink; arcs (^^) are the happy form */
+.sm-eye{transform-box:fill-box;transform-origin:center;
+  animation:sm-blink calc(5.2s - var(--sm-energy)*2.4s) ease-in-out infinite}
+.sm-eyes{transform-box:fill-box;transform-origin:center}
+.sm-pupil{fill:var(--sm-ink);transform-box:fill-box;transform-origin:center}
+.sm-arc{fill:none;stroke:var(--sm-ink);stroke-width:2;stroke-linecap:round;opacity:0}
+
+/* brows: hidden unless an emotion summons them */
+.sm-brow{stroke:var(--sm-ink);stroke-width:1.7;stroke-linecap:round;opacity:0;
+  transform-box:fill-box;transform-origin:center}
+
+/* mouths: only the smile shows by default */
+.sm-mouth{opacity:0}
+.sm-mouth:not(.m-o):not(.m-talk){fill:none;stroke:var(--sm-ink);stroke-width:2;
+  stroke-linecap:round;stroke-linejoin:round}
+.m-o,.m-talk{fill:var(--sm-ink)}
+.m-talk{transform-box:fill-box;transform-origin:center}
+.m-smile{opacity:1}
+
+/* extras */
+.sm-tongue{fill:var(--sm-tongue);opacity:0}
+.sm-shades *{opacity:0}
+.sm-shades path{fill:#15151a;stroke:#000;stroke-width:.6}
+.sm-shades line{stroke:#15151a;stroke-width:1.6;stroke-linecap:round}
+.sm-glint{stroke:rgba(255,255,255,.85)!important;stroke-width:1.1}
+.sm-sweat{fill:var(--blue);opacity:0}
+.sm-dot{fill:var(--text-2);opacity:0}
+
+/* think (reasoning): a calm, friendly up-glance + thought dots by default */
+.smiley[data-state="thinking"][data-mode="think"] .m-smile{opacity:0}
+.smiley[data-state="thinking"][data-mode="think"] .m-think{opacity:1}
+.smiley[data-state="thinking"][data-mode="think"] .sm-eyes{transform:translateY(-1.6px)}
+/* …with the skeptical raised-brow "hmm" surfacing only now and then (data-think) */
+.smiley[data-state="thinking"][data-mode="think"][data-think="hmm"] .m-think{opacity:0}
+.smiley[data-state="thinking"][data-mode="think"][data-think="hmm"] .m-hmm{opacity:1}
+.smiley[data-state="thinking"][data-mode="think"][data-think="hmm"] .sm-eyes{transform:translate(-0.8px,-1.6px)}
+.smiley[data-state="thinking"][data-mode="think"][data-think="hmm"] .sm-brow-l{opacity:1;transform:translateY(-1.4px) rotate(-9deg)}
+.smiley[data-state="thinking"][data-mode="think"] .sm-dot{animation:sm-think-dot 1.4s ease-in-out infinite}
+.smiley[data-state="thinking"][data-mode="think"] .d2{animation-delay:.18s}
+.smiley[data-state="thinking"][data-mode="think"] .d3{animation-delay:.36s}
+
+/* search: curious darting eyes */
+.smiley[data-state="thinking"][data-mode="search"] .sm-eyes{
+  animation:sm-dart calc(.9s - var(--sm-energy)*.4s) ease-in-out infinite}
+
+/* read: eyes scan left -> right */
+.smiley[data-state="thinking"][data-mode="read"] .sm-eyes{
+  animation:sm-scan calc(2.2s - var(--sm-energy)*1s) ease-in-out infinite}
+
+/* run: determined -- brows down, flat mouth, sweat that grows with energy */
+.smiley[data-state="thinking"][data-mode="run"] .m-smile{opacity:0}
+.smiley[data-state="thinking"][data-mode="run"] .m-flat{opacity:1}
+.smiley[data-state="thinking"][data-mode="run"] .sm-brow-l{opacity:1;transform:translateY(1.2px) rotate(13deg)}
+.smiley[data-state="thinking"][data-mode="run"] .sm-brow-r{opacity:1;transform:translateY(1.2px) rotate(-13deg)}
+.smiley[data-state="thinking"][data-mode="run"] .sm-sweat{animation:sm-drip 1.1s ease-in infinite}
+
+/* edit: concentrating -- one eye squints, tongue out */
+.smiley[data-state="thinking"][data-mode="edit"] .sm-tongue{opacity:1}
+.smiley[data-state="thinking"][data-mode="edit"] .sm-eye-l{animation:none}
+.smiley[data-state="thinking"][data-mode="edit"] .sm-eye-l .sm-pupil{opacity:0}
+.smiley[data-state="thinking"][data-mode="edit"] .sm-eye-l .sm-arc{opacity:1}
+
+/* skill: cool -- sunglasses + smirk */
+.smiley[data-state="thinking"][data-mode="skill"] .m-smile{opacity:0}
+.smiley[data-state="thinking"][data-mode="skill"] .m-smirk{opacity:1}
+.smiley[data-state="thinking"][data-mode="skill"] .sm-eyes{opacity:0}
+.smiley[data-state="thinking"][data-mode="skill"] .sm-shades *{opacity:1}
+.smiley[data-state="thinking"][data-mode="skill"] .sm-glint{animation:sm-glint 2.4s ease-in-out infinite}
+
+/* mcp: wide-eyed "oh!" plugged into a server */
+.smiley[data-state="thinking"][data-mode="mcp"] .m-smile{opacity:0}
+.smiley[data-state="thinking"][data-mode="mcp"] .m-o{opacity:1}
+.smiley[data-state="thinking"][data-mode="mcp"] .sm-pupil{transform:scale(1.4)}
+
+/* typing: happy chatter (wins over mode) -- ^^ eyes + a talking mouth */
+.smiley[data-state="typing"] .sm-mouth{opacity:0}
+.smiley[data-state="typing"] .m-talk{opacity:1;
+  animation:sm-talk calc(.5s - var(--sm-energy)*.2s) ease-in-out infinite}
+.smiley[data-state="typing"] .sm-eye{animation:none}
+.smiley[data-state="typing"] .sm-eyes{transform:none}
+.smiley[data-state="typing"] .sm-pupil{opacity:0}
+.smiley[data-state="typing"] .sm-arc{opacity:1}
+
+@keyframes sm-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-1px)}}
+@keyframes sm-blink{0%,92%,100%{transform:scaleY(1)}95%{transform:scaleY(.08)}}
+@keyframes sm-dart{0%,100%{transform:translateX(-1.6px)}50%{transform:translateX(1.6px)}}
+@keyframes sm-scan{0%{transform:translateX(-2px)}45%{transform:translateX(2px)}55%{transform:translateX(2px)}100%{transform:translateX(-2px)}}
+@keyframes sm-talk{0%,100%{transform:scaleY(.45)}50%{transform:scaleY(1.05)}}
+@keyframes sm-drip{0%{opacity:var(--sm-energy);transform:translateY(0)}100%{opacity:0;transform:translateY(4px)}}
+@keyframes sm-think-dot{0%,70%,100%{opacity:0}35%{opacity:.9}}
+@keyframes sm-glint{0%,70%,100%{opacity:0}82%{opacity:1}}
+
+/* ---- Smiley extras: sparkles, overworked wobble, easter eggs ---- */
+.sm-spark{fill:#fff;opacity:0;transform-box:fill-box;transform-origin:center}
+.sm-heart{fill:#ff6b8a;opacity:0;transform-box:fill-box;transform-origin:center}
+.sm-party *{opacity:0}
+.sm-hat{fill:var(--accent);transform-box:fill-box;transform-origin:center bottom}
+.sm-pom{fill:#ffe39a}
+.sm-cf.c1{fill:#ff6b8a}
+.sm-cf.c2{fill:#5b8cff}
+.sm-cf.c3{fill:#62c08a}
+.sm-cf.c4{fill:#e0b15b}
+.sm-cf.c5{fill:#b78cff}
+.sm-cf{transform-box:fill-box;transform-origin:center}
+
+/* skill: twinkling sparkles flank the shades */
+.smiley[data-state="thinking"][data-mode="skill"] .sm-spark{animation:sm-twinkle 1.8s ease-in-out infinite}
+.smiley[data-state="thinking"][data-mode="skill"] .s2{animation-delay:.6s}
+
+/* overworked: run at high energy → the whole face wobbles */
+.smiley[data-load="high"][data-mode="run"] .sm-svg{animation:sm-wobble .5s ease-in-out infinite}
+
+/* easter egg · wink: one eye shut, tongue out, heart drifts up */
+.smiley[data-egg="wink"] .sm-eye{animation:none}
+.smiley[data-egg="wink"] .sm-eye-r .sm-pupil{opacity:0}
+.smiley[data-egg="wink"] .sm-eye-r .sm-arc{opacity:1}
+.smiley[data-egg="wink"] .m-smile{opacity:0}
+.smiley[data-egg="wink"] .m-smirk{opacity:1}
+.smiley[data-egg="wink"] .sm-tongue{opacity:1}
+.smiley[data-egg="wink"] .sm-heart{animation:sm-heart-float 1.9s ease-out}
+
+/* easter egg · heart: happy eyes + a floating heart */
+.smiley[data-egg="heart"] .sm-eye{animation:none}
+.smiley[data-egg="heart"] .sm-pupil{opacity:0}
+.smiley[data-egg="heart"] .sm-arc{opacity:1}
+.smiley[data-egg="heart"] .sm-heart{animation:sm-heart-float 1.9s ease-out}
+
+/* easter egg · party: hat pops on, confetti bursts */
+.smiley[data-egg="party"] .sm-eye{animation:none}
+.smiley[data-egg="party"] .sm-pupil{opacity:0}
+.smiley[data-egg="party"] .sm-arc{opacity:1}
+.smiley[data-egg="party"] .sm-hat,.smiley[data-egg="party"] .sm-pom{opacity:1;animation:sm-pop .4s ease-out}
+.smiley[data-egg="party"] .sm-cf{animation:sm-confetti 1.9s ease-out}
+.smiley[data-egg="party"] .c2{animation-delay:.05s}
+.smiley[data-egg="party"] .c3{animation-delay:.1s}
+.smiley[data-egg="party"] .c4{animation-delay:.15s}
+.smiley[data-egg="party"] .c5{animation-delay:.08s}
+
+@keyframes sm-twinkle{0%,100%{opacity:0;transform:scale(.4) rotate(0deg)}50%{opacity:1;transform:scale(1) rotate(45deg)}}
+@keyframes sm-wobble{0%,100%{transform:rotate(-5deg)}50%{transform:rotate(5deg)}}
+@keyframes sm-heart-float{0%{opacity:0;transform:translateY(2px) scale(.4)}25%{opacity:1;transform:translateY(0) scale(1)}100%{opacity:0;transform:translateY(-11px) scale(.85)}}
+@keyframes sm-pop{0%{transform:translateY(5px) scale(.5)}60%{transform:translateY(-1px) scale(1.08)}100%{transform:translateY(0) scale(1)}}
+@keyframes sm-confetti{0%{opacity:0;transform:translateY(5px) scale(.4)}20%{opacity:1}100%{opacity:0;transform:translateY(-9px) scale(1)}}
+
+/* sleep: after a long idle the smiley dozes — closed eyes, zzz, slow breathing */
+.sm-zzz{opacity:0}
+.sm-zzz path{fill:none;stroke:var(--text-2);stroke-width:1.4;stroke-linecap:round;stroke-linejoin:round;
+  transform-box:fill-box;transform-origin:center}
+.smiley[data-sleep]{animation:none}
+.smiley[data-sleep] .sm-eye{animation:none}
+.smiley[data-sleep] .sm-pupil{opacity:0}
+.smiley[data-sleep] .sm-arc{opacity:1}
+.smiley[data-sleep] .sm-mouth{opacity:0}
+.smiley[data-sleep] .m-think{opacity:1}
+.smiley[data-sleep] .sm-eyes{transform:translateY(1.2px)}
+.smiley[data-sleep] .sm-svg{animation:sm-breathe 3.6s ease-in-out infinite}
+.smiley[data-sleep] .sm-zzz{opacity:1}
+.smiley[data-sleep] .z1{animation:sm-zfloat 3s ease-in-out infinite}
+.smiley[data-sleep] .z2{animation:sm-zfloat 3s ease-in-out infinite;animation-delay:1s}
+.smiley[data-sleep] .z3{animation:sm-zfloat 3s ease-in-out infinite;animation-delay:2s}
+
+@keyframes sm-breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+@keyframes sm-zfloat{0%{opacity:0;transform:translateY(2px) scale(.6)}30%{opacity:.85}100%{opacity:0;transform:translateY(-6px) scale(1.15)}}

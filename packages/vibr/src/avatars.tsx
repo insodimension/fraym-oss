@@ -1,4 +1,9 @@
 import type { AvatarId, AvatarProps } from "./types";
+import { Nebula } from "./avatars/nebula";
+import { Smiley } from "./avatars/smiley";
+
+export { Nebula, Smiley };
+
 function Avatar({
   avatar,
   state = "idle",
@@ -33,7 +38,6 @@ export const Static = form("static");
 export const Rorschach = form("rorschach");
 export const Inkblot = form("inkblot");
 export const Aurora = form("aurora");
-export const Nebula = form("nebula");
 export const Siri = form("siri");
 export const Orbit = form("orbit");
 export const Quasar = form("quasar");
@@ -44,7 +48,6 @@ export const Koi = form("koi");
 export const Duel = form("duel");
 export const Ember = form("ember");
 export const BlackHole = form("blackhole");
-export const Smiley = form("smiley");
 export const AVATARS = {
   blob: Blob,
   static: Static,

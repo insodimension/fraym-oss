@@ -40,16 +40,16 @@
       "import": "./src/avatars.tsx"
     },
     "./nebula": {
-      "types": "./src/avatars.tsx",
-      "import": "./src/avatars.tsx"
+      "types": "./src/avatars/nebula.tsx",
+      "import": "./src/avatars/nebula.tsx"
     },
     "./siri": {
       "types": "./src/avatars.tsx",
       "import": "./src/avatars.tsx"
     },
     "./smiley": {
-      "types": "./src/avatars.tsx",
-      "import": "./src/avatars.tsx"
+      "types": "./src/avatars/smiley.tsx",
+      "import": "./src/avatars/smiley.tsx"
     },
     "./orbit": {
       "types": "./src/avatars.tsx",

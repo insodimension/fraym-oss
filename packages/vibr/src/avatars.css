@@ -48,7 +48,6 @@
   transform: rotate(35deg) scaleX(1.5);
 }
 .vibr-avatar[data-avatar="aurora"] i,
-.vibr-avatar[data-avatar="nebula"] i,
 .vibr-avatar[data-avatar="siri"] i {
   filter: blur(3px);
   height: 20px;
@@ -98,18 +97,6 @@
   background: #08080b;
   border: 3px solid var(--vibr-accent);
   box-shadow: 0 0 9px var(--vibr-accent);
-}
-.vibr-avatar[data-avatar="smiley"] i {
-  background: transparent;
-  border: 2px solid var(--vibr-accent);
-  height: 18px;
-  width: 18px;
-}
-.vibr-avatar[data-avatar="smiley"] b {
-  transform: translate(-4px, -3px);
-}
-.vibr-avatar[data-avatar="smiley"] em {
-  transform: translate(4px, -3px);
 }
 @keyframes vibr-breathe {
   50% {
