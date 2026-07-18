@@ -1,6 +1,6 @@
 import { EditToolRenderer } from "../tool-renderers/renderers";
 import { readStringField } from "./default-renderer-utils";
-import type { ToolRenderer } from "./tool-renderer-registry";
+import type { ToolRenderer } from "./tool-renderer-types";
 
 export const renderEdit: ToolRenderer = call => {
   const path = readStringField(call.input, "path", "file", "file_path") ?? "File";

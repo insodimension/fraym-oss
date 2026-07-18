@@ -1,6 +1,6 @@
 import { ReadToolRenderer } from "../tool-renderers/renderers";
 import { readResultContentText, readStringField } from "./default-renderer-utils";
-import type { ToolRenderer } from "./tool-renderer-registry";
+import type { ToolRenderer } from "./tool-renderer-types";
 
 export const renderRead: ToolRenderer = call => {
   const path = readStringField(call.input, "path", "file", "file_path") ?? "File";

@@ -1,15 +1,8 @@
 import { createContext, isValidElement, type ReactNode, useContext, useMemo } from "react";
-import type { ToolCallStatus } from "@fraym/driver";
-import type { ToolCallState } from "../thread-state";
-import { DEFAULT_TOOL_RENDERERS } from "./default-renderers";
+import { DEFAULT_TOOL_RENDERERS } from "./default-tool-renderers";
+import type { ToolRenderer, ToolRendererMap, ToolView } from "./tool-renderer-types";
 
-export type ToolRenderInput = ToolCallState;
-export type ToolStatus = ToolCallStatus;
-export type ToolKind = "read" | "search" | "edit" | "run" | "skill" | "mcp" | "web" | "todo" | "realm" | "tool";
-export type ToolBodyVariant = "default" | "terminal" | "code" | "diff" | "plain";
-export interface ToolView { readonly label?: ReactNode; readonly headIcon?: ReactNode; readonly header?: ReactNode; readonly badges?: ReactNode; readonly stat?: string; readonly status?: ToolStatus; readonly kind?: ToolKind; readonly bodyVariant?: ToolBodyVariant; readonly defaultOpen?: boolean; readonly body: ReactNode }
-export type ToolRenderer = (call: ToolRenderInput) => ReactNode | ToolView;
-export type ToolRendererMap = Readonly<Record<string, ToolRenderer>>;
+export type { ToolBodyVariant, ToolKind, ToolRenderer, ToolRendererMap, ToolRenderInput, ToolStatus, ToolView } from "./tool-renderer-types";
 export const TOOL_FALLBACK_KEY = "*";
 export function isToolView(result: ReactNode | ToolView): result is ToolView { return typeof result === "object" && result !== null && !isValidElement(result) && "body" in result; }
 

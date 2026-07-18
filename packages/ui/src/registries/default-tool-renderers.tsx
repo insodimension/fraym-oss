@@ -2,7 +2,7 @@ import { BashToolRenderer, GenericToolRenderer, LspToolRenderer, SearchToolRende
 import { describeTool } from "./describe-tool";
 import { renderEdit } from "./edit-renderer";
 import { renderRead } from "./read-renderer";
-import type { ToolRenderer, ToolRendererMap } from "./tool-renderer-registry";
+import type { ToolRenderer, ToolRendererMap } from "./tool-renderer-types";
 import { renderWrite } from "./write-renderer";
 import { FEATURE_TOOL_RENDERERS } from "../features/tool-card/tools/feature-renderers";
 

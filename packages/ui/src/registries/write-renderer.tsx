@@ -1,6 +1,6 @@
 import { WriteToolRenderer } from "../tool-renderers/renderers";
 import { readField, readResultContentText, readStringField } from "./default-renderer-utils";
-import type { ToolRenderer } from "./tool-renderer-registry";
+import type { ToolRenderer } from "./tool-renderer-types";
 
 export const renderWrite: ToolRenderer = call => {
   const path = readStringField(call.input, "path", "file", "file_path") ?? "File";

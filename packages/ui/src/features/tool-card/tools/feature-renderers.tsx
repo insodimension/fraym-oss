@@ -4,7 +4,7 @@ import { Code } from "../../../elements/Code";
 import { MermaidDiagram } from "../../../elements/MermaidDiagram";
 import { StaticMarkdownLite } from "../../../elements/StaticMarkdownLite";
 import { arrayField, isRecord, prettyValue, stringField } from "../../../tool-renderers/data";
-import type { ToolKind, ToolRenderer, ToolView } from "../../../registries/tool-renderer-registry";
+import type { ToolKind, ToolRenderer, ToolView } from "../../../registries/tool-renderer-types";
 import { ToolArgsPreview } from "./bodies/tool-args-preview";
 
 interface RendererSpec { readonly label: string; readonly kind?: ToolKind; readonly variant?: ToolView["bodyVariant"]; readonly render?: (call: Parameters<ToolRenderer>[0]) => ReactNode }
