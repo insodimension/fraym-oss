@@ -56,7 +56,7 @@ interface ResolveInput {
 
 interface ResolveOutput {
 	readonly content?: Array<{ type: string; text: string }>;
-	readonly details?: Record<string, unknown>;
+	readonly details?: Record<string, unknown> | undefined;
 	readonly isError?: boolean;
 }
 

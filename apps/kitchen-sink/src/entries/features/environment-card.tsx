@@ -105,7 +105,7 @@ function Hairline() {
 /** DESIGN.md chip spec: surface-3 fill, mono caption, rounded.sm — on the
  *  shared Badge metrics (fixed h-5 + leading-none) so chip glyphs sit on the
  *  exact row axis next to the larger label text (mirrors the production panel). */
-function Chip({ children, tone }: { readonly children: ReactNode; readonly tone?: "warn" | "del" | "add" }) {
+function Chip({ children, tone }: { readonly children: ReactNode; readonly tone?: "warn" | "del" | "add" | undefined }) {
 	return (
 		<Badge
 			variant="soft"

@@ -6,8 +6,8 @@ export type TextareaVariant = "default" | "ghost" | "surface";
 export type TextareaResize = "none" | "vertical" | "horizontal" | "both";
 
 export interface TextareaProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {
-  variant?: TextareaVariant;
-  resize?: TextareaResize;
+  variant?: TextareaVariant | undefined;
+  resize?: TextareaResize | undefined;
 }
 
 export function textareaVariants({ variant = "default", resize = "none", className }: Pick<TextareaProps, "variant" | "resize" | "className"> = {}): string {

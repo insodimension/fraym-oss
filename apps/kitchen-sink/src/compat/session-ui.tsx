@@ -101,7 +101,7 @@ export function useSession(): SessionValue {
 
 type ConnectedThreadProps = Omit<React.ComponentProps<typeof PublicThread>, "source"> & {
 	readonly presence?: ReactNode;
-	readonly verberProfile?: string;
+	readonly verberProfile?: string | undefined;
 };
 
 export function ConnectedMessageThread({ presence: _presence, verberProfile: _profile, ...props }: ConnectedThreadProps) {

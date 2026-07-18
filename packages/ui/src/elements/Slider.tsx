@@ -9,7 +9,7 @@ export interface NumericSliderProps extends SliderCommonProps {
   onValueChange: (value: number) => void;
   min?: number;
   max?: number;
-  step?: number;
+  step?: number | undefined;
   label?: string;
   formatValue?: (value: number) => string;
   steps?: undefined;
@@ -19,8 +19,8 @@ export interface SteppedSliderProps extends SliderCommonProps {
   value: string | undefined;
   onValueChange: (value: string) => void;
   muted?: boolean;
-  startLabel?: string;
-  endLabel?: string;
+  startLabel?: string | undefined;
+  endLabel?: string | undefined;
 }
 export type SliderProps = NumericSliderProps | SteppedSliderProps;
 

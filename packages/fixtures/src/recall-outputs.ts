@@ -2,8 +2,8 @@ type RecallVariation = "found-results" | "no-results" | "error" | "pending";
 
 interface RecallFixtureCase {
 	readonly input: { readonly query: string };
-	readonly details?: Record<string, unknown>;
-	readonly outputText?: string;
+	readonly details?: Record<string, unknown> | undefined;
+	readonly outputText?: string | undefined;
 }
 
 const FOUND_RESULTS_TEXT = [

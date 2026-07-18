@@ -36,7 +36,7 @@ export interface SessionSnapshot {
     readonly approvalMode?: string;
     readonly activeTeam?: string | null;
     readonly ephemeral?: boolean;
-  };
+  } | undefined;
 }
 export interface CreateSessionOptions {
   readonly title?: string;

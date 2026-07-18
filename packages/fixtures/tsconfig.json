@@ -8,7 +8,7 @@
     "rootDir": "src",
     "strict": true,
     "noUncheckedIndexedAccess": true,
-    "exactOptionalPropertyTypes": false,
+    "exactOptionalPropertyTypes": true,
     "module": "ESNext",
     "moduleResolution": "Bundler",
     "target": "ES2022",

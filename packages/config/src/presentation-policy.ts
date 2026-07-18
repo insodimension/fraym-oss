@@ -2,7 +2,7 @@ import { globMatches } from "./glob";
 
 export interface IconSpec {
   readonly icon: string;
-  readonly color?: string;
+  readonly color?: string | undefined;
 }
 export interface IconRule {
   readonly tool: string | readonly string[];

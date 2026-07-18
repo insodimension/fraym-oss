@@ -8,7 +8,7 @@ export type CheckpointVariation = "pending" | "success";
 interface CheckpointCase {
 	readonly input: Record<string, unknown>;
 	readonly details?: Record<string, unknown>;
-	readonly outputText?: string;
+	readonly outputText?: string | undefined;
 	readonly call: unknown;
 }
 

@@ -6,8 +6,8 @@ export type InputVariant = "default" | "ghost" | "underline" | "surface";
 export type InputSize = "sm" | "default" | "md" | "lg";
 
 export interface InputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, "size"> {
-  variant?: InputVariant;
-  size?: InputSize;
+  variant?: InputVariant | undefined;
+  size?: InputSize | undefined;
 }
 
 export function inputVariants({ variant = "default", size = "default", className }: Pick<InputProps, "variant" | "size" | "className"> = {}): string {

@@ -8,8 +8,8 @@ export type RetainVariation = "with-items" | "empty" | "error" | "pending";
 interface RetainCase {
 	readonly id: RetainVariation;
 	readonly input: Record<string, unknown>;
-	readonly details?: Record<string, unknown>;
-	readonly outputText?: string;
+	readonly details?: Record<string, unknown> | undefined;
+	readonly outputText?: string | undefined;
 	readonly preview: unknown;
 }
 

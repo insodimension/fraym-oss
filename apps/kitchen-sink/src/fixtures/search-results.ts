@@ -39,7 +39,7 @@ export const CONTENT = {
 	multiFile: { display: MULTI_FILE, matchCount: 5, fileCount: 3, scopePath: "packages/ui/src" },
 	singleFile: { display: SINGLE_FILE, matchCount: 2, fileCount: 1, scopePath: undefined },
 	rootFiles: { display: ROOT_FILES, matchCount: 2, fileCount: 2, scopePath: undefined },
-} satisfies Record<string, { display: string; matchCount: number; fileCount: number; scopePath?: string }>;
+} satisfies Record<string, { display: string; matchCount: number; fileCount: number; scopePath?: string | undefined }>;
 
 export const INPUT = {
 	multiFile: { pattern: "useToolStream", paths: ["packages/ui/src"] },

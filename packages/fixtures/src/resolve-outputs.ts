@@ -8,7 +8,7 @@ interface ResolveCase {
 	readonly id: string;
 	readonly input: Record<string, unknown>;
 	readonly details?: Record<string, unknown>;
-	readonly outputText?: string;
+	readonly outputText?: string | undefined;
 }
 
 const RESOLVE_CASES = [

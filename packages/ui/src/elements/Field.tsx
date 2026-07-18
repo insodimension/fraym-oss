@@ -4,13 +4,13 @@ import { Label } from "./Label";
 
 export interface FieldProps {
 	/** Label text rendered above the control. */
-	readonly label?: string;
+	readonly label?: string | undefined;
 	/** Helper text (neutral tone). Shown when no error or warning. */
-	readonly helper?: string;
+	readonly helper?: string | undefined;
 	/** Error text (del tone). Overrides helper and sets `data-invalid` on the control. */
-	readonly error?: string;
+	readonly error?: string | undefined;
 	/** Warning text (warn tone). Shown when no error. */
-	readonly warning?: string;
+	readonly warning?: string | undefined;
 	/** Show a required asterisk on the label. */
 	readonly required?: boolean;
 	/** The form control (Input, Textarea, Select, etc.). */

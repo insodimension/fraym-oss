@@ -18,7 +18,7 @@ export interface MessageActionsProps {
   actions: readonly MessageAction[];
   className?: string;
   label?: string;
-  timestamp?: string;
+  timestamp?: string | undefined;
   align?: "start" | "end";
 }
 

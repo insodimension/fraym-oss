@@ -4,8 +4,8 @@ import { classNames } from "./utils";
 
 export interface SelectOption { value: string; label: string; disabled?: boolean }
 export interface SelectProps extends Omit<SelectHTMLAttributes<HTMLSelectElement>, "size"> {
-  variant?: "default" | "ghost" | "surface";
-  size?: "sm" | "default" | "md" | "lg";
+  variant?: "default" | "ghost" | "surface" | undefined;
+  size?: "sm" | "default" | "md" | "lg" | undefined;
   options?: readonly SelectOption[];
   children?: ReactNode;
 }

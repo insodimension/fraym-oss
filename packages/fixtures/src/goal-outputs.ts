@@ -37,7 +37,7 @@ interface GoalFixtureGoal {
 	readonly id: string;
 	readonly objective: string;
 	readonly status: GoalStatus;
-	readonly tokenBudget?: number;
+	readonly tokenBudget?: number | undefined;
 	readonly tokensUsed: number;
 	readonly timeUsedSeconds: number;
 	readonly createdAt: number;
@@ -46,7 +46,7 @@ interface GoalFixtureGoal {
 
 interface GoalFixtureCase {
 	readonly input: Record<string, unknown>;
-	readonly details?: Record<string, unknown>;
+	readonly details?: Record<string, unknown> | undefined;
 	readonly outputText?: string;
 }
 

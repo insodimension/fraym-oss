@@ -13,7 +13,7 @@ export const REWIND_VARIATIONS: readonly RewindVariation[] = ["success", "error"
 interface RewindFixtureCase {
 	readonly input: { readonly report: string };
 	readonly details?: { readonly report: string; readonly rewound: boolean };
-	readonly outputText?: string;
+	readonly outputText?: string | undefined;
 	readonly result?: unknown;
 	readonly pendingCall?: unknown;
 }

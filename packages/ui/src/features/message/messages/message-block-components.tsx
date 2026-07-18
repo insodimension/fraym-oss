@@ -4,7 +4,7 @@ import { StreamingMarkdown } from "../../../elements/StreamingMarkdown";
 import { classNames } from "../../../elements/utils";
 import type { FraymDensity } from "../../surface-kit";
 
-export interface ReasoningBlockProps { readonly text: string; readonly summary?: string; readonly defaultOpen?: boolean; readonly density?: FraymDensity; readonly live?: boolean; readonly className?: string }
+export interface ReasoningBlockProps { readonly text: string; readonly summary?: string | undefined; readonly defaultOpen?: boolean; readonly density?: FraymDensity; readonly live?: boolean; readonly className?: string }
 export function ReasoningBlock({ text, summary = "Thinking", defaultOpen = false, density = "comfortable", live, className }: ReasoningBlockProps) { const [open, setOpen] = useState(defaultOpen); if (density === "compact") return <StreamingMarkdown className={classNames("fraym-reasoning-block is-compact", className)}>{text}</StreamingMarkdown>; return <section className={classNames("fraym-reasoning-block", live && "is-live", className)}><button aria-expanded={open} onClick={() => setOpen(!open)} type="button"><span>✦</span>{summary}<i aria-hidden="true">›</i></button>{open ? <StreamingMarkdown>{text}</StreamingMarkdown> : null}</section>; }
 export interface NoticeCardProps { readonly level?: "info" | "warning" | "error"; readonly message: string; readonly source?: string; readonly className?: string }
 export function NoticeCard({ level = "info", message, source, className }: NoticeCardProps) { return <aside className={classNames("fraym-notice-card", `fraym-notice-card--${level}`, className)}>{source ? <strong>{source}</strong> : null}<span>{message}</span></aside>; }

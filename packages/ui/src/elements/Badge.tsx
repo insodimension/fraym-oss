@@ -6,7 +6,7 @@ export type BadgeTone = "neutral" | "accent" | "success" | "warning" | "danger" 
 export type BadgeVariant = "solid" | "soft" | "outline" | "code";
 
 export interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {
-  tone?: BadgeTone;
+  tone?: BadgeTone | undefined;
   variant?: BadgeVariant;
   asChild?: boolean;
 }

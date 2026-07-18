@@ -7,8 +7,8 @@ export type RenderMermaidVariation = "flowchart" | "sequence" | "state" | "error
 
 interface RenderMermaidCase {
 	readonly input: Record<string, unknown>;
-	readonly details?: Record<string, unknown>;
-	readonly outputText?: string;
+	readonly details?: Record<string, unknown> | undefined;
+	readonly outputText?: string | undefined;
 	readonly call: unknown;
 }
 

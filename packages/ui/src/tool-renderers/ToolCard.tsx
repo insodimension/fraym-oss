@@ -49,7 +49,7 @@ export function ToolCard({
 }: ToolCardProps) {
   const resolvedStatus: ToolCallStatus = status === "success" ? "succeeded" : status === "error" ? "failed" : status === "warn" ? "cancelled" : status ?? call?.status ?? "pending";
   const resolvedCall = call ?? { id: String(label ?? kind ?? "tool"), name: String(label ?? kind ?? "tool"), status: resolvedStatus, input: undefined, output: undefined };
-  const resolvedView: ToolView | undefined = view ?? (kind || status || stat || label || icon ? { kind, status: resolvedStatus, stat, label, headIcon: icon ? toolIconNode(icon, 14) : undefined, body: children ?? null } : undefined);
+  const resolvedView: ToolView | undefined = view ?? (kind || status || stat || label || icon ? { ...(kind === undefined ? {} : { kind }), status: resolvedStatus, ...(stat === undefined ? {} : { stat }), ...(label === undefined ? {} : { label }), ...(icon ? { headIcon: toolIconNode(icon, 14) } : {}), body: children ?? null } : undefined);
   const resolvedDefaultExpanded = defaultExpanded ?? (resolvedCall.status === "pending" || resolvedCall.status === "running" || resolvedCall.status === "failed");
   const [internalExpanded, setInternalExpanded] = useState(resolvedView?.defaultOpen ?? resolvedDefaultExpanded);
   const userChangedDisclosure = useRef(false);

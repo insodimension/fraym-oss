@@ -3,7 +3,7 @@ import { type CSSProperties, type ReactNode, useEffect, useRef } from "react";
 import { useReducedMotion } from "./MediaQueries";
 import { classNames } from "./utils";
 
-export interface GradientTextProps { children: ReactNode; className?: string; colors?: readonly string[]; speed?: number; showBorder?: boolean; disabled?: boolean }
+export interface GradientTextProps { children: ReactNode; className?: string; colors?: readonly string[] | undefined; speed?: number; showBorder?: boolean; disabled?: boolean }
 const defaultColors = ["var(--fraym-color-accent)", "var(--fraym-color-iris)", "var(--fraym-color-info)"] as const;
 
 export function GradientText({ children, className, colors = defaultColors, speed = 8, showBorder = false, disabled = false }: GradientTextProps) {

@@ -66,8 +66,8 @@ const ACTIVE_BY_ROUTE = new Map<string, Exclude<ActiveEntry, null>>(
 	TIERS.flatMap(tier => tier.entries.map(entry => [`${tier.id}/${entry.id}`, { tier: tier.id, entry }] as const)),
 );
 
-function groupEntries(entries: readonly ShowcaseEntry[]): { group?: string; items: ShowcaseEntry[] }[] {
-	const out: { group?: string; items: ShowcaseEntry[] }[] = [];
+function groupEntries(entries: readonly ShowcaseEntry[]): { group?: string | undefined; items: ShowcaseEntry[] }[] {
+	const out: { group?: string | undefined; items: ShowcaseEntry[] }[] = [];
 	for (const entry of entries) {
 		const last = out[out.length - 1];
 		if (last && last.group === entry.group) last.items.push(entry);
@@ -351,7 +351,7 @@ function useDockResize(setDockWidth: Dispatch<SetStateAction<number>>) {
 	};
 }
 
-function KitchenLogo({ onExit }: { readonly onExit?: () => void }) {
+function KitchenLogo({ onExit }: { readonly onExit?: (() => void) | undefined }) {
 	const brand = (
 		<>
 			<FraymBrandMark size={22} />
@@ -484,7 +484,7 @@ function KitchenHeader({
 	readonly onFontChange: (id: string) => void;
 	readonly onThemeChange: (id: string) => void;
 	readonly onDockOpenChange: Dispatch<SetStateAction<boolean>>;
-	readonly onExit?: () => void;
+	readonly onExit?: (() => void) | undefined;
 }) {
 	return (
 		<header className="flex shrink-0 flex-wrap items-center gap-3 border-b border-fr-border-soft px-4 py-3 sm:gap-4 sm:px-6">
@@ -517,7 +517,7 @@ function KitchenNavEntry({
 }: {
 	readonly entry: ShowcaseEntry;
 	readonly tier: Tier;
-	readonly group?: string;
+	readonly group?: string | undefined;
 	readonly active: ActiveEntry;
 	readonly onGo: (tier: Tier, id: string) => void;
 }) {
@@ -552,7 +552,7 @@ function KitchenNavGroup({
 	onGo,
 }: {
 	readonly tier: Tier;
-	readonly group?: string;
+		readonly group?: string | undefined;
 	readonly items: readonly ShowcaseEntry[];
 	readonly active: ActiveEntry;
 	readonly onGo: (tier: Tier, id: string) => void;
@@ -660,7 +660,7 @@ function KitchenNav({
 	);
 }
 
-function ActiveEntryPanel({ active, activeTier }: { readonly active: ActiveEntry; readonly activeTier?: TierDef }) {
+function ActiveEntryPanel({ active, activeTier }: { readonly active: ActiveEntry; readonly activeTier?: TierDef | undefined }) {
 	return (
 		<main className="min-w-0 flex-1 overflow-y-auto">
 			<div className="mx-auto max-w-[1080px] px-5 py-8 sm:px-10 sm:py-12">

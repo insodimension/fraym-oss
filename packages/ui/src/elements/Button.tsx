@@ -6,10 +6,10 @@ export type ButtonVariant = "primary" | "secondary" | "ghost" | "danger" | "defa
 export type ButtonSize = "sm" | "md" | "lg" | "icon" | "default";
 
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: ButtonVariant;
-  size?: ButtonSize;
+  variant?: ButtonVariant | undefined;
+  size?: ButtonSize | undefined;
   loading?: boolean;
-  loadingText?: string;
+  loadingText?: string | undefined;
   asChild?: boolean;
 }
 

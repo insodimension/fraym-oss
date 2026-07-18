@@ -27,7 +27,7 @@ export function useToolConfig(): ToolConfigValue {
  * (plus the generic Configuration panel) to everything below — the entry preview
  * and the Demo Dock. Key this by entry id so values reset per entry.
  */
-export function ToolConfigProvider({ schema, children }: { schema?: ControlsSchema; children: ReactNode }) {
+export function ToolConfigProvider({ schema, children }: { schema?: ControlsSchema | undefined; children: ReactNode }) {
 	const hasSchema = !!schema && Object.keys(schema).length > 0;
 	const { values, panel } = useControls(schema ?? {});
 	const displayValues = useMemo(() => {
@@ -50,4 +50,3 @@ export function ToolConfigProvider({ schema, children }: { schema?: ControlsSche
 		</ToolConfigContext.Provider>
 	);
 }
-

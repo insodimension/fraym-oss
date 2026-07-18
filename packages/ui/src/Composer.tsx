@@ -17,7 +17,7 @@ export function Composer(props: ComposerProps) {
     const commands = slashCommands.map(command => ({
       ...command,
       name: command.name ?? command.value?.replace(/^\/+/, "") ?? command.label.replace(/^\/+/, ""),
-      value: command.value ?? command.name,
+      ...(command.value !== undefined || command.name !== undefined ? { value: command.value ?? command.name! } : {}),
       description: command.description ?? "",
       group: command.group ?? "Commands",
     }));

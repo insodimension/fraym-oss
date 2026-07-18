@@ -115,13 +115,13 @@ export function readDialogField(meta: Readonly<Record<string, unknown>> | undefi
 		: undefined;
 	return {
 		type,
-		placeholder: str(field.placeholder),
-		min: toNumber(field.min),
-		max: toNumber(field.max),
-		step: toNumber(field.step),
-		default: def(field.default),
-		unit: str(field.unit),
-		suggestions,
+		...(str(field.placeholder) === undefined ? {} : { placeholder: str(field.placeholder)! }),
+		...(toNumber(field.min) === undefined ? {} : { min: toNumber(field.min)! }),
+		...(toNumber(field.max) === undefined ? {} : { max: toNumber(field.max)! }),
+		...(toNumber(field.step) === undefined ? {} : { step: toNumber(field.step)! }),
+		...(def(field.default) === undefined ? {} : { default: def(field.default)! }),
+		...(str(field.unit) === undefined ? {} : { unit: str(field.unit)! }),
+		...(suggestions === undefined ? {} : { suggestions }),
 	};
 }
 
@@ -461,16 +461,16 @@ export function AskFieldControl({
 				<span className="font-primary text-fr-base font-semibold text-fr-text">{question}</span>
 			</div>
 			{field.type === "text" && (
-				<TextField field={field} initialValue={initialValue} onSubmit={onSubmit} onCancel={onCancel} />
+				<TextField field={field} {...(initialValue === undefined ? {} : { initialValue })} onSubmit={onSubmit} onCancel={onCancel} />
 			)}
 			{field.type === "number" && (
-				<NumberField field={field} initialValue={initialValue} onSubmit={onSubmit} onCancel={onCancel} />
+				<NumberField field={field} {...(initialValue === undefined ? {} : { initialValue })} onSubmit={onSubmit} onCancel={onCancel} />
 			)}
 			{field.type === "slider" && (
 				<SliderField
 					question={question}
 					field={field}
-					initialValue={initialValue}
+					{...(initialValue === undefined ? {} : { initialValue })}
 					onSubmit={onSubmit}
 					onCancel={onCancel}
 				/>
@@ -479,13 +479,13 @@ export function AskFieldControl({
 				<ToggleField
 					question={question}
 					field={field}
-					toggleSubmit={toggleSubmit}
+					{...(toggleSubmit === undefined ? {} : { toggleSubmit })}
 					onSubmit={onSubmit}
 					onCancel={onCancel}
 				/>
 			)}
 			{field.type === "tags" && (
-				<TagsField field={field} initialValue={initialValue} onSubmit={onSubmit} onCancel={onCancel} />
+				<TagsField field={field} {...(initialValue === undefined ? {} : { initialValue })} onSubmit={onSubmit} onCancel={onCancel} />
 			)}
 		</div>
 	);
