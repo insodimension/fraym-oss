@@ -8,7 +8,7 @@ import {
   type ComposerSubmission,
 } from "./Composer";
 import type { SlashCommand } from "./composer-state";
-import { Code } from "./elements/Code";
+import { Code } from "./elements/code";
 import { classNames } from "./elements/utils";
 import { ThreadView } from "./Thread";
 import { useAgentSession } from "./useAgentSession";

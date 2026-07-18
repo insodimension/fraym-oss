@@ -62,7 +62,7 @@ function GradientTextEntry() {
 		>
 			<GradientText
 				className="text-4xl font-semibold tracking-tight"
-				colors={colors.length > 0 ? colors : undefined}
+				{...(colors.length > 0 ? { colors } : {})}
 				speed={values.speed}
 				showBorder={values.showBorder}
 				disabled={values.disabled}

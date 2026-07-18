@@ -1,4 +1,4 @@
-import { createPortal } from "react-dom"; import { BottomSheet, useIsPhoneWidth } from "../../components/bottom-sheet"; import { type Placement, PopoverPanel, PopoverHeading, Scrim } from "../../elements/Popover"; import { classNames } from "../../elements/utils";
+import { createPortal } from "react-dom"; import { BottomSheet, useIsPhoneWidth } from "../../components/bottom-sheet"; import { type Placement, PopoverPanel, PopoverHeading, Scrim } from "../../elements/popover"; import { classNames } from "../../elements/utils";
 export type PermissionTone = "warn" | "add" | "del" | "blue" | "accent";
 export interface PermissionDef { readonly id: string; readonly label: string; readonly desc: string; readonly icon: string; readonly tone: PermissionTone }
 export interface PermissionMenuProps { readonly permissions: readonly PermissionDef[]; readonly selected: string; readonly onSelect: (id: string) => void; readonly onClose: () => void; readonly anchorRect?: DOMRect | null; readonly place?: Placement; readonly style?: React.CSSProperties; readonly className?: string }

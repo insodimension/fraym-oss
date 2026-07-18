@@ -1,4 +1,4 @@
-import { Badge } from "../../elements/Badge";
+import { Badge } from "../../elements/badge";
 export interface LoopTickInfo { readonly current: number; readonly total?: number; readonly label?: string }
 export function parseLoopTickMessage(text: string): LoopTickInfo | null { const match = text.match(/(?:tick|step|iteration)\s+(\d+)(?:\s*(?:\/|of)\s*(\d+))?(?:\s*[:·-]\s*(.*))?/i); return match ? { current: Number(match[1]), ...(match[2] ? { total: Number(match[2]) } : {}), ...(match[3] ? { label: match[3] } : {}) } : null; }
 export function LoopTickBadge({ info, text }: { readonly info?: LoopTickInfo; readonly text?: string }) { const resolved = info ?? (text ? parseLoopTickMessage(text) : null); return resolved ? <Badge tone="accent">Tick {resolved.current}{resolved.total ? `/${resolved.total}` : ""}{resolved.label ? ` · ${resolved.label}` : ""}</Badge> : null; }

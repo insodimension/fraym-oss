@@ -116,7 +116,7 @@ function App() {
                 value={cwdDraft}
               />
             </div>
-            <Button disabled={!cwdIsAbsolute} size="sm" type="submit" variant="primary">Connect</Button>
+			<Button disabled={!cwdIsAbsolute} size="sm" type="submit" variant="default">Connect</Button>
             <p className="web-connection__help" id="acp-cwd-help">
               Enter the absolute workspace path the ACP agent should open.
             </p>

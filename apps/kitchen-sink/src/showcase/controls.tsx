@@ -157,7 +157,7 @@ function ControlInput({
 					value={Number(value)}
 					min={def.min}
 					max={def.max}
-					step={def.step}
+					{...(def.step !== undefined ? { step: def.step } : {})}
 					onValueChange={onChange}
 				/>
 			);

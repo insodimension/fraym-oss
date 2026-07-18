@@ -1,4 +1,4 @@
-import { createPortal } from "react-dom"; import type { ContextBreakdown, UsageStatus } from "@fraym/driver"; import { type Placement, PopoverPanel, Scrim } from "../../elements/Popover"; import { Meter } from "../density-ui"; import { classNames } from "../../elements/utils";
+import { createPortal } from "react-dom"; import type { ContextBreakdown, UsageStatus } from "@fraym/driver"; import { type Placement, PopoverPanel, Scrim } from "../../elements/popover"; import { Meter } from "../density-ui"; import { classNames } from "../../elements/utils";
 export type ContextRowTone = "accent" | "warn" | "blue" | "add" | "mute";
 export interface ContextRow { readonly name: string; readonly k: number; readonly pct: number; readonly free?: boolean; readonly tone?: ContextRowTone }
 export interface PlanLimit { readonly name: string; readonly pct: number; readonly resets: string; readonly status?: UsageStatus }

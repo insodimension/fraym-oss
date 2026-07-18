@@ -1,8 +1,9 @@
 import { useMemo, useState } from "react";
 
-import { Badge } from "../elements/Badge";
-import { Button } from "../elements/Button";
-import { Code } from "../elements/Code";
+import { Badge } from "../elements/badge";
+import { Button } from "../elements/button";
+import { Code } from "../elements/code";
+import { CodeBlock } from "../elements/code-block";
 import type { ToolCallState } from "../thread-state";
 import { arrayField, isRecord, numberField, prettyValue, stringField } from "./data";
 import type { ToolRendererMap } from "../registries/tool-renderer-types";
@@ -36,7 +37,7 @@ export function ReadToolRenderer({ input, output }: ToolCallState) {
         <MachineField label="Path" value={stringField(input, "path", "file") ?? "unknown"} />
         <Badge>{lineCount} lines</Badge>
       </div>
-      <Code block language="text">{preview}</Code>
+		<CodeBlock code={preview} language="text" />
       {lines.length > 8 ? (
         <Button onClick={() => setShowMore((value) => !value)} size="sm">
           {showMore ? "Show less" : `Show ${lines.length - 8} more lines`}
@@ -75,7 +76,7 @@ export function WriteToolRenderer(call: ToolCallState) {
         <MachineField label="Path" value={stringField(call.input, "path", "file") ?? "unknown"} />
         <Badge>{lines.length} lines</Badge>
       </div>
-      <Code block language={stringField(call.input, "language") ?? "text"}>{lines.slice(0, 12).join("\n")}</Code>
+		<CodeBlock code={lines.slice(0, 12).join("\n")} language={stringField(call.input, "language") ?? "text"} />
       {lines.length > 12 ? <span className="fraym-tool-note">Previewing 12 of {lines.length} lines</span> : null}
     </div>
   );
@@ -91,7 +92,7 @@ export function BashToolRenderer(call: ToolCallState) {
     <div className="fraym-tool-stack">
       <div className="fraym-tool-command"><span aria-hidden="true">$</span><code>{command}</code></div>
       <pre className="fraym-tool-terminal">{stdout}{stderr ? `\n${stderr}` : ""}</pre>
-      {exitCode !== undefined ? <Badge tone={exitCode === 0 ? "success" : "danger"}>exit {exitCode}</Badge> : null}
+		{exitCode !== undefined ? <Badge tone={exitCode === 0 ? "add" : "del"}>exit {exitCode}</Badge> : null}
     </div>
   );
 }
@@ -204,8 +205,8 @@ export function LspToolRenderer(call: ToolCallState) {
 export function GenericToolRenderer(call: ToolCallState) {
   return (
     <div className="fraym-tool-generic">
-      <section><span className="fraym-tool-field__label">Input</span><Code block language="json">{prettyValue(call.input)}</Code></section>
-      <section><span className="fraym-tool-field__label">Output</span><Code block language="json">{prettyValue(call.output)}</Code></section>
+		<section><span className="fraym-tool-field__label">Input</span><CodeBlock code={prettyValue(call.input)} language="json" /></section>
+		<section><span className="fraym-tool-field__label">Output</span><CodeBlock code={prettyValue(call.output)} language="json" /></section>
     </div>
   );
 }

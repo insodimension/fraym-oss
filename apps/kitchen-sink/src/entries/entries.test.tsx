@@ -1,7 +1,7 @@
 import { describe, expect, test } from "bun:test";
 import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
-import { ThemeProvider } from "@fraym/ui";
+import { ThemeProvider, TooltipProvider } from "@fraym/ui";
 import { ToolConfigProvider } from "../showcase/tool-config";
 import { TIERS } from "./registry";
 
@@ -24,7 +24,9 @@ describe("kitchen sink entries", () => {
 		for (const entry of entries) {
 			expect(() => renderToStaticMarkup(
 				createElement(ThemeProvider, null,
-					createElement(ToolConfigProvider, { schema: entry.config, children: createElement(entry.Component) }),
+					createElement(TooltipProvider, null,
+						createElement(ToolConfigProvider, { schema: entry.config, children: createElement(entry.Component) }),
+					),
 				),
 			)).not.toThrow();
 		}

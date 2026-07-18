@@ -27,13 +27,13 @@
 // option label ("Yes"/"No") so the TUI and web paths are byte-identical.
 
 import { useEffect, useState } from "react";
-import { Badge } from "../../elements/Badge";
-import { Button } from "../../elements/Button";
-import { IconButton } from "../../elements/IconButton";
-import { Input } from "../../elements/Input";
-import { Kbd } from "../../elements/Kbd";
-import { Slider } from "../../elements/Slider";
-import { Switch } from "../../elements/Switch";
+import { Badge } from "../../elements/badge";
+import { Button } from "../../elements/button";
+import { IconButton } from "../../elements/icon-button";
+import { Input } from "../../elements/input";
+import { Kbd } from "../../elements/kbd";
+import { Slider } from "../../elements/slider";
+import { Switch } from "../../elements/switch";
 import { Icon } from "../../icons/icon";
 import { cn } from "../../lib/cn";
 

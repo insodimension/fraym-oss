@@ -83,10 +83,10 @@ function ButtonEntry() {
 		>
 			<Button
 				variant={values.variant as ButtonProps["variant"]}
-				size={values.size as ButtonProps["size"]}
-				disabled={values.disabled}
-				loading={values.loading}
-				loadingText={values.loading ? "Working…" : undefined}
+					size={values.size as ButtonProps["size"]}
+					disabled={values.disabled}
+					loading={values.loading}
+					{...(values.loading ? { loadingText: "Working…" } : {})}
 			>
 				{values.size === "icon" ? <Icon name="plus" size={16} /> : values.label}
 			</Button>
@@ -170,7 +170,7 @@ function InputEntry() {
 				<Field label="Email address" helper="We never share your email.">
 					<Input type="email" placeholder="you@example.com" />
 				</Field>
-				<Field label="Amount" error={values.state === "invalid" ? "Must be between 1 and 100" : undefined}>
+				<Field label="Amount" {...(values.state === "invalid" ? { error: "Must be between 1 and 100" } : {})}>
 					<Input type="number" min={1} max={100} placeholder="0" />
 				</Field>
 				<Field label="Password" required helper="At least 8 characters">
@@ -270,10 +270,10 @@ function FieldEntry() {
 			stage="start"
 		>
 			<Field
-				label={values.label || undefined}
-				helper={values.helper || undefined}
-				warning={values.warning || undefined}
-				error={values.error || undefined}
+				{...(values.label ? { label: values.label } : {})}
+				{...(values.helper ? { helper: values.helper } : {})}
+				{...(values.warning ? { warning: values.warning } : {})}
+				{...(values.error ? { error: values.error } : {})}
 				required={values.required}
 				className="w-[320px]"
 			>
@@ -721,7 +721,9 @@ function DiagramTagEntry() {
 			stage="start"
 		>
 			<div className="font-secondary text-fr-base text-fr-text">
-				<DiagramTag tone={values.tone as DiagramTagProps["tone"]}>{values.text}</DiagramTag>
+				<DiagramTag {...(values.tone ? { tone: values.tone as NonNullable<DiagramTagProps["tone"]> } : {})}>
+					{values.text}
+				</DiagramTag>
 				Build pipeline
 			</div>
 		</Demo>
@@ -804,8 +806,7 @@ function SteppedSliderEntry() {
 					steps={EFFORT_STEPS}
 					value={value}
 					onValueChange={setValue}
-					startLabel={values.ends ? "Faster" : undefined}
-					endLabel={values.ends ? "Smarter" : undefined}
+					{...(values.ends ? { startLabel: "Faster", endLabel: "Smarter" } : {})}
 					muted={values.muted}
 					disabled={values.disabled}
 					aria-label="Reasoning effort"
@@ -908,7 +909,7 @@ function MessageActionsEntry() {
 		>
 			<MessageActions
 				actions={MESSAGE_ACTION_PRESETS[values.preset as keyof typeof MESSAGE_ACTION_PRESETS] ?? []}
-				timestamp={values.time ? new Date().toISOString() : undefined}
+				{...(values.time ? { timestamp: new Date().toISOString() } : {})}
 				align={values.align as "start" | "end"}
 			/>
 		</Demo>

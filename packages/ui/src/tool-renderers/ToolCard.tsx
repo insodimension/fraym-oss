@@ -3,18 +3,20 @@ import { useEffect, useRef, useState, type ReactNode } from "react";
 import type { ToolCallStatus } from "@fraym/driver";
 import type { IconSpec } from "@fraym/config";
 
-import { Badge, type BadgeTone } from "../elements/Badge";
+import { Badge, type BadgeProps } from "../elements/badge";
 import { classNames } from "../elements/utils";
 import type { ToolCallState } from "../thread-state";
 import type { ToolView } from "../registries/tool-renderer-registry";
 import { toolIconNode } from "../icons/icon";
 
+type BadgeTone = NonNullable<BadgeProps["tone"]>;
+
 const statusTone: Record<ToolCallStatus, BadgeTone> = {
-  pending: "neutral",
+  pending: "mute",
   running: "accent",
-  succeeded: "success",
-  failed: "danger",
-  cancelled: "warning",
+  succeeded: "add",
+  failed: "del",
+  cancelled: "warn",
 };
 
 export interface ToolCardProps {

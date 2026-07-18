@@ -1,4 +1,4 @@
-import { memo, useState } from "react"; import { Button } from "../../elements/Button"; import { Meter } from "../density-ui";
+import { memo, useState } from "react"; import { Button } from "../../elements/button"; import { Meter } from "../density-ui";
 export type GoalStatus = "active" | "paused" | "budget-limited" | "complete" | "dropped";
 export interface GoalView { readonly objective: string; readonly status: GoalStatus; readonly tokensUsed?: number; readonly tokenBudget?: number; readonly timeUsedSeconds?: number }
 export interface GoalComposerSurfaceProps { readonly goal?: GoalView | null | undefined; readonly disabled?: boolean; readonly onEditGoal?: (objective: string) => void; readonly onPauseGoal?: () => void; readonly onResumeGoal?: () => void; readonly onClearGoal?: () => void }

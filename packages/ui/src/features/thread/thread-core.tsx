@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import type { AgentEventStream, ApprovalResponseEvent } from "@fraym/driver";
 import { ApprovalCard } from "../../ApprovalCard";
-import { Card, CardContent } from "../../elements/Card";
+import { Card, CardContent } from "../../elements/card";
 import { classNames } from "../../elements/utils";
 import type { MessageBlockRendererMap } from "../../registries/message-block-registry";
 import type { ThreadMessage as StateMessage, ThreadState } from "../../thread-state";

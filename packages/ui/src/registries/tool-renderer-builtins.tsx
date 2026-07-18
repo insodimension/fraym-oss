@@ -1,7 +1,7 @@
 import type { PluginToolRendererDescriptor } from "@fraym/driver";
 import { Fragment, type ReactNode } from "react";
-import { Badge } from "../elements/Badge";
-import { Code } from "../elements/Code";
+import { Badge } from "../elements/badge";
+import { CodeBlock } from "../elements/code-block";
 import { prettyValue } from "../tool-renderers/data";
 import { asText, readField, readResultContentText } from "./default-renderer-utils";
 import type { ToolRenderer, ToolView } from "./tool-renderer-registry";
@@ -15,7 +15,7 @@ function frame(config: PluginToolRendererDescriptor, call: Parameters<ToolRender
 function fallback(call: Parameters<ToolRenderer>[0]) { const text = readResultContentText(call.output) ?? asText(call.output); return text ? <pre className="fraym-tool-terminal">{text}</pre> : <span className="fraym-tool-note">Done.</span>; }
 
 export function makeTableToolRenderer(config: PluginToolRendererDescriptor): ToolRenderer { return call => { const rows = records(call.output); if (!rows) return frame(config, call, fallback(call)); const columns = config.columns?.length ? config.columns : Object.keys(rows[0] ?? {}); return frame(config, call, <div className="fraym-tool-table">{rows.length ? rows.map((row, index) => <div className="fraym-tool-table__row" key={index}>{columns.map(column => <Fragment key={column}><span>{column}</span><code>{typeof row[column] === "string" ? row[column] : prettyValue(row[column])}</code></Fragment>)}</div>) : <span className="fraym-tool-note">No results.</span>}</div>, `${rows.length} ${rows.length === 1 ? "row" : "rows"}`); }; }
-export function makeJsonToolRenderer(config: PluginToolRendererDescriptor): ToolRenderer { return call => { const value = structured(call.output); return frame(config, call, value === undefined ? fallback(call) : <Code block language="json">{prettyValue(value)}</Code>, stat(call.output)); }; }
+export function makeJsonToolRenderer(config: PluginToolRendererDescriptor): ToolRenderer { return call => { const value = structured(call.output); return frame(config, call, value === undefined ? fallback(call) : <CodeBlock code={prettyValue(value)} language="json" />, stat(call.output)); }; }
 export function makeKeyValueToolRenderer(config: PluginToolRendererDescriptor): ToolRenderer { return call => { const value = structured(call.output); if (!record(value)) return frame(config, call, fallback(call)); const fields = config.fields?.length ? config.fields : Object.keys(value); return frame(config, call, <dl className="fraym-tool-key-values">{fields.map(field => <Fragment key={field}><dt>{field}</dt><dd>{prettyValue(readField(value, field))}</dd></Fragment>)}</dl>, stat(call.output)); }; }
 export function makeSummaryToolRenderer(config: PluginToolRendererDescriptor): ToolRenderer { return call => frame(config, call, <div className="fraym-tool-result">{readResultContentText(call.output) ?? prettyValue(structured(call.output))}</div>, stat(call.output)); }
 export function makeBuiltinToolRenderer(config: PluginToolRendererDescriptor): ToolRenderer { if (config.use === "table") return makeTableToolRenderer(config); if (config.use === "keyValue") return makeKeyValueToolRenderer(config); if (config.use === "summary") return makeSummaryToolRenderer(config); return makeJsonToolRenderer(config); }

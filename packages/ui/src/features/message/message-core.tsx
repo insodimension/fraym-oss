@@ -1,7 +1,7 @@
 import { Fragment, type ReactNode } from "react";
-import { CompactionSplit } from "../../elements/CompactionSplit";
-import { SessionContinuationSplit } from "../../elements/SessionContinuationSplit";
-import { Shimmer } from "../../elements/Shimmer";
+import { CompactionSplit } from "../../elements/compaction-split";
+import { SessionContinuationSplit } from "../../elements/session-continuation-split";
+import { Shimmer } from "../../elements/shimmer";
 import { classNames } from "../../elements/utils";
 import type { MessageBlockRendererMap } from "../../registries/message-block-registry";
 import type { KnownMessageBlockType, MessageBlock, MessageData } from "../../registries/message-block-registry";

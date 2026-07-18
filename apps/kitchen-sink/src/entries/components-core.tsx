@@ -47,7 +47,7 @@ function DiffBlockEntry() {
 			<DiffBlock
 				path={values.path}
 				added={lines.filter(line => line.kind === "add").length}
-				deleted={values.showDeleted ? deleted : undefined}
+				{...(values.showDeleted ? { deleted } : {})}
 				isNew={values.isNew}
 				lines={lines}
 			/>

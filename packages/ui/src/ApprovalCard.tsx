@@ -1,6 +1,6 @@
 import type { ApprovalDecision } from "@fraym/driver";
 
-import { Button } from "./elements/Button";
+import { Button } from "./elements/button";
 import type { ThreadApproval } from "./thread-state";
 
 export interface ApprovalCardProps {
@@ -26,7 +26,7 @@ export function ApprovalCard({ approval, onRespond }: ApprovalCardProps) {
         <Button onClick={() => onRespond?.("rejected")} size="sm" variant="ghost">
           Reject
         </Button>
-        <Button onClick={() => onRespond?.("approved")} size="sm" variant="primary">
+        <Button onClick={() => onRespond?.("approved")} size="sm" variant="default">
           Approve
         </Button>
       </div>

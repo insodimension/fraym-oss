@@ -1,8 +1,8 @@
 import type { ReactNode } from "react";
-import { Badge } from "../../../elements/Badge";
-import { Code } from "../../../elements/Code";
-import { MermaidDiagram } from "../../../elements/MermaidDiagram";
-import { StaticMarkdownLite } from "../../../elements/StaticMarkdownLite";
+import { Badge } from "../../../elements/badge";
+import { CodeBlock } from "../../../elements/code-block";
+import { MermaidDiagram } from "../../../elements/mermaid-diagram";
+import { StaticMarkdownLite } from "../../../elements/static-markdown-lite";
 import { arrayField, isRecord, prettyValue, stringField } from "../../../tool-renderers/data";
 import type { ToolKind, ToolRenderer, ToolView } from "../../../registries/tool-renderer-types";
 import { ToolArgsPreview } from "./bodies/tool-args-preview";
@@ -13,7 +13,7 @@ function stat(output: unknown): string | undefined { if (Array.isArray(output)) 
 function makeRenderer(spec: RendererSpec): ToolRenderer { return (call) => { const outputStat = stat(call.output); return { label: spec.label, kind: spec.kind ?? "tool", status: call.status, bodyVariant: spec.variant ?? "default", ...(outputStat ? { stat: outputStat } : {}), body: spec.render?.(call) ?? (call.output === undefined ? <ToolArgsPreview args={call.input} /> : <pre className="fraym-tool-terminal">{outputText(call.output)}</pre>) }; }; }
 const terminal = (label: string) => makeRenderer({ label, kind: "run", variant: "terminal" });
 const summary = (label: string, kind: ToolKind = "tool") => makeRenderer({ label, kind, render: (call) => <div className="fraym-tool-result">{outputText(call.output)}</div> });
-const structured = (label: string, kind: ToolKind = "tool") => makeRenderer({ label, kind, render: (call) => <Code block language="json">{prettyValue(call.output ?? call.input)}</Code> });
+const structured = (label: string, kind: ToolKind = "tool") => makeRenderer({ label, kind, render: (call) => <CodeBlock code={prettyValue(call.output ?? call.input)} language="json" /> });
 
 export const renderAsk = makeRenderer({ label: "Ask", kind: "tool", render: (call) => <div className="fraym-tool-result"><strong>{stringField(call.input, "question", "prompt", "title") ?? "Question"}</strong>{arrayField(call.input, "options").map((option, index) => <Badge key={index}>{typeof option === "string" ? option : prettyValue(option)}</Badge>)}</div> });
 export const renderAstEdit = structured("Structural edit", "edit");

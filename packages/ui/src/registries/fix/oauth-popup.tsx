@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { Button } from "../../elements/Button";
-import { Input } from "../../elements/Input";
-import { Spinner } from "../../elements/Spinner";
+import { Button } from "../../elements/button";
+import { Input } from "../../elements/input";
+import { Spinner } from "../../elements/spinner";
 export type OAuthStatus = "idle" | "starting" | "awaiting-auth" | "awaiting-input" | "connecting" | "success" | "cancelled" | "error";
 export interface OAuthController { readonly status: OAuthStatus; readonly error?: string | null; readonly progress?: string; readonly authInfo?: { readonly url?: string }; readonly prompt?: { readonly message?: string; readonly placeholder?: string; readonly allowEmpty?: boolean }; submitInput(value: string): void }
 export interface OAuthPopupProps { readonly provider: string; readonly oauth: OAuthController }

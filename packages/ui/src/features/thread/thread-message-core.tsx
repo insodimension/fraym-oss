@@ -1,5 +1,5 @@
 import { useState, type ReactNode } from "react";
-import { Badge } from "../../elements/Badge";
+import { Badge } from "../../elements/badge";
 import { classNames } from "../../elements/utils";
 import { useCommandTagResolver } from "../../registries/command-tag-registry";
 import type { MessageBlockRendererMap } from "../../registries/message-block-registry";

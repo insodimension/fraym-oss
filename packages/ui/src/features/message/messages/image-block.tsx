@@ -1,6 +1,6 @@
 import { Fragment, useEffect, useState, type ReactNode } from "react";
 import { createPortal } from "react-dom";
-import { FileMentionPill } from "../../../elements/FileMention";
+import { FileMentionPill } from "../../../elements/file-mention";
 import { classNames } from "../../../elements/utils";
 
 export interface ImageBlockProps { readonly src: string; readonly alt?: string; readonly caption?: string; readonly maxHeight?: number; readonly thumbnail?: boolean; readonly className?: string }
