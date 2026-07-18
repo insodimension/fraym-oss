@@ -31,7 +31,7 @@ function readText(file: Blob): Promise<string> { return new Promise((resolve, re
 export async function readImageAttachment(file: File, id: string): Promise<ComposerImageAttachment> { const url = await readDataUrl(file); return { id, name: file.name || "Pasted image", mimeType: file.type || "image/png", data: url.slice(url.indexOf(",") + 1) }; }
 export async function readFileAttachment(file: File, id: string): Promise<ComposerPasteAttachment> { return { id, name: file.name || "Pasted file", text: await readText(file), ...(file.type ? { mimeType: file.type } : {}) }; }
 export function imageFilesFromTransfer(data: DataTransfer | null): File[] { return filesFromTransfer(data).filter(isImageFile); }
-export function imageDataUrlsFromHtml(html: string): readonly string[] { return [...html.matchAll(/<img[^>]+src=["'](data:image\/[^"']+)["']/gi)].map((match) => match[1]!).filter(Boolean); }
+export function imageDataUrlsFromHtml(html: string): readonly string[] { return [...html.matchAll(/<img[^>]+src=["'](data:image\/[^"']+)["']/gi)].flatMap((match) => match[1] ? [match[1]] : []); }
 export function attachmentFromDataUrl(url: string, id: string): ComposerImageAttachment | null { const match = url.match(/^data:(image\/[^;,]+);base64,(.+)$/); return match ? { id, name: "Pasted image", mimeType: match[1]!, data: match[2]! } : null; }
 export function stripPastedImageLabels(text: string): string { return text.replace(/\[Image(?: #\d+)?]/gi, "").trim(); }
 export function splitLeadingCommand(value: string): { readonly command: string; readonly rest: string } | null { const match = value.match(/^\/(\S+)(?:\s+([\s\S]*))?$/); return match ? { command: match[1]!, rest: match[2] ?? "" } : null; }

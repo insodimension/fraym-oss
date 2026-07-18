@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, type ReactNode } from "react";
+import { useEffect, useEffectEvent, useMemo, useState, type ReactNode } from "react";
 import { Aethr } from "./aethr";
 import { CinematicText } from "./cinematic-text";
 import type {
@@ -82,19 +82,22 @@ export function CinematicWizard({
     setBusy(false);
     advance(choice.next ?? scene.next);
   };
-  useEffect(() => {
-    if (!scene) return;
-    if (scene.onEnter)
+  const enterScene = useEffectEvent((current: NonNullable<typeof scene>) => {
+    if (current.onEnter)
       void onAction?.({
         wizardId: spec.id,
-        sceneId: scene.id,
-        action: scene.onEnter,
+        sceneId: current.id,
+        action: current.onEnter,
         values,
       });
-    if (scene.autoAdvanceMs !== undefined) {
-      const timer = setTimeout(() => advance(scene.next), scene.autoAdvanceMs);
-      return () => clearTimeout(timer);
-    }
+    return current.autoAdvanceMs === undefined
+      ? undefined
+      : window.setTimeout(() => advance(current.next), current.autoAdvanceMs);
+  });
+  useEffect(() => {
+    if (!scene) return;
+    const timer = enterScene(scene);
+    return timer === undefined ? undefined : () => clearTimeout(timer);
   }, [scene]);
   if (!scene) return null;
   const gated = Boolean(

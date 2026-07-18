@@ -1,4 +1,4 @@
-import { createContext, type HTMLAttributes, type ButtonHTMLAttributes, useContext, useState } from "react";
+import { createContext, type HTMLAttributes, type ButtonHTMLAttributes, useCallback, useContext, useMemo, useState } from "react";
 
 import { classNames } from "./utils";
 
@@ -22,8 +22,9 @@ export interface TabsProps extends HTMLAttributes<HTMLDivElement> {
 export function Tabs({ value, defaultValue = "", onValueChange, variant = "segmented", className, ...props }: TabsProps) {
   const [internal, setInternal] = useState(defaultValue);
   const selected = value ?? internal;
-  const select = (next: string) => { if (value === undefined) setInternal(next); onValueChange?.(next); };
-  return <TabsContext.Provider value={{ value: selected, variant, select }}><div {...props} className={classNames("fraym-tabs", `fraym-tabs--${variant}`, className)} data-slot="tabs" /></TabsContext.Provider>;
+  const select = useCallback((next: string) => { if (value === undefined) setInternal(next); onValueChange?.(next); }, [onValueChange, value]);
+  const context = useMemo(() => ({ value: selected, variant, select }), [select, selected, variant]);
+  return <TabsContext.Provider value={context}><div {...props} className={classNames("fraym-tabs", `fraym-tabs--${variant}`, className)} data-slot="tabs" /></TabsContext.Provider>;
 }
 
 export function TabsList({ className, ...props }: HTMLAttributes<HTMLDivElement>) {

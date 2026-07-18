@@ -39,10 +39,13 @@ export function ToolConfigProvider({ schema, children }: { schema?: ControlsSche
 		}
 		return out;
 	}, [schema, values]);
+	const context = useMemo(() => ({
+		values: values as Record<string, unknown>,
+		displayValues,
+		panel: hasSchema ? panel : null,
+	}), [displayValues, hasSchema, panel, values]);
 	return (
-		<ToolConfigContext.Provider
-			value={{ values: values as Record<string, unknown>, displayValues, panel: hasSchema ? panel : null }}
-		>
+		<ToolConfigContext.Provider value={context}>
 			{children}
 		</ToolConfigContext.Provider>
 	);

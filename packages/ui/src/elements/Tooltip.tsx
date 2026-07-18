@@ -1,4 +1,4 @@
-import { cloneElement, createContext, type HTMLAttributes, type ReactElement, type ReactNode, useContext, useId } from "react";
+import { cloneElement, createContext, type HTMLAttributes, type ReactElement, type ReactNode, useContext, useId, useMemo } from "react";
 
 import { classNames } from "./utils";
 
@@ -15,11 +15,12 @@ export function TooltipProvider({ children }: { children?: ReactNode; delayDurat
 
 export function Tooltip({ children, className, content }: TooltipProps) {
   const id = useId();
+  const context = useMemo(() => ({ id }), [id]);
   if (content !== undefined && isElement(children)) {
     const describedBy = [children.props["aria-describedby"], id].filter(Boolean).join(" ");
     return <span className={classNames("fraym-tooltip", className)} data-slot="tooltip">{cloneElement(children, { "aria-describedby": describedBy })}<span className="fraym-tooltip__content" id={id} role="tooltip">{content}</span></span>;
   }
-  return <TooltipContext.Provider value={{ id }}><span className={classNames("fraym-tooltip", className)} data-slot="tooltip">{children}</span></TooltipContext.Provider>;
+  return <TooltipContext.Provider value={context}><span className={classNames("fraym-tooltip", className)} data-slot="tooltip">{children}</span></TooltipContext.Provider>;
 }
 
 function isElement(value: ReactNode): value is ReactElement<{ "aria-describedby"?: string }> {

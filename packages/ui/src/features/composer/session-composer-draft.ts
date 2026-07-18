@@ -11,7 +11,7 @@ export function clearSessionComposerDraft(key: string) { drafts.delete(key); lis
 export function subscribeSessionComposerSeed(listener: (key: string) => void) { listeners.add(listener); return () => { listeners.delete(listener); }; }
 export interface ComposerSeededContext { readonly badge?: { readonly label: string; readonly icon: string }; readonly skills?: readonly string[] }
 const contexts = new Map<string, ComposerSeededContext>();
-export function applyComposerSeededContext(value: string, context: ComposerSeededContext | undefined): string { const skills = (context?.skills ?? []).filter((skill) => !value.includes(`/skill:${skill}`)).map((skill) => `/skill:${skill}`); return [...skills, context?.badge?.label ? `${context.badge.label}:` : "", value].filter(Boolean).join(" "); }
+export function applyComposerSeededContext(value: string, context: ComposerSeededContext | undefined): string { const skills = (context?.skills ?? []).flatMap((skill) => value.includes(`/skill:${skill}`) ? [] : [`/skill:${skill}`]); return [...skills, context?.badge?.label ? `${context.badge.label}:` : "", value].filter(Boolean).join(" "); }
 export function seedSessionComposerContext(key: string, context: ComposerSeededContext | null) { if (!context || (!context.badge && !context.skills?.length)) contexts.delete(key); else contexts.set(key, context); listeners.forEach((listener) => listener(key)); }
 export function peekSessionComposerContext(key: string) { return contexts.get(key); }
 export function useSessionComposerContext(key: string) { const [context, setContext] = useState(() => contexts.get(key)); useEffect(() => subscribeSessionComposerSeed((changed) => { if (changed === key) setContext(contexts.get(key)); }), [key]); return context; }

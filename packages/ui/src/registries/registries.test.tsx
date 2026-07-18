@@ -31,7 +31,7 @@ describe("renderer contracts", () => {
 
   test("resolves recipe and skill command tags", () => {
     function Probe() { const resolve = useCommandTagResolver(); return <>{resolve("/recipe-review")?.label}|{resolve("/skill:cleanup")?.label}</>; }
-    const html = renderToStaticMarkup(createElement(CommandTagProvider, { recipes: [{ id: "recipe-review", name: "Review changes" }], children: createElement(Probe) }));
+    const html = renderToStaticMarkup(createElement(CommandTagProvider, { recipes: [{ id: "recipe-review", name: "Review changes" }] }, createElement(Probe)));
     expect(html).toContain("Review changes|cleanup");
   });
 });

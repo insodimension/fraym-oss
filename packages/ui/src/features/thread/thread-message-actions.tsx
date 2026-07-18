@@ -1,4 +1,4 @@
 import { useMemo } from "react"; import type { MessageBlock, MessageData } from "../message"; import type { MessageAction } from "../../elements/MessageActions";
-export function messagePlainText(blocks: readonly MessageBlock[]): string { return blocks.map((block) => typeof block.text === "string" ? block.text : typeof block.message === "string" ? block.message : "").filter(Boolean).join("\n\n"); }
+export function messagePlainText(blocks: readonly MessageBlock[]): string { return blocks.flatMap((block) => { const text = typeof block.text === "string" ? block.text : typeof block.message === "string" ? block.message : ""; return text ? [text] : []; }).join("\n\n"); }
 export interface ThreadMessageActions { readonly actions: readonly MessageAction[]; readonly plainText: string }
 export function useThreadMessageActions(message: MessageData): ThreadMessageActions { const plainText = messagePlainText(message.blocks); return useMemo(() => ({ plainText, actions: plainText ? [{ id: "copy", label: "Copy message", icon: "⧉", onClick: () => void navigator.clipboard?.writeText(plainText) }] : [] }), [plainText]); }

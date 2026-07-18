@@ -4,7 +4,8 @@ import { classNames } from "../../elements/utils";
 import { useCommandTagResolver } from "../../registries/command-tag-registry";
 import type { MessageBlockRendererMap } from "../../registries/message-block-registry";
 import { resolveSurfaceRegistration, useSurfaceRendererMap } from "../../registries/surface-renderer-registry";
-import { MessageBody, type MessageBlock, type MessageData, MessageDivider, MessageHeader } from "../message";
+import { MessageDivider, MessageHeader, type MessageBlock, type MessageData } from "../message/message-core";
+import { MessageBody } from "../message/messages/message-body";
 import { UserImageThumbnails, renderTextWithImageMarkers } from "../message/messages/image-block";
 
 const pasteMarker = /\[\[paste:(\d+)]]\n/g;
