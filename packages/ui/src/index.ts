@@ -1,5 +1,12 @@
 import "./styles.css";
 
+export * from "./backgrounds";
+export { Icon, type IconProps, toolIconNode } from "./icons/icon";
+export { type IconName, iconPaths } from "./icons/paths";
+export { cn } from "./lib/cn";
+export type { ActiveToolCall } from "./hooks/session-types";
+export { type LineStream, useLineStream } from "./hooks/use-line-stream";
+
 export { Thread, ThreadView, type ThreadProps, type ThreadViewProps } from "./Thread";
 export { ThreadMessage } from "./features/thread";
 export { SessionThread, type SessionThreadProps } from "./SessionThread";

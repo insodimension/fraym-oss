@@ -5,6 +5,13 @@ export type ToolCallStatus =
   | "failed"
   | "cancelled";
 
+export interface ToolCallMetadata {
+  readonly durationMs?: number;
+  readonly tokens?: number;
+  readonly cachedTokens?: number;
+  readonly extra?: Readonly<Record<string, string | number>>;
+}
+
 export type PluginToolRendererUse = "table" | "json" | "keyValue" | "summary";
 export interface PluginToolRendererDescriptor {
   readonly match: string;
