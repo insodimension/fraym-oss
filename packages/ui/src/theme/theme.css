@@ -1,118 +1,1420 @@
+@import "tailwindcss";
+/* Component CSS that MUST ship with the theme (relative `import "./x.css"` inside a
+   component gets dropped in some bundler/workspace setups — see streaming-markdown).
+   Importing here guarantees Shiki token colors + the code line-number gutter load
+   wherever theme.css is loaded (every app + kitchen-sink). */
 @import "../elements/streaming-markdown.css";
+/* Liquid Glass material layer — WebGL refraction optics shared by both
+   refractive presets (liquid-glass + liquid-glass-lumen) via the
+   [data-theme-preset^="liquid-glass"] prefix. The ambient field is mounted in
+   JS by <LiquidGlassRuntime>; this file supplies the CSS half (chrome +
+   floating-panel lenses). Inert for every other theme. */
 @import "./liquid-glass.css";
+/* Aerogel material layer — "frozen smoke" frost optics for the aerogel theme
+   preset. Fully scoped to [data-theme-preset="aerogel"]; inert otherwise. */
 @import "./aerogel.css";
+/* Cassette Futurism material layer — beige-plastic hardware (bezels, key
+   travel, lamp glow) for the cassette-futurism theme preset. Fully scoped to
+   [data-theme-preset="cassette-futurism"]; inert otherwise. */
 @import "./cassette-futurism.css";
 
+/* Tailwind scans this package's source for class names. */
+@source "../**/*.{ts,tsx}";
+
+/* ============================================================
+   FRAYM DESIGN TOKENS
+   Source of truth: prototype app.css (assistant Design handoff)
+   Every value here is hand-crafted — do not round or "improve".
+   ============================================================ */
+
+/* ---------- Dark mode (default) ---------- */
+:root {
+	--fr-bg: #0b0b0d;
+	--fr-rail: #0f0f12;
+	--fr-surface: #151518;
+	--fr-surface-2: #1c1c20;
+	--fr-surface-3: #222227;
+	--fr-border: #27272c;
+	--fr-border-soft: #1b1b1f;
+	--fr-text: #ececee;
+	--fr-text-2-base: #9a9aa2;
+	--fr-text-3-base: #65656d;
+	/* User-controllable display knobs (driven by @fraym/config; identity at defaults). */
+	--fr-ui-size: 14px;
+	--fr-code-size: 12px;
+	--fr-contrast: 50;
+	--fr-ui-scale: calc(var(--fr-ui-size) / 14px);
+	/* Muted text tiers, modulated by --fr-contrast (50 = exact design default). */
+	--fr-text-2: color-mix(in oklab, color-mix(in oklab, var(--fr-text-2-base), var(--fr-text) calc(max(0, var(--fr-contrast) - 50) * 2%)), var(--fr-bg) calc(max(0, 50 - var(--fr-contrast)) * 2%));
+	--fr-text-3: color-mix(in oklab, color-mix(in oklab, var(--fr-text-3-base), var(--fr-text) calc(max(0, var(--fr-contrast) - 50) * 2%)), var(--fr-bg) calc(max(0, 50 - var(--fr-contrast)) * 2%));
+	--fr-add: #62c08a;
+	--fr-add-bg: rgba(98, 192, 138, 0.10);
+	--fr-del: #e07a86;
+	--fr-del-bg: rgba(224, 122, 134, 0.09);
+	/* Danger hairline — the `del` analogue of `--fr-accent-line` (34% in dark). Used
+	   for the destructive button's subtle outline so it reads like the outline
+	   button, not a saturated 1px slab. Derived from `--fr-del` so theme presets
+	   that re-tint danger keep the border in sync. */
+	--fr-del-line: color-mix(in srgb, var(--fr-del) 34%, transparent);
+	--fr-warn: #e0b15b;
+	/* Ink for text ON a warn fill (badge solid). Warn is a light amber in every
+	   theme and gradient mode, so the ink is a fixed dark warm brown. */
+	--fr-warn-ink: #231703;
+	--fr-blue: #5b8cff;
+	--fr-iris: #8f7bff;
+
+	/* Accent (default = violet, overridden by [data-accent]) */
+	--fr-accent: #7a60c1;
+	--fr-accent-2: #6a50b1;
+	--fr-accent-dim: rgba(122, 96, 193, 0.14);
+	--fr-accent-line: rgba(122, 96, 193, 0.34);
+	--fr-accent-ink: #e6e6e6;
+	--fr-explainer-grad-start: rgba(183, 140, 255, 0.07);
+	/* Accent fill paint. Defaults to the solid accent so nothing changes until
+	   gradient mode is on; `*-grad-on` holds the per-hue gradient (see palettes). */
+	--fr-accent-grad: var(--fr-accent);
+	--fr-accent-grad-hover: var(--fr-accent-2);
+
+	/* Tone fill paint. Defaults to solid so nothing changes until gradient mode is on. */
+	--fr-add-grad: var(--fr-add);
+	--fr-blue-grad: var(--fr-blue);
+	--fr-warn-grad: var(--fr-warn);
+	--fr-del-grad: var(--fr-del);
+
+	/* Layout */
+	--fr-r: 10px;
+	--fr-rail-w: 264px;
+	--fr-rail-w-compact: 56px;
+	--fr-dock-w: 380px;
+
+	/* Input geometry (pixel-matched to prototype app.css .text-input) */
+	--fr-input-r: 8px;
+	--fr-input-px: 11px;
+
+	/* Textarea geometry (pixel-matched to prototype composer block) */
+	--fr-textarea-r: 14px;
+	--fr-textarea-px: 14px;
+	--fr-textarea-py: 13px;
+	--fr-textarea-min-h: 24px;
+	--fr-textarea-max-h: 160px;
+
+	/* Typography */
+	/* Semantic font ROLES — swap a family here and every element using the role
+	   follows. A new brand/display face just sets --fr-font-display; nothing else. */
+	--fr-font-primary: "IBM Plex Sans", -apple-system, BlinkMacSystemFont, sans-serif;
+	--fr-font-display: var(--fr-font-primary);
+	--fr-font-rail: var(--fr-font-primary);
+	--fr-font-mono: "IBM Plex Mono", ui-monospace, monospace;
+	/* SECONDARY is the role name used by components (`font-secondary`). It follows the
+	   runtime-overridable `--fr-font-mono` var (settings/code-font picker writes that),
+	   so swapping the code font updates every secondary-role element. New code uses the
+	   SECONDARY role; `mono`/`sans` utility names are being retired. */
+	--fr-font-secondary: var(--fr-font-mono);
+	/* Deprecated aliases (kept so older var(--fr-sans|--fr-mono) refs still resolve). */
+	--fr-sans: var(--fr-font-primary);
+	--fr-mono: var(--fr-font-mono);
+
+	/* Type scale + tracking (raw values — aliased into @theme inline below).
+	   Single source of truth for typography sizes; values are the prototype's
+	   hand-tuned ramp (app.css) — the small steps keep their half-pixel sizes
+	   (.tool-head 12.5 / .tool-body 11.5 / .t-stat 10.5) for design likeness. */
+	--fr-fs-2xs: calc(10.5px * var(--fr-ui-scale));
+	--fr-fs-xs: calc(11.5px * var(--fr-ui-scale));
+	--fr-fs-sm: calc(12.5px * var(--fr-ui-scale));
+	--fr-fs-base: calc(13px * var(--fr-ui-scale));
+	--fr-fs-md: calc(14px * var(--fr-ui-scale));
+	--fr-fs-lg: calc(15px * var(--fr-ui-scale));
+	--fr-fs-xl: calc(18px * var(--fr-ui-scale));
+	--fr-fs-2xl: calc(22px * var(--fr-ui-scale));
+	--fr-fs-3xl: calc(28px * var(--fr-ui-scale));
+	--fr-tracking-tight: 0.01em;
+	--fr-tracking-label: 0.04em;
+	--fr-tracking-caps: 0.06em;
+
+	/* Scrollbar */
+	--fr-scrollbar-thumb: #2a2a30;
+	--fr-scrollbar-thumb-hover: #36363d;
+
+	/* Controls */
+	--fr-switch-thumb-off: #6a6a72;
+	--fr-btn-hover-bd: #34343a;
+
+	/* Provider logos: invert the monochrome marks so they read white on the dark
+	   canvas. The light block + theme presets override this per-mode. */
+	--fr-provider-monochrome-logo-filter: brightness(0) invert(1);
+
+	/* Motion — shared smoothness dial. Tune here once; every transition (and
+	   the reduced-motion guards below) follows, so nothing drifts out of sync. */
+	--fr-motion-fast: 130ms;
+	--fr-motion-base: 220ms;
+	--fr-motion-slow: 360ms;
+	--fr-ease-standard: cubic-bezier(0.22, 1, 0.36, 1);
+	--fr-ease-inout: cubic-bezier(0.65, 0, 0.35, 1);
+	--fr-ease-emphasized: cubic-bezier(0.34, 1.3, 0.4, 1);
+
+	/* Diff syntax — dark. The dedicated diff surface and gutter distinguish dense
+	   change rows from the surrounding transcript; semantic code colors retain AA
+	   contrast over their add/del row tints. Theme presets override this complete
+	   token set, so every selected theme keeps its own calibrated palette. */
+	--fr-diff-bg: #111113;
+	--fr-diff-add-code: var(--fr-add);
+	--fr-diff-del-code: var(--fr-del);
+	--fr-diff-gutter: #82828b;
+}
+
+/* ---------- Light mode ---------- */
+[data-theme="light"] {
+	--fr-bg: #fbfbfa;
+	--fr-rail: #f4f3f1;
+	--fr-surface: #ffffff;
+	--fr-surface-2: #f1f0ee;
+	--fr-surface-3: #e7e6e3;
+	--fr-border: #e0ded9;
+	--fr-border-soft: #eceae6;
+	--fr-text: #1d1d1f;
+	--fr-text-2-base: #5f5f66;
+	--fr-text-3-base: #9a9aa0;
+	--fr-add: #3a9d6a;
+	--fr-add-bg: rgba(58, 157, 106, 0.10);
+	--fr-del: #cc5560;
+	--fr-del-bg: rgba(204, 85, 96, 0.08);
+	--fr-del-line: color-mix(in srgb, var(--fr-del) 30%, transparent);
+	--fr-accent-dim: rgba(124, 77, 221, 0.10);
+	--fr-accent-line: rgba(124, 77, 221, 0.30);
+	--fr-accent-ink: #ffffff;
+	--fr-switch-thumb-off: #9a9aa3;
+	--fr-btn-hover-bd: #c0c0c8;
+
+	/* Input geometry (shared with dark mode) */
+	--fr-input-r: 8px;
+	--fr-input-px: 11px;
+
+	/* Textarea geometry (shared with dark mode) */
+	--fr-textarea-r: 14px;
+	--fr-textarea-px: 14px;
+	--fr-textarea-py: 13px;
+	--fr-textarea-min-h: 24px;
+	--fr-textarea-max-h: 160px;
+
+	/* Diff syntax */
+	--fr-diff-bg: #f7f6f4;
+	--fr-diff-add-code: #1e7a4d;
+	--fr-diff-del-code: #b03b46;
+	--fr-diff-gutter: #45454d;
+	--fr-code-kw: #7c4ddd;
+	--fr-code-str: #1e7a4d;
+	--fr-code-path: #6b4bb5;
+	--fr-inline-code: #6b4bb5;
+	--fr-provider-monochrome-logo-filter: none;
+}
+
+/* ---------- Accent palettes ---------- */
 :root,
-[data-theme="dark"] {
-  color-scheme: dark;
-  --fr-bg: #0b0b0d;
-  --fr-rail: #0f0f12;
-  --fr-surface: #151518;
-  --fr-surface-2: #1c1c20;
-  --fr-surface-3: #222227;
-  --fr-border: #27272c;
-  --fr-border-soft: #1b1b1f;
-  --fr-text: #ececee;
-  --fr-text-2-base: #9a9aa2;
-  --fr-text-3-base: #65656d;
-  --fr-accent: #b78cff;
-  --fr-accent-2: #a679ff;
-  --fr-accent-dim: rgb(183 140 255 / 14%);
-  --fr-accent-line: rgb(183 140 255 / 34%);
-  --fr-accent-ink: #1a1023;
-  --fr-add: #62c08a;
-  --fr-add-bg: rgb(98 192 138 / 12%);
-  --fr-del: #e07a86;
-  --fr-del-bg: rgb(224 122 134 / 10%);
-  --fr-warn: #e0b15b;
-  --fr-blue: #5b8cff;
-  --fr-iris: #8f7bff;
-  --fr-scrollbar-thumb: #34343a;
-  --fr-scrollbar-thumb-hover: #494951;
-  --fr-diff-bg: #0f0f12;
-  --fr-diff-add-code: #8cd4aa;
-  --fr-diff-del-code: #efa0aa;
-  --fr-diff-gutter: #65656d;
-  --fr-code-kw: #c0a4ff;
-  --fr-code-str: #8cd4aa;
-  --fr-code-path: #c8c2d8;
-  --fr-inline-code: #ececee;
-  --fr-provider-monochrome-logo-filter: brightness(0) invert(1);
+[data-accent="violet"] {
+	--fr-accent: #7a60c1;
+	--fr-accent-2: #6a50b1;
+	--fr-accent-ink: #e6e6e6;
+	--fr-accent-grad-on: linear-gradient(135deg, #4f8cff, #7a60c1 55%, #a060c0);
+	--fr-accent-grad-on-hover: linear-gradient(135deg, #5f97ff, #8a70d1 55%, #b070d0);
+}
+:root:not([data-theme="light"]),
+:root:not([data-theme="light"])[data-accent="violet"] {
+	--fr-accent-dim: rgba(122, 96, 193, 0.14);
+	--fr-accent-line: rgba(122, 96, 193, 0.34);
+}
+[data-theme="light"][data-accent="violet"] {
+	--fr-accent-dim: rgba(122, 96, 193, 0.10);
+	--fr-accent-line: rgba(122, 96, 193, 0.30);
+	--fr-accent-ink: #ffffff;
+}
+[data-accent="coral"] {
+	--fr-accent: #d97757;
+	--fr-accent-2: #cc6a4a;
+	--fr-accent-ink: #ffffff;
+	--fr-accent-grad-on: linear-gradient(135deg, #e0b15b, #d97757 50%, #e0607f);
+	--fr-accent-grad-on-hover: linear-gradient(135deg, #ecc06e, #e6845f 50%, #ec7791);
+}
+:not([data-theme="light"])[data-accent="coral"] {
+	--fr-accent-dim: rgba(217, 119, 87, 0.14);
+	--fr-accent-line: rgba(217, 119, 87, 0.34);
+}
+[data-theme="light"][data-accent="coral"] {
+	--fr-accent-dim: rgba(217, 119, 87, 0.10);
+	--fr-accent-line: rgba(217, 119, 87, 0.30);
+	--fr-accent-ink: #ffffff;
+}
+
+[data-accent="blue"] {
+	--fr-accent: #5b8cff;
+	--fr-accent-2: #4a7df0;
+	--fr-accent-ink: #ffffff;
+	--fr-accent-grad-on: linear-gradient(135deg, #43dcea, #5b8cff 50%, #8f7bff);
+	--fr-accent-grad-on-hover: linear-gradient(135deg, #5fe9f0, #6f99ff 50%, #a08cff);
+}
+:not([data-theme="light"])[data-accent="blue"] {
+	--fr-accent-dim: rgba(91, 140, 255, 0.14);
+	--fr-accent-line: rgba(91, 140, 255, 0.34);
+}
+[data-theme="light"][data-accent="blue"] {
+	--fr-accent-dim: rgba(91, 140, 255, 0.10);
+	--fr-accent-line: rgba(91, 140, 255, 0.30);
+	--fr-accent-ink: #ffffff;
+}
+
+[data-accent="green"] {
+	--fr-accent: #5bb98c;
+	--fr-accent-2: #4aab7d;
+	--fr-accent-ink: #ffffff;
+	--fr-accent-grad-on: linear-gradient(135deg, #43dcea, #5bb98c 55%, #b7e05b);
+	--fr-accent-grad-on-hover: linear-gradient(135deg, #5fe9f0, #6fc99c 55%, #c6e76e);
+}
+:not([data-theme="light"])[data-accent="green"] {
+	--fr-accent-dim: rgba(91, 185, 140, 0.14);
+	--fr-accent-line: rgba(91, 185, 140, 0.34);
+}
+[data-theme="light"][data-accent="green"] {
+	--fr-accent-dim: rgba(91, 185, 140, 0.10);
+	--fr-accent-line: rgba(91, 185, 140, 0.30);
+	--fr-accent-ink: #ffffff;
+}
+
+[data-accent="amber"] {
+	--fr-accent: #e0b15b;
+	--fr-accent-2: #d4a449;
+	--fr-accent-ink: #ffffff;
+	--fr-accent-grad-on: linear-gradient(135deg, #ffd98a, #e0b15b 50%, #d97757);
+	--fr-accent-grad-on-hover: linear-gradient(135deg, #ffe49e, #e8bd6e 50%, #e6845f);
+}
+:not([data-theme="light"])[data-accent="amber"] {
+	--fr-accent-dim: rgba(224, 177, 91, 0.14);
+	--fr-accent-line: rgba(224, 177, 91, 0.34);
+}
+[data-theme="light"][data-accent="amber"] {
+	--fr-accent-dim: rgba(224, 177, 91, 0.10);
+	--fr-accent-line: rgba(224, 177, 91, 0.30);
+	--fr-accent-ink: #ffffff;
+}
+
+/* Mono is the one mode-flipping accent: silver/white in dark, graphite in light. */
+[data-accent="mono"] {
+	--fr-accent: #f5f5f7;
+	--fr-accent-2: #e4e4e9;
+	--fr-accent-ink: #0a0a0c;
+	--fr-accent-grad-on: linear-gradient(135deg, #ffffff, #ececf0 55%, #d8d8de);
+	--fr-accent-grad-on-hover: linear-gradient(135deg, #ffffff, #f5f5f8 55%, #e4e4ea);
+}
+:not([data-theme="light"])[data-accent="mono"] {
+	--fr-accent-dim: rgba(245, 245, 247, 0.14);
+	--fr-accent-line: rgba(245, 245, 247, 0.34);
+}
+[data-theme="light"][data-accent="mono"] {
+	--fr-accent: #1d1d1f;
+	--fr-accent-2: #3c3c40;
+	--fr-accent-ink: #ffffff;
+	--fr-accent-dim: rgba(29, 29, 31, 0.1);
+	--fr-accent-line: rgba(29, 29, 31, 0.3);
+	--fr-accent-grad-on: linear-gradient(135deg, #4c4c51, #2c2c2f 50%, #0d0d0f);
+	--fr-accent-grad-on-hover: linear-gradient(135deg, #5c5c61, #3c3c40 50%, #1a1a1d);
 }
 
 [data-theme="light"] {
-  color-scheme: light;
-  --fr-bg: #f7f7f8;
-  --fr-rail: #f0f0f2;
-  --fr-surface: #ffffff;
-  --fr-surface-2: #f3f3f5;
-  --fr-surface-3: #e9e9ed;
-  --fr-border: #d5d5dc;
-  --fr-border-soft: #e6e6eb;
-  --fr-text: #1c1c20;
-  --fr-text-2-base: #55555e;
-  --fr-text-3-base: #73737d;
-  --fr-add: #267849;
-  --fr-add-bg: rgb(38 120 73 / 10%);
-  --fr-del: #b84454;
-  --fr-del-bg: rgb(184 68 84 / 8%);
-  --fr-warn: #835900;
-  --fr-blue: #315fba;
-  --fr-provider-monochrome-logo-filter: none;
+	--fr-accent-ink: #ffffff;
 }
 
+/* ---------- Gradient accent style (opt-in via data-accent-style="gradient") ----------
+   Flips the active accent-fill paint from the solid hue to the palette's gradient.
+   On-accent text keeps the normal --fr-accent-ink (white in dark) to match solid. */
+[data-accent-style="gradient"] {
+	--fr-accent-grad: var(--fr-accent-grad-on);
+	--fr-accent-grad-hover: var(--fr-accent-grad-on-hover);
+
+	/* Tone gradients — each hue gets its own family gradient */
+	--fr-add-grad: linear-gradient(135deg, #4fd494, #62c08a 55%, #7ad66a);
+	--fr-blue-grad: linear-gradient(135deg, #43dcea, #5b8cff 55%, #8f7bff);
+	--fr-warn-grad: linear-gradient(135deg, #ffd98a, #e0b15b 55%, #e97757);
+	--fr-del-grad: linear-gradient(135deg, #e07a86, #e95245 55%, #cf362e);
+}
+
+/* ---------- shadcn compatibility aliases ---------- */
 :root {
-  --fr-font-primary: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
-  --fr-font-secondary: var(--fr-font-primary);
-  --fr-font-mono: "IBM Plex Mono", ui-monospace, monospace;
-  --fr-text-2: var(--fr-text-2-base);
-  --fr-text-3: var(--fr-text-3-base);
-  --fraym-color-primary: var(--fr-accent);
-  --fraym-color-primary-strong: var(--fr-accent-2);
-  --fraym-color-on-primary: var(--fr-accent-ink);
-  --fraym-color-bg: var(--fr-bg);
-  --fraym-color-rail: var(--fr-rail);
-  --fraym-color-surface: var(--fr-surface);
-  --fraym-color-surface-2: var(--fr-surface-2);
-  --fraym-color-surface-3: var(--fr-surface-3);
-  --fraym-color-border: var(--fr-border);
-  --fraym-color-border-soft: var(--fr-border-soft);
-  --fraym-color-text: var(--fr-text);
-  --fraym-color-text-2: var(--fr-text-2);
-  --fraym-color-text-3: var(--fr-text-3);
-  --fraym-color-success: var(--fr-add);
-  --fraym-color-danger: var(--fr-del);
-  --fraym-color-warning: var(--fr-warn);
-  --fraym-color-info: var(--fr-blue);
-  --fraym-color-iris: var(--fr-iris);
-  --fraym-color-accent: var(--fr-accent);
-  --fraym-color-muted: var(--fr-text-2);
-  --fraym-color-accent-dim: var(--fr-accent-dim);
-  --fraym-color-accent-line: var(--fr-accent-line);
-  --fraym-color-diff-added-bg: var(--fr-add-bg);
-  --fraym-color-diff-added-text: var(--fr-add);
-  --fraym-color-diff-removed-bg: var(--fr-del-bg);
-  --fraym-color-diff-removed-text: var(--fr-del);
-  --fraym-font-sans: var(--fr-font-primary);
-  --fraym-font-mono: var(--fr-font-mono);
+	--background: var(--fr-bg);
+	--foreground: var(--fr-text);
+	--card: var(--fr-surface);
+	--card-foreground: var(--fr-text);
+	--popover: var(--fr-surface);
+	--popover-foreground: var(--fr-text);
+	--primary: var(--fr-accent);
+	--primary-foreground: var(--fr-accent-ink);
+	--secondary: var(--fr-surface-2);
+	--secondary-foreground: var(--fr-text);
+	--muted: var(--fr-surface-3);
+	--muted-foreground: var(--fr-text-2);
+	--accent: var(--fr-accent-dim);
+	--accent-foreground: var(--fr-text);
+	--destructive: var(--fr-del);
+	--destructive-foreground: #ffffff;
+	--border: var(--fr-border);
+	--input: var(--fr-border);
+	--ring: var(--fr-accent-line);
+	--radius: var(--fr-r);
 }
 
-[data-motion="reduced"] *,
-[data-motion="reduced"] *::before,
-[data-motion="reduced"] *::after {
-  animation-duration: 1ms !important;
-  animation-iteration-count: 1 !important;
-  scroll-behavior: auto !important;
-  transition-duration: 1ms !important;
+/* ---------- Tailwind v4 @theme registration ---------- */
+@theme inline {
+	/* shadcn bridge */
+	--color-background: var(--background);
+	--color-foreground: var(--foreground);
+	--color-card: var(--card);
+	--color-card-foreground: var(--card-foreground);
+	--color-popover: var(--popover);
+	--color-popover-foreground: var(--popover-foreground);
+	--color-primary: var(--primary);
+	--color-primary-foreground: var(--primary-foreground);
+	--color-secondary: var(--secondary);
+	--color-secondary-foreground: var(--secondary-foreground);
+	--color-muted: var(--muted);
+	--color-muted-foreground: var(--muted-foreground);
+	--color-accent: var(--accent);
+	--color-accent-foreground: var(--accent-foreground);
+	--color-destructive: var(--destructive);
+	--color-destructive-foreground: var(--destructive-foreground);
+	--color-border: var(--border);
+	--color-input: var(--input);
+	--color-ring: var(--ring);
+
+	/* Fraym-specific utilities */
+	--color-fr-bg: var(--fr-bg);
+	--color-fr-rail: var(--fr-rail);
+	--color-fr-surface: var(--fr-surface);
+	--color-fr-surface-2: var(--fr-surface-2);
+	--color-fr-surface-3: var(--fr-surface-3);
+	--color-fr-border: var(--fr-border);
+	--color-fr-border-soft: var(--fr-border-soft);
+	--color-fr-text: var(--fr-text);
+	--color-fr-text-2: var(--fr-text-2);
+	--color-fr-text-3: var(--fr-text-3);
+	--color-fr-accent: var(--fr-accent);
+	--color-fr-accent-2: var(--fr-accent-2);
+	--color-fr-accent-dim: var(--fr-accent-dim);
+	--color-fr-accent-line: var(--fr-accent-line);
+	--color-fr-accent-ink: var(--fr-accent-ink);
+	--color-fr-add: var(--fr-add);
+	--color-fr-add-bg: var(--fr-add-bg);
+	--color-fr-del: var(--fr-del);
+	--color-fr-del-bg: var(--fr-del-bg);
+	--color-fr-del-line: var(--fr-del-line);
+	--color-fr-warn: var(--fr-warn);
+	--color-fr-warn-ink: var(--fr-warn-ink);
+	--color-fr-iris: var(--fr-iris);
+	--color-fr-blue: var(--fr-blue);
+	--color-fr-switch-thumb-off: var(--fr-switch-thumb-off);
+	/* Typography semantic roles. `font-primary` is UI/prose, `font-secondary`
+	   is code/paths/metadata, and `font-rail` is navigation/sidebar chrome. */
+	--font-primary: var(--fr-font-primary);
+	--font-secondary: var(--fr-font-secondary);
+	--font-display: var(--fr-font-display);
+	--font-rail: var(--fr-font-rail);
+
+	/* Type scale -> text-fr-* / tracking-fr-* utilities (inlined from raw vars). */
+	--text-fr-2xs: var(--fr-fs-2xs);
+	--text-fr-xs: var(--fr-fs-xs);
+	--text-fr-sm: var(--fr-fs-sm);
+	--text-fr-base: var(--fr-fs-base);
+	--text-fr-md: var(--fr-fs-md);
+	--text-fr-lg: var(--fr-fs-lg);
+	--text-fr-xl: var(--fr-fs-xl);
+	--text-fr-2xl: var(--fr-fs-2xl);
+	--text-fr-3xl: var(--fr-fs-3xl);
+	--tracking-fr-tight: var(--fr-tracking-tight);
+	--tracking-fr-label: var(--fr-tracking-label);
+	--tracking-fr-caps: var(--fr-tracking-caps);
+
+
+	/* Radii */
+	--radius-sm: calc(var(--fr-r) - 4px);
+	--radius-md: calc(var(--fr-r) - 2px);
+	--radius-lg: var(--fr-r);
+	--radius-xl: calc(var(--fr-r) + 4px);
 }
+
+/* ---------- Semantic text styles ----------
+   Role-level typography. Components apply one class (`fr-eyebrow`) instead of
+   re-stating font + size + caps + tracking + color on every section label. */
+@utility fr-eyebrow {
+	font-family: var(--fr-font-mono);
+	font-size: var(--fr-fs-2xs);
+	text-transform: uppercase;
+	letter-spacing: var(--fr-tracking-caps);
+	color: var(--fr-text-3);
+}
+
+/* ---------- Base reset ---------- */
+@layer base {
+	* {
+		box-sizing: border-box;
+		margin: 0;
+		padding: 0;
+		border-color: var(--fr-border);
+	}
+
+	html,
+	body,
+	#root {
+		height: 100%;
+	}
+
+	body {
+		font-family: var(--fr-font-primary);
+		background: var(--fr-bg);
+		color: var(--fr-text);
+		font-size: var(--fr-ui-size, 14px);
+		line-height: 1.5;
+		-webkit-font-smoothing: antialiased;
+	}
+
+	button {
+		font-family: inherit;
+		color: inherit;
+		cursor: pointer;
+		border: none;
+		background: none;
+	}
+
+	input,
+	textarea {
+		font-family: inherit;
+	}
+
+	code,
+	kbd,
+	samp,
+	pre {
+		font-size: var(--fr-code-size);
+	}
+
+	::-webkit-scrollbar {
+		width: 10px;
+		height: 10px;
+	}
+
+	::-webkit-scrollbar-thumb {
+		background: var(--fr-scrollbar-thumb);
+		border-radius: 8px;
+		border: 3px solid var(--fr-bg);
+	}
+
+	::-webkit-scrollbar-thumb:hover {
+		background: var(--fr-scrollbar-thumb-hover);
+	}
+}
+/* ---------- Component keyframes ---------- */
+
+@keyframes fr-shimmer-sweep {
+	from { background-position: 200% 0; }
+	to { background-position: -200% 0; }
+}
+
+@keyframes fr-bounce {
+	0%, 80%, 100% { opacity: 0.3; transform: translateY(0); }
+	40% { opacity: 1; transform: translateY(-3px); }
+}
+
+@keyframes fr-rise {
+	from { opacity: 0; transform: translateY(3px); }
+	to { opacity: 1; transform: none; }
+}
+
+@keyframes fr-signal {
+	0%, 100% { box-shadow: 0 0 0 2px var(--fr-accent-dim); }
+	50% { box-shadow: 0 0 0 4px var(--fr-accent-dim); }
+}
+
+/* Kanban drop preview: a slot GAP opens to mini-card height, displacing the
+ * stack below it — the drag's landing place, not a hairline. */
+@keyframes fr-slot-open {
+	from { height: 0; opacity: 0; }
+	to { height: 40px; opacity: 1; }
+}
+
+@keyframes fr-pop-in {
+	from { opacity: 0; transform: translateY(4px); }
+	to { opacity: 1; transform: none; }
+}
+
+/* Bottom sheet (phone-width picker surface): slide up on enter, down on leave.
+ * `.fr-sheet-leave` duration must match EXIT_MS in bottom-sheet.tsx. Under
+ * reduced motion both collapse to instant states (global rule at the bottom
+ * of this file already zeroes animation durations). */
+@keyframes fr-sheet-up {
+	from { transform: translateY(100%); }
+	to { transform: none; }
+}
+@keyframes fr-sheet-down {
+	from { transform: none; }
+	to { transform: translateY(100%); }
+}
+.fr-sheet-enter { animation: fr-sheet-up 0.22s cubic-bezier(0.32, 0.72, 0, 1); }
+.fr-sheet-leave { animation: fr-sheet-down 0.18s ease-in forwards; }
+
+/* Touch density inside a sheet: the same picker rows that render ~34px tall
+ * under a desktop popover get comfortable ≥44px touch targets here. */
+[data-slot="bottom-sheet"] [data-slot="selector-category-row"],
+[data-slot="bottom-sheet"] [role="menuitemradio"],
+[data-slot="bottom-sheet"] [data-slot="popover-row"],
+[data-slot="bottom-sheet"] [data-slot="model-row"] {
+	min-height: 44px;
+	padding-top: 10px;
+	padding-bottom: 10px;
+}
+
+/* Circling dot-matrix loader (braille-spinner style): a lit head orbits a
+ * square dot grid, each dot phase-delayed around the perimeter. */
+@keyframes fr-dotspin {
+	0% { opacity: 1; transform: scale(1); }
+	70%, 100% { opacity: 0.18; transform: scale(0.7); }
+}
+
+/* Slow hue cycle through the semantic palette for the dot-matrix loader. */
+@keyframes fr-dotcolor {
+	0% { background-color: var(--fr-accent); }
+	25% { background-color: var(--fr-blue); }
+	50% { background-color: var(--fr-add); }
+	75% { background-color: var(--fr-warn); }
+	100% { background-color: var(--fr-accent); }
+}
+
+/* Equalizer-bars loader: staggered vertical scale, origin centered. */
+@keyframes fr-bar-scale {
+	0%, 100% { transform: scaleY(0.35); }
+	50% { transform: scaleY(1); }
+}
+
+/* signal loader: a ring expands and fades out from the core dot. */
+@keyframes fr-spinner-ping {
+	0% { transform: scale(0.6); opacity: 0.55; }
+	75%, 100% { transform: scale(2); opacity: 0; }
+}
+
+/* ---------- Plugin connect modal ---------- */
+/* A packet of light travels along the wire between the two app marks. */
+@keyframes fr-connect-flow {
+	0% { transform: translateX(-120%); }
+	100% { transform: translateX(420%); }
+}
+/* Soft breathing glow behind a connect mark. */
+@keyframes fr-connect-glow {
+	0%, 100% { opacity: 0.3; transform: scale(0.9); }
+	50% { opacity: 0.65; transform: scale(1.12); }
+}
+/* One-shot: the success check badge pops in with a soft overshoot. */
+@keyframes fr-connect-check {
+	0% { opacity: 0; transform: scale(0.2); }
+	60% { opacity: 1; transform: scale(1.18); }
+	100% { opacity: 1; transform: scale(1); }
+}
+/* One-shot celebration ring that expands and fades behind the connected mark. */
+@keyframes fr-connect-burst {
+	0% { opacity: 0.55; transform: scale(0.78); }
+	100% { opacity: 0; transform: scale(1.85); }
+}
+
+/* ---------- Plugin detail hero: glass nebula ---------- */
+/* Two independently-timed drifting blobs behind a frosted glass scrim, tinted
+ * per-plugin via inline style (color-mix on the plugin's own logo colors) —
+ * see plugins-page.tsx PluginHeroNebula. Transform-only so the reduced-motion
+ * override above (animation-duration → ~0) neuters it for free. */
+@keyframes fr-nebula-a {
+	0% { transform: translate3d(-3%, -2%, 0) scale(1); }
+	100% { transform: translate3d(3%, 2.5%, 0) scale(1.12); }
+}
+@keyframes fr-nebula-b {
+	0% { transform: translate3d(2.5%, 1.5%, 0) scale(1.08); }
+	100% { transform: translate3d(-3%, -2.5%, 0) scale(1); }
+}
+
+/* ---------- Stream-wisp tool-card handoff ---------- */
+/* When the stream wisp rides a running tool card it lands on the card's icon and
+ * visually BECOMES its live indicator. Fade the card's own icon + pending signal
+ * out from under it (opacity/scale only — the layout box stays, so the header
+ * never reflows as the wisp arrives) and animate them back when the wisp leaves. */
+[data-slot="tool-card-icon"] {
+	transition: opacity 240ms ease, transform 240ms ease;
+}
+[data-wisp-riding] [data-slot="tool-card-icon"] {
+	opacity: 0;
+	transform: scale(0.55);
+}
+[data-slot="tool-signal"] {
+	transition: opacity 200ms ease;
+}
+[data-wisp-riding] [data-slot="tool-signal"] {
+	opacity: 0;
+}
+
+/* ---------- Host-UI dock (ask / permission / confirm) ---------- */
+/* Seamless question-to-question flow: the frame stays mounted between requests
+ * (see useDockLinger), the measured height morphs instead of jumping, incoming
+ * content rises in, and an emptied dock fades while collapsing to 0 height.
+ * All timings ride the shared --fr-motion-* dials (reduced-motion zeroes them). */
+[data-slot="host-ui-dock-height"] {
+	transition: height var(--fr-motion-base) var(--fr-ease-standard);
+}
+[data-slot="host-ui-dock-swap"] {
+	animation: fr-rise var(--fr-motion-base) var(--fr-ease-standard);
+}
+[data-slot="host-ui-select-dock"] {
+	transition: opacity var(--fr-motion-base) var(--fr-ease-standard);
+}
+[data-slot="host-ui-select-dock"][data-state="closing"] {
+	opacity: 0;
+	pointer-events: none;
+}
+
+/* ---------- Reduced motion ---------- */
+/* Honor the OS preference unless the user explicitly forced motion on, and */
+/* honor an explicit in-app "reduced" choice regardless of the OS setting. */
 @media (prefers-reduced-motion: reduce) {
-  [data-motion="system"] *,
-  [data-motion="system"] *::before,
-  [data-motion="system"] *::after {
-    animation-duration: 1ms !important;
-    animation-iteration-count: 1 !important;
-    scroll-behavior: auto !important;
-    transition-duration: 1ms !important;
-  }
+	:root:not([data-fr-motion="full"]) *,
+	:root:not([data-fr-motion="full"]) *::before,
+	:root:not([data-fr-motion="full"]) *::after {
+		animation-duration: 0.001ms !important;
+		animation-iteration-count: 1 !important;
+		transition-duration: 0.001ms !important;
+		scroll-behavior: auto !important;
+		--fr-motion-fast: 0.001ms !important;
+		--fr-motion-base: 0.001ms !important;
+		--fr-motion-slow: 0.001ms !important;
+	}
+}
+
+[data-fr-motion="reduced"] *,
+[data-fr-motion="reduced"] *::before,
+[data-fr-motion="reduced"] *::after {
+	animation-duration: 0.001ms !important;
+	animation-iteration-count: 1 !important;
+	transition-duration: 0.001ms !important;
+	scroll-behavior: auto !important;
+	--fr-motion-fast: 0.001ms !important;
+	--fr-motion-base: 0.001ms !important;
+	--fr-motion-slow: 0.001ms !important;
+}
+
+@media (max-width: 760px) {
+	[data-slot="app-shell"] {
+		grid-template-columns: minmax(0, 1fr) !important;
+	}
+
+	/* Rail on phones: compact/hidden stay off-canvas; EXPANDED floats as a left
+	   drawer over the scrim (the top-bar toggle + scrim tap drive the state).
+	   The old unconditional display:none made the toggle a silent no-op. */
+	[data-slot="app-shell"]:not([data-rail-mode="expanded"]) [data-slot="session-rail"] {
+		display: none !important;
+	}
+
+	[data-slot="app-shell"][data-rail-mode="expanded"] [data-slot="session-rail"] {
+		position: fixed;
+		top: 0;
+		bottom: 0;
+		left: 0;
+		z-index: 50;
+		width: var(--fr-rail-w);
+		max-width: 85vw;
+		box-shadow: 20px 0 60px rgba(0, 0, 0, 0.5);
+	}
+
+	[data-slot="app-shell"][data-rail-mode="expanded"] [data-slot="rail-scrim"] {
+		display: block;
+	}
+
+	/* Sessions-first drawer (2026-07-10 audit: sessions started ~55% down it).
+	   The mode tablist yields to the phone entirely; the action stack halves
+	   its height as a two-column grid with the primary New-session row (first
+	   child) and the customize mini-row (last child) spanning full width. */
+	[data-slot="rail-mode-tabs"] {
+		display: none !important;
+	}
+
+	[data-slot="rail-actions"] {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 2px;
+	}
+
+	[data-slot="rail-actions"] > :first-child,
+	[data-slot="rail-actions"] > :last-child {
+		grid-column: 1 / -1;
+	}
+
+	/* The full-bleed sheet starts BELOW the 52px top bar — covering it left no
+	   way to close the dock or reach the rail toggle once open (2026-07-16). */
+	[data-slot="app-shell"][data-dock-open] [data-slot="right-dock"] {
+		width: 100% !important;
+		max-width: 100vw;
+		top: 52px !important;
+	}
+
+	[data-slot="right-dock"] [data-slot="right-dock-resize-handle"] {
+		display: none !important;
+	}
+
+	[data-slot="message"],
+	[data-slot="thread-message"],
+	[data-slot="text-bubble"],
+	[data-slot="text-bubble"] * {
+		max-width: 100%;
+		overflow-wrap: anywhere;
+	}
+
+	/* Composer de-cramp (2026-07-10 audit): 5 controls shared 380px. The
+	   permission chip collapses to its dot (aria-label carries the tier), the
+	   model chip swaps to its short label, the rotating tip line yields, and
+	   the desktop gutter narrows. */
+	[data-slot="composer"] {
+		padding-left: 12px;
+		padding-right: 12px;
+	}
+
+	[data-slot="composer-tip"] {
+		display: none !important;
+	}
+
+	/* Dead-gap fix (2026-07-10 audit): the hover-revealed copy/timestamp row
+	   under every bubble is opacity-0 but still ~30px tall — unreachable dead
+	   space on touch (no hover). Remove it from layout at phone width. */
+	[data-slot="message-actions"] {
+		display: none !important;
+	}
+
+	[data-chip="permission"] > .fr-overflow,
+	[data-chip="permission"] > svg {
+		display: none;
+	}
+
+	[data-chip="model"] [data-model-label="full"] {
+		display: none;
+	}
+
+	/* Two selectors (0,2,0) so this beats the base display:none below, which
+	   sits LATER in the file at (0,1,0) — media queries don't raise specificity. */
+	[data-chip="model"] [data-model-label="short"] {
+		display: inline;
+	}
+}
+
+/* Overlay dock posture keeps the workspace's transcript and composer clear of
+   the active, resizable dock width. Wide shells retain their third grid track;
+   phone postures clear this inset for the dock's full-bleed sheet. */
+@media (min-width: 761px) and (max-width: 1240px) {
+	[data-slot="app-shell"][data-dock-open] > [data-slot="workspace-main"] {
+		padding-right: var(--fr-dock-w-active, var(--fr-dock-w));
+	}
+}
+
+[data-frame-w="medium"] [data-slot="app-shell"][data-dock-open] > [data-slot="workspace-main"] {
+	padding-right: var(--fr-dock-w-active, var(--fr-dock-w));
+}
+
+[data-frame-w="narrow"] [data-slot="app-shell"][data-dock-open] > [data-slot="workspace-main"] {
+	padding-right: 0;
+}
+
+/* Container-aware shell adaptivity. The frame root measures its own width and
+   exposes it as data-frame-w (narrow ≤760px, medium ≤1240px, wide), so an
+   embedded frame — landing-page demo, split pane, any host page — collapses
+   like a phone/tablet even when the viewport is wide. The @media block above
+   stays as a fallback for shells rendered outside a fraym-frame root. */
+
+/* Medium frame + open dock: the dock can't share the grid, so it floats as an
+   overlay pinned inside the frame (mirrors the ≤1240px viewport behavior, but
+   absolute instead of fixed so it never escapes an embedded frame). */
+[data-frame-w="medium"] [data-slot="app-shell"][data-dock-open] {
+	grid-template-columns: minmax(0, 1fr) !important;
+}
+
+[data-frame-w="medium"] [data-slot="app-shell"][data-dock-open]:not([data-rail-mode="hidden"]) {
+	grid-template-columns: var(--fr-rail-w) minmax(0, 1fr) !important;
+}
+
+[data-frame-w="narrow"] [data-slot="app-shell"][data-dock-open] [data-slot="right-dock"],
+[data-frame-w="medium"] [data-slot="app-shell"][data-dock-open] [data-slot="right-dock"] {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	right: 0;
+	z-index: 45;
+	width: var(--fr-dock-w-active, var(--fr-dock-w));
+	max-width: 100%;
+	box-shadow: -20px 0 60px rgba(0, 0, 0, 0.5);
+}
+
+/* Narrow frame: phone posture — the dock is a full-bleed sheet. A desktop
+   dock width (up to 760px) pinned right would escape the frame's left edge,
+   so width yields to the frame and the resize handle disappears. The sheet
+   starts BELOW the 52px top bar so the dock/rail toggles stay reachable. */
+[data-frame-w="narrow"] [data-slot="app-shell"][data-dock-open] [data-slot="right-dock"] {
+	width: 100%;
+	border-left: 0;
+	top: 52px;
+}
+
+[data-frame-w="narrow"] [data-slot="right-dock"] [data-slot="right-dock-resize-handle"] {
+	display: none;
+}
+
+/* Wide diff/preview content scrolls inside the sheet instead of clipping. */
+[data-frame-w="narrow"] [data-slot="right-dock-content"],
+[data-frame-w="medium"] [data-slot="right-dock-content"] {
+	overflow-x: auto;
+}
+
+/* Narrow frame: phone posture — rail and branch chip yield to the thread. */
+[data-frame-w="narrow"] [data-slot="app-shell"] {
+	grid-template-columns: minmax(0, 1fr) !important;
+}
+
+[data-frame-w="narrow"] [data-slot="app-shell"]:not([data-rail-mode="expanded"]) [data-slot="session-rail"] {
+	display: none !important;
+}
+
+/* Narrow embedded frame: same drawer, absolute so it never escapes the frame
+   (mirrors the dock's narrow-frame overlay above). */
+[data-frame-w="narrow"] [data-slot="app-shell"][data-rail-mode="expanded"] [data-slot="session-rail"] {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	z-index: 50;
+	width: var(--fr-rail-w);
+	max-width: 85vw;
+	box-shadow: 20px 0 60px rgba(0, 0, 0, 0.5);
+}
+
+[data-frame-w="narrow"] [data-slot="app-shell"][data-rail-mode="expanded"] [data-slot="rail-scrim"] {
+	display: block;
+}
+
+/* Sessions-first drawer — the narrow-frame twin of the ≤760px rules above. */
+[data-frame-w="narrow"] [data-slot="rail-mode-tabs"] {
+	display: none !important;
+}
+
+[data-frame-w="narrow"] [data-slot="rail-actions"] {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 2px;
+}
+
+[data-frame-w="narrow"] [data-slot="rail-actions"] > :first-child,
+[data-frame-w="narrow"] [data-slot="rail-actions"] > :last-child {
+	grid-column: 1 / -1;
+}
+
+[data-frame-w="narrow"] [data-slot="top-bar-branch"] {
+	display: none !important;
+}
+
+/* Composer de-cramp — narrow-frame twin of the ≤760px rules above. The base
+   rule comes FIRST so the posture overrides below it win the cascade. The
+   model chip's short label exists only in phone posture. */
+[data-model-label="short"] {
+	display: none;
+}
+
+[data-frame-w="narrow"] [data-slot="composer"] {
+	padding-left: 12px;
+	padding-right: 12px;
+}
+
+[data-frame-w="narrow"] [data-slot="composer-tip"] {
+	display: none !important;
+}
+
+[data-frame-w="narrow"] [data-slot="message-actions"] {
+	display: none !important;
+}
+
+[data-frame-w="narrow"] [data-chip="permission"] > .fr-overflow,
+[data-frame-w="narrow"] [data-chip="permission"] > svg {
+	display: none;
+}
+
+[data-frame-w="narrow"] [data-chip="model"] [data-model-label="full"] {
+	display: none;
+}
+
+[data-frame-w="narrow"] [data-chip="model"] [data-model-label="short"] {
+	display: inline;
+}
+
+[data-frame-w="narrow"] [data-slot="message"],
+[data-frame-w="narrow"] [data-slot="thread-message"],
+[data-frame-w="narrow"] [data-slot="text-bubble"],
+[data-frame-w="narrow"] [data-slot="text-bubble"] * {
+	max-width: 100%;
+	overflow-wrap: anywhere;
+}
+
+/* The rail drawer's tap-to-close scrim (app-shell.tsx renders it only while the
+   rail is expanded and collapsible). Hidden except in phone posture, where the
+   media/narrow-frame blocks above reveal it under the drawer. Must sit ABOVE the
+   dock overlay (z-45) — the drawer (z-50) can open over an open Code dock, and a
+   z-40 scrim left the dock undimmed and swallowed the close tap. */
+[data-slot="rail-scrim"] {
+	display: none;
+	position: fixed;
+	inset: 0;
+	z-index: 48;
+	background: rgba(0, 0, 0, 0.5);
+	border: 0;
+	padding: 0;
+	cursor: default;
+}
+
+[data-frame-w="narrow"] [data-slot="rail-scrim"] {
+	position: absolute;
+}
+
+/* Session rail typography and project rows. */
+[data-slot="session-rail"] {
+	font-family: var(--fr-font-rail);
+	font-optical-sizing: auto;
+}
+
+[data-slot="session-rail"] button,
+[data-slot="session-rail"] input {
+	font-family: inherit;
+}
+
+[data-slot="session-rail"] .rail-btn,
+[data-slot="session-rail"] .repo-name,
+[data-slot="session-rail"] .s-title {
+	font-weight: 400;
+}
+
+[data-slot="session-rail"] .rail-btn.primary,
+[data-slot="session-rail"] .sess.active .s-title {
+	font-weight: 500;
+}
+
+/* Codex preset only: rail session titles are intentionally brighter than the muted
+   project/folder labels (which stay text-2), matching the Codex app's rail hierarchy. */
+[data-theme-preset="codex"] [data-slot="session-rail"] .s-title {
+	color: color-mix(in oklab, var(--fr-text) 60%, var(--fr-text-2));
+}
+[data-theme-preset="codex"] [data-slot="session-rail"] .sess.active .s-title {
+	color: var(--fr-text);
+}
+
+[data-slot="session-rail"] [data-slot="collapsible-trigger"] {
+	background-color: transparent;
+	transition: color 120ms ease;
+}
+
+[data-slot="session-rail"] [data-slot="collapsible-trigger"]:hover,
+[data-slot="session-rail"] [data-slot="collapsible-trigger"]:focus-visible {
+	background-color: transparent;
+}
+
+[data-slot="session-rail"] [data-slot="collapsible-header"]:hover [data-slot="collapsible-trigger"],
+[data-slot="session-rail"] [data-slot="collapsible-header"]:focus-within [data-slot="collapsible-trigger"] {
+	color: var(--fr-text);
+}
+
+[data-slot="session-rail"] [data-slot="collapsible-actions"] {
+	opacity: 0;
+	pointer-events: none;
+	transition: opacity 120ms ease;
+}
+
+[data-slot="session-rail"] [data-slot="collapsible-header"]:hover [data-slot="collapsible-actions"],
+[data-slot="session-rail"] [data-slot="collapsible-header"]:focus-within [data-slot="collapsible-actions"] {
+	opacity: 1;
+	pointer-events: auto;
+}
+
+[data-slot="session-rail"] [data-slot="collapsible-caret"] {
+	opacity: 0;
+	transition:
+		opacity 120ms ease,
+		transform 150ms ease;
+}
+
+[data-slot="session-rail"] [data-slot="collapsible-header"]:hover [data-slot="collapsible-caret"],
+[data-slot="session-rail"] [data-slot="collapsible-header"]:focus-within [data-slot="collapsible-caret"] {
+	opacity: 1;
+}
+
+/* ── Rail collapse: expanded (264) ⇄ compact (56) ⇄ hidden (0). ───────────────
+   One mechanism: the shell grid's rail track is ALWAYS present and its width is
+   var(--fr-rail-w), re-targeted per data-rail-mode, so the column morphs instead
+   of the track count changing (which can't animate). Icons stay anchored; labels
+   fade. The transition is suppressed mid dock-resize so dragging never rubber-bands. */
+[data-slot="app-shell"] {
+	transition: grid-template-columns var(--fr-motion-base) cubic-bezier(0.4, 0, 0.2, 1);
+}
+[data-slot="app-shell"][data-rail-mode="compact"] {
+	--fr-rail-w: var(--fr-rail-w-compact);
+}
+[data-slot="app-shell"][data-rail-mode="hidden"] {
+	--fr-rail-w: 0px;
+}
+:root[data-fr-shell-resizing] [data-slot="app-shell"] {
+	transition: none;
+}
+
+/* Label choreography. Collapsing fades labels out FIRST (no delay) while the
+   frame is still shrinking; expanding delays the fade-in until the frame settles
+   (content-out-before-frame, frame-before-content-in). Honors the motion knob via
+   the shared --fr-motion-* vars (reduced-motion zeroes them). */
+[data-slot="session-rail"] .rail-label {
+	transition:
+		opacity var(--fr-motion-fast) ease var(--fr-motion-fast),
+		transform var(--fr-motion-fast) ease var(--fr-motion-fast);
+}
+[data-slot="session-rail"][data-compact] {
+	overflow: hidden;
+}
+/* In compact, labels collapse to nothing — zero width AND no flex-grow — so every
+   icon-only control truly centers under justify-center; opacity still fades for feel. */
+[data-slot="session-rail"][data-compact] .rail-label {
+	flex: none;
+	width: 0;
+	min-width: 0;
+	max-width: 0;
+	margin: 0;
+	padding: 0;
+	border: 0;
+	height: 0;
+	white-space: nowrap;
+	opacity: 0;
+	overflow: hidden;
+	pointer-events: none;
+	transition: opacity var(--fr-motion-fast) ease;
+}
+
+/* LEGACY thread rhythm — applies ONLY to the old `data-slot="message"` path
+   (the `<Message>` component still rendered by `ConnectedMessageThread` /
+   demo-dock). The canonical `<Thread>` (Thread v2) uses `data-slot="thread-message"`
+   + the `.fr-thread` flex-`gap` tokens below and is NEVER touched by this rule.
+   DELETE this block when `ConnectedMessageThread`/`<Message>` are retired.
+   (Kept a uniform 12px between agent blocks; tool/reasoning trace runs tight 3px.) */
+[data-slot="message"][data-role="agent"] > * + * {
+	margin-top: 12px;
+}
+[data-slot="message"][data-role="agent"] > [data-slot="tool-card"] + [data-slot="tool-card"],
+[data-slot="message"][data-role="agent"] > [data-slot="tool-card"] + [data-slot="reasoning-block"],
+[data-slot="message"][data-role="agent"] > [data-slot="reasoning-block"] + [data-slot="tool-card"],
+[data-slot="message"][data-role="agent"] > [data-slot="reasoning-block"] + [data-slot="reasoning-block"] {
+	margin-top: 3px;
+}
+
+/* ── Thread v2 rhythm: one spacing system, owned entirely by flex `gap`. ──────
+   The Thread (`.fr-thread`) and its sub-containers set the ONLY vertical rhythm
+   via three density-scaled tokens. Blocks set ZERO outer margin (the containers
+   carry `[&>*]:my-0`); there is NO `> * + *` override to fight specificity, and
+   `gap` never margin-collapses. Three beats:
+     --fr-thread-turn  inter-message (turn-to-turn)
+     --fr-thread-beat  prose blocks within a message (the agent's "speech")
+     --fr-thread-trace work-trace cards (reasoning/tool) grouped tight */
+.fr-thread {
+	--fr-thread-beat: 12px;
+	--fr-thread-trace: 3px;
+	--fr-thread-turn: 26px;
+	/* Horizontal overflow of the TRANSCRIPT COLUMN is never acceptable: one
+	   unbreakable path in a tool-card header used to widen the whole thread and
+	   hand the page a horizontal scrollbar (hit on-device at 360px, 2026-07-10).
+	   Wide content that WANTS to scroll (code blocks, diffs, terminals) owns its
+	   own inner overflow-x-auto scroller; the column itself clips. */
+	overflow-x: clip;
+	/* VIBR's thinking state combines a 17px glow with a 1.13 scale. Keep its
+	   optical bleed inside the transcript gutter instead of shearing the avatar
+	   at the column edge; the parent content shell reserves 28px on each side. */
+	overflow-clip-margin: 20px;
+}
+.fr-thread[data-density="compact"] {
+	--fr-thread-beat: 8px;
+	--fr-thread-trace: 2px;
+	--fr-thread-turn: 18px;
+}
+.fr-thread[data-density="spacious"] {
+	--fr-thread-beat: 16px;
+	--fr-thread-trace: 5px;
+	--fr-thread-turn: 32px;
+}
+
+/* Thread turns deliberately do NOT use `content-visibility: auto`. It skip-paints
+   off-screen turns, but a skipped element shows its `contain-intrinsic-size` as a
+   BLANK box until the browser repaints — a repaint that loses the race during BOTH
+   live streaming (auto-scroll churn) and plain idle scrolling, flashing a
+   full-height empty turn in the viewport (the "content cut off / empty gap while
+   Working…" P0, plus a scroll-time flicker). The thread already caps its rendered
+   set to `maxVisibleTurns` (useVisibleThreadTranscript), so the skip bought little.
+   Do NOT reintroduce it without a virtualizer that never paints an empty box. */
+
+/* Rail rows stay fully laid out: content-visibility can under-report scroll
+ * extent in this nested flex scroller, leaving lower sessions unreachable. */
+
+[data-slot="session-rail"],
+[data-slot="right-dock"] {
+	contain: layout style;
+}
+
+:root[data-fr-shell-resizing="dock"] [data-slot="right-dock"] {
+	width: var(--fr-dock-w-live, var(--fr-dock-w));
+}
+
+/* Hide default number-input spinners on Fraym inputs (browser chrome that
+   clashes with the design system). The element still accepts arrow-key increment. */
+[data-slot="input"][type="number"]::-webkit-inner-spin-button,
+[data-slot="input"][type="number"]::-webkit-outer-spin-button {
+	-webkit-appearance: none;
+	margin: 0;
+}
+[data-slot="input"][type="number"] {
+	-moz-appearance: textfield;
+}
+
+/* ---------- Text overflow policy ----------
+   One primitive for how long single-line text ENDS. `.fr-overflow` follows the
+   root [data-text-overflow] policy (config.textOverflow, Settings → Appearance):
+   a hard ellipsis by default, a right-edge dissolve under "fade" — the two are
+   interchangeable treatments of the same problem, so surfaces adopt the class
+   and the user picks once. `.fr-fade-end` is the explicit ALWAYS-fade variant
+   for surfaces whose design is the fade itself (the threaded rail title).
+   Fade width rides --fr-fade-w so a dense surface can shorten it.
+
+   The fade must engage ONLY on real overflow: ellipsis is inert when text fits,
+   but a bare mask is not — a shrink-wrapped label ends exactly at its text, so
+   an unconditional mask washes every short chip/header ("Autonomy", user name).
+   Overflow detection is the scroll-driven-animation trick: with overflow:hidden
+   the element is a self scroll container; `animation-timeline: scroll(self
+   inline)` stays INACTIVE while nothing overflows (keyframes don't apply → no
+   mask) and activates the identical from/to keyframes once content overflows.
+   Chromium-family (web + WebView2 + WKWebView≥26) supports it; anything else
+   keeps the ellipsis fallback via @supports. NOTE: the rule owns `animation`
+   on adopters — don't combine with self-animated elements. */
+.fr-overflow,
+.fr-fade-end {
+	--fr-fade-w: 1.75rem;
+	overflow: hidden;
+	white-space: nowrap;
+}
+.fr-overflow {
+	text-overflow: ellipsis;
+}
+@supports (animation-timeline: scroll(self inline)) {
+	.fr-fade-end,
+	[data-text-overflow="fade"] .fr-overflow {
+		text-overflow: clip;
+		animation: fr-overflow-fade 1ms linear both;
+		animation-timeline: scroll(self inline);
+	}
+}
+@keyframes fr-overflow-fade {
+	0%,
+	100% {
+		-webkit-mask-image: linear-gradient(to right, currentColor calc(100% - var(--fr-fade-w)), transparent);
+		mask-image: linear-gradient(to right, currentColor calc(100% - var(--fr-fade-w)), transparent);
+	}
+}
+
+/* ---------- IDE surface motion ----------
+   Motivated micro-motion for the IDE (file tree, Source Control, split pane).
+   Every timing rides --fr-motion-* / --fr-ease-*, so the reduced-motion guards
+   above zero them automatically. */
+
+/* Folder disclosure: one caret glyph rotated on expand (no icon swap flicker). */
+.fr-tree-caret {
+	transition: transform var(--fr-motion-fast) var(--fr-ease-standard);
+}
+.fr-tree-caret[data-open] {
+	transform: rotate(90deg);
+}
+
+/* File / change row: an accent bar slides in on the selected row (VS Code-style),
+   and the icon lifts a hair on hover for tactile feedback. */
+[data-slot="file-row"] {
+	position: relative;
+}
+[data-slot="file-row"]::before {
+	content: "";
+	position: absolute;
+	left: 0;
+	top: 3px;
+	bottom: 3px;
+	width: 2px;
+	border-radius: 0 2px 2px 0;
+	background: var(--fr-accent);
+	transform: scaleY(0);
+	opacity: 0;
+	transition:
+		transform var(--fr-motion-fast) var(--fr-ease-emphasized),
+		opacity var(--fr-motion-fast) ease;
+}
+[data-slot="file-row"][data-selected]::before {
+	transform: scaleY(1);
+	opacity: 1;
+}
+[data-slot="file-row"] img {
+	transition: transform var(--fr-motion-fast) var(--fr-ease-standard);
+}
+[data-slot="file-row"]:hover img {
+	transform: scale(1.12);
+}
+
+/* Split pane: the left panel collapses / expands by animated width. */
+[data-slot="split-pane-left"] {
+	transition: width var(--fr-motion-base) var(--fr-ease-standard);
+}
+[data-slot="split-pane-divider"] {
+	transition:
+		width var(--fr-motion-base) var(--fr-ease-standard),
+		opacity var(--fr-motion-fast) ease,
+		background-color var(--fr-motion-fast) ease;
+}
+
+/* IDE side panel rises in when the rail switches Folder <-> Git. */
+[data-slot="ide-panel"] {
+	animation: fr-rise var(--fr-motion-base) var(--fr-ease-standard);
+}
+
+/* IDE right pane content rises in when a file / diff opens. */
+[data-slot="ide-right-body"] {
+	animation: fr-rise var(--fr-motion-base) var(--fr-ease-standard);
+}
+
+/* Activity-rail active indicator grows in with a soft overshoot. */
+[data-slot="ide-rail-bar"] {
+	transform-origin: center;
+	animation: fr-rail-bar var(--fr-motion-base) var(--fr-ease-emphasized);
+}
+@keyframes fr-rail-bar {
+	from {
+		transform: scaleY(0);
+		opacity: 0;
+	}
+	to {
+		transform: scaleY(1);
+		opacity: 1;
+	}
+}
+
+/* ── Settings → Mobile pairing motion ─────────────────────────────────────────
+   The QR "materializes" outward (per-module radial delays set inline), a
+   shimmer sweep suggests scannability, the phone frame breathes accent light
+   while a live code is up, and a landed pairing celebrates with a ring pop.
+   All of it collapses to instant states under prefers-reduced-motion. */
+
+.mobile-qr-module {
+	opacity: 0;
+	animation: mobile-qr-module-in 0.3s ease-out forwards;
+}
+
+@keyframes mobile-qr-module-in {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}
+
+.mobile-qr-shimmer {
+	background: linear-gradient(115deg, transparent 42%, rgba(122, 96, 193, 0.16) 50%, transparent 58%);
+	background-size: 250% 250%;
+	animation: mobile-qr-shimmer-sweep 4.2s var(--fr-ease-emphasized, ease-out) 1.2s infinite;
+}
+
+@keyframes mobile-qr-shimmer-sweep {
+	0% {
+		background-position: 120% 120%;
+	}
+	38%,
+	100% {
+		background-position: -60% -60%;
+	}
+}
+
+.mobile-pair-glow {
+	animation: mobile-pair-glow-breathe 3.6s ease-in-out infinite;
+}
+
+@keyframes mobile-pair-glow-breathe {
+	0%,
+	100% {
+		box-shadow:
+			0 18px 50px rgba(0, 0, 0, 0.45),
+			0 0 0 0 rgba(122, 96, 193, 0);
+	}
+	50% {
+		box-shadow:
+			0 18px 50px rgba(0, 0, 0, 0.45),
+			0 0 34px 2px rgba(122, 96, 193, 0.28);
+	}
+}
+
+.mobile-pair-signal {
+	animation: mobile-pair-signal-blink 1.1s ease-in-out infinite;
+}
+
+@keyframes mobile-pair-signal-blink {
+	50% {
+		opacity: 0.35;
+	}
+}
+
+.mobile-pair-success {
+	animation: mobile-pair-success-in 0.35s var(--fr-ease-emphasized, ease-out);
+}
+
+@keyframes mobile-pair-success-in {
+	from {
+		opacity: 0;
+		transform: scale(0.96);
+	}
+	to {
+		opacity: 1;
+		transform: scale(1);
+	}
+}
+
+.mobile-pair-success-ring {
+	animation: mobile-pair-success-ring-pop 0.6s var(--fr-ease-emphasized, ease-out);
+}
+
+@keyframes mobile-pair-success-ring-pop {
+	0% {
+		transform: scale(0.5);
+		box-shadow: 0 0 0 0 rgba(98, 192, 138, 0.5);
+	}
+	60% {
+		transform: scale(1.06);
+	}
+	100% {
+		transform: scale(1);
+		box-shadow: 0 0 0 18px rgba(98, 192, 138, 0);
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.mobile-qr-module {
+		animation: none;
+		opacity: 1;
+	}
+	.mobile-qr-shimmer,
+	.mobile-pair-glow,
+	.mobile-pair-signal,
+	.mobile-pair-success,
+	.mobile-pair-success-ring {
+		animation: none;
+	}
+}
+
+/* Viewport phone posture wins even before an embedded frame's ResizeObserver
+   publishes its narrow tier. */
+@media (max-width: 760px) {
+	[data-frame-w="medium"] [data-slot="app-shell"][data-dock-open] > [data-slot="workspace-main"],
+	[data-slot="app-shell"][data-dock-open] > [data-slot="workspace-main"] {
+		padding-right: 0;
+	}
 }

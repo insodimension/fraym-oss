@@ -7,17 +7,17 @@
    drifts. Consumed by fraym-docs (Diagram.tsx + docs.css).
    ============================================================ */
 :root {
-  /* Secondary accent — runtime / metering (a cooler violet than --fr-accent). */
-  --fr-iris: #8f7bff;
+	/* Secondary accent — runtime / metering (a cooler violet than --fr-accent). */
+	--fr-iris: #8f7bff;
 
-  /* Diagram edge palette — one color per semantic edge kind.
+	/* Diagram edge palette — one color per semantic edge kind.
 	   contract/mcp/llm/add intentionally mirror the default
 	   accent/blue/warn/add but are pinned here so the diagrams keep a
 	   stable identity regardless of theme accent. */
-  --fr-diagram-contract: #b78cff; /* the SessionDriver contract */
-  --fr-diagram-mcp: #5b8cff; /* MCP · tools */
-  --fr-diagram-llm: #e0b15b; /* model providers */
-  --fr-diagram-meter: #8f7bff; /* metering · runtime */
-  --fr-diagram-add: #62c08a; /* realm · capability */
-  --fr-diagram-mute: #8a8a92; /* internal · in-process */
+	--fr-diagram-contract: #b78cff; /* the SessionDriver contract */
+	--fr-diagram-mcp: #5b8cff; /* MCP · tools */
+	--fr-diagram-llm: #e0b15b; /* model providers */
+	--fr-diagram-meter: #8f7bff; /* metering · runtime */
+	--fr-diagram-add: #62c08a; /* realm · capability */
+	--fr-diagram-mute: #8a8a92; /* internal · in-process */
 }
