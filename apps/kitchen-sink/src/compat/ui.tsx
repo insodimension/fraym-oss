@@ -40,7 +40,7 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export type { IconName };
-export interface IconProps extends SVGAttributes<SVGSVGElement> {
+interface IconProps extends SVGAttributes<SVGSVGElement> {
 	readonly name: IconName;
 	readonly size?: number;
 	readonly strokeWidth?: number;
