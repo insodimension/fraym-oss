@@ -56,5 +56,5 @@ export function dotToneClass(tone: ComposerControlTone | "mute" = "mute"): strin
 export function toneClass(tone: ComposerControlTone = "default", active = false): string { return `fraym-tone--${tone}${active ? " is-active" : ""}`; }
 export function taskStatusTone(status: string): ComposerControlTone { return status === "completed" ? "add" : status === "in_progress" ? "accent" : status === "abandoned" ? "del" : "default"; }
 export function taskStatusIcon(status: string): string { return status === "completed" ? "✓" : status === "in_progress" ? "✦" : status === "abandoned" ? "×" : "◷"; }
-export function taskCounts(phases: readonly TaskPhase[]) { const tasks = phases.flatMap((phase) => phase.tasks); return { total: tasks.length, completed: tasks.filter((task) => task.status === "completed").length, active: tasks.filter((task) => task.status === "in_progress").length }; }
-export function currentTask(phases: readonly TaskPhase[]) { return phases.flatMap((phase) => phase.tasks).find((task) => task.status === "in_progress"); }
+export function taskCounts(phases: readonly TaskPhase[]) { let total = 0; let completed = 0; let active = 0; for (const phase of phases) for (const task of phase.tasks) { total += 1; if (task.status === "completed") completed += 1; else if (task.status === "in_progress") active += 1; } return { total, completed, active }; }
+export function currentTask(phases: readonly TaskPhase[]) { for (const phase of phases) for (const task of phase.tasks) if (task.status === "in_progress") return task; return undefined; }
