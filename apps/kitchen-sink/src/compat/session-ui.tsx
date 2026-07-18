@@ -1,4 +1,4 @@
-import type { AgentEventStream } from "@fraym/driver";
+import type { AgentEvent, AgentEventStream, SessionDriver, SessionDriverEvent, SessionRef } from "@fraym/driver";
 import {
 	Composer as PublicComposer,
 	GoalComposerSurface,
@@ -35,21 +35,61 @@ interface SessionValue {
 
 const Context = createContext<SessionValue | null>(null);
 
+function toAgentEvent(event: SessionDriverEvent): AgentEvent | null {
+	const sessionId = event.sessionRef.sessionId;
+	switch (event.type) {
+		case "queuedMessageStarted": {
+			const message = event.message as { readonly id?: string; readonly text?: string } | undefined;
+			return { type: "user.message", sessionId, messageId: message?.id ?? "user", content: message?.text ?? "" };
+		}
+		case "assistantDelta":
+			return { type: "assistant.message.delta", sessionId, messageId: "assistant", delta: String(event.text ?? "") };
+		case "reasoningDelta":
+			return { type: "reasoning.delta", sessionId, messageId: "reasoning", delta: String(event.text ?? "") };
+		case "toolStarted":
+			return { type: "tool_call.start", sessionId, toolCallId: String(event.callId), toolName: String(event.toolName), input: event.input, status: "running" };
+		case "toolFinished":
+			return { type: "tool_call.end", sessionId, toolCallId: String(event.callId), status: event.success ? "succeeded" : "failed", output: event.output };
+		case "runCompleted":
+			return { type: "session.done", sessionId };
+		case "runFailed":
+			return { type: "session.error", sessionId, message: String((event.error as { message?: string } | undefined)?.message ?? "Run failed") };
+		default:
+			return null;
+	}
+}
+
+function sessionDriverStream(driver: SessionDriver, sessionRef: SessionRef): AgentEventStream {
+	return {
+		subscribe(listener) {
+			void driver.openSession(sessionRef).then(() => listener({ type: "session.start", sessionId: sessionRef.sessionId }));
+			return driver.subscribe(sessionRef, event => {
+				const converted = toAgentEvent(event);
+				if (converted) listener(converted);
+			});
+		},
+	};
+}
+
 export function SessionProvider({
 	driver,
+	sessionRef,
 	children,
 }: {
-	readonly driver: AgentEventStream;
-	readonly sessionRef: unknown;
+	readonly driver: AgentEventStream | SessionDriver;
+	readonly sessionRef: SessionRef;
 	readonly children: ReactNode;
 }) {
+	const source = useMemo(() => "openSession" in driver ? sessionDriverStream(driver, sessionRef) : driver, [driver, sessionRef]);
 	const value = useMemo<SessionValue>(() => ({
-		source: driver,
-		sendMessage: async () => undefined,
+		source,
+		sendMessage: async text => {
+			if ("sendUserMessage" in driver) await driver.sendUserMessage(sessionRef, { text });
+		},
 		isStreaming: false,
 		cancelRun: async () => undefined,
 		goal: null,
-	}), [driver]);
+	}), [driver, sessionRef, source]);
 	return <Context.Provider value={value}>{children}</Context.Provider>;
 }
 

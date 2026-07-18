@@ -5,10 +5,10 @@ import { Textarea } from "../../elements/Textarea";
 import { classNames } from "../../elements/utils";
 import { filterSlashCommands, getComposerKeyAction, type SlashCommand } from "../../composer-state";
 
-export interface SlashCommandSubcommand { readonly value: string; readonly label: string; readonly description?: string }
-export interface SlashCommandOption extends SlashCommand { readonly value?: string; readonly kind?: string; readonly subcommands?: readonly SlashCommandSubcommand[]; readonly options?: readonly SlashCommandOption[]; readonly keywords?: readonly string[] }
-export interface ArgumentCompletion { readonly value: string; readonly label?: string; readonly description?: string; readonly kind?: string }
-export type ArgumentCompletionSource = (command: SlashCommandOption, query: string, signal: AbortSignal) => Promise<readonly ArgumentCompletion[]>;
+export interface SlashCommandSubcommand { readonly name: string; readonly description?: string; readonly usage?: string }
+export interface SlashCommandOption extends SlashCommand { readonly value?: string; readonly kind?: string; readonly inputHint?: string; readonly hint?: string; readonly subcommands?: readonly SlashCommandSubcommand[]; readonly options?: readonly SlashCommandOption[]; readonly keywords?: readonly string[] }
+export interface ArgumentCompletion { readonly value: string; readonly label: string; readonly description?: string; readonly kind?: string; readonly hint?: string }
+export type ArgumentCompletionSource = (commandValue: string, argsPrefix: string, signal: AbortSignal) => Promise<readonly ArgumentCompletion[]>;
 export type FileCompletionSource = (query: string, signal: AbortSignal) => Promise<readonly SlashCommandOption[]>;
 export interface ActiveMention { readonly query: string; readonly start: number; readonly end: number }
 export function activeMentionQuery(value: string, cursor: number): ActiveMention | null { const before = value.slice(0, cursor); const match = before.match(/(?:^|\s)@([^\s@]*)$/); return match ? { query: match[1] ?? "", start: cursor - (match[1]?.length ?? 0) - 1, end: cursor } : null; }
@@ -19,6 +19,7 @@ export interface ComposerContextTag { readonly id: string; readonly label: strin
 export interface ComposerSubmission { readonly value: string; readonly attachments: readonly ComposerImageAttachment[]; readonly pasteAttachments: readonly ComposerPasteAttachment[] }
 export interface ComposerVoiceOptions { readonly enabled?: boolean; readonly onStart?: () => void }
 export interface ComposerProps { readonly className?: string; readonly value?: string; readonly defaultValue?: string; readonly placeholder?: string; readonly disabled?: boolean; readonly streaming?: boolean; readonly commands?: readonly SlashCommandOption[]; readonly leftSlot?: ReactNode; readonly rightSlot?: ReactNode; readonly topSlot?: ReactNode; readonly footer?: ReactNode; readonly attachments?: readonly ComposerImageAttachment[]; readonly pasteAttachments?: readonly ComposerPasteAttachment[]; readonly recipeTags?: readonly ComposerRecipeTag[]; readonly contextTags?: readonly ComposerContextTag[]; readonly onValueChange?: (value: string) => void; readonly onChange?: (value: string) => void; readonly onAttachmentsChange?: (attachments: readonly ComposerImageAttachment[]) => void; readonly onPasteAttachmentsChange?: (attachments: readonly ComposerPasteAttachment[]) => void; readonly onSubmit?: (submission: ComposerSubmission) => void; readonly onStop?: () => void; readonly onCommand?: (command: SlashCommandOption) => void }
+export interface CommandComposerProps extends Omit<ComposerProps, "commands" | "onSubmit"> { readonly slashCommands: readonly SlashCommandOption[]; readonly argumentCompletionSource?: ArgumentCompletionSource; readonly onSubmit: (value: string, attachments: readonly ComposerImageAttachment[]) => void }
 
 export function isLargePaste(text: string): boolean { return text.length >= 800 || text.split(/\r?\n/).length >= 12; }
 export function pastePreview(text: string): string { return text.replace(/\s+/g, " ").trim().slice(0, 120); }
@@ -37,7 +38,7 @@ export function stripPastedImageLabels(text: string): string { return text.repla
 export function splitLeadingCommand(value: string): { readonly command: string; readonly rest: string } | null { const match = value.match(/^\/(\S+)(?:\s+([\s\S]*))?$/); return match ? { command: match[1]!, rest: match[2] ?? "" } : null; }
 export interface CommittedChip { readonly label: string; readonly value: string; readonly kind?: string }
 export interface CommittedCommand { readonly token: string; readonly command: SlashCommandOption; readonly rest: string }
-export function parseCommittedCommand(value: string, commands: readonly SlashCommandOption[]): CommittedCommand | null { const split = splitLeadingCommand(value); if (!split) return null; const command = commands.find((entry) => (entry.value ?? entry.name).replace(/^\//, "") === split.command); return command ? { token: `/${split.command}`, command, rest: split.rest } : null; }
+export function parseCommittedCommand(value: string, commands: readonly SlashCommandOption[]): CommittedCommand | null { const split = splitLeadingCommand(value); if (!split) return null; const command = commands.find((entry) => (entry.value ?? entry.name ?? "").replace(/^\//, "") === split.command); return command ? { token: `/${split.command}`, command, rest: split.rest } : null; }
 export function removeValueSpan(value: string, start: number, end: number): string { return `${value.slice(0, start)}${value.slice(end)}`; }
 
 const defaults: readonly SlashCommandOption[] = [{ name: "clear", label: "Clear session", description: "Reset the transcript", group: "Session", icon: "×" }, { name: "retry", label: "Retry turn", description: "Run the last instruction again", group: "Session", icon: "↻" }];

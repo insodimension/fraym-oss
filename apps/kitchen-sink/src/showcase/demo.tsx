@@ -49,3 +49,16 @@ export function Demo({
 }
 
 /** A labeled example cell — for static "all states / variants" galleries. */
+export function Cell({ label, children }: { readonly label?: string; readonly children: ReactNode }) {
+	return (
+		<div className="flex flex-col items-center gap-2">
+			<div className="flex min-h-[40px] items-center justify-center">{children}</div>
+			{label && <span className="font-secondary text-fr-2xs text-fr-text-3">{label}</span>}
+		</div>
+	);
+}
+
+/** A small caption above a sub-group inside a preview. */
+export function Note({ children }: { readonly children: ReactNode }) {
+	return <p className="fr-eyebrow">{children}</p>;
+}

@@ -20,9 +20,16 @@ describe("fixtures", () => {
     stop();
     expect(events).toEqual([
       "queuedMessageStarted",
+      "workingStatus",
       "assistantDelta",
+      "assistantDelta",
+      "workingStatus",
       "toolStarted",
       "toolFinished",
+      "workingStatus",
+      "toolStarted",
+      "toolFinished",
+      "turnEnded",
       "runCompleted",
     ]);
   });

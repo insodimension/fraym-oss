@@ -23,6 +23,11 @@ export interface SessionSnapshot {
   readonly status: "idle" | "running" | "failed";
   readonly updatedAt: string;
   readonly transcript?: readonly SessionMessage[];
+  readonly contextUsage?: {
+    readonly tokens: number;
+    readonly contextWindow: number;
+    readonly percent: number;
+  };
   readonly archivedAt?: string;
   readonly config?: {
     readonly provider?: string;

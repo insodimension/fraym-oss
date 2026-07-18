@@ -4,9 +4,9 @@ import type {
 	ToolDisplaySettings,
 	ToolRendererMap,
 } from "@fraym/ui";
-import { SessionProvider } from "../compat/session-ui";
+import type { SessionDriver, SessionRef } from "@fraym/driver";
 import type { VerberProfileId } from "@fraym/verber";
-import type { ComponentProps, ComponentType, ReactNode } from "react";
+import type { ComponentType, ReactNode } from "react";
 import type { ControlsSchema } from "./controls";
 import type { EntryDocs } from "./docs";
 
@@ -14,8 +14,8 @@ export type Tier = "guide" | "tokens" | "elements" | "components" | "features" |
 
 // Driver/ref types derived from SessionProvider so the app needs no direct
 // @fraym/driver dependency.
-type DemoDriver = NonNullable<ComponentProps<typeof SessionProvider>["driver"]>;
-type DemoSessionRef = NonNullable<ComponentProps<typeof SessionProvider>["sessionRef"]>;
+type DemoDriver = SessionDriver;
+type DemoSessionRef = SessionRef;
 
 /**
  * Live-conversation demo for an entry, consumed by the shared Demo Dock.
@@ -65,4 +65,9 @@ export interface TierDef {
 	readonly label: string;
 	readonly intro: string;
 	readonly entries: readonly ShowcaseEntry[];
+}
+
+/** Stamp a sub-group label onto a cluster of entries (consumed by the nav's grouped view). */
+export function withGroup(group: string, entries: readonly ShowcaseEntry[]): ShowcaseEntry[] {
+	return entries.map(entry => ({ ...entry, group }));
 }

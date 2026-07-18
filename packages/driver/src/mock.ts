@@ -25,6 +25,8 @@ export interface DemoScript {
   readonly replies?: readonly DemoTurn[];
   readonly defaultReply?: DemoTurn;
   readonly speed?: number;
+  readonly commands?: readonly unknown[];
+  readonly completions?: readonly unknown[];
 }
 interface Runtime {
   snapshot: SessionSnapshot;

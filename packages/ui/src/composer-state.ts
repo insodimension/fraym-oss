@@ -1,8 +1,9 @@
 export interface SlashCommand {
-  name: string;
+  name?: string;
+  value?: string;
   label: string;
-  description: string;
-  group: string;
+  description?: string;
+  group?: string;
   icon?: string;
 }
 
@@ -51,11 +52,11 @@ export function filterSlashCommands(
   if (query.length === 0) return commands;
 
   const directMatches = commands.filter((command) =>
-    `${command.name} ${command.label}`.toLowerCase().includes(query),
+    `${command.name ?? command.value ?? ""} ${command.label}`.toLowerCase().includes(query),
   );
   if (directMatches.length > 0) return directMatches;
 
   return commands.filter((command) =>
-    `${command.description} ${command.group}`.toLowerCase().includes(query),
+    `${command.description ?? ""} ${command.group ?? ""}`.toLowerCase().includes(query),
   );
 }
