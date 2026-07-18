@@ -177,7 +177,7 @@ const OP_LABELS: Record<string, string> = {
 function opBadge(op: string): ReactNode {
 	const label = OP_LABELS[op] ?? op;
 	return (
-		<Badge variant="code" tone="accent">
+		<Badge key="operation" variant="code" tone="accent">
 			{label}
 		</Badge>
 	);
