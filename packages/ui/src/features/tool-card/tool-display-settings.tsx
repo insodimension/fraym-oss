@@ -1,8 +1,36 @@
-import { createContext, type ReactNode, useContext, useMemo } from "react";
+import { createContext, use, useMemo } from "react";
 import { DEFAULT_TOOL_DISPLAY_SETTINGS, type ToolDisplaySettings } from "./tool-display-settings-model";
-export * from "./tool-display-settings-model";
 
-const Context = createContext<Required<ToolDisplaySettings>>(DEFAULT_TOOL_DISPLAY_SETTINGS);
-export interface ToolDisplaySettingsProviderProps { readonly settings?: ToolDisplaySettings; readonly children: ReactNode }
-export function ToolDisplaySettingsProvider({ settings, children }: ToolDisplaySettingsProviderProps) { const value = useMemo(() => ({ ...DEFAULT_TOOL_DISPLAY_SETTINGS, ...settings }), [settings]); return <Context.Provider value={value}>{children}</Context.Provider>; }
-export function useToolDisplaySettings() { return useContext(Context); }
+export {
+	DEFAULT_TOOL_DISPLAY_SETTINGS,
+	isToolDefaultOpen,
+	resolveToolDefaultOpen,
+	type ThreadCollapseMode,
+	type ToolDefaultOpen,
+	type ToolDisplaySettings,
+} from "./tool-display-settings-model";
+
+const ToolDisplaySettingsContext = createContext<ToolDisplaySettings | null>(null);
+
+export interface ToolDisplaySettingsProviderProps {
+	readonly settings?: ToolDisplaySettings;
+	readonly children: React.ReactNode;
+}
+
+export function ToolDisplaySettingsProvider({ settings, children }: ToolDisplaySettingsProviderProps) {
+	const parent = use(ToolDisplaySettingsContext);
+	const value = useMemo<ToolDisplaySettings>(
+		() => ({
+			...DEFAULT_TOOL_DISPLAY_SETTINGS,
+			...(parent ?? {}),
+			...(settings ?? {}),
+		}),
+		[parent, settings],
+	);
+
+	return <ToolDisplaySettingsContext.Provider value={value}>{children}</ToolDisplaySettingsContext.Provider>;
+}
+
+export function useToolDisplaySettings(): Required<ToolDisplaySettings> {
+	return (use(ToolDisplaySettingsContext) ?? DEFAULT_TOOL_DISPLAY_SETTINGS) as Required<ToolDisplaySettings>;
+}

@@ -40,15 +40,16 @@ export interface ContextBreakdown {
   readonly [key: string]: number | undefined;
 }
 
+export type TaskStatus = "pending" | "in_progress" | "completed" | "abandoned";
+
 export interface TaskItem {
-  readonly id: string;
-  readonly title: string;
-  readonly status: "pending" | "in_progress" | "completed" | "abandoned";
+  readonly content: string;
+  readonly status: TaskStatus;
+  readonly notes?: readonly string[] | undefined;
 }
 
 export interface TaskPhase {
-  readonly id: string;
-  readonly title: string;
+  readonly name: string;
   readonly tasks: readonly TaskItem[];
 }
 

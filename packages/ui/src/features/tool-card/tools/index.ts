@@ -1,9 +1,26 @@
-export * from "./tool-render";
-export * from "./feature-renderers";
-export * from "./tool-group-model";
-export * from "./read-group-model";
-export * from "./bodies/tool-args-preview";
-export * from "./bodies/ansi";
-export * from "./bodies/search-display";
-export * from "./bodies/lsp-parse";
-export * from "./bodies/conflict-content";
+// Tool rendering surfaces (registry-driven) + reusable tool bodies.
+
+export { EditDiffBody, type EditDiffBodyProps } from "./bodies/edit-diff-body";
+export { parseSearchDisplay, type SearchFileGroup, type SearchLine } from "./bodies/search-display";
+export {
+	SearchEmptyBody,
+	SearchPendingBody,
+	SearchPlainBody,
+	SearchResultsBody,
+	type SearchResultsBodyProps,
+} from "./bodies/search-results-body";
+export { ToolArgsPreview, type ToolArgsPreviewProps } from "./bodies/tool-args-preview";
+export {
+	type CoalesceToolGroupsOptions,
+	coalesceToolGroups,
+	DEFAULT_TOOL_GROUP_THRESHOLD,
+	ToolGroupCard,
+	type ToolGroupCardProps,
+} from "./tool-group-model";
+export {
+	ConnectedToolStream,
+	type ConnectedToolStreamProps,
+	ToolRender,
+	type ToolRenderProps,
+	toolKindForName,
+} from "./tool-render";
