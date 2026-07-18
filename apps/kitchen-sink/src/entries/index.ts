@@ -1,7 +1,7 @@
-import { elementEntries } from "./elements";
+import { elementEntries } from "./oss-elements";
 import { composerEntries } from "./composer";
 import { featureEntries } from "./features";
-import { tokenEntries } from "./tokens";
+import { tokenEntries } from "./oss-tokens";
 import { toolEntries } from "./tools";
 import type { Entry } from "../entry";
 import { chatSurfaceEntries } from "./chat-surface";
