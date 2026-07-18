@@ -8,6 +8,7 @@
 
 import type { SessionRef, SessionSnapshot, WorkspaceRef } from "@fraym/driver";
 import type { DemoScript, ScriptedEvent, ScriptStep } from "@fraym/driver/mock";
+import { assistantDelta as say, queuedMessage, runCompleted, scriptedStep as step, toolFinished as toolDone, toolStarted, workingStatus as verb } from "./scripted-event-utils";
 
 const NOW = "2026-06-02T12:00:00.000Z";
 
@@ -29,34 +30,16 @@ const SNAPSHOT: SessionSnapshot = {
 	config: { provider: "acme", modelId: "Opus 4.6", thinkingLevel: "high" },
 };
 
-// --- step authoring helpers (mirror fraym-demo) -----------------------------
-
-function step(event: ScriptedEvent, delayMs = 0): ScriptStep {
-	return { event, delayMs };
-}
-
-function verb(message: string): ScriptedEvent {
-	return { type: "workingStatus", status: { message, visible: true } };
-}
-
 function userMessage(id: string, text: string): ScriptedEvent {
-	return { type: "queuedMessageStarted", message: { id, mode: "followUp", text, createdAt: NOW, updatedAt: NOW } };
-}
-
-function say(text: string): ScriptedEvent {
-	return { type: "assistantDelta", text };
+	return queuedMessage(id, text, NOW);
 }
 
 function toolStart(callId: string, input: unknown): ScriptedEvent {
-	return { type: "toolStarted", callId, toolName: "read", input };
-}
-
-function toolDone(callId: string, output: unknown, success = true): ScriptedEvent {
-	return { type: "toolFinished", callId, success, output };
+	return toolStarted(callId, "read", input);
 }
 
 function completed(): ScriptedEvent {
-	return { type: "runCompleted", snapshot: SNAPSHOT };
+	return runCompleted(SNAPSHOT);
 }
 
 /** A read phase: verb → the card appears running → it resolves. */

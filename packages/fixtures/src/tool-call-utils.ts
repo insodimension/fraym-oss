@@ -1,18 +1,4 @@
 /**
- * Shared helpers for constructing synthetic `ActiveToolCall`-compatible objects
- * and `AgentToolResult`-shaped output in test/demo fixtures.
- *
- * Every kitchen-sink entry was duplicating `toolResult`/`pendingToolCall` inline
- * with identical `{ content: [{ type: "text", text }], details, isError }` and
- * `{ callId, toolName, input, status: "running" }` shapes. This file consolidates
- * those patterns.
- */
-
-// ---------------------------------------------------------------------------
-// Result builders (AgentToolResult shape)
-// ---------------------------------------------------------------------------
-
-/**
  * Standard `AgentToolResult`-shaped output: `{ content, details, isError }`.
  *
  * @param text    The text content (wrapped as `[{ type: "text", text }]`).
@@ -36,10 +22,6 @@ export function optionalToolResult(
 	if (text === undefined) return undefined;
 	return { content: [{ type: "text", text }], details, isError };
 }
-
-// ---------------------------------------------------------------------------
-// Pending tool call builder
-// ---------------------------------------------------------------------------
 
 /**
  * A bare `ActiveToolCall`-compatible object with `status: "running"`.
