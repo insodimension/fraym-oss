@@ -7,6 +7,7 @@ import { ImageBlock } from "../../message/messages/image-block";
 import { ToolBodyCard, ToolBodySection } from "../tool-body-card";
 import { ToolBodyTerm } from "../tool-card";
 import { EditErrorBody } from "./bodies/edit-diff-body";
+import { readNumberField } from "./renderer-utils";
 
 interface InlineImage {
 	data: string;
@@ -27,11 +28,6 @@ interface GenerateImageModel {
 	readonly imageCount: number;
 	readonly responseText?: string | undefined;
 	readonly revisedPrompt?: string | undefined;
-}
-
-function readNumberField(value: unknown, key: string): number | undefined {
-	const v = readField(value, key);
-	return typeof v === "number" ? v : undefined;
 }
 
 function readOutputText(output: unknown): string {

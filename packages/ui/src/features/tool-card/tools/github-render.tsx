@@ -18,6 +18,7 @@ import type { ToolRenderer, ToolView } from "../../../registries/tool-renderer-r
 import { ToolBodyCard, ToolBodySection } from "../tool-body-card";
 import { ToolBodyTerm } from "../tool-card";
 import { EditErrorBody } from "./bodies/edit-diff-body";
+import { readNumberField } from "./renderer-utils";
 
 // ─── Types (local; mirrors Engine's GhToolDetails) ──────────────────────────
 
@@ -59,11 +60,6 @@ interface GhRunWatchViewDetails {
 	run?: GhRunWatchRunDetails | undefined;
 	runs?: GhRunWatchRunDetails[] | undefined;
 	failedLogs?: GhRunWatchFailedLogDetails[] | undefined;
-}
-
-function readNumberField(value: unknown, key: string): number | undefined {
-	const v = readField(value, key);
-	return typeof v === "number" ? v : undefined;
 }
 
 function readArrayField<T>(value: unknown, key: string): T[] | undefined {

@@ -12,6 +12,7 @@ import type { ToolRenderer, ToolView } from "../../../registries/tool-renderer-r
 import { ToolBodySection } from "../tool-body-card";
 import { ToolBodyTerm } from "../tool-card";
 import { EditErrorBody } from "./bodies/edit-diff-body";
+import { readNumberField, readStringArrayField, toolStatusForCall } from "./renderer-utils";
 
 interface SearchToolBm25Match {
 	name: string;
@@ -34,19 +35,9 @@ function readMatchDetails(details: unknown): SearchToolBm25Match[] {
 			description: readStringField(m, "description") ?? "",
 			server_name: readStringField(m, "server_name"),
 			mcp_tool_name: readStringField(m, "mcp_tool_name"),
-			schema_keys: readStringArray(m, "schema_keys"),
+			schema_keys: readStringArrayField(m, "schema_keys"),
 			score: readNumberField(m, "score") ?? 0,
 		}));
-}
-
-function readStringArray(value: unknown, key: string): string[] {
-	const raw = readField(value, key);
-	return Array.isArray(raw) ? raw.filter((item): item is string => typeof item === "string") : [];
-}
-
-function readNumberField(value: unknown, key: string): number | undefined {
-	const raw = readField(value, key);
-	return typeof raw === "number" ? raw : undefined;
 }
 
 function formatScore(score: number): string {
@@ -56,7 +47,7 @@ function formatScore(score: number): string {
 const MATCH_BODY_MAX_HEIGHT = 300;
 
 function searchStatus(call: ActiveToolCall): Pick<ToolView, "status" | "stat"> {
-	const status = call.status === "error" ? "error" : call.status === "running" ? "pending" : "success";
+	const status = toolStatusForCall(call.status);
 	const stat = call.status === "error" ? "failed" : call.status === "running" ? "running" : "done";
 	return { status, stat };
 }

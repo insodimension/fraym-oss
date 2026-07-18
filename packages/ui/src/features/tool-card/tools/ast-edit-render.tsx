@@ -18,31 +18,9 @@ import { AstEditDiffBody, AstEditEmptyBody, AstEditPendingBody } from "./bodies/
 import { parseAstEditDisplay } from "./bodies/ast-edit-display";
 import { EditErrorBody } from "./bodies/edit-diff-body";
 import { dimChip, truncatingChip } from "./chip";
+import { readFirstTextResult, readNumberField, toPathList } from "./renderer-utils";
 
 // --- defensive parse (local; no coupling to the monolith) -------------------
-
-function readNumberField(value: unknown, key: string): number | undefined {
-	const v = readField(value, key);
-	return typeof v === "number" ? v : undefined;
-}
-
-function toPathList(input: unknown): string[] {
-	if (typeof input === "string") return [input];
-	return Array.isArray(input) ? input.filter((s): s is string => typeof s === "string") : [];
-}
-
-function readResultText(output: unknown): string | undefined {
-	const content = readField(output, "content");
-	if (Array.isArray(content)) {
-		for (const part of content) {
-			if (readField(part, "type") === "text") {
-				const text = readField(part, "text");
-				if (typeof text === "string") return text;
-			}
-		}
-	}
-	return undefined;
-}
 
 /** First op's pattern + the op count, from `input.ops: [{pat, out}]`. */
 function readOps(input: unknown): { firstPat: string | undefined; count: number } {
@@ -81,7 +59,7 @@ function readAstEditContext(call: ActiveToolCall): AstEditContext {
 		readNumberField(details, "parseErrorsTotal") ?? (Array.isArray(parseErrors) ? parseErrors.length : 0);
 
 	const rawError =
-		(typeof call.text === "string" ? call.text : undefined) ?? readResultText(output) ?? "AST Edit failed";
+		(typeof call.text === "string" ? call.text : undefined) ?? readFirstTextResult(output) ?? "AST Edit failed";
 
 	return {
 		opLabel,

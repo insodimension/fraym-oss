@@ -17,32 +17,9 @@ import { parseAstGrepDisplay } from "./bodies/ast-grep-display";
 import { AstGrepEmptyBody, AstGrepPendingBody, AstGrepResultsBody } from "./bodies/ast-grep-results-body";
 import { EditErrorBody } from "./bodies/edit-diff-body";
 import { dimChip, truncatingChip } from "./chip";
+import { readFirstTextResult, readNumberField, toPathList } from "./renderer-utils";
 
 // --- defensive parse (local; no coupling to the monolith) -------------------
-
-function readNumberField(value: unknown, key: string): number | undefined {
-	const v = readField(value, key);
-	return typeof v === "number" ? v : undefined;
-}
-
-/** `paths` is a string or string[] in the schema. */
-function toPathList(input: unknown): string[] {
-	if (typeof input === "string") return [input];
-	return Array.isArray(input) ? input.filter((s): s is string => typeof s === "string") : [];
-}
-
-function readResultText(output: unknown): string | undefined {
-	const content = readField(output, "content");
-	if (Array.isArray(content)) {
-		for (const part of content) {
-			if (readField(part, "type") === "text") {
-				const text = readField(part, "text");
-				if (typeof text === "string") return text;
-			}
-		}
-	}
-	return undefined;
-}
 
 interface AstGrepContext {
 	readonly pattern: string;
@@ -73,7 +50,7 @@ function astGrepRawError(call: ActiveToolCall, output: unknown, errorText: strin
 	return (
 		errorText ??
 		(typeof call.text === "string" ? call.text : undefined) ??
-		readResultText(output) ??
+		readFirstTextResult(output) ??
 		"AST Grep failed"
 	);
 }
