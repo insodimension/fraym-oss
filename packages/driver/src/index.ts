@@ -357,3 +357,15 @@ export interface TurnUsage {
 	readonly ttftMs?: number;
 	readonly durationMs?: number;
 }
+
+// --- Goal mode ---------------------------------------------------------------
+export type GoalStatus = "active" | "paused" | "budget-limited" | "complete" | "dropped";
+
+export interface Goal {
+	readonly id: string;
+	readonly objective: string;
+	readonly status: GoalStatus;
+	readonly tokenBudget?: number;
+	readonly tokensUsed: number;
+	readonly timeUsedSeconds: number;
+}
