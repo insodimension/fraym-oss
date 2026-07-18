@@ -1,1 +1,1 @@
-export { KitchenSink } from "./kitchen-sink-core";
+export * from "./kitchen-sink-core";

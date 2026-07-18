@@ -1,22 +1,22 @@
+import "@fraym/ui/theme.css";
+import "@fraym/ui/architecture.css";
+import "@fraym/ui/fonts.css";
+import "./index.css";
+
+import { ThemeProvider } from "@fraym/ui/theme";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
+import { KitchenSink } from "./kitchen-sink";
 
-import { App } from "./App";
-import "./styles.css";
-import "./index.css";
-import "@fraym/ui/fonts.css";
-import "@fraym/ui/theme.css";
-import "@fraym/vibr/avatars.css";
-import "@fraym/aethr/cinematic.css";
-
-const root = document.getElementById("root");
-
-if (!root) {
-  throw new Error("Root element not found");
+const container = document.getElementById("root");
+if (!container) {
+	throw new Error("Fraym kitchen-sink: missing #root element");
 }
 
-createRoot(root).render(
-  <StrictMode>
-    <App />
-  </StrictMode>,
+createRoot(container).render(
+	<StrictMode>
+		<ThemeProvider>
+			<KitchenSink />
+		</ThemeProvider>
+	</StrictMode>,
 );

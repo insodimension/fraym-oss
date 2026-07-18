@@ -1,240 +1,798 @@
+import { Button, Input, TooltipProvider } from "@fraym/ui/elements";
 import {
-  useEffect,
-  useMemo,
-  useState,
-  type CSSProperties,
-  type ReactNode,
+	accents,
+	type ACCENT_PALETTES,
+	DEFAULT_THEME_ID,
+	findThemePreset,
+	FONT_PRESETS,
+	fontFamilyLabel,
+	THEME_MODES,
+	THEME_PRESETS,
+	useTheme,
+} from "@fraym/ui/theme";
+import { cn, FraymBrandMark, Icon, LiquidGlassRuntime, useSettings } from "./compat/ui";
+import {
+	type Dispatch,
+	type MouseEvent as ReactMouseEvent,
+	type RefObject,
+	type SetStateAction,
+	useEffect,
+	useMemo,
+	useRef,
+	useState,
 } from "react";
-import {
-  Button,
-  Code,
-  FONT_PRESETS,
-  THEME_PRESETS,
-  useTheme,
-  type AccentPalette,
-  type ThemeMode,
-} from "@fraym/ui";
+import { TIERS } from "./entries/registry";
+import { DemoDock } from "./showcase/demo-dock";
+import { DocPanel } from "./showcase/doc-panel";
+import { ToolConfigProvider } from "./showcase/tool-config";
+import type { ShowcaseEntry, Tier, TierDef } from "./showcase/types";
 
-import { DemoDock } from "./DemoDock";
-import { clampDockWidth } from "./demo-dock-utils";
-import { entries } from "./entries";
-import {
-  entriesForTier,
-  guides,
-  tierFor,
-  tierIds,
-  tiers,
-  type TierId,
-} from "./catalog";
-import {
-  initialKnobValues,
-  type Entry,
-  type Knob,
-  type KnobValue,
-} from "./entry";
+type ThemeMode = (typeof THEME_MODES)[number];
+type AccentId = (typeof ACCENT_PALETTES)[number];
+type ActiveEntry = { tier: Tier; entry: ShowcaseEntry } | null;
+type ThemeFont = { readonly primary: string; readonly mono: string };
+type KitchenFontOption = {
+	readonly id: string;
+	readonly label: string;
+	readonly note: string;
+	readonly primary: string;
+	readonly mono: string;
+};
 
-type Route = { tier: TierId; id: string };
-type AccentStyle = "solid" | "gradient";
+function stripBase(raw: string, basePath: string): string {
+	if (!basePath) return raw;
+	if (raw === basePath) return "";
+	const prefix = `${basePath}/`;
+	return raw.startsWith(prefix) ? raw.slice(prefix.length) : "";
+}
 
-const accents: readonly Exclude<AccentPalette, "theme">[] = [
-  "violet", "coral", "blue", "green", "amber", "mono",
+function useHashRoute(basePath = ""): [string, (tier: Tier, id: string) => void] {
+	const [hash, setHash] = useState(() => stripBase(window.location.hash.slice(1), basePath));
+	useEffect(() => {
+		const onHash = () => setHash(stripBase(window.location.hash.slice(1), basePath));
+		window.addEventListener("hashchange", onHash);
+		return () => window.removeEventListener("hashchange", onHash);
+	}, [basePath]);
+	const go = (tier: Tier, id: string) => {
+		window.location.hash = basePath ? `${basePath}/${tier}/${id}` : `${tier}/${id}`;
+	};
+	return [hash, go];
+}
+
+const FIRST = TIERS[0]?.entries[0];
+const DEFAULT_ROUTE = FIRST ? `${TIERS[0]?.id}/${FIRST.id}` : "";
+const DEFAULT_ACTIVE_ENTRY: ActiveEntry = FIRST && TIERS[0] ? { tier: TIERS[0].id, entry: FIRST } : null;
+const ACTIVE_BY_ROUTE = new Map<string, Exclude<ActiveEntry, null>>(
+	TIERS.flatMap(tier => tier.entries.map(entry => [`${tier.id}/${entry.id}`, { tier: tier.id, entry }] as const)),
+);
+
+function groupEntries(entries: readonly ShowcaseEntry[]): { group?: string; items: ShowcaseEntry[] }[] {
+	const out: { group?: string; items: ShowcaseEntry[] }[] = [];
+	for (const entry of entries) {
+		const last = out[out.length - 1];
+		if (last && last.group === entry.group) last.items.push(entry);
+		else out.push({ group: entry.group, items: [entry] });
+	}
+	return out;
+}
+
+// Font dropdown options — the "Theme default" row names + previews the active theme's font.
+function themeDefaultFontLabel(themeFont: ThemeFont | undefined): string {
+	if (!themeFont) return "Theme default";
+	return `Theme default · ${fontFamilyLabel(themeFont.primary)}`;
+}
+
+function themeDefaultFontNote(themeFont: ThemeFont | undefined): string {
+	return themeFont ? "follows the active theme" : "follows the theme";
+}
+
+function themeDefaultPrimary(themeFont: ThemeFont | undefined): string {
+	return themeFont?.primary ?? "";
+}
+
+function themeDefaultMono(themeFont: ThemeFont | undefined): string {
+	return themeFont?.mono ?? "";
+}
+
+function themeDefaultFontOption(themeFont: ThemeFont | undefined): KitchenFontOption {
+	return {
+		id: "",
+		label: themeDefaultFontLabel(themeFont),
+		note: themeDefaultFontNote(themeFont),
+		primary: themeDefaultPrimary(themeFont),
+		mono: themeDefaultMono(themeFont),
+	};
+}
+
+function ksFontOptions(themeFont: ThemeFont | undefined): KitchenFontOption[] {
+	return [themeDefaultFontOption(themeFont), ...FONT_PRESETS];
+}
+
+function FontPicker({ value, onChange }: { value: string; onChange: (id: string) => void }) {
+	const [open, setOpen] = useState(false);
+	const ref = useRef<HTMLDivElement>(null);
+	useFontMenuDismiss(open, ref, setOpen);
+	const { options, current } = useKitchenFontOptions(value);
+	return (
+		<div ref={ref} className="relative flex items-center">
+			<span className="fr-eyebrow mr-2">font</span>
+			<button
+				type="button"
+				onClick={() => setOpen(state => !state)}
+				className="inline-flex items-center gap-2 rounded-lg border border-fr-border bg-fr-surface px-2.5 py-1.5 text-fr-base text-fr-text transition-colors hover:border-fr-text-3"
+				style={{ fontFamily: current.primary || undefined }}
+			>
+				{current.label}
+				<Icon name="caretD" size={12} className="text-fr-text-3" />
+			</button>
+			{open ? <FontMenu value={value} options={options} onChange={onChange} onClose={() => setOpen(false)} /> : null}
+		</div>
+	);
+}
+
+function useKitchenFontOptions(value: string): { options: KitchenFontOption[]; current: KitchenFontOption } {
+	const { config } = useSettings();
+	const themeFont = config.themePreset ? findThemePreset(config.themePreset)?.font : undefined;
+	const options = ksFontOptions(themeFont);
+	const current = options.find(option => option.id === value) ?? options[0]!;
+	return { options, current };
+}
+
+function useFontMenuDismiss(
+	open: boolean,
+	ref: RefObject<HTMLDivElement | null>,
+	setOpen: Dispatch<SetStateAction<boolean>>,
+) {
+	useEffect(() => {
+		if (!open) return;
+		const onClick = (event: MouseEvent) => {
+			if (ref.current && !ref.current.contains(event.target as Node)) setOpen(false);
+		};
+		document.addEventListener("mousedown", onClick);
+		return () => document.removeEventListener("mousedown", onClick);
+	}, [open, ref, setOpen]);
+}
+
+function FontMenu({
+	options,
+	value,
+	onChange,
+	onClose,
+}: {
+	readonly value: string;
+	readonly options: ReturnType<typeof ksFontOptions>;
+	readonly onChange: (id: string) => void;
+	readonly onClose: () => void;
+}) {
+	return (
+		<div
+			data-slot="settings-dropdown"
+			className="absolute right-0 top-full z-50 mt-1.5 w-72 rounded-xl border border-fr-border bg-fr-surface-2 p-1.5 shadow-[0_16px_40px_rgba(0,0,0,0.45)]"
+		>
+			{options.map(option => (
+				<FontMenuOption
+					key={option.id || "default"}
+					option={option}
+					selected={value === option.id}
+					onSelect={() => {
+						onChange(option.id);
+						onClose();
+					}}
+				/>
+			))}
+		</div>
+	);
+}
+
+function FontMenuOption({
+	option,
+	selected,
+	onSelect,
+}: {
+	readonly option: KitchenFontOption;
+	readonly selected: boolean;
+	readonly onSelect: () => void;
+}) {
+	const previewFont = { fontFamily: option.primary || undefined };
+	return (
+		<button
+			type="button"
+			onClick={onSelect}
+			className={cn(
+				"flex w-full flex-col gap-1 rounded-lg px-2.5 py-2 text-left transition-colors hover:bg-fr-accent-dim",
+				selected && "bg-fr-accent-dim",
+			)}
+		>
+			<span className="flex items-center justify-between">
+				<span className="text-fr-md text-fr-text" style={previewFont}>
+					{option.label}
+				</span>
+				{selected && <Icon name="check" size={13} className="text-fr-accent" />}
+			</span>
+			<span className="text-fr-2xs text-fr-text-3">{option.note}</span>
+			<span className="text-fr-sm text-fr-text-2" style={previewFont}>
+				The quick brown fox / 0123
+			</span>
+		</button>
+	);
+}
+
+const THEME_PICKER_OPTIONS = [
+	{ id: DEFAULT_THEME_ID, name: "Fraym", note: "Default" },
+	...THEME_PRESETS.map(preset => ({ id: preset.id, name: preset.name, note: preset.note })),
 ];
-const defaultRoute: Route = { tier: "guide", id: "introduction" };
 
-function routeExists(route: Route): boolean {
-  if (route.tier === "guide") return guides.some((guide) => guide.id === route.id);
-  return entriesForTier(route.tier).some((entry) => entry.id === route.id);
+const KS_FRAYM_SWATCH = {
+	dark: { surface: "#151518", accent: "#b78cff" },
+	light: { surface: "#ffffff", accent: "#7c4ddd" },
+} as const;
+
+function themePickerSwatch(id: string, mode: "dark" | "light") {
+	if (id === DEFAULT_THEME_ID) return KS_FRAYM_SWATCH[mode];
+	const preset = findThemePreset(id);
+	if (!preset) return KS_FRAYM_SWATCH[mode];
+	const variant = preset[mode];
+	return { surface: variant.surface, accent: variant.accent };
 }
 
-function readRoute(): Route {
-  if (typeof window === "undefined") return defaultRoute;
-  const [tierValue, id] = window.location.hash.slice(1).split("/");
-  const tier = tierIds.find((candidate) => candidate === tierValue);
-  const route = tier && id ? { tier, id } : defaultRoute;
-  return routeExists(route) ? route : defaultRoute;
+function ThemeSwatch({ id, mode }: { readonly id: string; readonly mode: "dark" | "light" }) {
+	const s = themePickerSwatch(id, mode);
+	return (
+		<span className="inline-flex items-center gap-px overflow-hidden rounded border border-fr-border p-px">
+			<span className="size-3 rounded-[2px]" style={{ background: s.surface }} />
+			<span className="size-3 rounded-[2px]" style={{ background: s.accent }} />
+		</span>
+	);
 }
 
-function Icon({ name }: { name: "chevron" | "close" | "moon" | "replay" | "search" | "sun" | "system" }) {
-  const paths = {
-    chevron: <path d="m9 18 6-6-6-6" />,
-    close: <path d="m6 6 12 12M18 6 6 18" />,
-    moon: <path d="M20 15.2A8 8 0 0 1 8.8 4 8 8 0 1 0 20 15.2Z" />,
-    replay: <path d="M4 12a8 8 0 1 0 2.3-5.7L4 8.6M4 4v4.6h4.6" />,
-    search: <path d="m21 21-4.4-4.4M19 11a8 8 0 1 1-16 0 8 8 0 0 1 16 0Z" />,
-    sun: <path d="M12 3v2m0 14v2M3 12h2m14 0h2M5.6 5.6 7 7m10 10 1.4 1.4M18.4 5.6 17 7M7 17l-1.4 1.4M16 12a4 4 0 1 1-8 0 4 4 0 0 1 8 0Z" />,
-    system: <path d="M4 5h16v11H4zM9 20h6m-3-4v4" />,
-  } as const;
-  return <svg aria-hidden="true" className="ks-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.7">{paths[name]}</svg>;
+function ThemePicker({
+	value,
+	mode,
+	onChange,
+}: {
+	readonly value: string;
+	readonly mode: "dark" | "light";
+	readonly onChange: (id: string) => void;
+}) {
+	const [open, setOpen] = useState(false);
+	const ref = useRef<HTMLDivElement>(null);
+	useFontMenuDismiss(open, ref, setOpen);
+	const current = THEME_PICKER_OPTIONS.find(option => option.id === value) ?? THEME_PICKER_OPTIONS[0]!;
+	return (
+		<div ref={ref} className="relative flex items-center">
+			<span className="fr-eyebrow mr-2">theme</span>
+			<button
+				type="button"
+				onClick={() => setOpen(state => !state)}
+				className="inline-flex items-center gap-2 rounded-lg border border-fr-border bg-fr-surface px-2.5 py-1.5 text-fr-base text-fr-text transition-colors hover:border-fr-text-3"
+			>
+				<ThemeSwatch id={current.id} mode={mode} />
+				{current.name}
+				<Icon name="caretD" size={12} className="text-fr-text-3" />
+			</button>
+			{open && (
+				<div
+					data-slot="settings-dropdown"
+					className="absolute right-0 top-full z-50 mt-1.5 max-h-[360px] w-60 overflow-y-auto rounded-xl border border-fr-border bg-fr-surface-2 p-1.5 shadow-[0_16px_40px_rgba(0,0,0,0.45)]"
+				>
+					{THEME_PICKER_OPTIONS.map(option => (
+						<button
+							key={option.id}
+							type="button"
+							onClick={() => {
+								onChange(option.id);
+								setOpen(false);
+							}}
+							className={cn(
+								"flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-left transition-colors hover:bg-fr-accent-dim",
+								value === option.id && "bg-fr-accent-dim",
+							)}
+						>
+							<ThemeSwatch id={option.id} mode={mode} />
+							<span className="min-w-0 flex-1">
+								<span className="block truncate text-fr-base text-fr-text">{option.name}</span>
+								<span className="block truncate text-fr-2xs text-fr-text-3">{option.note}</span>
+							</span>
+							{value === option.id && <Icon name="check" size={13} className="text-fr-accent" />}
+						</button>
+					))}
+				</div>
+			)}
+		</div>
+	);
 }
 
-function CopyButton({ value, label = "Copy" }: { value: string; label?: string }) {
-  const [copied, setCopied] = useState(false);
-  const copy = async () => {
-    await navigator.clipboard.writeText(value);
-    setCopied(true);
-    window.setTimeout(() => setCopied(false), 1200);
-  };
-  return <Button size="sm" variant="ghost" onClick={copy}>{copied ? "Copied" : label}</Button>;
+function usePersistentDockState() {
+	const [dockOpen, setDockOpen] = useState(() => localStorage.getItem("ks-dock-open") === "1");
+	const [dockWidth, setDockWidth] = useState(() => {
+		const width = Number(localStorage.getItem("ks-dock-width"));
+		return Number.isFinite(width) && width >= 340 ? width : 440;
+	});
+	useEffect(() => {
+		localStorage.setItem("ks-dock-open", dockOpen ? "1" : "0");
+	}, [dockOpen]);
+	useEffect(() => {
+		localStorage.setItem("ks-dock-width", String(dockWidth));
+	}, [dockWidth]);
+	return { dockOpen, dockWidth, setDockOpen, setDockWidth };
 }
 
-function AppearanceControls() {
-  const { accent, mode, preset, resolvedMode, setAccent, setMode, setPreset } = useTheme();
-  const [accentStyle, setAccentStyle] = useState<AccentStyle>(() =>
-    (window.localStorage.getItem("ks-accent-style") as AccentStyle | null) ?? "solid",
-  );
-  const [fontId, setFontId] = useState(() => window.localStorage.getItem("ks-font") ?? "plex");
-  const font = FONT_PRESETS.find((option) => option.id === fontId) ?? FONT_PRESETS[0];
-
-  useEffect(() => {
-    window.localStorage.setItem("ks-accent-style", accentStyle);
-    document.documentElement.dataset.accentStyle = accentStyle;
-  }, [accentStyle]);
-  useEffect(() => {
-    window.localStorage.setItem("ks-font", fontId);
-    document.documentElement.style.setProperty("--fr-font-primary", font.primary);
-    document.documentElement.style.setProperty("--fr-font-mono", font.mono);
-  }, [font, fontId]);
-
-  return (
-    <div className="ks-appearance">
-      <div className="ks-mode" aria-label={`Color mode, ${resolvedMode} resolved`} role="group">
-        {(["dark", "light", "system"] as const).map((option) => (
-          <button aria-label={`${option} mode`} aria-pressed={mode === option} key={option} onClick={() => setMode(option satisfies ThemeMode)} type="button">
-            <Icon name={option === "dark" ? "moon" : option === "light" ? "sun" : "system"} />
-          </button>
-        ))}
-      </div>
-      <div className="ks-swatches" aria-label="Accent color" role="group">
-        {accents.map((option) => <button aria-label={`${option} accent`} aria-pressed={accent === option} className={`ks-swatch ks-swatch--${option}`} key={option} onClick={() => setAccent(option)} type="button" />)}
-      </div>
-      <div className="ks-mode" aria-label="Accent style" role="group">
-        {(["solid", "gradient"] as const).map((option) => <button aria-pressed={accentStyle === option} className="ks-text-option" key={option} onClick={() => setAccentStyle(option)} type="button">{option}</button>)}
-      </div>
-      <label className="ks-select"><span>Theme</span><select aria-label="Theme preset" value={preset} onChange={(event) => setPreset(event.currentTarget.value)}><option value="fraym">Fraym</option>{THEME_PRESETS.filter((option) => option.id !== "fraym").map((option) => <option key={option.id} value={option.id}>{option.name}</option>)}</select></label>
-      <label className="ks-select ks-font-select"><span>Font</span><select aria-label="Font preset" value={fontId} onChange={(event) => setFontId(event.currentTarget.value)}>{FONT_PRESETS.map((option) => <option key={option.id} value={option.id}>{option.label}</option>)}</select></label>
-    </div>
-  );
+function useActiveRoute(hash: string): ActiveEntry {
+	return useMemo(() => ACTIVE_BY_ROUTE.get(hash || DEFAULT_ROUTE) ?? DEFAULT_ACTIVE_ENTRY, [hash]);
 }
 
-function groupAdjacent(items: readonly Entry[]): readonly { name: string; entries: readonly Entry[] }[] {
-  const groups: { name: string; entries: Entry[] }[] = [];
-  for (const entry of items) {
-    const name = entry.tier;
-    const last = groups.at(-1);
-    if (last?.name === name) last.entries.push(entry);
-    else groups.push({ name, entries: [entry] });
-  }
-  return groups;
+function useFilteredTiers(query: string): readonly TierDef[] {
+	return useMemo(() => {
+		const needle = query.trim().toLowerCase();
+		if (!needle) return TIERS;
+		return TIERS.map(tier => ({
+			...tier,
+			entries: tier.entries.filter(entry => entry.name.toLowerCase().includes(needle)),
+		})).filter(tier => tier.entries.length > 0);
+	}, [query]);
 }
 
-function Sidebar({ route, navigate }: { route: Route; navigate: (route: Route) => void }) {
-  const [query, setQuery] = useState("");
-  const [open, setOpen] = useState<Set<TierId>>(() => new Set(tierIds));
-  const needle = query.trim().toLowerCase();
-  const toggle = (tier: TierId) => setOpen((current) => {
-    const next = new Set(current);
-    if (next.has(tier)) next.delete(tier); else next.add(tier);
-    return next;
-  });
-
-  return (
-    <aside className="ks-sidebar">
-      <div className="ks-search"><Icon name="search" /><input aria-label="Search showcase" placeholder="Search" value={query} onChange={(event) => setQuery(event.currentTarget.value)} />{query && <button aria-label="Clear search" onClick={() => setQuery("")} type="button"><Icon name="close" /></button>}</div>
-      <nav aria-label="Showcase catalog" className="ks-nav">
-        {tiers.map((tier) => {
-          const tierEntries = tier.id === "guide"
-            ? guides.filter((guide) => guide.title.toLowerCase().includes(needle))
-            : entriesForTier(tier.id).filter((entry) => `${entry.title} ${entry.description}`.toLowerCase().includes(needle));
-          if (needle && tierEntries.length === 0) return null;
-          const expanded = needle.length > 0 || open.has(tier.id);
-          return (
-            <section className="ks-nav-tier" key={tier.id}>
-              <button aria-expanded={expanded} className="ks-tier-toggle" onClick={() => toggle(tier.id)} type="button"><span>{tier.label}</span><span className="ks-tier-count">{tierEntries.length}</span><span className="ks-tier-chevron" data-open={expanded}><Icon name="chevron" /></span></button>
-              {expanded && <div className="ks-tier-items">
-                {tier.id === "guide" ? tierEntries.map((guide) => <NavLink active={route.tier === "guide" && route.id === guide.id} key={guide.id} label={guide.title} onClick={() => navigate({ tier: "guide", id: guide.id })} />) : groupAdjacent(tierEntries as readonly Entry[]).map((group) => <div className="ks-nav-group" key={group.name}><span>{group.name}</span>{group.entries.map((entry) => <NavLink active={route.id === entry.id} key={entry.id} label={entry.title} onClick={() => navigate({ tier: tierFor(entry), id: entry.id })} />)}</div>)}
-              </div>}
-            </section>
-          );
-        })}
-      </nav>
-    </aside>
-  );
+function useOpenTiers(activeTierId: Tier | undefined) {
+	const [openTiers, setOpenTiers] = useState<Set<string>>(() => new Set(activeTierId ? [activeTierId] : []));
+	useEffect(() => {
+		setOpenTiers(prev => (activeTierId && !prev.has(activeTierId) ? new Set(prev).add(activeTierId) : prev));
+	}, [activeTierId]);
+	const toggleTier = (id: string) =>
+		setOpenTiers(prev => {
+			const next = new Set(prev);
+			if (next.has(id)) next.delete(id);
+			else next.add(id);
+			return next;
+		});
+	return { openTiers, toggleTier };
 }
 
-function NavLink({ active, label, onClick }: { active: boolean; label: string; onClick: () => void }) {
-  return <button aria-current={active ? "page" : undefined} className="ks-nav-link" onClick={onClick} type="button">{label}</button>;
+function useDockResize(setDockWidth: Dispatch<SetStateAction<number>>) {
+	return (event: ReactMouseEvent) => {
+		event.preventDefault();
+		const onMove = (moveEvent: MouseEvent) =>
+			setDockWidth(Math.min(720, Math.max(340, window.innerWidth - moveEvent.clientX)));
+		const onUp = () => {
+			document.removeEventListener("mousemove", onMove);
+			document.removeEventListener("mouseup", onUp);
+		};
+		document.addEventListener("mousemove", onMove);
+		document.addEventListener("mouseup", onUp);
+	};
 }
 
-function GuidePage({ id, navigate }: { id: string; navigate: (route: Route) => void }) {
-  const position = guides.findIndex((guide) => guide.id === id);
-  const guide = guides[position] ?? guides[0];
-  const content: Record<string, ReactNode> = {
-    introduction: <><Lead>Fraym is a composable React interface system for agent sessions. It turns one typed event stream into messages, tools, approvals, and complete conversation surfaces.</Lead><GuideSection title="The driver pattern"><p>Your runtime emits framework-neutral events through <Code>@fraym/driver</Code>. The UI consumes that contract, so rendering stays independent from any one agent harness.</p><Code block language="text">runtime events → @fraym/driver → @fraym/ui</Code></GuideSection><GuideSection title="What you get"><CardGrid cards={[["Elements", "Focused primitives for streaming and interactive UI."], ["Components", "Reusable compositions for tools, dialogs, menus, and registries."], ["Features", "Complete chat, composer, approval, and metadata patterns."], ["Pages", "Full surfaces that connect the pieces."]]} /></GuideSection><GuideSection title="This site is the showcase"><p>Every public surface has a live, configurable example. Search the catalog, change the global appearance, then open Demo to see an entry inside a real replayed session.</p></GuideSection></>,
-    installation: <><Lead>Install only the package boundary your application needs.</Lead><GuideSection title="UI and driver"><Code block language="sh">bun add @fraym/ui @fraym/driver</Code><p>Import the shared theme and font layers once at your application root.</p><Code block language="ts">{`import "@fraym/ui/fonts.css";\nimport "@fraym/ui/theme.css";`}</Code></GuideSection><GuideSection title="Optional packages"><p>The Config, Fixtures, Driver Test, Verber, Vibr, and Aethr entries document the smaller workspace packages and their focused responsibilities.</p></GuideSection></>,
-    "quick-start": <><Lead>Wrap your application in the theme provider, then render the surface that matches your integration depth.</Lead><GuideSection title="Add the provider"><Code block language="tsx">{`import { ThemeProvider } from "@fraym/ui";\n\n<ThemeProvider>\n  <App />\n</ThemeProvider>`}</Code></GuideSection><GuideSection title="Render a session"><p>Start with <Code>SessionThread</Code> for a complete surface, or compose lower-level message and composer features when your product owns more of the surrounding layout.</p></GuideSection></>,
-    drivers: <><Lead>Drivers translate a runtime into the ordered event contract consumed by Fraym surfaces.</Lead><GuideSection title="A stable seam"><p>Session lifecycle, user and assistant messages, reasoning, tools, approvals, and completion all share discriminated event shapes. Test helpers can replay the same stream without a live backend.</p></GuideSection><GuideSection title="Build against fixtures"><p>Use <Code>@fraym/fixtures</Code> and <Code>@fraym/driver-test</Code> to exercise adapters and UI states deterministically.</p></GuideSection></>,
-    theming: <><Lead>The theme engine applies mode, palette, typography, motion, and semantic tokens without coupling components to raw color values.</Lead><GuideSection title="Provider state"><p>Use <Code>useTheme</Code> to switch mode, accent, motion, and theme preset. The controls in this header use that same public API.</p></GuideSection><GuideSection title="Token layers"><p>Base tokens describe intent; theme presets resolve that intent for light and dark variants. Component CSS consumes only the semantic layer.</p></GuideSection></>,
-    architecture: <><Lead>Fraym separates event transport, rendering policy, reusable UI, and application composition.</Lead><GuideSection title="Package boundaries"><CardGrid cards={[["@fraym/driver", "Typed runtime and session event contract."], ["@fraym/ui", "Elements, components, features, registries, and themes."], ["Adapters", "Runtime-specific translation at the application edge."], ["Applications", "Routing, persistence, and product composition."]]} /></GuideSection><GuideSection title="Renderer registries"><p>Tool, message-block, command-tag, and surface registries keep extension policy explicit while preserving useful defaults.</p></GuideSection></>,
-  };
-  const previous = guides[position - 1];
-  const next = guides[position + 1];
-  return <article className="ks-guide"><div className="ks-guide-body">{content[guide.id]}</div><footer className="ks-guide-pagination">{previous ? <button onClick={() => navigate({ tier: "guide", id: previous.id })} type="button"><span>Previous</span><strong>{previous.title}</strong></button> : <span />}{next && <button className="ks-next" onClick={() => navigate({ tier: "guide", id: next.id })} type="button"><span>Next</span><strong>{next.title}</strong></button>}</footer></article>;
+function KitchenLogo({ onExit }: { readonly onExit?: () => void }) {
+	const brand = (
+		<>
+			<FraymBrandMark size={22} />
+			<span className="text-fr-lg font-semibold tracking-tight">Fraym Kitchen Sink</span>
+		</>
+	);
+	if (onExit) {
+		return (
+			<button
+				type="button"
+				onClick={onExit}
+				className="flex min-w-0 items-center gap-2.5 text-fr-text transition-opacity hover:opacity-80"
+				title="Back to the Fraym site"
+			>
+				<span aria-hidden="true" className="text-fr-text-3">
+					←
+				</span>
+				{brand}
+			</button>
+		);
+	}
+	return <div className="flex min-w-0 items-center gap-2.5">{brand}</div>;
 }
 
-function Lead({ children }: { children: ReactNode }) { return <p className="ks-lead">{children}</p>; }
-function GuideSection({ children, title }: { children: ReactNode; title: string }) { return <section className="ks-guide-section"><h2>{title}</h2>{children}</section>; }
-function CardGrid({ cards }: { cards: readonly (readonly [string, string])[] }) { return <div className="ks-card-grid">{cards.map(([title, text]) => <article key={title}><strong>{title}</strong><p>{text}</p></article>)}</div>; }
-
-function KnobControl({ knob, value, onChange }: { knob: Knob; value: KnobValue; onChange: (value: KnobValue) => void }) {
-  if (knob.kind === "pick") return <label className="ks-control"><span>{knob.label}</span><select value={String(value)} onChange={(event) => onChange(event.currentTarget.value)}>{knob.options.map((option) => <option key={option}>{option}</option>)}</select></label>;
-  if (knob.kind === "toggle") return <label className="ks-control ks-toggle-control"><span>{knob.label}</span><button aria-checked={value === true} role="switch" type="button" onClick={() => onChange(value !== true)}><span /></button></label>;
-  if (knob.kind === "number") return <label className="ks-control"><span>{knob.label}</span><input max={knob.max} min={knob.min} step={knob.step} type="number" value={Number(value)} onChange={(event) => onChange(event.currentTarget.valueAsNumber)} /></label>;
-  return <label className="ks-control"><span>{knob.label}</span><input value={String(value)} onChange={(event) => onChange(event.currentTarget.value)} /></label>;
+function ThemeControls({
+	mode,
+	resolvedMode,
+	onModeChange,
+}: {
+	readonly mode: ThemeMode;
+	readonly resolvedMode: string;
+	readonly onModeChange: (mode: ThemeMode) => void;
+}) {
+	return (
+		<div className="flex flex-wrap items-center gap-2 sm:ml-auto">
+			{THEME_MODES.map(item => (
+				<Button
+					key={item}
+					variant={mode === item ? "default" : "outline"}
+					size="sm"
+					onClick={() => onModeChange(item)}
+				>
+					<Icon name={item === "dark" ? "moon" : item === "light" ? "sun" : "computer"} size={14} />
+					{item}
+				</Button>
+			))}
+			<span className="ml-1 font-secondary text-fr-2xs text-fr-text-3">{resolvedMode}</span>
+		</div>
+	);
 }
 
-function EntryPage({ entry, values, setValues }: { entry: Entry; values: Record<string, KnobValue>; setValues: (values: Record<string, KnobValue>) => void }) {
-  const Demo = entry.Demo;
-  const generated = entry.code(values);
-  return <>
-    <section className="ks-demo-card">
-      <div className="ks-demo-copy"><div><h2>Component</h2><p>{entry.description}</p></div><div className="ks-import"><Code>{entry.importCode}</Code><CopyButton value={entry.importCode} /></div></div>
-      <div className="ks-playground"><div className="ks-preview"><Demo values={values} /></div>{entry.knobs.length > 0 && <aside className="ks-controls"><div className="ks-controls-head"><strong>Controls</strong><button onClick={() => setValues(initialKnobValues(entry.knobs))} type="button">Reset</button></div>{entry.knobs.map((knob) => <KnobControl key={knob.prop} knob={knob} value={values[knob.prop] ?? knob.defaultValue} onChange={(value) => setValues({ ...values, [knob.prop]: value })} />)}</aside>}</div>
-      <div className="ks-code"><div><span>Usage</span><CopyButton label="Copy code" value={generated} /></div><Code block language="tsx">{generated}</Code></div>
-    </section>
-    <DocPanel entry={entry} />
-  </>;
+function AccentControls({
+	accent,
+	onAccentChange,
+}: {
+	readonly accent: AccentId;
+	readonly onAccentChange: (accent: AccentId) => void;
+}) {
+	return (
+		<div className="flex flex-wrap items-center gap-2">
+			{(Object.keys(accents) as (keyof typeof accents)[]).map(item => (
+				<button
+					key={item}
+					type="button"
+					className={cn(
+						"relative size-6 rounded-lg border-2 transition-colors duration-150",
+						accent === item ? "border-fr-text" : "border-transparent",
+					)}
+					style={{ background: accents[item].value }}
+					title={accents[item].name}
+					onClick={() => onAccentChange(item)}
+				/>
+			))}
+		</div>
+	);
 }
 
-function DocPanel({ entry }: { entry: Entry }) {
-  return <section className="ks-docs"><aside><a href="#import">Import</a><a href="#examples">Examples <span>{entry.examples.length}</span></a><a href="#api">API <span>{entry.props.length}</span></a></aside><div className="ks-doc-content"><section id="import"><h2>Import</h2><div className="ks-code-row"><Code block language="tsx">{entry.importCode}</Code><CopyButton value={entry.importCode} /></div></section><section id="examples"><h2>Examples</h2>{entry.examples.map((example) => <article className="ks-example" key={example.title}><div><h3>{example.title}</h3><p>{example.description}</p></div><div className="ks-code-row"><Code block language="tsx">{example.code}</Code><CopyButton value={example.code} /></div></article>)}</section><section id="api"><h2>API</h2><div className="ks-table-wrap"><table><thead><tr><th>Prop</th><th>Type</th><th>Default</th><th>Description</th></tr></thead><tbody>{entry.props.map((prop) => <tr key={prop.name}><td><Code>{prop.name}</Code></td><td><Code>{prop.type}</Code></td><td>{prop.defaultValue}</td><td>{prop.description}</td></tr>)}</tbody></table></div></section></div></section>;
+function AccentStyleControls({
+	value,
+	onChange,
+}: {
+	readonly value: "solid" | "gradient";
+	readonly onChange: (style: "solid" | "gradient") => void;
+}) {
+	return (
+		<div className="flex items-center gap-2">
+			{(["solid", "gradient"] as const).map(item => (
+				<Button
+					key={item}
+					variant={value === item ? "default" : "outline"}
+					size="sm"
+					onClick={() => onChange(item)}
+					title={`Accent style: ${item}`}
+				>
+					{item}
+				</Button>
+			))}
+		</div>
+	);
 }
 
-export function KitchenSink() {
-  const [route, setRoute] = useState(readRoute);
-  const [dockOpen, setDockOpen] = useState(() => window.localStorage.getItem("ks-dock-open") === "1");
-  const [dockWidth, setDockWidth] = useState(() => clampDockWidth(Number(window.localStorage.getItem("ks-dock-width")) || 440));
-  const entry = useMemo(() => entries.find((candidate) => candidate.id === route.id) ?? null, [route.id]);
-  const [values, setValues] = useState<Record<string, KnobValue>>(() => entry ? initialKnobValues(entry.knobs) : {});
+function KitchenHeader({
+	mode,
+	accent,
+	resolvedMode,
+	fontId,
+	themeId,
+	dockOpen,
+	hasActiveDemo,
+	onModeChange,
+	onAccentChange,
+	accentStyle,
+	onAccentStyleChange,
+	onFontChange,
+	onThemeChange,
+	onDockOpenChange,
+	onExit,
+}: {
+	readonly mode: ThemeMode;
+	readonly accent: AccentId;
+	readonly resolvedMode: string;
+	readonly fontId: string;
+	readonly themeId: string;
+	readonly dockOpen: boolean;
+	readonly hasActiveDemo: boolean;
+	readonly onModeChange: (mode: ThemeMode) => void;
+	readonly onAccentChange: (accent: AccentId) => void;
+	readonly accentStyle: "solid" | "gradient";
+	readonly onAccentStyleChange: (style: "solid" | "gradient") => void;
+	readonly onFontChange: (id: string) => void;
+	readonly onThemeChange: (id: string) => void;
+	readonly onDockOpenChange: Dispatch<SetStateAction<boolean>>;
+	readonly onExit?: () => void;
+}) {
+	return (
+		<header className="flex shrink-0 flex-wrap items-center gap-3 border-b border-fr-border-soft px-4 py-3 sm:gap-4 sm:px-6">
+			<KitchenLogo onExit={onExit} />
+			<ThemeControls mode={mode} resolvedMode={resolvedMode} onModeChange={onModeChange} />
+			<AccentControls accent={accent} onAccentChange={onAccentChange} />
+			<AccentStyleControls value={accentStyle} onChange={onAccentStyleChange} />
+			<ThemePicker value={themeId} mode={resolvedMode === "light" ? "light" : "dark"} onChange={onThemeChange} />
+			<FontPicker value={fontId} onChange={onFontChange} />
+			<Button
+				variant={dockOpen ? "default" : "outline"}
+				size="sm"
+				disabled={!hasActiveDemo}
+				onClick={() => onDockOpenChange(open => !open)}
+				title={hasActiveDemo ? "Toggle live demo" : "No live demo for this entry"}
+			>
+				<Icon name="chat" size={14} />
+				Demo
+			</Button>
+		</header>
+	);
+}
 
-  useEffect(() => setValues(entry ? initialKnobValues(entry.knobs) : {}), [entry]);
-  useEffect(() => { window.localStorage.setItem("ks-dock-open", dockOpen ? "1" : "0"); }, [dockOpen]);
-  useEffect(() => { window.localStorage.setItem("ks-dock-width", String(dockWidth)); }, [dockWidth]);
-  useEffect(() => {
-    const onHash = () => setRoute(readRoute());
-    window.addEventListener("hashchange", onHash);
-    return () => window.removeEventListener("hashchange", onHash);
-  }, []);
+function KitchenNavEntry({
+	entry,
+	tier,
+	group,
+	active,
+	onGo,
+}: {
+	readonly entry: ShowcaseEntry;
+	readonly tier: Tier;
+	readonly group?: string;
+	readonly active: ActiveEntry;
+	readonly onGo: (tier: Tier, id: string) => void;
+}) {
+	const isActive = active?.tier === tier && active.entry.id === entry.id;
+	return (
+		<button
+			type="button"
+			title={entry.name}
+			onClick={() => onGo(tier, entry.id)}
+			className={navEntryClass({ grouped: Boolean(group), active: isActive })}
+		>
+			{entry.name}
+		</button>
+	);
+}
 
-  const navigate = (next: Route) => {
-    setRoute(next);
-    window.history.pushState(null, "", `#${next.tier}/${next.id}`);
-    window.scrollTo({ top: 0, behavior: "auto" });
-  };
-  const activeTier = tiers.find((tier) => tier.id === route.tier) ?? tiers[0]!;
-  const title = route.tier === "guide" ? guides.find((guide) => guide.id === route.id)?.title ?? "Introduction" : entry?.title ?? "Introduction";
+function navEntryClass({ grouped, active }: { readonly grouped: boolean; readonly active: boolean }) {
+	return cn(
+		"relative block w-full truncate rounded-[7px] py-[7px] text-left text-fr-base transition-colors duration-[120ms]",
+		grouped ? "pl-4 pr-2.5" : "px-2.5",
+		active
+			? "bg-fr-surface-2 font-medium text-fr-text before:absolute before:top-2 before:bottom-2 before:left-0 before:w-0.5 before:rounded-[2px] before:bg-fr-accent before:content-['']"
+			: "text-fr-text-2 hover:bg-fr-surface hover:text-fr-text",
+	);
+}
 
-  return <div className="ks-shell" style={{ "--ks-dock-width": `${dockWidth}px` } as CSSProperties}>
-    <header className="ks-header"><button className="ks-brand" onClick={() => navigate(defaultRoute)} type="button"><span className="ks-logo">F</span><strong>Fraym Kitchen Sink</strong></button><div className="ks-header-tools"><AppearanceControls /><button aria-pressed={dockOpen} className="ks-demo-toggle" disabled={!entry} onClick={() => setDockOpen((current) => !current)} type="button"><span className="ks-demo-dot" />Demo</button></div></header>
-    <div className="ks-layout"><Sidebar navigate={navigate} route={route} /><main className="ks-main"><header className="ks-page-head"><span>{activeTier.label}</span><h1>{title}</h1></header>{route.tier === "guide" ? <GuidePage id={route.id} navigate={navigate} /> : entry ? <EntryPage entry={entry} setValues={setValues} values={values} /> : null}</main>{entry && dockOpen ? <DemoDock entry={entry} onClose={() => setDockOpen(false)} onWidthChange={setDockWidth} values={values} width={dockWidth} /> : null}</div>
-  </div>;
+function KitchenNavGroup({
+	tier,
+	group,
+	items,
+	active,
+	onGo,
+}: {
+	readonly tier: Tier;
+	readonly group?: string;
+	readonly items: readonly ShowcaseEntry[];
+	readonly active: ActiveEntry;
+	readonly onGo: (tier: Tier, id: string) => void;
+}) {
+	return (
+		<div className="flex flex-col gap-px">
+			{group && (
+				<div className="px-2.5 pt-2 pb-1 font-secondary text-fr-xs font-medium tracking-fr-tight text-fr-text-3">
+					{group}
+				</div>
+			)}
+			{items.map(entry => (
+				<KitchenNavEntry key={entry.id} entry={entry} tier={tier} group={group} active={active} onGo={onGo} />
+			))}
+		</div>
+	);
+}
+
+function KitchenNavTier({
+	tier,
+	open,
+	active,
+	onToggle,
+	onGo,
+}: {
+	readonly tier: TierDef;
+	readonly open: boolean;
+	readonly active: ActiveEntry;
+	readonly onToggle: (id: string) => void;
+	readonly onGo: (tier: Tier, id: string) => void;
+}) {
+	return (
+		<div className="flex flex-col">
+			<button
+				type="button"
+				aria-expanded={open}
+				onClick={() => onToggle(tier.id)}
+				className="group flex items-center justify-between gap-2 rounded-[7px] px-2.5 py-2 text-left text-fr-base font-semibold text-fr-text-2 transition-colors hover:text-fr-text"
+			>
+				<span>{tier.label}</span>
+				<span className="flex items-center gap-1.5">
+					<span className="font-secondary text-fr-2xs text-fr-text-3">{tier.entries.length}</span>
+					<Icon
+						name="caretR"
+						size={12}
+						strokeWidth={2.2}
+						className={cn("text-fr-text-3 transition-transform", open && "rotate-90")}
+					/>
+				</span>
+			</button>
+			{open &&
+				groupEntries(tier.entries).map(({ group, items }) => (
+					<KitchenNavGroup
+						key={group ?? "_"}
+						tier={tier.id}
+						group={group}
+						items={items}
+						active={active}
+						onGo={onGo}
+					/>
+				))}
+		</div>
+	);
+}
+
+function KitchenNav({
+	query,
+	tiers,
+	openTiers,
+	searching,
+	active,
+	onQueryChange,
+	onToggleTier,
+	onGo,
+}: {
+	readonly query: string;
+	readonly tiers: readonly TierDef[];
+	readonly openTiers: ReadonlySet<string>;
+	readonly searching: boolean;
+	readonly active: ActiveEntry;
+	readonly onQueryChange: (query: string) => void;
+	readonly onToggleTier: (id: string) => void;
+	readonly onGo: (tier: Tier, id: string) => void;
+}) {
+	return (
+		<nav className="hidden w-[var(--fr-rail-w)] shrink-0 flex-col gap-0.5 overflow-y-auto border-r border-fr-border-soft bg-fr-rail p-2 md:flex">
+			<div className="px-1 pb-1.5">
+				<Input
+					placeholder="Search components..."
+					value={query}
+					onChange={event => onQueryChange(event.target.value)}
+				/>
+			</div>
+			{tiers.map(tier => (
+				<KitchenNavTier
+					key={tier.id}
+					tier={tier}
+					open={searching || openTiers.has(tier.id)}
+					active={active}
+					onToggle={onToggleTier}
+					onGo={onGo}
+				/>
+			))}
+		</nav>
+	);
+}
+
+function ActiveEntryPanel({ active, activeTier }: { readonly active: ActiveEntry; readonly activeTier?: TierDef }) {
+	return (
+		<main className="min-w-0 flex-1 overflow-y-auto">
+			<div className="mx-auto max-w-[1080px] px-5 py-8 sm:px-10 sm:py-12">
+				{active && (
+					<>
+						<div className="mb-1 fr-eyebrow">{activeTier?.label}</div>
+						<h1 className="mb-6 text-fr-2xl font-semibold tracking-tight">{active.entry.name}</h1>
+						<active.entry.Component />
+						{active.entry.docs && (
+							<div className="mt-10 border-t border-fr-border-soft pt-8">
+								<DocPanel docs={active.entry.docs} />
+							</div>
+						)}
+					</>
+				)}
+			</div>
+		</main>
+	);
+}
+
+function DemoAside({
+	active,
+	dockWidth,
+	onResizeStart,
+	onClose,
+}: {
+	readonly active: ActiveEntry;
+	readonly dockWidth: number;
+	readonly onResizeStart: (event: ReactMouseEvent) => void;
+	readonly onClose: () => void;
+}) {
+	const demo = active?.entry.demo;
+	if (!active || !demo) return null;
+	return (
+		<aside
+			className="relative hidden min-h-0 shrink-0 border-l border-fr-border-soft bg-fr-bg lg:flex"
+			style={{ width: dockWidth }}
+		>
+			<button
+				type="button"
+				aria-label="Resize demo panel"
+				onMouseDown={onResizeStart}
+				className="absolute left-0 top-0 z-10 h-full w-1.5 cursor-col-resize hover:bg-fr-accent-dim"
+			/>
+			<div className="flex min-h-0 flex-1 flex-col">
+				<DemoDock key={active.entry.id} demo={demo} entryName={active.entry.name} onClose={onClose} />
+			</div>
+		</aside>
+	);
+}
+
+export function KitchenSink({
+	basePath = "",
+	onExit,
+}: {
+	readonly basePath?: string;
+	readonly onExit?: () => void;
+} = {}) {
+	const { mode, accent, resolvedMode, setMode, setAccent } = useTheme();
+	const { config, update, patch } = useSettings();
+	useEffect(() => {
+		document.documentElement.setAttribute("data-accent-style", config.accentStyle);
+	}, [config.accentStyle]);
+	const [hash, go] = useHashRoute(basePath);
+	const [query, setQuery] = useState("");
+	const fontId = config.fontPreset;
+	const themeId = config.themePreset || DEFAULT_THEME_ID;
+	const { dockOpen, dockWidth, setDockOpen, setDockWidth } = usePersistentDockState();
+	const active = useActiveRoute(hash);
+	const activeTier = TIERS.find(tier => tier.id === active?.tier);
+	const activeTierId = active?.tier;
+	const activeDemo = active?.entry.demo;
+	const tiers = useFilteredTiers(query);
+	const searching = query.trim().length > 0;
+	const { openTiers, toggleTier } = useOpenTiers(activeTierId);
+	const startResize = useDockResize(setDockWidth);
+
+	return (
+		<TooltipProvider delayDuration={200}>
+			<div className="relative isolate flex h-screen min-h-0 flex-col bg-fr-bg font-primary text-fr-text">
+				<LiquidGlassRuntime />
+				<KitchenHeader
+					mode={mode}
+					accent={accent}
+					resolvedMode={resolvedMode}
+					fontId={fontId}
+					themeId={themeId}
+					dockOpen={dockOpen}
+					hasActiveDemo={Boolean(activeDemo)}
+					onModeChange={setMode}
+					onAccentChange={setAccent}
+					accentStyle={config.accentStyle}
+					onAccentStyleChange={style => update("accentStyle", style)}
+					onFontChange={id => patch({ fontPreset: id, uiFont: "", codeFont: "" })}
+					onThemeChange={id => update("themePreset", id === DEFAULT_THEME_ID ? "" : id)}
+					onDockOpenChange={setDockOpen}
+					onExit={onExit}
+				/>
+				<div className="flex min-h-0 flex-1">
+					<KitchenNav
+						query={query}
+						tiers={tiers}
+						openTiers={openTiers}
+						searching={searching}
+						active={active}
+						onQueryChange={setQuery}
+						onToggleTier={toggleTier}
+						onGo={go}
+					/>
+					<ToolConfigProvider key={active?.entry.id} schema={active?.entry.config}>
+						<ActiveEntryPanel active={active} activeTier={activeTier} />
+						{dockOpen && (
+							<DemoAside
+								active={active}
+								dockWidth={dockWidth}
+								onResizeStart={startResize}
+								onClose={() => setDockOpen(false)}
+							/>
+						)}
+					</ToolConfigProvider>
+				</div>
+			</div>
+		</TooltipProvider>
+	);
 }
