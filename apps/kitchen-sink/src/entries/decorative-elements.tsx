@@ -1,11 +1,11 @@
-import { useState, type ReactNode } from "react";
+import { useState } from "react";
 import {
   ChromaGrid, ClickSpark, CompactionSplit, DiagramTag, DotGridBackdrop, ElectricBorder,
   GlareHover, GradientText, GradualBlur, LiquidGlassBackdrop, LiquidGlassButton,
   LiquidGlassSurface, Magnet, MermaidDiagram, NoiseOverlay, SessionContinuationSplit,
   SessionLink, SessionNavigationProvider, ShinyText, StarBorder,
 } from "@fraym/ui";
-import type { DemoProps, ElementSubgroup, Entry } from "../entry";
+import { elementEntry, type Entry } from "../entry";
 
 const tiles = <div className="sink-effect-grid">{["Plan", "Build", "Verify", "Ship"].map(item => <div key={item}>{item}</div>)}</div>;
 function ChromaGridDemo() { return <ChromaGrid className="sink-effect-stage">{tiles}</ChromaGrid>; }
@@ -30,10 +30,7 @@ function CompactionDemo() { return <div className="sink-demo-stack"><CompactionS
 function ContinuationDemo() { const [opened, setOpened] = useState("None"); return <SessionNavigationProvider openSession={({ sessionId }) => setOpened(sessionId)}><div className="sink-demo-stack"><SessionContinuationSplit reason="handoff" toSessionId="next-session" workspaceId="demo" /><span className="sink-demo-feedback">Opened: {opened}</span></div></SessionNavigationProvider>; }
 function SessionLinkDemo() { const [opened, setOpened] = useState("None"); return <SessionNavigationProvider openSession={({ sessionId }) => setOpened(sessionId)}><div className="sink-demo-row"><SessionLink label="Open follow-up" sessionId="follow-up" workspaceId="demo" /><span className="sink-demo-feedback">Opened: {opened}</span></div></SessionNavigationProvider>; }
 
-type Demo = (props: DemoProps) => ReactNode;
-function entry(id: string, title: string, subgroup: ElementSubgroup, description: string, Demo: Demo, code: string, names = title): Entry {
-  return { id, title, group: "elements", subgroup, tier: "Element", description, importCode: `import { ${names} } from "@fraym/ui"`, Demo, knobs: [], code: () => code, examples: [{ title: "Basic", description: `A focused ${title} usage.`, code }, { title: "Composed", description: `Compose ${title} inside an agent surface.`, code: `<Card><CardContent>${code}</CardContent></Card>` }], props: [{ name: "className", type: "string", defaultValue: "undefined", description: "Optional styling hook for composition." }] };
-}
+const entry = elementEntry((title) => `Compose ${title} inside an agent surface.`);
 
 export const decorativeElementEntries: readonly Entry[] = [
   entry("chroma-grid", "ChromaGrid", "layout", "Pointer-follow focus that desaturates the surrounding grid.", ChromaGridDemo, `<ChromaGrid>{cards}</ChromaGrid>`),

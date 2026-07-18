@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from "react";
+import { useState } from "react";
 import {
   BranchName,
   Button,
@@ -35,7 +35,7 @@ import {
   useReducedMotion,
 } from "@fraym/ui";
 
-import type { DemoProps, ElementSubgroup, Entry } from "../entry";
+import { elementEntry, type Entry } from "../entry";
 
 const sampleCode = `export function createSession(id: string) {
   return { id, status: "ready" };
@@ -66,27 +66,7 @@ function FileTypeIconDemo() { return <div className="sink-demo-row">{["Thread.ts
 function FileMentionDemo() { const [opened, setOpened] = useState("Nothing opened"); return <FileMentionProvider openFile={setOpened}><div className="sink-demo-stack"><p>Inspect <FileMentionPill fallback="packages/ui/src/index.ts" path="packages/ui/src/index.ts" /> before publishing.</p><span className="sink-demo-feedback" role="status">{opened}</span></div></FileMentionProvider>; }
 function BranchNameDemo() { return <div style={{ maxWidth: 220 }}><BranchName name="feature/open-core-elements-parity" /></div>; }
 
-type Demo = (props: DemoProps) => ReactNode;
-
-function element(id: string, title: string, subgroup: ElementSubgroup, description: string, Demo: Demo, code: string, names = title): Entry {
-  return {
-    id,
-    title,
-    group: "elements",
-    subgroup,
-    tier: "Element",
-    description,
-    importCode: `import { ${names} } from "@fraym/ui"`,
-    Demo,
-    knobs: [],
-    code: () => code,
-    examples: [
-      { title: "Basic", description: `A focused ${title} usage.`, code },
-      { title: "Composed", description: `Use ${title} inside a larger agent surface.`, code: `<Card><CardContent>${code}</CardContent></Card>` },
-    ],
-    props: [{ name: "className", type: "string", defaultValue: "undefined", description: "Optional styling hook for composition." }],
-  };
-}
+const element = elementEntry((title) => `Use ${title} inside a larger agent surface.`);
 
 export const additionalElementEntries: readonly Entry[] = [
   element("input", "Input", "inputs", "Token-driven single-line text input with native semantics.", InputDemo, `<Input aria-label="Repository path" placeholder="packages/ui" />`),

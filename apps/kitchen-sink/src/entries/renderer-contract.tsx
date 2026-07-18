@@ -1,4 +1,4 @@
-import { useRef, useState, type ReactNode } from "react";
+import { useRef, useState } from "react";
 import {
   AgentSetup, BottomSheet, Button, Collapsible, CommandTagProvider, ConfirmDialog, DiffBlock, DockSplit,
   FormSheet, InputGroup, InstallProgress, MarketplaceFilterPills, Menu, MenuBar, MenuItem,
@@ -7,7 +7,7 @@ import {
   useCommandTagResolver, useMessageBlockRenderer, useSurfaceRendererMap,
   type MessageBlock, type MessageData, type OAuthController, type SurfaceRenderInput,
 } from "@fraym/ui";
-import type { DemoProps, ElementSubgroup, Entry } from "../entry";
+import { elementEntry, type Entry } from "../entry";
 
 function DiffBlockDemo() { return <DiffBlock added={2} deleted={1} path="src/registry.ts" lines={[{ kind: "ctx", lineNo: "12", code: "export function resolve(name) {" }, { kind: "del", lineNo: "13", code: "  return renderers[name];" }, { kind: "add", lineNo: "13", code: "  return renderers[normalize(name)];" }, { kind: "add", lineNo: "14", code: "}" }]} />; }
 function CollapsibleDemo() { const [open, setOpen] = useState(true); return <Collapsible count={3} onToggle={() => setOpen(value => !value)} open={open} title="Renderer details"><p>Exact, normalized, then fallback resolution.</p></Collapsible>; }
@@ -38,8 +38,7 @@ function WaitingForAppDemo() { return <WaitingForApp appName="Companion service"
 const oauth: OAuthController = { status: "awaiting-auth", authInfo: { url: "https://example.com/authorize" }, submitInput: () => undefined };
 function OAuthPopupDemo() { return <OAuthPopup oauth={oauth} provider="Example" />; }
 
-type Demo = (props: DemoProps) => ReactNode;
-function entry(id: string, title: string, subgroup: ElementSubgroup, description: string, Demo: Demo, code: string, names = title): Entry { return { id, title, group: "elements", subgroup, tier: "Element", description, importCode: `import { ${names} } from "@fraym/ui"`, Demo, knobs: [], code: () => code, examples: [{ title: "Basic", description: `A focused ${title} usage.`, code }, { title: "Composed", description: `Compose ${title} inside a host surface.`, code: `<Card><CardContent>${code}</CardContent></Card>` }], props: [{ name: "className", type: "string", defaultValue: "undefined", description: "Optional styling hook for composition." }] }; }
+const entry = elementEntry((title) => `Compose ${title} inside a host surface.`);
 
 export const rendererContractEntries: readonly Entry[] = [
   entry("diff-block", "DiffBlock", "content", "Compact file diff with line gutters and semantic add/delete treatment.", DiffBlockDemo, `<DiffBlock path="src/file.ts" added={2} lines={lines} />`),

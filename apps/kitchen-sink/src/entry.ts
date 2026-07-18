@@ -1,9 +1,9 @@
 import type { ComponentType } from "react";
 
-export const entryGroups = ["tokens", "elements", "tools", "features"] as const;
+const entryGroups = ["tokens", "elements", "tools", "features"] as const;
 export type EntryGroup = (typeof entryGroups)[number];
 
-export const elementSubgroups = ["actions", "inputs", "feedback", "layout", "content"] as const;
+const elementSubgroups = ["actions", "inputs", "feedback", "layout", "content"] as const;
 export type ElementSubgroup = (typeof elementSubgroups)[number];
 
 export type KnobValue = string | number | boolean;
@@ -71,6 +71,26 @@ export interface Entry {
   code: (values: KnobValues) => string;
   examples: readonly CodeExample[];
   props: readonly PropDoc[];
+}
+
+export function elementEntry(composedDescription: (title: string) => string) {
+  return (id: string, title: string, subgroup: ElementSubgroup, description: string, Demo: ComponentType<DemoProps>, code: string, names = title): Entry => ({
+    id,
+    title,
+    group: "elements",
+    subgroup,
+    tier: "Element",
+    description,
+    importCode: `import { ${names} } from "@fraym/ui"`,
+    Demo,
+    knobs: [],
+    code: () => code,
+    examples: [
+      { title: "Basic", description: `A focused ${title} usage.`, code },
+      { title: "Composed", description: composedDescription(title), code: `<Card><CardContent>${code}</CardContent></Card>` },
+    ],
+    props: [{ name: "className", type: "string", defaultValue: "undefined", description: "Optional styling hook for composition." }],
+  });
 }
 
 export function initialKnobValues(knobs: readonly Knob[]): Record<string, KnobValue> {
