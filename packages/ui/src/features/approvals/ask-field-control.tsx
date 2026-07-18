@@ -72,6 +72,16 @@ function toNumber(value: unknown): number | undefined {
 	return undefined;
 }
 
+function toString(value: unknown): string | undefined {
+	return typeof value === "string" ? value : undefined;
+}
+
+function toDefault(value: unknown): string | number | boolean | undefined {
+	return typeof value === "string" || typeof value === "boolean" || (typeof value === "number" && Number.isFinite(value))
+		? value
+		: undefined;
+}
+
 /** Decimal places implied by a step like 0.05 → 2, so a snapped value reads cleanly. */
 function precisionOf(step: number): number {
 	if (!Number.isFinite(step) || Math.floor(step) === step) return 0;
@@ -105,22 +115,23 @@ export function readDialogField(meta: Readonly<Record<string, unknown>> | undefi
 	const field = raw as Record<string, unknown>;
 	const type = field.type;
 	if (type !== "text" && type !== "number" && type !== "toggle" && type !== "slider" && type !== "tags") return null;
-	const str = (value: unknown): string | undefined => (typeof value === "string" ? value : undefined);
-	const def = (value: unknown): string | number | boolean | undefined =>
-		typeof value === "string" || typeof value === "boolean" || (typeof value === "number" && Number.isFinite(value))
-			? value
-			: undefined;
+	const placeholder = toString(field.placeholder);
+	const min = toNumber(field.min);
+	const max = toNumber(field.max);
+	const step = toNumber(field.step);
+	const defaultValue = toDefault(field.default);
+	const unit = toString(field.unit);
 	const suggestions = Array.isArray(field.suggestions)
 		? field.suggestions.filter((entry): entry is string => typeof entry === "string")
 		: undefined;
 	return {
 		type,
-		...(str(field.placeholder) === undefined ? {} : { placeholder: str(field.placeholder)! }),
-		...(toNumber(field.min) === undefined ? {} : { min: toNumber(field.min)! }),
-		...(toNumber(field.max) === undefined ? {} : { max: toNumber(field.max)! }),
-		...(toNumber(field.step) === undefined ? {} : { step: toNumber(field.step)! }),
-		...(def(field.default) === undefined ? {} : { default: def(field.default)! }),
-		...(str(field.unit) === undefined ? {} : { unit: str(field.unit)! }),
+		...(placeholder === undefined ? {} : { placeholder }),
+		...(min === undefined ? {} : { min }),
+		...(max === undefined ? {} : { max }),
+		...(step === undefined ? {} : { step }),
+		...(defaultValue === undefined ? {} : { default: defaultValue }),
+		...(unit === undefined ? {} : { unit }),
 		...(suggestions === undefined ? {} : { suggestions }),
 	};
 }
