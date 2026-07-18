@@ -1,5 +1,4 @@
 import { type ShowcaseEntry, withGroup } from "../../showcase/types";
-import { aethrEntries } from "./aethr";
 import { askEntries } from "./ask";
 import { astEditEntries } from "./ast-edit";
 import { astGrepEntries } from "./ast-grep";
@@ -35,6 +34,7 @@ import { sshEntries } from "./ssh";
 import { todoEntries } from "./todo";
 import { toolGroupEntries } from "./tool-group";
 import { toolIconRegistryEntries } from "./tool-icon-registry";
+import { vibrEntries } from "./vibr";
 import { webSearchEntries } from "./web-search";
 import { workflowConceptsEntries } from "./workflow-concepts";
 import { writeEntries } from "./write";
@@ -78,7 +78,7 @@ export const featuresEntries: readonly ShowcaseEntry[] = [
 	]),
 	...withGroup("Docks & files", environmentCardEntries),
 	...withGroup("Presence, diagram & diff", [
-		...aethrEntries,
+		...vibrEntries,
 		...renderMermaidEntries,
 		...checkpointEntries,
 		...rewindEntries,
