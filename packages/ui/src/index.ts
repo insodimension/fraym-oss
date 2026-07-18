@@ -14,11 +14,12 @@ export { ApprovalCard, type ApprovalCardProps } from "./ApprovalCard";
 export { ReasoningRow, type ReasoningRowProps } from "./ReasoningRow";
 export {
   Composer,
-  ContextUsage,
-  type ComposerAttachment,
+  ComposerChip,
+  ContextRadial,
+  type ComposerImageAttachment,
   type ComposerProps,
-  type ComposerSubmission,
-} from "./Composer";
+} from "./features/composer";
+export { ContextUsage } from "./Composer";
 export {
   filterSlashCommands,
   getComposerKeyAction,

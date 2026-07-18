@@ -19,7 +19,6 @@ describe("chat surface contracts", () => {
   test("round-trips neutral length-delimited paste sentinels", () => {
     const attachment = {
       id: "paste-1",
-      name: "notes.txt",
       text: "alpha\nbeta",
     };
     expect(splitUserPastedText(foldPasteAttachment(attachment))).toEqual([

@@ -1,13 +1,12 @@
-import type { ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 
 import type { AgentEventStream, ApprovalResponseEvent } from "@fraym/driver";
 
 import {
   Composer,
-  ContextUsage,
-  type ComposerSubmission,
-} from "./Composer";
-import type { SlashCommand } from "./composer-state";
+  type ComposerProps,
+} from "./features/composer";
+import { ContextUsage } from "./Composer";
 import { Code } from "./elements/code";
 import { classNames } from "./elements/utils";
 import { ThreadView } from "./Thread";
@@ -20,24 +19,22 @@ export interface SessionThreadProps {
   placeholder?: string;
   model?: string;
   contextUsage?: number;
-  commands?: readonly SlashCommand[];
+  slashCommands?: ComposerProps["slashCommands"];
   composerLeftSlot?: ReactNode;
   composerRightSlot?: ReactNode;
   transcriptFooter?: ReactNode;
-  onSubmit?: (submission: ComposerSubmission) => void;
+  onSubmit?: ComposerProps["onSubmit"];
   onStop?: () => void;
-  onCommand?: (command: SlashCommand) => void;
   onApprovalResponse?: (event: ApprovalResponseEvent) => void;
 }
 
 export function SessionThread({
   className,
-  commands,
+  slashCommands,
   composerLeftSlot,
   composerRightSlot,
   contextUsage = 42,
   model = "Agent",
-  onCommand,
   onApprovalResponse,
   onStop,
   onSubmit,
@@ -47,18 +44,24 @@ export function SessionThread({
   transcriptFooter,
 }: SessionThreadProps) {
   const session = useAgentSession(source);
+  const [composerValue, setComposerValue] = useState("");
   const stop = () => {
     session.stop();
     onStop?.();
   };
+  const submit: ComposerProps["onSubmit"] = (value, attachments) => {
+    onSubmit?.(value, attachments);
+    setComposerValue("");
+  };
   const composerProps = {
+    value: composerValue,
+    onChange: setComposerValue,
+    onSubmit: submit,
     streaming: session.streaming,
     leftSlot: composerLeftSlot ?? <Code>{model}</Code>,
     rightSlot: composerRightSlot ?? <ContextUsage value={contextUsage} />,
     onStop: stop,
-    ...(commands === undefined ? {} : { commands }),
-    ...(onCommand === undefined ? {} : { onCommand }),
-    ...(onSubmit === undefined ? {} : { onSubmit }),
+    ...(slashCommands === undefined ? {} : { slashCommands }),
     ...(placeholder === undefined ? {} : { placeholder }),
   };
   const threadProps = {
