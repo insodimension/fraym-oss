@@ -5,8 +5,9 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { entries } from "./index";
 import { initialKnobValues } from "../entry";
 import { createEntryDockFixture } from "../dock-fixtures";
-import { clampDockWidth } from "../DemoDock";
+import { clampDockWidth } from "../demo-dock-utils";
 import { ThemeProvider } from "@fraym/ui";
+import { entriesForTier, tierIds } from "../catalog";
 
 describe("kitchen sink entries", () => {
   test("clamps persisted dock widths to the supported range", () => {
@@ -22,6 +23,17 @@ describe("kitchen sink entries", () => {
       78,
     );
     expect(entries.filter((entry) => entry.group === "tools")).toHaveLength(9);
+  });
+
+  test("re-homes every existing entry into exactly one shell tier", () => {
+    const tieredEntries = tierIds.flatMap((tier) => entriesForTier(tier));
+    expect(tieredEntries).toHaveLength(entries.length);
+    expect(new Set(tieredEntries.map((entry) => entry.id)).size).toBe(
+      entries.length,
+    );
+    expect(entriesForTier("pages").map((entry) => entry.id)).toEqual([
+      "streaming-thread",
+    ]);
   });
 
   test("renders every live demo and provides a usage snippet", () => {

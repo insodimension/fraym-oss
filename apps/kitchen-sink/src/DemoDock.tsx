@@ -3,6 +3,7 @@ import { createReplayDriver } from "@fraym/driver";
 import { Button, SessionThread } from "@fraym/ui";
 
 import { createEntryDockFixture } from "./dock-fixtures";
+import { clampDockWidth, demoDockBounds } from "./demo-dock-utils";
 import type { Entry, KnobValues } from "./entry";
 
 type ReplaySpeed = "slow" | "medium" | "fast";
@@ -21,18 +22,11 @@ interface DemoDockProps {
   width: number;
 }
 
-const dockMinWidth = 320;
-const dockMaxWidth = 720;
-
-export function clampDockWidth(width: number): number {
-  const viewportMaximum = typeof window === "undefined"
-    ? dockMaxWidth
-    : Math.max(dockMinWidth, window.innerWidth - dockMinWidth);
-  return Math.min(Math.min(dockMaxWidth, viewportMaximum), Math.max(dockMinWidth, width));
-}
-
 export function DemoDock({ entry, onClose, onWidthChange, values, width }: DemoDockProps) {
-  const [speed, setSpeed] = useState<ReplaySpeed>("medium");
+  const [speed, setSpeed] = useState<ReplaySpeed>(() => {
+    const stored = window.localStorage.getItem("ks-demo-speed");
+    return stored === "slow" || stored === "fast" ? stored : "medium";
+  });
   const [replayId, setReplayId] = useState(0);
   const fixture = useMemo(() => createEntryDockFixture(entry), [entry]);
   const source = useMemo(
@@ -44,14 +38,18 @@ export function DemoDock({ entry, onClose, onWidthChange, values, width }: DemoD
   );
   const Demo = entry.Demo;
   const resize = (clientX: number) => onWidthChange(clampDockWidth(window.innerWidth - clientX));
+  const selectSpeed = (next: ReplaySpeed) => {
+    setSpeed(next);
+    window.localStorage.setItem("ks-demo-speed", next);
+  };
 
   return (
     <aside aria-label={`${entry.title} live agent context`} className="sink-demo-dock" style={{ width }}>
       <button
         aria-label="Resize demo dock"
         aria-orientation="vertical"
-        aria-valuemax={dockMaxWidth}
-        aria-valuemin={dockMinWidth}
+        aria-valuemax={demoDockBounds.max}
+        aria-valuemin={demoDockBounds.min}
         aria-valuenow={Math.round(width)}
         className="sink-demo-dock__resize"
         onKeyDown={(event) => {
@@ -68,9 +66,12 @@ export function DemoDock({ entry, onClose, onWidthChange, values, width }: DemoD
       <header className="sink-demo-dock__header">
         <div>
           <span className="sink-eyebrow">Live session</span>
-          <strong>{entry.title} in context</strong>
+          <strong>Demo</strong>
         </div>
-        <Button aria-label="Close demo dock" size="sm" variant="ghost" onClick={onClose}>Close</Button>
+        <div className="sink-demo-dock__actions">
+          <Button data-dock-restart size="sm" variant="ghost" onClick={() => setReplayId((value) => value + 1)}>Replay</Button>
+          <Button aria-label="Close demo dock" size="sm" variant="ghost" onClick={onClose}>Close</Button>
+        </div>
       </header>
       <div className="sink-demo-dock__controls">
         <div aria-label="Replay speed" className="sink-dock-speed" role="group">
@@ -81,15 +82,13 @@ export function DemoDock({ entry, onClose, onWidthChange, values, width }: DemoD
               key={option}
               size="sm"
               variant="ghost"
-              onClick={() => setSpeed(option)}
+              onClick={() => selectSpeed(option)}
             >
               {option === "medium" ? "Med" : option}
             </Button>
           ))}
         </div>
-        <Button data-dock-restart size="sm" variant="ghost" onClick={() => setReplayId((value) => value + 1)}>
-          Restart
-        </Button>
+        <span className="sink-demo-dock__speed-label">Replay speed</span>
       </div>
       <SessionThread
         className="sink-demo-dock__session"
