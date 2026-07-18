@@ -4,6 +4,7 @@ import type { ControlsSchema } from "../../showcase/controls";
 import { Demo, Note } from "../../showcase/demo";
 import type { EntryDocs } from "../../showcase/docs";
 import { useToolConfig } from "../../showcase/tool-config";
+import { toolPreviewControl } from "../../showcase/tool-preview";
 import type { ShowcaseEntry } from "../../showcase/types";
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -28,13 +29,12 @@ type View = "collapsed" | "comfortable" | "compact" | "spacious";
 type Density = Exclude<View, "collapsed">;
 
 const COUNTS = ["3", "6", "9", "12"] as const;
-const VIEWS: View[] = ["collapsed", "comfortable", "compact", "spacious"];
 
 const TOOL_GROUP_CONFIG: ControlsSchema = {
 	count: { kind: "select", label: "count", options: COUNTS, default: "12" },
 	failure: { kind: "boolean", label: "include failure", default: true },
 	// `scope: "display"` → shared with the Demo Dock (collapse + density).
-	view: { kind: "select", label: "view", options: VIEWS, default: "collapsed", scope: "display" },
+	view: toolPreviewControl("collapsed"),
 };
 
 function configValue<T extends string>(values: Record<string, unknown>, key: string, fallback: T): T {

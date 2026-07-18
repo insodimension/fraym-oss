@@ -17,6 +17,7 @@ import {
 	ToolMainPreview,
 	type ToolPreviewView,
 	ToolVariationGrid,
+	toolPreviewControl,
 	toolPreviewView,
 } from "../../showcase/tool-preview";
 import type { ShowcaseEntry } from "../../showcase/types";
@@ -26,7 +27,6 @@ type InspectState = "success" | "error";
 type View = ToolPreviewView;
 
 const VARIATIONS: Variation[] = ["normal", "no-question", "empty", "error"];
-const VIEWS: View[] = ["collapsed", "comfortable", "compact", "spacious"];
 const STATES: InspectState[] = ["success", "error"];
 
 type InspectCallBase = {
@@ -56,7 +56,7 @@ function buildInspectCall(variation: Variation, state: InspectState): ActiveTool
 const INSPECT_CONFIG: ControlsSchema = {
 	variation: { kind: "select", label: "variation", options: VARIATIONS, default: "normal" },
 	state: { kind: "select", label: "state", options: STATES, default: "success" },
-	view: { kind: "select", label: "view", options: VIEWS, default: "comfortable", scope: "display" },
+	view: toolPreviewControl(),
 };
 
 function InspectEntry() {

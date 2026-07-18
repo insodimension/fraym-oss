@@ -10,6 +10,7 @@ import {
 	ToolMainPreview,
 	type ToolPreviewView,
 	ToolVariationGrid,
+	toolPreviewControl,
 	toolPreviewView,
 } from "../../showcase/tool-preview";
 import type { ShowcaseEntry } from "../../showcase/types";
@@ -35,7 +36,6 @@ type View = ToolPreviewView;
 
 const VARIATIONS: Variation[] = ["multiFile", "single", "broad"];
 const STATES: AstEditState[] = ["proposed", "empty", "limit", "error", "pending"];
-const VIEWS: View[] = ["collapsed", "comfortable", "compact", "spacious"];
 
 const CONTENT: Record<
 	Variation,
@@ -153,7 +153,7 @@ const AST_EDIT_CONFIG: ControlsSchema = {
 	variation: { kind: "select", label: "variation", options: VARIATIONS, default: "multiFile" },
 	state: { kind: "select", label: "state", options: STATES, default: "proposed" },
 	// `scope: "display"` → shared with the Demo Dock (collapse/density), not just the preview.
-	view: { kind: "select", label: "view", options: VIEWS, default: "comfortable", scope: "display" },
+	view: toolPreviewControl(),
 };
 
 function AstEditEntry() {

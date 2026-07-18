@@ -12,6 +12,7 @@ import {
 	type ToolPreviewView,
 	ToolStreamingReplay,
 	ToolVariationGrid,
+	toolPreviewControl,
 	toolPreviewView,
 } from "../../showcase/tool-preview";
 import type { ShowcaseEntry } from "../../showcase/types";
@@ -38,7 +39,6 @@ type FindCallBase = Pick<ActiveToolCall, "callId" | "toolName" | "input">;
 
 const VARIATIONS: Variation[] = ["files", "dirs", "root"];
 const STATES: FindState[] = ["success", "empty", "truncated", "streaming", "error", "pending"];
-const VIEWS: View[] = ["collapsed", "comfortable", "compact", "spacious"];
 
 // ── per-variation glob args + result file lists ───────────────────────────────
 
@@ -146,7 +146,7 @@ const FIND_CONFIG: ControlsSchema = {
 	variation: { kind: "select", label: "variation", options: VARIATIONS, default: "files" },
 	state: { kind: "select", label: "state", options: STATES, default: "success" },
 	// `scope: "display"` → shared with the Demo Dock (collapse/density), not just the preview.
-	view: { kind: "select", label: "view", options: VIEWS, default: "comfortable", scope: "display" },
+	view: toolPreviewControl(),
 };
 
 function FindEntry() {

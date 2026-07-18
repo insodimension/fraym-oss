@@ -8,6 +8,7 @@ import {
 	selectControlValue,
 	type ToolPreviewView,
 	toolPreviewDisplay,
+	toolPreviewControl,
 	toolPreviewView,
 } from "../../showcase/tool-preview";
 import type { ShowcaseEntry } from "../../showcase/types";
@@ -69,7 +70,6 @@ const FAMILIES: Family[] = [
 ];
 
 const STATES: LspState[] = ["pending", "success", "error", "warn"];
-const VIEWS: View[] = ["collapsed", "comfortable", "compact", "spacious"];
 
 interface LspInputShape {
 	readonly action: string;
@@ -273,7 +273,7 @@ function buildLspCall(family: Family, state: LspState): ActiveToolCall {
 const LSP_CONFIG: ControlsSchema = {
 	family: { kind: "select", label: "family", options: FAMILIES, default: "hover" },
 	state: { kind: "select", label: "state", options: STATES, default: "success" },
-	view: { kind: "select", label: "view", options: VIEWS, default: "comfortable", scope: "display" },
+	view: toolPreviewControl(),
 };
 
 function LspEntry() {

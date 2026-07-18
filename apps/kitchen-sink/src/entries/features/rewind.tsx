@@ -12,7 +12,13 @@ import type { ControlsSchema } from "../../showcase/controls";
 import { Demo } from "../../showcase/demo";
 import type { EntryDocs } from "../../showcase/docs";
 import { useToolConfig } from "../../showcase/tool-config";
-import { ToolMainPreview, ToolVariationGrid, toolPreviewView } from "../../showcase/tool-preview";
+import {
+	selectControlValue,
+	ToolMainPreview,
+	ToolVariationGrid,
+	toolPreviewControl,
+	toolPreviewView,
+} from "../../showcase/tool-preview";
 import type { ShowcaseEntry } from "../../showcase/types";
 
 type State = "success" | "error" | "running";
@@ -38,19 +44,13 @@ function buildCall(variation: string, state: State): ActiveToolCall {
 const CONFIG: ControlsSchema = {
 	variation: { kind: "select", label: "variation", options: VARS, default: VARS[0] as string },
 	state: { kind: "select", label: "state", options: STATES, default: "success" },
-	view: {
-		kind: "select",
-		label: "view",
-		options: ["collapsed", "comfortable", "compact", "spacious"],
-		default: "comfortable",
-		scope: "display",
-	},
+	view: toolPreviewControl(),
 };
 
 function Entry() {
 	const { values, panel } = useToolConfig();
-	const variation = values.variation as string;
-	const state = values.state as State;
+	const variation = selectControlValue(values.variation, VARS, VARS[0] as string);
+	const state = selectControlValue(values.state, STATES, "success");
 	const view = toolPreviewView(values.view);
 	return (
 		<Demo summary="Rewind tool card." importPath="@fraym/ui · DEFAULT_TOOL_RENDERERS.rewind" controls={panel}>

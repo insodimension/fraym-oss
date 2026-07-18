@@ -18,6 +18,7 @@ import {
 	ToolMainPreview,
 	type ToolPreviewView,
 	ToolVariationGrid,
+	toolPreviewControl,
 	toolPreviewView,
 } from "../../showcase/tool-preview";
 import type { ShowcaseEntry } from "../../showcase/types";
@@ -52,7 +53,6 @@ const VARIATIONS: Variation[] = [
 ];
 
 const STATES: GithubState[] = ["success", "error", "pending"];
-const VIEWS: View[] = ["collapsed", "comfortable", "compact", "spacious"];
 
 // ── synthetic call builder ────────────────────────────────────────────────────
 
@@ -91,7 +91,7 @@ function buildGithubCall(variation: Variation, state: GithubState): ActiveToolCa
 const GITHUB_CONFIG: ControlsSchema = {
 	variation: { kind: "select", label: "variation", options: VARIATIONS, default: "repo-view" },
 	state: { kind: "select", label: "state", options: STATES, default: "success" },
-	view: { kind: "select", label: "view", options: VIEWS, default: "comfortable", scope: "display" },
+	view: toolPreviewControl(),
 };
 
 function GithubEntry() {

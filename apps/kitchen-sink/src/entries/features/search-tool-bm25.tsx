@@ -17,6 +17,7 @@ import {
 	ToolMainPreview,
 	type ToolPreviewView,
 	ToolVariationGrid,
+	toolPreviewControl,
 	toolPreviewView,
 } from "../../showcase/tool-preview";
 import type { ShowcaseEntry } from "../../showcase/types";
@@ -26,7 +27,6 @@ type Bm25State = "success" | "error";
 type View = ToolPreviewView;
 
 const VARIATIONS: Variation[] = ["normal", "no-matches", "empty", "error"];
-const VIEWS: View[] = ["collapsed", "comfortable", "compact", "spacious"];
 const STATES: Bm25State[] = ["success", "error"];
 
 type Bm25CallBase = {
@@ -56,7 +56,7 @@ function buildBm25Call(variation: Variation, state: Bm25State): ActiveToolCall {
 const BM25_CONFIG: ControlsSchema = {
 	variation: { kind: "select", label: "variation", options: VARIATIONS, default: "normal" },
 	state: { kind: "select", label: "state", options: STATES, default: "success" },
-	view: { kind: "select", label: "view", options: VIEWS, default: "comfortable", scope: "display" },
+	view: toolPreviewControl(),
 };
 
 function SearchToolBm25Entry() {

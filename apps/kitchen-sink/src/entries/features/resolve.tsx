@@ -18,6 +18,7 @@ import {
 	ToolMainPreview,
 	type ToolPreviewView,
 	ToolVariationGrid,
+	toolPreviewControl,
 	toolPreviewView,
 } from "../../showcase/tool-preview";
 import type { ShowcaseEntry } from "../../showcase/types";
@@ -39,7 +40,6 @@ type View = ToolPreviewView;
 
 const VARIATIONS: Variation[] = ["apply-accept", "discard", "apply-with-source", "apply-failed", "pending"];
 const STATES: ResolveState[] = ["success", "error", "pending"];
-const VIEWS: View[] = ["collapsed", "comfortable", "compact", "spacious"];
 
 /** Cast to plain records to avoid barrel type-collision issues. */
 const INPUT_MAP = RESOLVE_INPUT as Record<string, Record<string, unknown>>;
@@ -106,7 +106,7 @@ const RESOLVE_CONFIG: ControlsSchema = {
 		default: "apply-accept",
 	},
 	state: { kind: "select", label: "state", options: STATES, default: "success" },
-	view: { kind: "select", label: "view", options: VIEWS, default: "comfortable", scope: "display" },
+	view: toolPreviewControl(),
 };
 
 function ResolveEntry() {

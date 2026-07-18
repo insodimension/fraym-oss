@@ -17,6 +17,7 @@ import {
 	ToolMainPreview,
 	type ToolPreviewView,
 	ToolVariationGrid,
+	toolPreviewControl,
 	toolPreviewView,
 } from "../../showcase/tool-preview";
 import type { ShowcaseEntry } from "../../showcase/types";
@@ -26,7 +27,6 @@ type JobState = "success" | "error";
 type View = ToolPreviewView;
 
 const VARIATIONS: Variation[] = ["poll", "cancel", "list", "idle", "error"];
-const VIEWS: View[] = ["collapsed", "comfortable", "compact", "spacious"];
 const STATES: JobState[] = ["success", "error"];
 
 type JobCallBase = {
@@ -56,7 +56,7 @@ function buildJobCall(variation: Variation, state: JobState): ActiveToolCall {
 const JOB_CONFIG: ControlsSchema = {
 	variation: { kind: "select", label: "variation", options: VARIATIONS, default: "poll" },
 	state: { kind: "select", label: "state", options: STATES, default: "success" },
-	view: { kind: "select", label: "view", options: VIEWS, default: "comfortable", scope: "display" },
+	view: toolPreviewControl(),
 };
 
 function JobEntry() {

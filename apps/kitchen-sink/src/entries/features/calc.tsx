@@ -18,6 +18,7 @@ import {
 	ToolMainPreview,
 	type ToolPreviewView,
 	ToolVariationGrid,
+	toolPreviewControl,
 	toolPreviewView,
 } from "../../showcase/tool-preview";
 import type { ShowcaseEntry } from "../../showcase/types";
@@ -41,7 +42,6 @@ type View = ToolPreviewView;
 
 const VARIATIONS: Variation[] = ["simple", "complex", "string", "error", "pending"];
 const STATES: CalcState[] = ["success", "error", "pending"];
-const VIEWS: View[] = ["collapsed", "comfortable", "compact", "spacious"];
 
 /** Cast CALC_INPUT to a plain record to avoid barrel type-collision issues. */
 const INPUT_MAP = CALC_INPUT as Record<string, Record<string, unknown>>;
@@ -91,7 +91,7 @@ function buildCalcCall(variation: Variation, state: CalcState): ActiveToolCall {
 const CALC_CONFIG: ControlsSchema = {
 	variation: { kind: "select", label: "variation", options: VARIATIONS, default: "simple" },
 	state: { kind: "select", label: "state", options: STATES, default: "success" },
-	view: { kind: "select", label: "view", options: VIEWS, default: "comfortable", scope: "display" },
+	view: toolPreviewControl(),
 };
 
 function CalcEntry() {

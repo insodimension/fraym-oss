@@ -19,8 +19,8 @@ import { useToolConfig } from "../../showcase/tool-config";
 import {
 	selectControlValue,
 	ToolMainPreview,
-	type ToolPreviewView,
 	ToolVariationGrid,
+	toolPreviewControl,
 	toolPreviewView,
 } from "../../showcase/tool-preview";
 import type { ShowcaseEntry } from "../../showcase/types";
@@ -29,7 +29,6 @@ type GoalPreviewState = "success" | "running" | "error";
 type GoalPreviewGoal = ComponentProps<typeof GoalComposerSurface>["goal"];
 
 const STATES: readonly GoalPreviewState[] = ["success", "running", "error"];
-const VIEWS: readonly ToolPreviewView[] = ["collapsed", "comfortable", "compact", "spacious"];
 
 const INPUT_MAP = GOAL_INPUT as Record<GoalVariation, Record<string, unknown>>;
 const DETAILS_MAP = GOAL_DETAILS as Record<GoalVariation, Record<string, unknown> | undefined>;
@@ -64,7 +63,7 @@ function previewGoal(variation: GoalVariation): GoalPreviewGoal {
 const GOAL_CONFIG: ControlsSchema = {
 	variation: { kind: "select", label: "variation", options: GOAL_VARIATIONS, default: "create-active-budgeted" },
 	state: { kind: "select", label: "state", options: STATES, default: "success" },
-	view: { kind: "select", label: "view", options: VIEWS, default: "comfortable", scope: "display" },
+	view: toolPreviewControl(),
 };
 
 function GoalEntry() {

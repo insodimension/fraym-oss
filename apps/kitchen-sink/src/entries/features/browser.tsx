@@ -22,6 +22,7 @@ import {
 	ToolMainPreview,
 	type ToolPreviewView,
 	ToolVariationGrid,
+	toolPreviewControl,
 	toolPreviewView,
 } from "../../showcase/tool-preview";
 import type { ShowcaseEntry } from "../../showcase/types";
@@ -51,7 +52,6 @@ type View = ToolPreviewView;
 
 const VARIATIONS: Variation[] = ["open", "run", "capture", "close"];
 const STATES: BrowserState[] = ["success", "error", "pending", "truncated"];
-const VIEWS: View[] = ["collapsed", "comfortable", "compact", "spacious"];
 
 function successCall(callId: string, variation: Variation, input: unknown): ActiveToolCall {
 	if (variation === "open")
@@ -107,7 +107,7 @@ const BROWSER_CONFIG: ControlsSchema = {
 	variation: { kind: "select", label: "variation", options: VARIATIONS, default: "capture" },
 	state: { kind: "select", label: "state", options: STATES, default: "success" },
 	// `scope: "display"` → shared with the Demo Dock (collapse/density), not just the preview.
-	view: { kind: "select", label: "view", options: VIEWS, default: "comfortable", scope: "display" },
+	view: toolPreviewControl(),
 };
 
 function BrowserEntry() {

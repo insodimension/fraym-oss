@@ -17,6 +17,7 @@ import {
 	ToolMainPreview,
 	type ToolPreviewView,
 	ToolVariationGrid,
+	toolPreviewControl,
 	toolPreviewView,
 } from "../../showcase/tool-preview";
 import type { ShowcaseEntry } from "../../showcase/types";
@@ -26,7 +27,6 @@ type IrcState = "success" | "error";
 type View = ToolPreviewView;
 
 const VARIATIONS: Variation[] = ["list", "send", "send-no-reply", "send-failed", "error"];
-const VIEWS: View[] = ["collapsed", "comfortable", "compact", "spacious"];
 const STATES: IrcState[] = ["success", "error"];
 
 type IrcCallBase = {
@@ -56,7 +56,7 @@ function buildIrcCall(variation: Variation, state: IrcState): ActiveToolCall {
 const IRC_CONFIG: ControlsSchema = {
 	variation: { kind: "select", label: "variation", options: VARIATIONS, default: "list" },
 	state: { kind: "select", label: "state", options: STATES, default: "success" },
-	view: { kind: "select", label: "view", options: VIEWS, default: "comfortable", scope: "display" },
+	view: toolPreviewControl(),
 };
 
 function IrcEntry() {

@@ -1,9 +1,20 @@
 import { type ActiveToolCall, type FraymDensity, ToolRender } from "@fraym/ui";
+import type { ControlDef } from "./controls";
 import { Note } from "./demo";
 
 export type ToolPreviewView = "collapsed" | FraymDensity;
 
 const TOOL_PREVIEW_VIEWS: readonly ToolPreviewView[] = ["collapsed", "comfortable", "compact", "spacious"];
+
+export function toolPreviewControl(defaultValue: ToolPreviewView = "comfortable"): ControlDef {
+	return {
+		kind: "select",
+		label: "view",
+		options: TOOL_PREVIEW_VIEWS,
+		default: defaultValue,
+		scope: "display",
+	};
+}
 
 export function selectControlValue<T extends string>(value: unknown, options: readonly T[], fallback: T): T {
 	return options.includes(value as T) ? (value as T) : fallback;

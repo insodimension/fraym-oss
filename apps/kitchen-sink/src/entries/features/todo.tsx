@@ -8,8 +8,8 @@ import { useToolConfig } from "../../showcase/tool-config";
 import {
 	selectControlValue,
 	ToolMainPreview,
-	type ToolPreviewView,
 	ToolVariationGrid,
+	toolPreviewControl,
 	toolPreviewView,
 } from "../../showcase/tool-preview";
 import type { ShowcaseEntry } from "../../showcase/types";
@@ -29,7 +29,6 @@ import type { ShowcaseEntry } from "../../showcase/types";
 type Variation = "single" | "phases" | "notes" | "mixed" | "empty";
 
 const VARIATIONS: Variation[] = ["single", "phases", "notes", "mixed", "empty"];
-const VIEWS: ToolPreviewView[] = ["collapsed", "comfortable", "compact", "spacious"];
 
 /** An `AgentToolResult`-shaped output carrying `TodoToolDetails`. */
 function buildTodoCall(variation: Variation): ActiveToolCall {
@@ -48,7 +47,7 @@ function buildTodoCall(variation: Variation): ActiveToolCall {
 
 const TODO_CONFIG: ControlsSchema = {
 	variation: { kind: "select", label: "variation", options: VARIATIONS, default: "phases" },
-	view: { kind: "select", label: "view", options: VIEWS, default: "comfortable", scope: "display" },
+	view: toolPreviewControl(),
 };
 
 function TodoEntry() {

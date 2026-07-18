@@ -11,6 +11,7 @@ import {
 	type ToolPreviewView,
 	ToolStreamingReplay,
 	ToolVariationGrid,
+	toolPreviewControl,
 	toolPreviewView,
 } from "../../showcase/tool-preview";
 import type { ShowcaseEntry } from "../../showcase/types";
@@ -38,7 +39,6 @@ type View = ToolPreviewView;
 
 const VARIATIONS: Variation[] = ["module", "config", "markdown", "large"];
 const STATES: WriteState[] = ["success", "diagnostics", "error", "pending", "streaming"];
-const VIEWS: View[] = ["collapsed", "comfortable", "compact", "spacious"];
 
 const BASE_PATH: Record<Variation, string> = {
 	module: "src/telemetry.ts",
@@ -170,7 +170,7 @@ const WRITE_CONFIG: ControlsSchema = {
 	variation: { kind: "select", label: "variation", options: VARIATIONS, default: "module" },
 	state: { kind: "select", label: "state", options: STATES, default: "success" },
 	// `scope: "display"` → shared with the Demo Dock (collapse/density), not just the preview.
-	view: { kind: "select", label: "view", options: VIEWS, default: "comfortable", scope: "display" },
+	view: toolPreviewControl(),
 };
 
 function WriteEntry() {

@@ -17,6 +17,7 @@ import {
 	ToolMainPreview,
 	type ToolPreviewView,
 	ToolVariationGrid,
+	toolPreviewControl,
 	toolPreviewView,
 } from "../../showcase/tool-preview";
 import type { ShowcaseEntry } from "../../showcase/types";
@@ -26,7 +27,6 @@ type MermaidState = "success" | "error";
 type View = ToolPreviewView;
 
 const VARIATIONS: Variation[] = ["flowchart", "sequence", "state", "error", "pending"];
-const VIEWS: View[] = ["collapsed", "comfortable", "compact", "spacious"];
 const STATES: MermaidState[] = ["success", "error"];
 
 function mermaidErrorCall(calL: ActiveToolCall, text: string): ActiveToolCall {
@@ -56,7 +56,7 @@ function buildMermaidCall(variation: Variation, state: MermaidState): ActiveTool
 const MERMAID_CONFIG: ControlsSchema = {
 	variation: { kind: "select", label: "variation", options: VARIATIONS, default: "flowchart" },
 	state: { kind: "select", label: "state", options: STATES, default: "success" },
-	view: { kind: "select", label: "view", options: VIEWS, default: "comfortable", scope: "display" },
+	view: toolPreviewControl(),
 };
 
 function MermaidEntry() {

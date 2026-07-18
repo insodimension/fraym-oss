@@ -6,6 +6,7 @@ import type { ControlsSchema } from "../../showcase/controls";
 import { Demo, Note } from "../../showcase/demo";
 import type { EntryDocs } from "../../showcase/docs";
 import { useToolConfig } from "../../showcase/tool-config";
+import { toolPreviewControl } from "../../showcase/tool-preview";
 import type { ShowcaseEntry } from "../../showcase/types";
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -47,7 +48,6 @@ type ReasoningState = "static" | "streaming";
 
 const CONTENTS: Content[] = ["short", "long", "markdown"];
 const SUMMARIES: SummaryMode[] = ["default", "custom"];
-const VIEWS: View[] = ["collapsed", "comfortable", "compact", "spacious"];
 const STATES: ReasoningState[] = ["static", "streaming"];
 
 function summaryFor(content: Content, mode: SummaryMode): string | undefined {
@@ -62,7 +62,7 @@ const REASONING_CONFIG: ControlsSchema = {
 	content: { kind: "select", label: "content", options: CONTENTS, default: "long" },
 	summary: { kind: "select", label: "summary", options: SUMMARIES, default: "default" },
 	// `scope: "display"` → shared with the Demo Dock so it collapses/sets reasoning density too.
-	view: { kind: "select", label: "view", options: VIEWS, default: "comfortable", scope: "display" },
+	view: toolPreviewControl(),
 	state: { kind: "select", label: "state", options: STATES, default: "static" },
 };
 

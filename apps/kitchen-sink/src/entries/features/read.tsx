@@ -16,6 +16,7 @@ import type { ControlsSchema } from "../../showcase/controls";
 import { Demo, Note } from "../../showcase/demo";
 import type { EntryDocs } from "../../showcase/docs";
 import { useToolConfig } from "../../showcase/tool-config";
+import { toolPreviewControl } from "../../showcase/tool-preview";
 import type { ShowcaseEntry } from "../../showcase/types";
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -43,7 +44,6 @@ type View = "collapsed" | "comfortable" | "compact" | "spacious";
 const TARGETS: Target[] = ["file-code", "markdown", "directory", "sqlite", "image", "url"];
 const SELECTORS: Selector[] = ["whole", "range", "multi-range", "raw", "summary", "conflicts"];
 const STATES: ReadState[] = ["success", "truncated", "error", "pending"];
-const VIEWS: View[] = ["collapsed", "comfortable", "compact", "spacious"];
 
 // ── synthetic call builder ────────────────────────────────────────────────────
 
@@ -119,7 +119,7 @@ const READ_CONFIG: ControlsSchema = {
 	selector: { kind: "select", label: "selector", options: SELECTORS, default: "whole" },
 	state: { kind: "select", label: "state", options: STATES, default: "success" },
 	// `scope: "display"` → shared with the Demo Dock (collapse/density), not just the preview.
-	view: { kind: "select", label: "view", options: VIEWS, default: "comfortable", scope: "display" },
+	view: toolPreviewControl(),
 };
 
 interface ReadPreviewState {
