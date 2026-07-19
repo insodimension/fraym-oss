@@ -4,12 +4,14 @@
     { "path": "./packages/config" },
     { "path": "./packages/driver" },
     { "path": "./packages/driver-acp" },
+    { "path": "./packages/driver-codex" },
     { "path": "./packages/driver-test" },
     { "path": "./packages/fixtures" },
     { "path": "./packages/verber" },
     { "path": "./packages/vibr" },
     { "path": "./packages/ui" },
     { "path": "./apps/web" },
-    { "path": "./apps/kitchen-sink" }
+    { "path": "./apps/kitchen-sink" },
+    { "path": "./apps/codex-web" }
   ]
 }
