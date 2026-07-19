@@ -1,0 +1,43 @@
+{
+  "type": "module",
+  "name": "@fraym/template-web-agent",
+  "version": "0.1.0",
+  "description": "A self-contained Vite and React Fraym web agent template",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "engines": {
+    "bun": ">=1.3.14"
+  },
+  "scripts": {
+    "check": "bun run --cwd template check",
+    "check:types": "bun run --cwd template check:types",
+    "build": "bun run --cwd template build --outDir ../dist --emptyOutDir"
+  },
+  "keywords": ["fraym", "template", "agent", "vite", "react"],
+  "files": [
+    "fraym.template.json",
+    "template/README.md",
+    "template/index.html",
+    "template/package.json",
+    "template/src",
+    "template/tsconfig.json",
+    "template/vite.config.ts"
+  ],
+  "dependencies": {
+    "@fraym/driver": "^0.1.0",
+    "@fraym/ui": "^0.1.0",
+    "react": "^19.2.5",
+    "react-dom": "^19.2.5"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.2.4",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^4.3.4",
+    "tailwindcss": "^4.2.4",
+    "typescript": "^6.0.3",
+    "vite": "^6.0.0"
+  }
+}
