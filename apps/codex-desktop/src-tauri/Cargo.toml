@@ -1,0 +1,20 @@
+[package]
+name = "fraym-codex-desktop"
+version = "0.1.0"
+description = "Native Fraym shell backed by the local Codex CLI"
+authors = ["Fraym"]
+edition = "2021"
+
+[lib]
+name = "fraym_codex_desktop_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[[bin]]
+name = "fraym-codex-desktop"
+path = "src/main.rs"
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = [] }

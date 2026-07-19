@@ -1,0 +1,30 @@
+{
+	"type": "module",
+	"name": "fraym-codex-desktop",
+	"version": "0.1.0",
+	"private": true,
+	"description": "Native Tauri shell for Fraym backed by the local Codex CLI",
+	"scripts": {
+		"dev": "tauri dev",
+		"dev:webview": "vite --host localhost --port 5188 --strictPort",
+		"build": "tauri build",
+		"build:webview": "vite build",
+		"check:types": "tsc -p tsconfig.json --noEmit"
+	},
+	"dependencies": {
+		"@fraym/driver-codex": "workspace:*",
+		"@fraym/ui": "workspace:*",
+		"@tauri-apps/api": "^2.11.0",
+		"react": "^19.0.0",
+		"react-dom": "^19.0.0"
+	},
+	"devDependencies": {
+		"@tailwindcss/vite": "^4.3.0",
+		"@tauri-apps/cli": "^2.11.2",
+		"@types/react": "^19.0.0",
+		"@types/react-dom": "^19.0.0",
+		"@vitejs/plugin-react": "latest",
+		"tailwindcss": "^4.3.0",
+		"vite": "latest"
+	}
+}

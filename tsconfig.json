@@ -12,6 +12,7 @@
     { "path": "./packages/ui" },
     { "path": "./apps/web" },
     { "path": "./apps/kitchen-sink" },
-    { "path": "./apps/codex-web" }
+    { "path": "./apps/codex-web" },
+    { "path": "./apps/codex-desktop" }
   ]
 }
