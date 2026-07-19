@@ -27,7 +27,7 @@ export function App() {
 				<span className="ml-auto text-fr-text-3">Local bridge · exec --json</span>
 			</header>
 			<section className="h-[calc(100%-3rem)]">
-				<SessionThread {...sessionProps} />
+				<SessionThread className="h-full" {...sessionProps} />
 			</section>
 		</main>
 	);
