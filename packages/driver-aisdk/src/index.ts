@@ -17,6 +17,12 @@ export interface AiSdkDriverOptions<TOOLS extends ToolSet = ToolSet> {
 	readonly system?: string;
 	/** Stable session id reported on every emitted event. */
 	readonly sessionId?: string;
+	/**
+	 * Conversation history to seed the model context with (e.g. a persisted
+	 * transcript restored after a reload). Turns prompted through this driver
+	 * are appended after these messages.
+	 */
+	readonly initialMessages?: readonly ModelMessage[];
 	/** Maximum agent steps (model + tool rounds) per turn. Defaults to 8. */
 	readonly maxSteps?: number;
 }
@@ -68,7 +74,7 @@ export function createAiSdkDriver<TOOLS extends ToolSet = ToolSet>(options: AiSd
 	const sessionId = options.sessionId ?? `aisdk-${crypto.randomUUID()}`;
 	const maxSteps = options.maxSteps ?? AISDK_DEFAULT_MAX_STEPS;
 	const listeners = new Set<AgentEventListener>();
-	const messages: ModelMessage[] = [];
+	const messages: ModelMessage[] = [...(options.initialMessages ?? [])];
 	let started = false;
 	let turn = 0;
 	let abort: AbortController | undefined;

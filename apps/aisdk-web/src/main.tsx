@@ -1,201 +1,176 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
 import { createOpenAICompatible } from "@ai-sdk/openai-compatible";
-import { createAiSdkDriver } from "@fraym/driver-aisdk";
+import { type AiSdkDriver, createAiSdkDriver } from "@fraym/driver-aisdk";
+import type { AgentEvent, AgentEventStream } from "@fraym/driver";
+import { Code, Icon, SessionThread, type SessionThreadProps, ToolDisplaySettingsProvider, cn } from "@fraym/ui";
 import {
-  Button,
-  Code,
-  Segmented,
-  SessionThread,
-  type SessionThreadProps,
-  SettingsGroup,
-  type SettingsNavItem,
-  SettingsPage,
-  SettingsRow,
-  SettingsSub,
-  SettingsTitle,
-  type ToolDefaultOpen,
-  ToolDisplaySettingsProvider,
-} from "@fraym/ui";
+  applyTheme,
+  type Connection,
+  type Density,
+  loadAutoExpand,
+  loadConnection,
+  loadDensity,
+  loadDrafts,
+  loadTheme,
+  persistAutoExpand,
+  persistConnection,
+  persistDensity,
+  persistTheme,
+  PROVIDERS,
+  type ProviderDraft,
+  type ProviderId,
+  type ThemeMode,
+} from "./providers";
+import {
+  createReplayingStream,
+  deleteSessionEvents,
+  loadSessionEvents,
+  loadSessionList,
+  messagesFromEvents,
+  relativeAge,
+  saveSessionEvents,
+  saveSessionList,
+  type SessionMeta,
+  sessionTitleFromEvents,
+} from "./session-store";
+import { SettingsView } from "./settings-view";
+import type { ToolDefaultOpen } from "@fraym/ui";
 
 import "@fraym/ui/theme.css";
 import "@fraym/ui/fonts.css";
 import "./styles.css";
 
-type ProviderId = "openai" | "openrouter";
+const K_ACTIVE_SESSION = "fraym-aisdk-active-session";
+const PERSIST_DELAY_MS = 400;
 
-interface ProviderInfo {
-  readonly label: string;
-  readonly monogram: string;
-  readonly baseURL: string;
-  readonly defaultModel: string;
-  readonly keyPlaceholder: string;
+interface SessionRuntime {
+  readonly connKey: string;
+  readonly driver: AiSdkDriver;
+  readonly stream: AgentEventStream;
 }
 
-const PROVIDERS: Record<ProviderId, ProviderInfo> = {
-  openai: {
-    label: "OpenAI",
-    monogram: "OA",
-    baseURL: "https://api.openai.com/v1",
-    defaultModel: "gpt-4o-mini",
-    keyPlaceholder: "sk-...",
-  },
-  openrouter: {
-    label: "OpenRouter",
-    monogram: "OR",
-    baseURL: "https://openrouter.ai/api/v1",
-    defaultModel: "openai/gpt-4o-mini",
-    keyPlaceholder: "sk-or-...",
-  },
-};
-
-const PROVIDER_IDS: readonly ProviderId[] = ["openai", "openrouter"];
-
-const K_ACTIVE = "fraym-aisdk-provider";
-const K_THEME = "fraym-aisdk-theme";
-const K_DENSITY = "fraym-aisdk-density";
-const K_AUTO_EXPAND = "fraym-aisdk-auto-expand";
-
-type ThemeMode = "dark" | "light";
-type Density = "compact" | "comfortable" | "spacious";
-
-const THEME_OPTIONS: readonly ThemeMode[] = ["dark", "light"];
-const DENSITY_OPTIONS: readonly Density[] = ["compact", "comfortable", "spacious"];
-const AUTO_EXPAND_OPTIONS: readonly ToolDefaultOpen[] = ["none", "running", "failed", "all"];
-
-function applyTheme(theme: ThemeMode) {
-  document.documentElement.dataset.theme = theme;
-  document.documentElement.dataset.fraymTheme = theme;
+function newSessionMeta(): SessionMeta {
+  const now = Date.now();
+  return { id: crypto.randomUUID(), title: "New session", createdAt: now, updatedAt: now };
 }
 
-function loadTheme(): ThemeMode {
-  return localStorage.getItem(K_THEME) === "light" ? "light" : "dark";
+interface SidebarProps {
+  readonly sessions: readonly SessionMeta[];
+  readonly activeId: string;
+  readonly onSelect: (id: string) => void;
+  readonly onNew: () => void;
+  readonly onDelete: (id: string) => void;
+  readonly onOpenSettings: () => void;
 }
 
-function loadDensity(): Density {
-  const stored = localStorage.getItem(K_DENSITY);
-  return stored === "compact" || stored === "spacious" ? stored : "comfortable";
-}
-
-function loadAutoExpand(): ToolDefaultOpen {
-  const stored = localStorage.getItem(K_AUTO_EXPAND);
-  return stored === "running" || stored === "failed" || stored === "all" ? stored : "none";
-}
-
-interface ProviderDraft {
-  readonly apiKey: string;
-  readonly model: string;
-}
-
-interface Connection {
-  readonly provider: ProviderId;
-  readonly apiKey: string;
-  readonly model: string;
-}
-
-function loadDrafts(): Record<ProviderId, ProviderDraft> {
-  // Earlier builds stored one free-form key; treat it as an OpenRouter key.
-  const legacyKey = localStorage.getItem("fraym-aisdk-api-key") ?? "";
-  return {
-    openai: {
-      apiKey: localStorage.getItem("fraym-aisdk-openai-key") ?? "",
-      model: localStorage.getItem("fraym-aisdk-openai-model") ?? PROVIDERS.openai.defaultModel,
-    },
-    openrouter: {
-      apiKey: localStorage.getItem("fraym-aisdk-openrouter-key") ?? legacyKey,
-      model: localStorage.getItem("fraym-aisdk-openrouter-model") ?? PROVIDERS.openrouter.defaultModel,
-    },
-  };
-}
-
-function loadConnection(): Connection | null {
-  const stored = localStorage.getItem(K_ACTIVE);
-  if (stored !== "openai" && stored !== "openrouter") {
-    return null;
-  }
-  const apiKey = localStorage.getItem(`fraym-aisdk-${stored}-key`) ?? "";
-  if (apiKey.length === 0) {
-    return null;
-  }
-  return {
-    provider: stored,
-    apiKey,
-    model: localStorage.getItem(`fraym-aisdk-${stored}-model`) ?? PROVIDERS[stored].defaultModel,
-  };
-}
-
-const SETTINGS_NAV: readonly SettingsNavItem[] = [
-  { id: "general", label: "General", icon: "gear" },
-  { id: "appearance", label: "Appearance", icon: "sun" },
-  { id: "models", label: "Models", icon: "spark" },
-];
-
-interface ProviderCardProps {
-  readonly id: ProviderId;
-  readonly draft: ProviderDraft;
-  readonly active: boolean;
-  readonly onDraftChange: (id: ProviderId, patch: Partial<ProviderDraft>) => void;
-  readonly onUse: (id: ProviderId) => void;
-}
-
-function ProviderCard({ id, draft, active, onDraftChange, onUse }: ProviderCardProps) {
-  const info = PROVIDERS[id];
-  const hasKey = draft.apiKey.trim().length > 0;
+function Sidebar({ sessions, activeId, onSelect, onNew, onDelete, onOpenSettings }: SidebarProps) {
+  const [menuOpen, setMenuOpen] = useState(false);
   return (
-    <div className="rounded-xl border border-fr-border bg-fr-surface p-4">
-      <div className="flex items-center gap-3">
-        <span className="flex size-[34px] shrink-0 items-center justify-center rounded-[9px] border border-fr-border bg-fr-surface-2 font-secondary text-xs font-semibold text-fr-text-2">
-          {info.monogram}
+    <aside className="flex h-full min-h-0 flex-col border-r border-fr-border-soft bg-fr-rail">
+      <div className="flex items-center gap-2 px-3.5 pt-3.5 pb-1">
+        <span className="text-fr-base font-semibold tracking-[-0.01em]">Fraym</span>
+        <span className="rounded-md border border-fr-border px-1.5 py-0.5 font-mono text-[10px] text-fr-text-3">
+          aisdk-web
         </span>
-        <div className="min-w-0 flex-1">
-          <div className="text-fr-base font-medium text-fr-text">{info.label}</div>
-          <div className="flex items-center gap-1.5 text-xs text-fr-text-2">
-            <span className={active ? "size-1.5 rounded-full bg-fr-ok" : "size-1.5 rounded-full bg-fr-warn"} />
-            {active ? "Active" : hasKey ? "Key entered" : "Not connected"}
+      </div>
+      <div className="px-2.5 pt-2">
+        <button
+          type="button"
+          className="flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-left text-fr-base font-medium text-fr-text hover:bg-fr-surface"
+          onClick={onNew}
+        >
+          <Icon name="plus" size={15} strokeWidth={2} />
+          New session
+          <span className="ml-auto font-mono text-[10px] text-fr-text-3">Ctrl+N</span>
+        </button>
+      </div>
+      <div className="fr-eyebrow px-5 pt-4 pb-1.5">Sessions</div>
+      <div className="min-h-0 flex-1 overflow-y-auto px-2.5">
+        {sessions.map((session) => (
+          <div
+            key={session.id}
+            className={cn(
+              "group flex items-center gap-2 rounded-lg px-2.5 py-[7px]",
+              session.id === activeId ? "bg-fr-surface-2" : "hover:bg-fr-surface",
+            )}
+          >
+            <button
+              type="button"
+              className={cn(
+                "min-w-0 flex-1 truncate text-left text-fr-sm",
+                session.id === activeId ? "text-fr-text" : "text-fr-text-2",
+              )}
+              onClick={() => onSelect(session.id)}
+            >
+              {session.title}
+            </button>
+            <span className="shrink-0 font-mono text-[10px] text-fr-text-3 group-hover:hidden">
+              {relativeAge(session.updatedAt)}
+            </span>
+            <button
+              type="button"
+              aria-label="Delete session"
+              className="hidden shrink-0 text-fr-text-3 hover:text-fr-text group-hover:block"
+              onClick={() => onDelete(session.id)}
+            >
+              <Icon name="x" size={12} strokeWidth={2} />
+            </button>
           </div>
-        </div>
-        <code className="hidden text-xs text-fr-text-3 sm:block">{info.baseURL}</code>
+        ))}
       </div>
-      <div className="mt-4 grid gap-3 sm:grid-cols-2">
-        <label className="grid gap-1.5 text-xs text-fr-text-2">
-          API key
-          <input
-            autoComplete="off"
-            className="h-9 rounded-lg border border-fr-border bg-fr-surface-2 px-3 font-mono text-xs text-fr-text outline-none focus:border-fr-accent-line"
-            onChange={(event) => onDraftChange(id, { apiKey: event.currentTarget.value })}
-            placeholder={info.keyPlaceholder}
-            spellCheck={false}
-            type="password"
-            value={draft.apiKey}
-          />
-        </label>
-        <label className="grid gap-1.5 text-xs text-fr-text-2">
-          Model
-          <input
-            className="h-9 rounded-lg border border-fr-border bg-fr-surface-2 px-3 font-mono text-xs text-fr-text outline-none focus:border-fr-accent-line"
-            onChange={(event) => onDraftChange(id, { model: event.currentTarget.value })}
-            placeholder={info.defaultModel}
-            spellCheck={false}
-            type="text"
-            value={draft.model}
-          />
-        </label>
+      <div className="relative border-t border-fr-border-soft p-2.5">
+        {menuOpen && (
+          <>
+            <button
+              type="button"
+              aria-label="Close menu"
+              className="fixed inset-0 z-10 cursor-default"
+              onClick={() => setMenuOpen(false)}
+            />
+            <div className="absolute bottom-full left-2.5 z-20 mb-1.5 w-[210px] rounded-xl border border-fr-border bg-fr-surface p-1.5 shadow-lg">
+              <div className="px-2.5 py-1.5">
+                <div className="text-fr-sm font-medium text-fr-text">Local profile</div>
+                <div className="text-xs text-fr-text-3">Keys stay in this browser</div>
+              </div>
+              <button
+                type="button"
+                className="flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-left text-fr-sm text-fr-text-2 hover:bg-fr-surface-2 hover:text-fr-text"
+                onClick={() => {
+                  setMenuOpen(false);
+                  onOpenSettings();
+                }}
+              >
+                <Icon name="gear" size={14} strokeWidth={1.8} />
+                Settings
+              </button>
+            </div>
+          </>
+        )}
+        <button
+          type="button"
+          className="flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-left hover:bg-fr-surface"
+          onClick={() => setMenuOpen((current) => !current)}
+        >
+          <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-fr-surface-2 text-xs font-semibold text-fr-text-2">
+            L
+          </span>
+          <span className="min-w-0 flex-1">
+            <span className="block truncate text-fr-sm font-medium text-fr-text">Local profile</span>
+            <span className="block truncate text-xs text-fr-text-3">Fraym · aisdk</span>
+          </span>
+          <Icon name="caretD" size={13} strokeWidth={2} className="text-fr-text-3" />
+        </button>
       </div>
-      <div className="mt-3">
-        <Button disabled={!hasKey} onClick={() => onUse(id)} size="sm" variant={active ? "outline" : "default"}>
-          {active ? "Save" : `Use ${info.label}`}
-        </Button>
-      </div>
-    </div>
+    </aside>
   );
 }
 
 function App() {
   const [connection, setConnection] = useState<Connection | null>(loadConnection);
-  const [view, setView] = useState<"chat" | "settings">("chat");
-  const [pane, setPane] = useState("general");
-  const [version, setVersion] = useState(0);
   const [drafts, setDrafts] = useState<Record<ProviderId, ProviderDraft>>(loadDrafts);
+  const [view, setView] = useState<"app" | "settings">("app");
+  const [pane, setPane] = useState("general");
   const [theme, setTheme] = useState<ThemeMode>(() => {
     const initial = loadTheme();
     applyTheme(initial);
@@ -204,14 +179,116 @@ function App() {
   const [density, setDensity] = useState<Density>(loadDensity);
   const [autoExpand, setAutoExpand] = useState<ToolDefaultOpen>(loadAutoExpand);
 
-  const driver = useMemo(() => {
+  const [sessions, setSessions] = useState<readonly SessionMeta[]>(() => {
+    const loaded = loadSessionList();
+    return loaded.length > 0 ? loaded : [newSessionMeta()];
+  });
+  const [activeId, setActiveId] = useState<string>(() => {
+    const stored = localStorage.getItem(K_ACTIVE_SESSION);
+    return stored !== null && sessions.some((session) => session.id === stored) ? stored : (sessions[0]?.id ?? "");
+  });
+
+  const eventsRef = useRef(new Map<string, AgentEvent[]>());
+  const runtimesRef = useRef(new Map<string, SessionRuntime>());
+  const persistTimersRef = useRef(new Map<string, ReturnType<typeof setTimeout>>());
+
+  useEffect(() => {
+    saveSessionList(sessions);
+  }, [sessions]);
+
+  useEffect(() => {
+    localStorage.setItem(K_ACTIVE_SESSION, activeId);
+  }, [activeId]);
+
+  const sessionEvents = (id: string): AgentEvent[] => {
+    let events = eventsRef.current.get(id);
+    if (events === undefined) {
+      events = [...loadSessionEvents(id)];
+      eventsRef.current.set(id, events);
+    }
+    return events;
+  };
+
+  const schedulePersist = (id: string) => {
+    const timers = persistTimersRef.current;
+    clearTimeout(timers.get(id));
+    timers.set(
+      id,
+      setTimeout(() => {
+        timers.delete(id);
+        saveSessionEvents(id, sessionEvents(id));
+      }, PERSIST_DELAY_MS),
+    );
+  };
+
+  const recordEvent = (id: string, event: AgentEvent) => {
+    const events = sessionEvents(id);
+    events.push(event);
+    schedulePersist(id);
+    if (event.type === "user.message" || event.type === "session.done" || event.type === "session.error") {
+      const title = sessionTitleFromEvents(events);
+      setSessions((current) =>
+        current.map((session) => (session.id === id ? { ...session, title, updatedAt: Date.now() } : session)),
+      );
+    }
+  };
+
+  const runtime = useMemo<SessionRuntime | null>(() => {
     if (connection === null) {
       return null;
     }
     const info = PROVIDERS[connection.provider];
+    const connKey = `${connection.provider}|${connection.apiKey}|${connection.model}`;
+    const cached = runtimesRef.current.get(activeId);
+    if (cached !== undefined && cached.connKey === connKey) {
+      return cached;
+    }
+    const events = sessionEvents(activeId);
     const provider = createOpenAICompatible({ name: connection.provider, baseURL: info.baseURL, apiKey: connection.apiKey });
-    return createAiSdkDriver({ model: provider(connection.model), system: "You are a helpful coding agent." });
-  }, [connection]);
+    const driver = createAiSdkDriver({
+      model: provider(connection.model),
+      system: "You are a helpful coding agent.",
+      sessionId: activeId,
+      initialMessages: messagesFromEvents(events),
+    });
+    driver.subscribe((event) => recordEvent(activeId, event));
+    const created: SessionRuntime = { connKey, driver, stream: createReplayingStream(driver, events) };
+    runtimesRef.current.set(activeId, created);
+    return created;
+  }, [activeId, connection]);
+
+  const newSession = () => {
+    const meta = newSessionMeta();
+    setSessions((current) => [meta, ...current]);
+    setActiveId(meta.id);
+    setView("app");
+  };
+
+  const deleteSession = (id: string) => {
+    deleteSessionEvents(id);
+    eventsRef.current.delete(id);
+    runtimesRef.current.delete(id);
+    setSessions((current) => {
+      const remaining = current.filter((session) => session.id !== id);
+      const next = remaining.length > 0 ? remaining : [newSessionMeta()];
+      const fallback = next[0];
+      if (id === activeId && fallback !== undefined) {
+        setActiveId(fallback.id);
+      }
+      return next;
+    });
+  };
+
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "n") {
+        event.preventDefault();
+        newSession();
+      }
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, []);
 
   const updateDraft = (id: ProviderId, patch: Partial<ProviderDraft>) => {
     setDrafts((current) => ({ ...current, [id]: { ...current[id], ...patch } }));
@@ -223,134 +300,112 @@ function App() {
       return;
     }
     const model = drafts[id].model.trim() || PROVIDERS[id].defaultModel;
-    localStorage.setItem(K_ACTIVE, id);
-    localStorage.setItem(`fraym-aisdk-${id}-key`, apiKey);
-    localStorage.setItem(`fraym-aisdk-${id}-model`, model);
-    setConnection({ provider: id, apiKey, model });
-    setVersion((current) => current + 1);
-  }
+    const next: Connection = { provider: id, apiKey, model };
+    persistConnection(next);
+    setConnection(next);
+  };
 
   const changeTheme = (next: ThemeMode) => {
-    localStorage.setItem(K_THEME, next);
+    persistTheme(next);
     applyTheme(next);
     setTheme(next);
   };
 
   const changeDensity = (next: Density) => {
-    localStorage.setItem(K_DENSITY, next);
+    persistDensity(next);
     setDensity(next);
   };
 
   const changeAutoExpand = (next: ToolDefaultOpen) => {
-    localStorage.setItem(K_AUTO_EXPAND, next);
+    persistAutoExpand(next);
     setAutoExpand(next);
   };
 
-  const sessionProps: SessionThreadProps | null = driver === null || connection === null
-    ? null
-    : {
-        source: driver,
-        title: connection.model,
-        model: connection.model,
-        contextUsage: 0,
-        onStop: driver.cancel,
-        onSubmit: (value) => {
-          void driver.prompt(value).catch(() => undefined);
-        },
-      };
-
   if (view === "settings") {
     return (
-      <div className="h-dvh">
-        <SettingsPage activePane={pane} navItems={SETTINGS_NAV} onBack={() => setView("chat")} onPaneChange={setPane}>
-          {pane === "general" && (
-            <div>
-              <SettingsTitle>General</SettingsTitle>
-              <SettingsSub>How tool cards and the thread render.</SettingsSub>
-              <SettingsGroup heading="Tools">
-                <SettingsRow desc="How compact tool cards and the thread render" name="Density">
-                  <Segmented onChange={changeDensity} options={DENSITY_OPTIONS} value={density} />
-                </SettingsRow>
-                <SettingsRow desc="Which tool calls open automatically — none, while running, on failure, or all" name="Auto-expand">
-                  <Segmented onChange={changeAutoExpand} options={AUTO_EXPAND_OPTIONS} value={autoExpand} />
-                </SettingsRow>
-              </SettingsGroup>
-            </div>
-          )}
-          {pane === "appearance" && (
-            <div>
-              <SettingsTitle>Appearance</SettingsTitle>
-              <SettingsSub>Theme for this browser.</SettingsSub>
-              <SettingsGroup heading="Theme">
-                <SettingsRow desc="Dark or light, applied live" name="Theme">
-                  <Segmented onChange={changeTheme} options={THEME_OPTIONS} value={theme} />
-                </SettingsRow>
-              </SettingsGroup>
-            </div>
-          )}
-          {pane === "models" && (
-            <div>
-              <SettingsTitle>Models</SettingsTitle>
-              <SettingsSub>
-                Add an API key for a provider, then use it to start a session. Keys live only in this browser
-                (localStorage) and are sent straight to the provider.
-              </SettingsSub>
-              <SettingsGroup>
-                <div className="grid gap-3">
-                  {PROVIDER_IDS.map((id) => (
-                    <ProviderCard
-                      active={connection?.provider === id}
-                      draft={drafts[id]}
-                      id={id}
-                      key={id}
-                      onDraftChange={updateDraft}
-                      onUse={activateProvider}
-                    />
-                  ))}
-                </div>
-              </SettingsGroup>
-            </div>
-          )}
-        </SettingsPage>
-      </div>
+      <SettingsView
+        autoExpand={autoExpand}
+        connection={connection}
+        density={density}
+        drafts={drafts}
+        onAutoExpandChange={changeAutoExpand}
+        onBack={() => setView("app")}
+        onDensityChange={changeDensity}
+        onDraftChange={updateDraft}
+        onPaneChange={setPane}
+        onThemeChange={changeTheme}
+        onUseProvider={activateProvider}
+        pane={pane}
+        theme={theme}
+      />
     );
   }
 
+  const active = sessions.find((session) => session.id === activeId) ?? sessions[0];
+  if (active === undefined) {
+    return null;
+  }
+  const sessionProps: SessionThreadProps | null = runtime === null || connection === null
+    ? null
+    : {
+        source: runtime.stream,
+        title: active.title,
+        model: connection.model,
+        contextUsage: 0,
+        onStop: runtime.driver.cancel,
+        onSubmit: (value) => {
+          void runtime.driver.prompt(value).catch(() => undefined);
+        },
+      };
+
   return (
-    <main>
-      <header className="web-hero">
-        <span className="web-eyebrow">Fraym</span>
-        <h1>AI SDK agent</h1>
-        <p>The whole agent loop runs in your browser. Pick a provider under Settings → Models, add its API key, and the conversation surface talks to it directly — no backend.</p>
-      </header>
-
-      <section aria-label="Connection" className="web-source-panel">
-        <div className="web-source-tabs" role="group">
-          {connection === null ? (
-            <span className="web-eyebrow">Not connected</span>
+    <div className="grid h-dvh grid-cols-[240px_minmax(0,1fr)] bg-fr-bg text-fr-text">
+      <Sidebar
+        activeId={activeId}
+        onDelete={deleteSession}
+        onNew={newSession}
+        onOpenSettings={() => {
+          setPane("models");
+          setView("settings");
+        }}
+        onSelect={setActiveId}
+        sessions={sessions}
+      />
+      <div className="flex min-h-0 min-w-0 flex-col">
+        <header className="flex h-12 shrink-0 items-center gap-2 border-b border-fr-border-soft px-4">
+          <span className="font-mono text-xs text-fr-text-3">aisdk</span>
+          <span className="text-fr-text-3">/</span>
+          <span className="truncate text-fr-sm font-medium text-fr-text">{active.title}</span>
+          <div className="ml-auto flex items-center gap-2">
+            {connection === null ? (
+              <span className="fr-eyebrow">Not connected</span>
+            ) : (
+              <>
+                <span className="fr-eyebrow">{PROVIDERS[connection.provider].label}</span>
+                <Code>{connection.model}</Code>
+              </>
+            )}
+          </div>
+        </header>
+        <main className="min-h-0 flex-1 overflow-hidden">
+          {sessionProps === null || runtime === null ? (
+            <div className="grid h-full place-content-center gap-2 px-6 text-center">
+              <span className="fr-eyebrow">No model</span>
+              <p className="max-w-[42ch] text-fr-base text-fr-text-2">
+                The whole agent loop runs in your browser. Open Settings → Models, add an API key, and start a session
+                — no backend.
+              </p>
+            </div>
           ) : (
-            <>
-              <span className="web-eyebrow">{PROVIDERS[connection.provider].label}</span>
-              <Code>{connection.model}</Code>
-            </>
+            <div className="mx-auto flex h-full w-full max-w-[920px] flex-col px-5 py-4">
+              <ToolDisplaySettingsProvider settings={{ density, defaultOpen: autoExpand }}>
+                <SessionThread key={`${activeId}:${runtime.connKey}`} className="min-h-0 flex-1" {...sessionProps} />
+              </ToolDisplaySettingsProvider>
+            </div>
           )}
-        </div>
-        <Button onClick={() => setView("settings")} size="sm" variant="ghost">
-          Settings
-        </Button>
-      </section>
-
-      {sessionProps === null ? (
-        <section className="web-acp-pending">
-          <span className="web-eyebrow">No model</span>
-          <p>Open Settings → Models and add a key to start a session.</p>
-        </section>
-      ) : (
-        <ToolDisplaySettingsProvider settings={{ density, defaultOpen: autoExpand }}>
-          <SessionThread key={version} {...sessionProps} />
-        </ToolDisplaySettingsProvider>
-      )}
-    </main>
+        </main>
+      </div>
+    </div>
   );
 }
 

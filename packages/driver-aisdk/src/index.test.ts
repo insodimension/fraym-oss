@@ -89,4 +89,37 @@ describe("createAiSdkDriver", () => {
 		expect(events.some(event => event.type === "session.error")).toBe(true);
 		expect(events.some(event => event.type === "session.done")).toBe(false);
 	});
+
+	test("initialMessages seed the model context ahead of the new turn", async () => {
+		let seenPromptLength = 0;
+		const model = new MockLanguageModelV2({
+			doStream: async ({ prompt }) => {
+				seenPromptLength = prompt.length;
+				return {
+					stream: simulateReadableStream({
+						chunks: [
+							{ type: "stream-start", warnings: [] },
+							{ type: "text-start", id: "0" },
+							{ type: "text-delta", id: "0", delta: "ok" },
+							{ type: "text-end", id: "0" },
+							{ type: "finish", finishReason: "stop", usage: { inputTokens: 1, outputTokens: 1, totalTokens: 2 } },
+						],
+					}),
+				};
+			},
+		});
+		const driver = createAiSdkDriver({
+			model,
+			sessionId: SID,
+			initialMessages: [
+				{ role: "user", content: "earlier question" },
+				{ role: "assistant", content: "earlier answer" },
+			],
+		});
+		driver.subscribe(() => undefined);
+		await driver.prompt("follow-up");
+
+		// Two seeded messages + the new user turn.
+		expect(seenPromptLength).toBe(3);
+	});
 });
