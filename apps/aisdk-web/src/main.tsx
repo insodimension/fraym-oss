@@ -1,66 +1,249 @@
-import { type FormEvent, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { createRoot } from "react-dom/client";
 import { createOpenAICompatible } from "@ai-sdk/openai-compatible";
 import { createAiSdkDriver } from "@fraym/driver-aisdk";
-import { Button, Code, SessionThread, type SessionThreadProps } from "@fraym/ui";
+import {
+  Button,
+  Code,
+  Segmented,
+  SessionThread,
+  type SessionThreadProps,
+  SettingsGroup,
+  type SettingsNavItem,
+  SettingsPage,
+  SettingsRow,
+  SettingsSub,
+  SettingsTitle,
+  type ToolDefaultOpen,
+  ToolDisplaySettingsProvider,
+} from "@fraym/ui";
 
 import "@fraym/ui/theme.css";
 import "@fraym/ui/fonts.css";
 import "./styles.css";
 
-const DEFAULT_BASE_URL = "https://openrouter.ai/api/v1";
-const DEFAULT_MODEL = "openai/gpt-4o-mini";
-const K_BASE = "fraym-aisdk-base-url";
-const K_KEY = "fraym-aisdk-api-key";
-const K_MODEL = "fraym-aisdk-model";
+type ProviderId = "openai" | "openrouter";
 
-interface Connection {
+interface ProviderInfo {
+  readonly label: string;
+  readonly monogram: string;
   readonly baseURL: string;
+  readonly defaultModel: string;
+  readonly keyPlaceholder: string;
+}
+
+const PROVIDERS: Record<ProviderId, ProviderInfo> = {
+  openai: {
+    label: "OpenAI",
+    monogram: "OA",
+    baseURL: "https://api.openai.com/v1",
+    defaultModel: "gpt-4o-mini",
+    keyPlaceholder: "sk-...",
+  },
+  openrouter: {
+    label: "OpenRouter",
+    monogram: "OR",
+    baseURL: "https://openrouter.ai/api/v1",
+    defaultModel: "openai/gpt-4o-mini",
+    keyPlaceholder: "sk-or-...",
+  },
+};
+
+const PROVIDER_IDS: readonly ProviderId[] = ["openai", "openrouter"];
+
+const K_ACTIVE = "fraym-aisdk-provider";
+const K_THEME = "fraym-aisdk-theme";
+const K_DENSITY = "fraym-aisdk-density";
+const K_AUTO_EXPAND = "fraym-aisdk-auto-expand";
+
+type ThemeMode = "dark" | "light";
+type Density = "compact" | "comfortable" | "spacious";
+
+const THEME_OPTIONS: readonly ThemeMode[] = ["dark", "light"];
+const DENSITY_OPTIONS: readonly Density[] = ["compact", "comfortable", "spacious"];
+const AUTO_EXPAND_OPTIONS: readonly ToolDefaultOpen[] = ["none", "running", "failed", "all"];
+
+function applyTheme(theme: ThemeMode) {
+  document.documentElement.dataset.theme = theme;
+  document.documentElement.dataset.fraymTheme = theme;
+}
+
+function loadTheme(): ThemeMode {
+  return localStorage.getItem(K_THEME) === "light" ? "light" : "dark";
+}
+
+function loadDensity(): Density {
+  const stored = localStorage.getItem(K_DENSITY);
+  return stored === "compact" || stored === "spacious" ? stored : "comfortable";
+}
+
+function loadAutoExpand(): ToolDefaultOpen {
+  const stored = localStorage.getItem(K_AUTO_EXPAND);
+  return stored === "running" || stored === "failed" || stored === "all" ? stored : "none";
+}
+
+interface ProviderDraft {
   readonly apiKey: string;
   readonly model: string;
 }
 
+interface Connection {
+  readonly provider: ProviderId;
+  readonly apiKey: string;
+  readonly model: string;
+}
+
+function loadDrafts(): Record<ProviderId, ProviderDraft> {
+  // Earlier builds stored one free-form key; treat it as an OpenRouter key.
+  const legacyKey = localStorage.getItem("fraym-aisdk-api-key") ?? "";
+  return {
+    openai: {
+      apiKey: localStorage.getItem("fraym-aisdk-openai-key") ?? "",
+      model: localStorage.getItem("fraym-aisdk-openai-model") ?? PROVIDERS.openai.defaultModel,
+    },
+    openrouter: {
+      apiKey: localStorage.getItem("fraym-aisdk-openrouter-key") ?? legacyKey,
+      model: localStorage.getItem("fraym-aisdk-openrouter-model") ?? PROVIDERS.openrouter.defaultModel,
+    },
+  };
+}
+
 function loadConnection(): Connection | null {
-  const apiKey = localStorage.getItem(K_KEY) ?? "";
+  const stored = localStorage.getItem(K_ACTIVE);
+  if (stored !== "openai" && stored !== "openrouter") {
+    return null;
+  }
+  const apiKey = localStorage.getItem(`fraym-aisdk-${stored}-key`) ?? "";
   if (apiKey.length === 0) {
     return null;
   }
   return {
-    baseURL: localStorage.getItem(K_BASE) ?? DEFAULT_BASE_URL,
+    provider: stored,
     apiKey,
-    model: localStorage.getItem(K_MODEL) ?? DEFAULT_MODEL,
+    model: localStorage.getItem(`fraym-aisdk-${stored}-model`) ?? PROVIDERS[stored].defaultModel,
   };
+}
+
+const SETTINGS_NAV: readonly SettingsNavItem[] = [
+  { id: "general", label: "General", icon: "gear" },
+  { id: "appearance", label: "Appearance", icon: "sun" },
+  { id: "models", label: "Models", icon: "spark" },
+];
+
+interface ProviderCardProps {
+  readonly id: ProviderId;
+  readonly draft: ProviderDraft;
+  readonly active: boolean;
+  readonly onDraftChange: (id: ProviderId, patch: Partial<ProviderDraft>) => void;
+  readonly onUse: (id: ProviderId) => void;
+}
+
+function ProviderCard({ id, draft, active, onDraftChange, onUse }: ProviderCardProps) {
+  const info = PROVIDERS[id];
+  const hasKey = draft.apiKey.trim().length > 0;
+  return (
+    <div className="rounded-xl border border-fr-border bg-fr-surface p-4">
+      <div className="flex items-center gap-3">
+        <span className="flex size-[34px] shrink-0 items-center justify-center rounded-[9px] border border-fr-border bg-fr-surface-2 font-secondary text-xs font-semibold text-fr-text-2">
+          {info.monogram}
+        </span>
+        <div className="min-w-0 flex-1">
+          <div className="text-fr-base font-medium text-fr-text">{info.label}</div>
+          <div className="flex items-center gap-1.5 text-xs text-fr-text-2">
+            <span className={active ? "size-1.5 rounded-full bg-fr-ok" : "size-1.5 rounded-full bg-fr-warn"} />
+            {active ? "Active" : hasKey ? "Key entered" : "Not connected"}
+          </div>
+        </div>
+        <code className="hidden text-xs text-fr-text-3 sm:block">{info.baseURL}</code>
+      </div>
+      <div className="mt-4 grid gap-3 sm:grid-cols-2">
+        <label className="grid gap-1.5 text-xs text-fr-text-2">
+          API key
+          <input
+            autoComplete="off"
+            className="h-9 rounded-lg border border-fr-border bg-fr-surface-2 px-3 font-mono text-xs text-fr-text outline-none focus:border-fr-accent-line"
+            onChange={(event) => onDraftChange(id, { apiKey: event.currentTarget.value })}
+            placeholder={info.keyPlaceholder}
+            spellCheck={false}
+            type="password"
+            value={draft.apiKey}
+          />
+        </label>
+        <label className="grid gap-1.5 text-xs text-fr-text-2">
+          Model
+          <input
+            className="h-9 rounded-lg border border-fr-border bg-fr-surface-2 px-3 font-mono text-xs text-fr-text outline-none focus:border-fr-accent-line"
+            onChange={(event) => onDraftChange(id, { model: event.currentTarget.value })}
+            placeholder={info.defaultModel}
+            spellCheck={false}
+            type="text"
+            value={draft.model}
+          />
+        </label>
+      </div>
+      <div className="mt-3">
+        <Button disabled={!hasKey} onClick={() => onUse(id)} size="sm" variant={active ? "outline" : "default"}>
+          {active ? "Save" : `Use ${info.label}`}
+        </Button>
+      </div>
+    </div>
+  );
 }
 
 function App() {
   const [connection, setConnection] = useState<Connection | null>(loadConnection);
-  const [showSettings, setShowSettings] = useState(connection === null);
+  const [view, setView] = useState<"chat" | "settings">("chat");
+  const [pane, setPane] = useState("general");
   const [version, setVersion] = useState(0);
-  const [baseURL, setBaseURL] = useState(connection?.baseURL ?? DEFAULT_BASE_URL);
-  const [apiKey, setApiKey] = useState(connection?.apiKey ?? "");
-  const [model, setModel] = useState(connection?.model ?? DEFAULT_MODEL);
+  const [drafts, setDrafts] = useState<Record<ProviderId, ProviderDraft>>(loadDrafts);
+  const [theme, setTheme] = useState<ThemeMode>(() => {
+    const initial = loadTheme();
+    applyTheme(initial);
+    return initial;
+  });
+  const [density, setDensity] = useState<Density>(loadDensity);
+  const [autoExpand, setAutoExpand] = useState<ToolDefaultOpen>(loadAutoExpand);
 
   const driver = useMemo(() => {
     if (connection === null) {
       return null;
     }
-    const provider = createOpenAICompatible({ name: "byo", baseURL: connection.baseURL, apiKey: connection.apiKey });
+    const info = PROVIDERS[connection.provider];
+    const provider = createOpenAICompatible({ name: connection.provider, baseURL: info.baseURL, apiKey: connection.apiKey });
     return createAiSdkDriver({ model: provider(connection.model), system: "You are a helpful coding agent." });
   }, [connection]);
 
-  const save = (event: FormEvent) => {
-    event.preventDefault();
-    const key = apiKey.trim();
-    if (key.length === 0) {
+  const updateDraft = (id: ProviderId, patch: Partial<ProviderDraft>) => {
+    setDrafts((current) => ({ ...current, [id]: { ...current[id], ...patch } }));
+  };
+
+  const activateProvider = (id: ProviderId) => {
+    const apiKey = drafts[id].apiKey.trim();
+    if (apiKey.length === 0) {
       return;
     }
-    const next: Connection = { baseURL: baseURL.trim() || DEFAULT_BASE_URL, apiKey: key, model: model.trim() || DEFAULT_MODEL };
-    localStorage.setItem(K_BASE, next.baseURL);
-    localStorage.setItem(K_KEY, next.apiKey);
-    localStorage.setItem(K_MODEL, next.model);
-    setConnection(next);
+    const model = drafts[id].model.trim() || PROVIDERS[id].defaultModel;
+    localStorage.setItem(K_ACTIVE, id);
+    localStorage.setItem(`fraym-aisdk-${id}-key`, apiKey);
+    localStorage.setItem(`fraym-aisdk-${id}-model`, model);
+    setConnection({ provider: id, apiKey, model });
     setVersion((current) => current + 1);
-    setShowSettings(false);
+  }
+
+  const changeTheme = (next: ThemeMode) => {
+    localStorage.setItem(K_THEME, next);
+    applyTheme(next);
+    setTheme(next);
+  };
+
+  const changeDensity = (next: Density) => {
+    localStorage.setItem(K_DENSITY, next);
+    setDensity(next);
+  };
+
+  const changeAutoExpand = (next: ToolDefaultOpen) => {
+    localStorage.setItem(K_AUTO_EXPAND, next);
+    setAutoExpand(next);
   };
 
   const sessionProps: SessionThreadProps | null = driver === null || connection === null
@@ -76,49 +259,96 @@ function App() {
         },
       };
 
+  if (view === "settings") {
+    return (
+      <div className="h-dvh">
+        <SettingsPage activePane={pane} navItems={SETTINGS_NAV} onBack={() => setView("chat")} onPaneChange={setPane}>
+          {pane === "general" && (
+            <div>
+              <SettingsTitle>General</SettingsTitle>
+              <SettingsSub>How tool cards and the thread render.</SettingsSub>
+              <SettingsGroup heading="Tools">
+                <SettingsRow desc="How compact tool cards and the thread render" name="Density">
+                  <Segmented onChange={changeDensity} options={DENSITY_OPTIONS} value={density} />
+                </SettingsRow>
+                <SettingsRow desc="Which tool calls open automatically — none, while running, on failure, or all" name="Auto-expand">
+                  <Segmented onChange={changeAutoExpand} options={AUTO_EXPAND_OPTIONS} value={autoExpand} />
+                </SettingsRow>
+              </SettingsGroup>
+            </div>
+          )}
+          {pane === "appearance" && (
+            <div>
+              <SettingsTitle>Appearance</SettingsTitle>
+              <SettingsSub>Theme for this browser.</SettingsSub>
+              <SettingsGroup heading="Theme">
+                <SettingsRow desc="Dark or light, applied live" name="Theme">
+                  <Segmented onChange={changeTheme} options={THEME_OPTIONS} value={theme} />
+                </SettingsRow>
+              </SettingsGroup>
+            </div>
+          )}
+          {pane === "models" && (
+            <div>
+              <SettingsTitle>Models</SettingsTitle>
+              <SettingsSub>
+                Add an API key for a provider, then use it to start a session. Keys live only in this browser
+                (localStorage) and are sent straight to the provider.
+              </SettingsSub>
+              <SettingsGroup>
+                <div className="grid gap-3">
+                  {PROVIDER_IDS.map((id) => (
+                    <ProviderCard
+                      active={connection?.provider === id}
+                      draft={drafts[id]}
+                      id={id}
+                      key={id}
+                      onDraftChange={updateDraft}
+                      onUse={activateProvider}
+                    />
+                  ))}
+                </div>
+              </SettingsGroup>
+            </div>
+          )}
+        </SettingsPage>
+      </div>
+    );
+  }
+
   return (
-    <main data-fraym-theme="dark">
+    <main>
       <header className="web-hero">
         <span className="web-eyebrow">Fraym</span>
         <h1>AI SDK agent</h1>
-        <p>The whole agent loop runs in your browser. Point the same conversation surface at any CORS-enabled OpenAI-compatible endpoint — OpenRouter, Groq, or a local Ollama / LM Studio.</p>
+        <p>The whole agent loop runs in your browser. Pick a provider under Settings → Models, add its API key, and the conversation surface talks to it directly — no backend.</p>
       </header>
 
-      <section aria-label="Model settings" className="web-source-panel">
-        <div aria-label="Connection" className="web-source-tabs" role="group">
-          {connection === null ? <span className="web-eyebrow">Not connected</span> : <Code>{connection.model}</Code>}
+      <section aria-label="Connection" className="web-source-panel">
+        <div className="web-source-tabs" role="group">
+          {connection === null ? (
+            <span className="web-eyebrow">Not connected</span>
+          ) : (
+            <>
+              <span className="web-eyebrow">{PROVIDERS[connection.provider].label}</span>
+              <Code>{connection.model}</Code>
+            </>
+          )}
         </div>
-        <Button aria-pressed={showSettings} onClick={() => setShowSettings((current) => !current)} size="sm" variant="ghost">
+        <Button onClick={() => setView("settings")} size="sm" variant="ghost">
           Settings
         </Button>
       </section>
 
-      {showSettings ? (
-        <form className="web-connection web-connection--stack" onSubmit={save}>
-          <div className="web-connection__field">
-            <label htmlFor="ai-base">Base URL</label>
-            <input id="ai-base" onChange={(event) => setBaseURL(event.currentTarget.value)} spellCheck={false} type="url" value={baseURL} />
-          </div>
-          <div className="web-connection__field">
-            <label htmlFor="ai-key">API key</label>
-            <input autoComplete="off" id="ai-key" onChange={(event) => setApiKey(event.currentTarget.value)} placeholder="sk-or-..." spellCheck={false} type="password" value={apiKey} />
-          </div>
-          <div className="web-connection__field">
-            <label htmlFor="ai-model">Model</label>
-            <input id="ai-model" onChange={(event) => setModel(event.currentTarget.value)} spellCheck={false} type="text" value={model} />
-          </div>
-          <Button disabled={apiKey.trim().length === 0} size="sm" type="submit" variant="default">
-            {connection === null ? "Connect" : "Save"}
-          </Button>
-          <p className="web-connection__help">Your key is stored only in this browser (localStorage) and sent straight to the endpoint — there is no backend.</p>
-        </form>
-      ) : sessionProps === null ? (
+      {sessionProps === null ? (
         <section className="web-acp-pending">
           <span className="web-eyebrow">No model</span>
-          <p>Open settings and add a key to start a session.</p>
+          <p>Open Settings → Models and add a key to start a session.</p>
         </section>
       ) : (
-        <SessionThread key={version} {...sessionProps} />
+        <ToolDisplaySettingsProvider settings={{ density, defaultOpen: autoExpand }}>
+          <SessionThread key={version} {...sessionProps} />
+        </ToolDisplaySettingsProvider>
       )}
     </main>
   );

@@ -62,6 +62,7 @@ export type {
 export { tokens, type FraymColorToken, type FraymTokens } from "./tokens";
 export * from "./elements";
 export * from "./components";
+export * from "./pages";
 export * from "./registries";
 export * from "./features";
 export * from "./theme";
