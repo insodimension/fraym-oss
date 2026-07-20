@@ -6,6 +6,7 @@
 import { createOpenAICompatible } from "@ai-sdk/openai-compatible";
 import type {
   CompletionItem,
+  CompletionQuery,
   ContextBreakdown,
   ContextUsage,
   CreateSessionOptions,
@@ -35,6 +36,13 @@ const MAX_SESSIONS = 60;
 const DEFAULT_CONTEXT_WINDOW = 128_000;
 const SYSTEM_PROMPT_CHARS = 160;
 const TITLE_MAX = 44;
+
+const SLASH_COMMANDS: readonly { readonly name: string; readonly description: string }[] = [
+  { name: "/help", description: "List the available commands" },
+  { name: "/clear", description: "Clear this conversation" },
+  { name: "/model", description: "Switch the model for this session" },
+];
+const SLASH_HELP = SLASH_COMMANDS.map((entry) => `${entry.name} — ${entry.description}`).join("\n");
 
 interface StoredSession {
   readonly snapshot: SessionSnapshot;
@@ -248,6 +256,11 @@ export class LocalSessionDriver implements SessionDriver {
 
   async sendUserMessage(ref: SessionRef, input: SessionMessageInput): Promise<void> {
     const rt = this.#runtime(ref);
+    const command = input.text.trim();
+    if (command.startsWith("/")) {
+      this.#runSlashCommand(rt, command);
+      return;
+    }
     rt.turn += 1;
     const userMessage: SessionTranscriptMessage = {
       id: input.clientMessageId ?? `${ref.sessionId}-u${rt.turn}`,
@@ -496,8 +509,54 @@ export class LocalSessionDriver implements SessionDriver {
     return [];
   }
 
-  async queryCompletions(): Promise<readonly CompletionItem[]> {
-    return [];
+  async queryCompletions(_ref: SessionRef, query: CompletionQuery): Promise<readonly CompletionItem[]> {
+    const before = query.text.slice(0, query.cursor);
+    const match = before.match(/(?:^|\s)(\/[a-z]*)$/i);
+    if (!match) return [];
+    const prefix = match[1] ?? "";
+    return SLASH_COMMANDS.filter((entry) => entry.name.startsWith(prefix)).map((entry) => ({
+      kind: "command" as const,
+      label: entry.name,
+      value: entry.name,
+      detail: entry.description,
+    }));
+  }
+
+  /** Client-side slash commands for the AI SDK harness. /clear + /help run for
+   *  real; anything else renders an honest command-output block in the thread
+   *  (there is no engine to execute engine commands in the browser). */
+  #runSlashCommand(rt: Runtime, text: string): void {
+    const name = text.split(/\s+/)[0] ?? text;
+    if (name === "/clear") {
+      rt.transcript.length = 0;
+      rt.history.length = 0;
+      this.#emitJournal(rt);
+      this.#patchSnapshot(rt, { status: "idle", preview: "" });
+      this.#emit(rt, { type: "runCompleted", snapshot: rt.snapshot });
+      return;
+    }
+    rt.turn += 1;
+    const block: SessionTranscriptMessage["blocks"][number] =
+      name === "/help"
+        ? { type: "command", command: "/help", invocation: "/help", renderKind: "command-output", text: SLASH_HELP }
+        : {
+            type: "command",
+            command: name,
+            invocation: text,
+            renderKind: "command-output",
+            text: `${name} is a UI-demo command — the AI SDK harness runs in the browser with no engine to execute it. Try /help, /clear, or the model chip.`,
+          };
+    rt.transcript.push({
+      id: `${rt.snapshot.ref.sessionId}-c${rt.turn}`,
+      role: "agent",
+      blocks: [block],
+      timestamp: nowIso(),
+      settled: true,
+      final: true,
+    });
+    this.#emitJournal(rt);
+    this.#patchSnapshot(rt, { status: "idle", preview: name });
+    this.#emit(rt, { type: "runCompleted", snapshot: rt.snapshot });
   }
 
   async respondToHostUiRequest(_ref: SessionRef, _response: HostUiResponse): Promise<boolean> {
