@@ -86,7 +86,7 @@ function freshnessDotClass(status: string): string {
 	return cn(
 		"size-1.5 rounded-full bg-fr-text-3",
 		status === "ready" && "bg-fr-accent",
-		status === "syncing" && "animate-ping bg-fr-warn",
+		status === "syncing" && "animate-[fr-breathe_1.6s_infinite] bg-fr-warn",
 		status === "stale" && "bg-fr-warn",
 	);
 }

@@ -25,28 +25,28 @@ import { truncatingChip } from "./chip";
 interface SearchSource {
 	title: string;
 	url: string;
-	snippet?: string | undefined;
-	publishedDate?: string | undefined;
-	ageSeconds?: number | undefined;
-	author?: string | undefined;
+	snippet?: string;
+	publishedDate?: string;
+	ageSeconds?: number;
+	author?: string;
 }
 interface SearchUsage {
-	inputTokens?: number | undefined;
-	outputTokens?: number | undefined;
-	searchRequests?: number | undefined;
-	totalTokens?: number | undefined;
+	inputTokens?: number;
+	outputTokens?: number;
+	searchRequests?: number;
+	totalTokens?: number;
 }
 
 interface SearchResponse {
 	provider: string;
-	answer?: string | undefined;
+	answer?: string;
 	sources: SearchSource[];
 	citationCount: number;
-	searchQueries?: string[] | undefined;
-	usage?: SearchUsage | undefined;
-	model?: string | undefined;
-	requestId?: string | undefined;
-	authMode?: string | undefined;
+	searchQueries?: string[];
+	usage?: SearchUsage;
+	model?: string;
+	requestId?: string;
+	authMode?: string;
 }
 
 // ─── Defensive Parse ──────────────────────────────────────────────────────
@@ -112,7 +112,6 @@ function readSearchResponse(details: unknown): SearchResponse | undefined {
 
 const PROVIDER_LABELS: Record<string, string> = {
 	brave: "Brave",
-	acme: "Acme",
 	perplexity: "Perplexity",
 	gemini: "Gemini",
 	google: "Google",

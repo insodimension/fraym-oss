@@ -18,9 +18,9 @@ export interface ReadCodeBodyProps {
 	/** Shiki language id (from the path extension). */
 	readonly language: string;
 	/** Show the line-number gutter. */
-	readonly lineNumbers?: boolean | undefined;
+	readonly lineNumbers?: boolean;
 	/** First gutter line number (for `:range` reads). Default 1. */
-	readonly startLine?: number | undefined;
+	readonly startLine?: number;
 }
 
 /**
@@ -40,7 +40,7 @@ export function ReadCodeBody({ text, language, lineNumbers = true, startLine = 1
 				lineNumbers={lineNumbers}
 				startLine={startLine}
 				className="text-fr-xs"
-					{...(language ? { codeClassName: `language-${language}` } : {})}
+				codeClassName={language ? `language-${language}` : undefined}
 			/>
 		);
 	}
@@ -74,10 +74,10 @@ export function ReadMarkdownBody({ text }: ReadMarkdownBodyProps) {
 
 export interface ReadImageBodyProps {
 	/** `data:` URL or http(s) src for the actual image; omit to show the placeholder. */
-	readonly src?: string | undefined;
+	readonly src?: string;
 	/** Metadata line, e.g. `512 × 512 · 84 KB · RGBA`. */
-	readonly meta?: string | undefined;
-	readonly mime?: string | undefined;
+	readonly meta?: string;
+	readonly mime?: string;
 }
 
 /** Image preview + metadata (a GUI win over the TUI, which prints text only). */
@@ -106,13 +106,13 @@ export function ReadImageBody({ src, meta, mime }: ReadImageBodyProps) {
 export interface ReadUrlMetaRow {
 	readonly label: string;
 	readonly value: string;
-	readonly link?: boolean | undefined;
+	readonly link?: boolean;
 }
 
 export interface ReadUrlBodyProps {
 	readonly meta: readonly ReadUrlMetaRow[];
 	/** Reader-mode markdown preview; omit to show the "preview hidden" hint. */
-	readonly preview?: string | undefined;
+	readonly preview?: string;
 }
 
 /** URL read: meta key/value list + reader-mode preview on the dark surface card. */

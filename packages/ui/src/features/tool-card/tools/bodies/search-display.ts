@@ -17,40 +17,40 @@ const BAR = "\u2502"; // │
 
 export interface SearchLine {
 	/** 1-based source line number (undefined for gap rows or unnumbered lines). */
-	readonly line?: number | undefined;
+	readonly line?: number;
 	/** Content to the right of the gutter `│`. */
 	readonly text: string;
 	/** True for match lines (`*` marker); false for context lines. */
 	readonly isMatch: boolean;
 	/** True for a `│...` elision row between non-contiguous windows. */
-	readonly gap?: boolean | undefined;
+	readonly gap?: boolean;
 }
 
 export interface SearchFileGroup {
 	/** Directory the file lives in (no trailing slash); undefined for root-level / single-file. */
-	readonly dir?: string | undefined;
+	readonly dir?: string;
 	/** File name (basename for grouped output). Empty when a single-file search emitted no header. */
 	readonly file: string;
 	/** Trailing `#<hash>` content-hash from the file header, when present. */
-	readonly hash?: string | undefined;
+	readonly hash?: string;
 	readonly lines: readonly SearchLine[];
 }
 
 interface MutableGroup {
-	dir?: string | undefined;
+	dir?: string;
 	file: string;
-	hash?: string | undefined;
+	hash?: string;
 	lines: SearchLine[];
 }
 
 interface HeaderParseResult {
-	readonly currentDir?: string | undefined;
-	readonly current?: MutableGroup | undefined;
+	readonly currentDir?: string;
+	readonly current?: MutableGroup;
 	readonly handled: boolean;
 }
 
 /** Peel a trailing ` (suffix)` annotation and a `#<hash>` off a file-header name. */
-function splitHeaderName(raw: string): { name: string; hash?: string | undefined } {
+function splitHeaderName(raw: string): { name: string; hash?: string } {
 	const noSuffix = raw.replace(/\s+\([^)]*\)\s*$/, "").trimEnd();
 	const hashMatch = noSuffix.match(/#([0-9a-f]+)$/);
 	if (hashMatch && hashMatch.index !== undefined) {

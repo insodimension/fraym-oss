@@ -5,11 +5,10 @@ import { readField, readResultContentText } from "../../../registries/default-re
 import type { ToolRenderer, ToolView } from "../../../registries/tool-renderer-registry";
 import { ToolBodySection } from "../tool-body-card";
 import { ToolBodyTerm } from "../tool-card";
-import { toolStatusForCall } from "./renderer-utils";
 
 interface RetainItem {
-	readonly content?: string | undefined;
-	readonly context?: string | undefined;
+	readonly content?: string;
+	readonly context?: string;
 }
 
 function readRetainItems(input: unknown): RetainItem[] {
@@ -24,7 +23,7 @@ export const renderRetain: ToolRenderer = (call: ActiveToolCall): ToolView => {
 	const countField = readField(details, "count");
 	const count = typeof countField === "number" ? countField : items.length;
 	const errorText = readResultContentText(call.output) ?? "Retain failed";
-	const status = toolStatusForCall(call.status);
+	const status = call.status === "error" ? "error" : call.status === "running" ? "pending" : "success";
 
 	const visibleItems = items.filter(item => (item.content ?? "").trim().length > 0);
 

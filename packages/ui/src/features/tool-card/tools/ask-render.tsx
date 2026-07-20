@@ -35,22 +35,22 @@ const RECOMMENDED_SUFFIX = " (Recommended)";
 
 interface AskOption {
 	readonly label: string;
-	readonly description?: string | undefined;
+	readonly description?: string;
 }
 
 interface AskQuestion {
 	readonly id: string;
 	readonly question: string;
-	readonly options?: readonly AskOption[] | undefined;
-	readonly multi?: boolean | undefined;
-	readonly recommended?: number | undefined;
+	readonly options?: readonly AskOption[];
+	readonly multi?: boolean;
+	readonly recommended?: number;
 }
 
 /** Minimal shape of a typed FIELD spec (number/slider/toggle/tags) — only what
  *  formatting the answered value needs; the rest of `AskField` is irrelevant here. */
 interface AskFieldMeta {
-	readonly type?: string | undefined;
-	readonly unit?: string | undefined;
+	readonly type?: string;
+	readonly unit?: string;
 }
 
 /** A typed-field answer value: number/slider -> number, toggle -> boolean,
@@ -63,24 +63,24 @@ interface AskResult {
 	readonly options: readonly string[];
 	readonly multi: boolean;
 	readonly selectedOptions: readonly string[];
-	readonly customInput?: string | undefined;
+	readonly customInput?: string;
 	/** Present when this question was a typed field (mutually exclusive with options). */
-	readonly field?: AskFieldMeta | undefined;
-	readonly value?: AskFieldValue | undefined;
+	readonly field?: AskFieldMeta;
+	readonly value?: AskFieldValue;
 }
 
 interface AskDetails {
 	/** Single question mode */
-	readonly question?: string | undefined;
-	readonly options?: readonly string[] | undefined;
-	readonly multi?: boolean | undefined;
-	readonly selectedOptions?: readonly string[] | undefined;
-	readonly customInput?: string | undefined;
+	readonly question?: string;
+	readonly options?: readonly string[];
+	readonly multi?: boolean;
+	readonly selectedOptions?: readonly string[];
+	readonly customInput?: string;
 	/** Multi-part question mode */
-	readonly results?: readonly AskResult[] | undefined;
+	readonly results?: readonly AskResult[];
 	/** Single-question field mode (mutually exclusive with options/selectedOptions). */
-	readonly field?: AskFieldMeta | undefined;
-	readonly value?: AskFieldValue | undefined;
+	readonly field?: AskFieldMeta;
+	readonly value?: AskFieldValue;
 }
 
 /**
@@ -89,8 +89,8 @@ interface AskDetails {
  * on the input questions.
  */
 interface OptionMeta {
-	readonly description?: string | undefined;
-	readonly recommended?: boolean | undefined;
+	readonly description?: string;
+	readonly recommended?: boolean;
 }
 
 // ─── Defensive parse ────────────────────────────────────────────────────────
@@ -225,8 +225,8 @@ function AnswerOptions({
 	readonly meta: Map<string, OptionMeta>;
 	/** Present when the question was a typed field (number/slider/toggle/tags)
 	 *  instead of options — mutually exclusive with options/selectedOptions. */
-	readonly field?: AskFieldMeta | undefined;
-	readonly value?: AskFieldValue | undefined;
+	readonly field?: AskFieldMeta;
+	readonly value?: AskFieldValue;
 }): ReactNode {
 	const selected = new Set(selectedOptions ?? []);
 	const hasFieldAnswer = value !== undefined;

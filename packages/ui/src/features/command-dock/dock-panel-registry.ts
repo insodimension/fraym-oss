@@ -4,9 +4,10 @@ import type { ReactNode } from "react";
  * A dock panel: which dock tab it renders into + how it renders its payload.
  *
  * The dock is a source-agnostic content surface: slash commands, tool results,
- * and session events all `registerDockPanel` and `openDockPanel` the same way.
- * `kind` is a neutral panel id ("usage", "browser", "plan"), never a command
- * name. `tab` is either the shared "insights" tab or a dedicated dock tab.
+ * session events, and plugins all `registerDockPanel` and `openDockPanel` the
+ * same way. `kind` is a neutral panel id ("usage", "browser", "plan"), never a
+ * command name (LAW 2). `tab` is either the shared "insights" multiplexer tab or
+ * a dedicated dock tab ("plan", "tasks", "tree").
  */
 export interface DockPanel {
 	/** Dock tab id this panel renders into. */
@@ -20,7 +21,9 @@ export interface DockPanel {
 }
 
 /**
- * Panel kinds are inserted at runtime, so a Map is the appropriate structure.
+ * Panel kinds are inserted at runtime — built-ins register at module load,
+ * plugins/MCP can register later — so a Map (not a static Record) is the right
+ * structure here.
  */
 const DOCK_PANELS = new Map<string, DockPanel>();
 

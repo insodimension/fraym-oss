@@ -16,8 +16,8 @@ interface JobSnapshot {
 	status: "running" | "completed" | "failed" | "cancelled";
 	label: string;
 	durationMs: number;
-	resultText?: string | undefined;
-	errorText?: string | undefined;
+	resultText?: string;
+	errorText?: string;
 }
 
 interface CancelOutcome {
@@ -71,7 +71,7 @@ function parseCancelled(details: unknown): CancelOutcome[] {
 
 const STATUS_ORDER: Record<string, number> = { running: 0, failed: 1, cancelled: 2, completed: 3 };
 
-function sortJobs(jobs: readonly JobSnapshot[]): JobSnapshot[] {
+function sortJobs(jobs: JobSnapshot[]): JobSnapshot[] {
 	return [...jobs].sort((a, b) => {
 		const diff = (STATUS_ORDER[a.status] ?? 9) - (STATUS_ORDER[b.status] ?? 9);
 		if (diff !== 0) return diff;
@@ -244,7 +244,7 @@ function jobBody({
 	return (
 		<ToolBodySection title="Jobs" padContent maxHeight={400}>
 			<div className="flex min-w-0 flex-col gap-1">
-				{sortJobs(jobs).map((job, index) => (
+				{sortJobs([...jobs]).map((job, index) => (
 					<JobRow key={job.id || `job-${index}`} job={job} />
 				))}
 				{cancelled.length > 0 && (

@@ -9,7 +9,7 @@
 import { Fragment } from "react";
 import { Icon } from "../../../../icons";
 import { cn } from "../../../../lib/cn";
-import type { DiffViewerFile, DiffViewerLine } from "./diff-types";
+import type { DiffViewerFile, DiffViewerLine } from "../../../diff/diff-types";
 import { ToolBodyCard, ToolBodySection } from "../../tool-body-card";
 import type { AstEditChangeLine, AstEditFileGroup } from "./ast-edit-display";
 
@@ -41,10 +41,10 @@ function groupsToDiffFiles(groups: readonly AstEditFileGroup[]): DiffViewerFile[
 export interface AstEditDiffBodyProps {
 	readonly groups: readonly AstEditFileGroup[];
 	/** Dim footer notes (limit reached / N parse errors). */
-	readonly footerNotes?: readonly string[] | undefined;
+	readonly footerNotes?: readonly string[];
 	/** Fallback file label for a single-file edit with no header (e.g. the input path). */
-	readonly fallbackFile?: string | undefined;
-	readonly className?: string | undefined;
+	readonly fallbackFile?: string;
+	readonly className?: string;
 }
 
 /** One change row: right-aligned line number + `-`/`+` marker + content, del red / add green. */
@@ -117,7 +117,7 @@ export function AstEditDiffBody({ groups, footerNotes, fallbackFile, className }
 						return (
 							<Fragment key={`${group.dir ?? ""}/${group.file}#${group.hash ?? ""}-${i}`}>
 								{dirChanged ? <div className="text-fr-text-3">{group.dir}/</div> : null}
-									<FileBlock group={group} {...(fallbackFile === undefined ? {} : { fallbackFile })} />
+								<FileBlock group={group} fallbackFile={fallbackFile} />
 							</Fragment>
 						);
 					})}

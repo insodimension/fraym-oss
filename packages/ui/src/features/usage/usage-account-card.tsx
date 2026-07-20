@@ -1,5 +1,5 @@
 import type { UsageAccountView } from "@fraym/driver";
-import { Icon } from "../../icons";
+import { ProviderBrandIcon } from "../../components";
 import { Badge, Card, CardContent } from "../../elements";
 import { UsageMeter } from "./usage-meter";
 import { usageDataAgeLabel } from "./usage-staleness";
@@ -14,7 +14,11 @@ export function UsageAccountCard({ account, className }: UsageAccountCardProps) 
 	return (
 		<Card className={className}>
 			<div className="flex items-center gap-2.5 px-3 pt-3 pb-1">
-				<Icon name="user" size={16} className="text-fr-text-3" />
+				<ProviderBrandIcon
+					providerId={account.provider}
+					providerName={account.label || account.provider}
+					size="sm"
+				/>
 				<div className="min-w-0 flex-1">
 					<div className="fr-overflow text-fr-sm font-semibold text-fr-text">{account.label}</div>
 					{account.accountId && <div className="fr-overflow text-fr-2xs text-fr-text-3">{account.accountId}</div>}

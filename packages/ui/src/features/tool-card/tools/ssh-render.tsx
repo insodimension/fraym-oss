@@ -112,7 +112,7 @@ function renderSshBody(ctx: SshRenderContext): ReactNode {
 						{ctx.command.split("\n")[0]}
 					</>
 				}
-					footer={ctx.streaming ? null : ctx.truncated ? <BashTruncationNote {...(ctx.artifact === undefined ? {} : { artifact: ctx.artifact })} /> : null}
+				footer={ctx.streaming ? null : ctx.truncated ? <BashTruncationNote artifact={ctx.artifact} /> : null}
 				maxHeight={SSH_BODY_MAX_HEIGHT}
 				followTail={ctx.streaming}
 				tailKey={ctx.output}

@@ -7,7 +7,7 @@ import { DEFAULT_SLASH_ENTRY_POLICY } from "../../registries/slash-entry-policy"
 // Slash-entry presentation resolver — the composer's consumer of the
 // `SlashEntryPolicy` standard. Resolves a menu option's icon/label/hidden across
 // four override layers (later wins): bundled default ▸ engine wire (option.icon)
-// ▸ plugin (fraym.plugin.json) ▸ user (Fraym config). Falls back to the kind
+// ▸ plugin (the plugin manifest) ▸ user (Fraym config). Falls back to the kind
 // glyph when no layer supplies an icon.
 
 /** The plugin + user policy layers, threaded from the Fraym root. The bundled

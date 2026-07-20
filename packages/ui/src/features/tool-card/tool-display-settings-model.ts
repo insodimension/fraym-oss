@@ -12,21 +12,21 @@ export type ToolDefaultOpen = "none" | "failed" | "running" | "all";
 export type ThreadCollapseMode = "simple" | "worked";
 
 export interface ToolDisplaySettings {
-	readonly defaultOpen?: ToolDefaultOpen | undefined;
+	readonly defaultOpen?: ToolDefaultOpen;
 	/** Card density applied to tool cards under this provider (overridable per-card). */
-	readonly density?: FraymDensity | undefined;
+	readonly density?: FraymDensity;
 	/** How long agent turns condense in the thread (default `worked`). */
-	readonly collapseMode?: ThreadCollapseMode | undefined;
+	readonly collapseMode?: ThreadCollapseMode;
 	/** When `collapseMode: "simple"`, how many blocks to show before windowing (default 10). */
-	readonly maxVisibleBlocks?: number | undefined;
+	readonly maxVisibleBlocks?: number;
 	/** How many recent turns to keep before windowing the very early ones (default 12). */
-	readonly maxVisibleTurns?: number | undefined;
+	readonly maxVisibleTurns?: number;
 	/** Per-tool icon policy (exact + ordered globs) resolved over each card's kind icon. */
-	readonly iconPolicy?: ToolIconPolicy | undefined;
+	readonly iconPolicy?: ToolIconPolicy;
 	/** Coalesce runs of consecutive tool calls into one nested group card (default `false`). */
-	readonly groupConsecutiveTools?: boolean | undefined;
+	readonly groupConsecutiveTools?: boolean;
 	/** Minimum consecutive-call run length before a group forms (default 2). */
-	readonly groupThreshold?: number | undefined;
+	readonly groupThreshold?: number;
 }
 
 export const DEFAULT_TOOL_DISPLAY_SETTINGS: Required<ToolDisplaySettings> = Object.freeze({
@@ -69,6 +69,6 @@ export function resolveToolDefaultOpen(
 	// per-tool in bash only). Completion hands control back to the policy: the
 	// ToolCard defaultOpen effect re-applies it unless the user toggled.
 	if (DEFAULT_OPEN_STATUSES.running?.has(status ?? "")) return true;
-	const mode = settings?.defaultOpen ?? DEFAULT_TOOL_DISPLAY_SETTINGS.defaultOpen ?? "none";
+	const mode = settings?.defaultOpen ?? DEFAULT_TOOL_DISPLAY_SETTINGS.defaultOpen;
 	return TOOL_DEFAULT_OPEN_RULES[mode](status);
 }

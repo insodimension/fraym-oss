@@ -1,13 +1,10 @@
 import { useMemo } from "react";
 import { useShikiLineHtml } from "../../elements/code-block";
 import { cn } from "../../lib/cn";
+import { detectLanguage } from "../code-viewer/code-viewer";
 import { ToolBodySection } from "../tool-card/tool-body-card";
 import type { DiffViewerFile, DiffViewerLine, DiffViewerLineKind, DiffViewMode } from "./diff-types";
 import { pairForSplit, type SplitPair } from "./split-pairs";
-function detectLanguage(path: string): string {
-	const extension = path.split(".").pop()?.toLowerCase();
-	return extension === "tsx" || extension === "ts" ? "typescript" : extension ?? "text";
-}
 
 interface DiffRowsProps {
 	readonly file: DiffViewerFile;

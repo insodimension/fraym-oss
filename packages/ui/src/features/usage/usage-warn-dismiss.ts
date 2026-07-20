@@ -19,9 +19,11 @@ export function usageDismissKey(windowId: string, accountLabel: string): string 
 }
 
 /**
- * Quota windows are hours-to-days apart, but reported reset times can jitter by
- * a few hundred milliseconds between polls. Match within a tolerance so a
- * dismissal remains stable without hiding a genuinely reset window.
+ * Quota windows are hours-to-days apart, but the engine's reported `resetsAt`
+ * jitters by a few hundred ms between polls (it recomputes it each snapshot), so an
+ * EXACT match would make a stored dismissal never line up with the live value → the
+ * strip would always reappear. Match within a tolerance: far above the jitter, far
+ * below the gap to a genuinely-reset window (the shortest common window is 5h).
  */
 const WINDOW_MATCH_MS = 5 * 60_000;
 

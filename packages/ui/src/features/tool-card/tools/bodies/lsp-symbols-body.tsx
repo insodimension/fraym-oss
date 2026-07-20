@@ -15,14 +15,14 @@ import type { ParsedSymbol } from "./lsp-parse";
 export interface LspSymbolsBodyProps {
 	readonly fileName: string;
 	readonly symbols: ParsedSymbol[];
-	readonly maxHeight?: number | undefined;
+	readonly maxHeight?: number;
 }
 
 export interface LspSymbolsWorkspaceBodyProps {
 	readonly query: string;
 	readonly count: number;
 	readonly raw: string;
-	readonly maxHeight?: number | undefined;
+	readonly maxHeight?: number;
 }
 
 export function LspSymbolsBody({ fileName, symbols, maxHeight = 240 }: LspSymbolsBodyProps): ReactNode {

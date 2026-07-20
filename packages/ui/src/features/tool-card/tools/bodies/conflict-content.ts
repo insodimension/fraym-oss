@@ -16,7 +16,7 @@
 // (`engine/.../tools/conflict-detect.ts`): exact 7-char runs so indented or
 // marker-shaped prose is never mistaken for a conflict.
 
-import type { DiffViewerFile, DiffViewerLine } from "./diff-viewer";
+import type { DiffViewerFile, DiffViewerLine } from "../../../diff/diff-viewer";
 
 export type ConflictSide = "ours" | "base" | "theirs";
 export type ConflictMarkerKind = "ours" | "base" | "sep" | "theirs";

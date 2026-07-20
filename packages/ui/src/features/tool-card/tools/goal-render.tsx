@@ -20,7 +20,7 @@ interface GoalRecord {
 	readonly id: string;
 	readonly objective: string;
 	readonly status: GoalState;
-	readonly tokenBudget?: number | undefined;
+	readonly tokenBudget?: number;
 	readonly tokensUsed: number;
 	readonly timeUsedSeconds: number;
 }

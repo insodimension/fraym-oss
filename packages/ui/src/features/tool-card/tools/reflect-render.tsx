@@ -5,13 +5,12 @@ import { readResultContentText, readStringField } from "../../../registries/defa
 import type { ToolRenderer, ToolView } from "../../../registries/tool-renderer-registry";
 import { ToolBodySection } from "../tool-body-card";
 import { ToolBodyTerm } from "../tool-card";
-import { toolStatusForCall } from "./renderer-utils";
 
 export const renderReflect: ToolRenderer = (call: ActiveToolCall): ToolView => {
 	const query = readStringField(call.input, "query")?.trim();
 	const answer = readResultContentText(call.output) ?? "";
 	const errorText = answer || "Reflect failed";
-	const status = toolStatusForCall(call.status);
+	const status = call.status === "error" ? "error" : call.status === "running" ? "pending" : "success";
 
 	const badges: ReactNode[] = [];
 	if (query) {

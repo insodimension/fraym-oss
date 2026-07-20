@@ -17,11 +17,11 @@ export interface WriteContentBodyProps {
 	/** Shiki language id (from the path extension). */
 	readonly language: string;
 	/** Cap (px) for this content's scroll window. Omit for no cap. */
-	readonly maxHeight?: number | undefined;
+	readonly maxHeight?: number;
 	/** Auto-scroll to the tail as content grows (streaming). */
-	readonly followTail?: boolean | undefined;
+	readonly followTail?: boolean;
 	/** Show the line-number gutter. Default true. */
-	readonly lineNumbers?: boolean | undefined;
+	readonly lineNumbers?: boolean;
 }
 
 export function WriteContentBody({ text, language, maxHeight, followTail, lineNumbers = true }: WriteContentBodyProps) {

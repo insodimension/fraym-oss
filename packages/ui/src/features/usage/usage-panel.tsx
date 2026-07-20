@@ -150,7 +150,7 @@ function freshnessButtonClass(status: UsageFreshness["status"] | "unavailable"):
 
 function freshnessDotClass(status: UsageFreshness["status"] | "unavailable"): string | false {
 	if (status === "ready") return "bg-fr-accent";
-	if (status === "syncing") return "animate-ping bg-fr-warn";
+	if (status === "syncing") return "animate-[fr-breathe_1.6s_infinite] bg-fr-warn";
 	if (status === "stale") return "bg-fr-warn";
 	return false;
 }

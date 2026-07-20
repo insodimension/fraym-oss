@@ -18,7 +18,6 @@ import { ToolBodyCard, ToolBodySection } from "../tool-body-card";
 import { ToolBodyTerm, type ToolStatus } from "../tool-card";
 import { parseAnsi } from "./bodies/ansi";
 import { BashStatsRow, BashTruncationNote } from "./bodies/bash-body";
-import { readFirstTextResult, readNumberField } from "./renderer-utils";
 
 // Per-card output height cap (px) — matches the edit/write caps so the card stays compact;
 // the output scrolls within this window and follows the tail while streaming.
@@ -28,6 +27,11 @@ type BadgeTone = "accent" | "add" | "blue" | "warn" | "mute" | "del";
 
 // --- defensive parse (local; no coupling to the monolith) -------------------
 
+function readNumberField(value: unknown, key: string): number | undefined {
+	const v = readField(value, key);
+	return typeof v === "number" ? v : undefined;
+}
+
 function isStringRecord(value: unknown): value is Record<string, string> {
 	return (
 		typeof value === "object" &&
@@ -35,6 +39,20 @@ function isStringRecord(value: unknown): value is Record<string, string> {
 		!Array.isArray(value) &&
 		Object.values(value as Record<string, unknown>).every(v => typeof v === "string")
 	);
+}
+
+/** Pull the first text part out of an `AgentToolResult`-shaped output. */
+function readResultText(output: unknown): string | undefined {
+	const content = readField(output, "content");
+	if (Array.isArray(content)) {
+		for (const part of content) {
+			if (readField(part, "type") === "text") {
+				const text = readField(part, "text");
+				if (typeof text === "string") return text;
+			}
+		}
+	}
+	return undefined;
 }
 
 // --- command prefix ---------------------------------------------------------
@@ -104,7 +122,7 @@ function readBashOutput(call: ActiveToolCall, details: unknown, truncated: boole
 	// Prefer the structured result (clean output; full at finish) over `call.text`, which
 	// carries the ACP mapper's `$ command` preamble and, once finished, holds only the stale
 	// streamed tail. Fall back to text for snapshots that carry no structured output.
-	let output = readFirstTextResult(call.output) ?? call.text ?? "";
+	let output = readResultText(call.output) ?? call.text ?? "";
 	output = stripWallTimeNotice(output, detailsWallMs);
 	if (truncated) output = stripTrailingBracketNotice(output);
 	return output.replace(/\s+$/, "");
@@ -200,7 +218,7 @@ function renderBashBody(ctx: BashRenderContext): ReactNode {
 							{ctx.truncated ? (
 								<>
 									{" · "}
-									<BashTruncationNote {...(ctx.artifact === undefined ? {} : { artifact: ctx.artifact })} />
+									<BashTruncationNote artifact={ctx.artifact} />
 								</>
 							) : null}
 						</>

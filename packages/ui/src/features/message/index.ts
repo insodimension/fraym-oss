@@ -1,12 +1,2 @@
-export * from "./message";
+export { Message, type MessageBlock, type MessageData, type MessageProps, TextBubble } from "./message";
 export * from "./messages";
-export * from "./surface-messages";
-export * from "./advisor-note-surface";
-export * from "./async-result-surface";
-export * from "./background-task-dispatch-surface";
-export * from "./btw-answer-surface";
-export * from "./feedback-result-surface";
-export * from "./handoff-context-surface";
-export * from "./lsp-late-diagnostic-surface";
-export * from "./relay-message-surface";
-export * from "./skill-prompt-surface";

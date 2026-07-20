@@ -6,8 +6,8 @@ import { cn } from "../../../../lib/cn";
 export interface ToolArgsPreviewProps {
 	readonly args: unknown;
 	/** Max characters per value before truncation (default 80). */
-	readonly maxValueLength?: number | undefined;
-	readonly className?: string | undefined;
+	readonly maxValueLength?: number;
+	readonly className?: string;
 }
 
 function preview(value: unknown, max: number): string {

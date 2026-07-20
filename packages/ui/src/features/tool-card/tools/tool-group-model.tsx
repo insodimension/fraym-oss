@@ -25,7 +25,7 @@ import {
 	useToolRendererMap,
 } from "../../../registries/tool-renderer-registry";
 import { ToolCard, type ToolKind, type ToolStatus } from "../tool-card";
-import { DEFAULT_TOOL_DISPLAY_SETTINGS, resolveToolDefaultOpen, useToolDisplaySettings } from "../tool-display-settings";
+import { resolveToolDefaultOpen, useToolDisplaySettings } from "../tool-display-settings";
 import { coalesceReadGroups } from "./read-group-model";
 import { ToolRender, toolKindForName } from "./tool-render";
 
@@ -55,10 +55,10 @@ function isUngroupableCall(call: ActiveToolCall): boolean {
 
 interface GroupHead {
 	readonly kind: ToolKind;
-	readonly icon?: IconSpec | undefined;
+	readonly icon?: IconSpec;
 	readonly label: ReactNode;
-	readonly badges?: ReactNode | undefined;
-	readonly stat?: string | undefined;
+	readonly badges?: ReactNode;
+	readonly stat?: string;
 }
 
 /**
@@ -88,10 +88,10 @@ export interface ToolGroupCardProps {
 	/** The ordered run of consecutive calls (≥2). The LAST is the "latest" shown collapsed. */
 	readonly calls: readonly ActiveToolCall[];
 	/** Renders one child call as its own card. Defaults to the production `<ToolRender>`. */
-	readonly renderChild?: (call: ActiveToolCall, index: number) => ReactNode | undefined;
+	readonly renderChild?: (call: ActiveToolCall, index: number) => ReactNode;
 	/** Explicit group-stack disclosure; otherwise resolved from display settings. */
-	readonly defaultOpen?: boolean | undefined;
-	readonly className?: string | undefined;
+	readonly defaultOpen?: boolean;
+	readonly className?: string;
 }
 
 /**
@@ -104,7 +104,7 @@ export function ToolGroupCard({ calls, renderChild, defaultOpen, className }: To
 	const renderers = useToolRendererMap();
 	const latest = calls[calls.length - 1];
 	const head = useMemo(
-		() => (latest ? deriveHead(latest, settings.iconPolicy ?? DEFAULT_TOOL_DISPLAY_SETTINGS.iconPolicy!, renderers) : null),
+		() => (latest ? deriveHead(latest, settings.iconPolicy, renderers) : null),
 		[latest, settings.iconPolicy, renderers],
 	);
 	if (!latest || !head) return null;
@@ -165,11 +165,11 @@ export function ToolGroupCard({ calls, renderChild, defaultOpen, className }: To
 
 export interface CoalesceToolGroupsOptions {
 	/** Minimum consecutive-call run length before grouping (default `DEFAULT_TOOL_GROUP_THRESHOLD`). */
-	readonly threshold?: number | undefined;
+	readonly threshold?: number;
 	/** Treat `reasoning` blocks as run-glue too (fold hidden thinking into a tool group).
 	 *  Set when reasoning is HIDDEN (`!showReasoning`) so a burst the model interleaved with
 	 *  thinking still groups; leave false when reasoning is VISIBLE so it stays a separator. */
-	readonly glueReasoning?: boolean | undefined;
+	readonly glueReasoning?: boolean;
 }
 
 /**

@@ -15,9 +15,38 @@ import type { ToolStatus } from "../tool-card";
 import { EditErrorBody } from "./bodies/edit-diff-body";
 import { FindEmptyBody, FindListBody } from "./bodies/find-list-body";
 import { dimChip, truncatingChip } from "./chip";
-import { readFirstTextResult, readNumberField, readStringArrayField, toPathList } from "./renderer-utils";
 
 // --- defensive parse (local; no coupling to the monolith) -------------------
+
+function readNumberField(value: unknown, key: string): number | undefined {
+	const v = readField(value, key);
+	return typeof v === "number" ? v : undefined;
+}
+
+function readStringArray(value: unknown, key: string): string[] {
+	const v = readField(value, key);
+	return Array.isArray(v) ? v.filter((s): s is string => typeof s === "string") : [];
+}
+
+/** `paths` is the glob list (string or string[]) in the schema. */
+function toPathList(input: unknown): string[] {
+	if (typeof input === "string") return [input];
+	return Array.isArray(input) ? input.filter((s): s is string => typeof s === "string") : [];
+}
+
+/** First text part out of an `AgentToolResult`-shaped output. */
+function readResultText(output: unknown): string | undefined {
+	const content = readField(output, "content");
+	if (Array.isArray(content)) {
+		for (const part of content) {
+			if (readField(part, "type") === "text") {
+				const text = readField(part, "text");
+				if (typeof text === "string") return text;
+			}
+		}
+	}
+	return undefined;
+}
 
 function pushResultLimitReason(reasons: string[], value: unknown): void {
 	const reached = typeof value === "number" ? value : readNumberField(value, "reached");
@@ -72,10 +101,10 @@ interface FindContext {
 }
 
 function readFindFiles(call: ActiveToolCall, details: unknown): { fileCount: number; files: string[] } {
-	const detailFiles = readStringArrayField(details, "files");
+	const detailFiles = readStringArray(details, "files");
 	const fileCountRaw = readNumberField(details, "fileCount");
 	const hasDetailed = fileCountRaw !== undefined || detailFiles.length > 0;
-	const plainText = typeof call.text === "string" ? call.text : readFirstTextResult(call.output);
+	const plainText = typeof call.text === "string" ? call.text : readResultText(call.output);
 	const plainLines = !hasDetailed && plainText ? plainText.split("\n").filter(line => line.trim() !== "") : [];
 	const files = hasDetailed ? detailFiles : plainLines;
 	return { fileCount: fileCountRaw ?? files.length, files };
@@ -87,7 +116,7 @@ function readFindError(call: ActiveToolCall, details: unknown): { isError: boole
 	const rawError =
 		errorText ??
 		(typeof call.text === "string" ? call.text : undefined) ??
-		readFirstTextResult(call.output) ??
+		readResultText(call.output) ??
 		"Find failed";
 	return { isError, errorText: rawError.replace(/^Error:\s*/, "") };
 }
@@ -112,7 +141,7 @@ function readFindContext(call: ActiveToolCall): FindContext {
 		truncated,
 		truncationReasons: reasons,
 		artifact,
-		missingPaths: readStringArrayField(details, "missingPaths"),
+		missingPaths: readStringArray(details, "missingPaths"),
 	};
 }
 

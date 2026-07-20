@@ -13,7 +13,7 @@ import { Badge } from "../../../elements/badge";
 import type { ActiveToolCall } from "../../../hooks/session-types";
 import { readField, readStringField, toTermLines } from "../../../registries/default-renderer-utils";
 import type { ToolRenderer, ToolView } from "../../../registries/tool-renderer-registry";
-import { DataInspectorBody } from "./data-inspector-body";
+import { DataInspectorBody } from "../../data-inspector";
 import { ToolBodySection } from "../tool-body-card";
 import { ToolBodyTerm, type ToolStatus } from "../tool-card";
 import { EditErrorBody, EditStreamingFooter } from "./bodies/edit-diff-body";
@@ -34,13 +34,13 @@ function readResultText(output: unknown): string | undefined {
 }
 
 interface LspInput {
-	readonly action?: string | undefined;
-	readonly file?: string | undefined;
-	readonly line?: number | undefined;
-	readonly symbol?: string | undefined;
-	readonly query?: string | undefined;
-	readonly new_name?: string | undefined;
-	readonly apply?: boolean | undefined;
+	readonly action?: string;
+	readonly file?: string;
+	readonly line?: number;
+	readonly symbol?: string;
+	readonly query?: string;
+	readonly new_name?: string;
+	readonly apply?: boolean;
 }
 
 function readLspInput(call: ActiveToolCall): LspInput {
@@ -83,7 +83,7 @@ function buildTarget(input: LspInput): string | undefined {
 
 interface LspBadges {
 	readonly action: string;
-	readonly target?: string | undefined;
+	readonly target?: string;
 	readonly meta: ReactNode[];
 }
 

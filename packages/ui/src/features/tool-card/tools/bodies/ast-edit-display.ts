@@ -17,7 +17,7 @@ const BAR = "\u2502"; // │
 
 export interface AstEditChangeLine {
 	/** 1-based source line number (undefined for unnumbered lines). */
-	readonly line?: number | undefined;
+	readonly line?: number;
 	/** Content to the right of the gutter `│`. */
 	readonly text: string;
 	/** `del` = before (`-`), `add` = after (`+`). */
@@ -26,26 +26,26 @@ export interface AstEditChangeLine {
 
 export interface AstEditFileGroup {
 	/** Directory the file lives in (no trailing slash); undefined for root-level / single-file. */
-	readonly dir?: string | undefined;
+	readonly dir?: string;
 	/** File name (basename for grouped output). Empty when a single-file edit emitted no header. */
 	readonly file: string;
 	/** Trailing `#<hash>` content-hash from the file header, when present. */
-	readonly hash?: string | undefined;
+	readonly hash?: string;
 	/** ` (N replacements)` annotation from the file header, when present. */
-	readonly replacements?: number | undefined;
+	readonly replacements?: number;
 	readonly lines: readonly AstEditChangeLine[];
 }
 
 interface MutableGroup {
-	dir?: string | undefined;
+	dir?: string;
 	file: string;
-	hash?: string | undefined;
-	replacements?: number | undefined;
+	hash?: string;
+	replacements?: number;
 	lines: AstEditChangeLine[];
 }
 
 /** Peel ` (N replacements)` and `#<hash>` off a file-header name → name + hash + count. */
-function splitFileHeader(raw: string): { name: string; hash?: string | undefined; replacements?: number | undefined } {
+function splitFileHeader(raw: string): { name: string; hash?: string; replacements?: number } {
 	let rest = raw.trimEnd();
 	let replacements: number | undefined;
 	const repMatch = rest.match(/\((\d+)\s+replacements?\)\s*$/);

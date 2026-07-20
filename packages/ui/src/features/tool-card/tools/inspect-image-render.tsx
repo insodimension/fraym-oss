@@ -101,9 +101,9 @@ function buildInspectBadges({
 	model,
 	mimeType,
 }: {
-	readonly path?: string | undefined;
-	readonly model?: string | undefined;
-	readonly mimeType?: string | undefined;
+	readonly path?: string;
+	readonly model?: string;
+	readonly mimeType?: string;
 }): ReactNode[] {
 	const badges: ReactNode[] = [];
 	if (path) {
@@ -137,8 +137,8 @@ function pushInspectSections({
 	text,
 }: {
 	readonly sections: ReactNode[];
-	readonly imagePreview?: InlineImage | undefined;
-	readonly question?: string | undefined;
+	readonly imagePreview?: InlineImage;
+	readonly question?: string;
 	readonly text: string;
 }): void {
 	if (imagePreview) {
@@ -168,8 +168,8 @@ function renderInspectBody({
 }: {
 	readonly isError: boolean;
 	readonly text: string;
-	readonly imagePreview?: InlineImage | undefined;
-	readonly question?: string | undefined;
+	readonly imagePreview?: InlineImage;
+	readonly question?: string;
 }): ReactNode {
 	if (isError) return <EditErrorBody message={text || "request failed"} />;
 	const sections: ReactNode[] = [];

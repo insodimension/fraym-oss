@@ -189,14 +189,14 @@ export function combineMessage(value: string, pasted: string): string {
 	return `${value}\n\n${pasted}`;
 }
 
-/** A recipe pinned to the composer (Studio): renders as a leading pill (icon +
+/** A pipeline pinned to the composer (Studio): renders as a leading pill (icon +
  *  title) the same way a committed slash command does, marking that the next
- *  send runs through this recipe. `onRemove` clears the pin. */
-export interface ComposerRecipeTag {
+ *  send runs through this pipeline. `onRemove` clears the pin. */
+export interface ComposerPipelineTag {
 	readonly id: string;
 	readonly title: string;
 	readonly icon: IconName;
-	/** Composer ghost text while this recipe is pinned — the recipe's example
+	/** Composer ghost text while this pipeline is pinned — the pipeline's example
 	 *  brief as a HINT (placeholder), never typed-for-you content. */
 	readonly placeholder?: string;
 	readonly onRemove?: () => void;
@@ -205,7 +205,7 @@ export interface ComposerRecipeTag {
 /** A seeded CONTEXT pinned to the composer (the loop-agent dock): a leading badge
  *  pill (icon + label) that says WHAT this thread is for — "New loop", "Editing
  *  <name>" — carried as a first-class UI component instead of priming the message
- *  box with text. Mirrors {@link ComposerRecipeTag}; `onRemove` clears it. */
+ *  box with text. Mirrors {@link ComposerPipelineTag}; `onRemove` clears it. */
 export interface ComposerContextTag {
 	readonly label: string;
 	readonly icon: IconName;
@@ -281,7 +281,7 @@ function longestBacktickRun(text: string): number {
  * length-delimited marker so the durable user-message renderer can collapse it
  * without duplicating the content or relying on an escapable closing tag. */
 export function foldPasteAttachment(attachment: ComposerPasteAttachment): string {
-	if (!attachment.name) return `[[paste:${attachment.text.length}]]\n${attachment.text}`;
+	if (!attachment.name) return `[[fraym-paste:${attachment.text.length}]]\n${attachment.text}`;
 	const sizeLabel =
 		typeof attachment.sizeBytes === "number" ? ` · ${Math.max(1, Math.round(attachment.sizeBytes / 1024))} KB` : "";
 	if (attachment.binary) {
@@ -328,9 +328,9 @@ export interface ComposerProps {
 	readonly attachments?: readonly ComposerImageAttachment[];
 	readonly onAttachmentsChange?: (attachments: readonly ComposerImageAttachment[]) => void;
 	readonly leftSlot?: React.ReactNode;
-	/** A recipe pinned to this composer (Studio): shows a leading recipe pill
+	/** A pipeline pinned to this composer (Studio): shows a leading pipeline pill
 	 *  (icon + title). Absent → no pill. */
-	readonly recipeTag?: ComposerRecipeTag | null;
+	readonly pipelineTag?: ComposerPipelineTag | null;
 	/** A seeded context pinned to this composer (loop-agent dock): a leading badge
 	 *  pill marking the thread's purpose. Absent → no pill. */
 	readonly contextTag?: ComposerContextTag | null;
@@ -759,7 +759,7 @@ interface ComposerFieldProps {
 	readonly committed: CommittedCommand | null;
 	readonly onRemoveCommand: () => void;
 	readonly onRemoveChip: (index: number) => void;
-	readonly recipeTag?: ComposerRecipeTag | null;
+	readonly pipelineTag?: ComposerPipelineTag | null;
 	readonly contextTag?: ComposerContextTag | null;
 	readonly primedSkills?: readonly string[];
 	readonly attachments: readonly ComposerImageAttachment[];
@@ -975,7 +975,7 @@ function ComposerField({
 	menuCrumb,
 	menuStageLabel,
 	onCaretChange,
-	recipeTag,
+	pipelineTag,
 	contextTag,
 	primedSkills,
 }: ComposerFieldProps) {
@@ -1067,25 +1067,25 @@ function ComposerField({
 				</div>
 			)}
 			<div className="flex flex-wrap items-baseline gap-x-2 gap-y-1 px-3.5 pt-[13px] pb-1">
-				{recipeTag && (
+				{pipelineTag && (
 					<span
-						data-slot="composer-recipe-pill"
-						className="group/recipe inline-flex shrink-0 items-center gap-1.5 rounded-[10px] border border-fr-accent-line bg-fr-accent-dim py-1 pr-2 pl-1 font-secondary text-[0.95em] font-medium text-fr-accent"
+						data-slot="composer-pipeline-pill"
+						className="group/pipeline inline-flex shrink-0 items-center gap-1.5 rounded-[10px] border border-fr-accent-line bg-fr-accent-dim py-1 pr-2 pl-1 font-secondary text-[0.95em] font-medium text-fr-accent"
 					>
 						<span
 							aria-hidden
 							className="grid size-5 shrink-0 place-items-center rounded-[7px] text-fr-accent-ink [background:var(--fr-accent-grad)]"
 						>
-							<Icon name={recipeTag.icon} size={13} strokeWidth={2} />
+							<Icon name={pipelineTag.icon} size={13} strokeWidth={2} />
 						</span>
-						<span className="max-w-[200px] fr-overflow">{recipeTag.title}</span>
-						{recipeTag.onRemove && (
+						<span className="max-w-[200px] fr-overflow">{pipelineTag.title}</span>
+						{pipelineTag.onRemove && (
 							<button
 								type="button"
-								onClick={recipeTag.onRemove}
-								aria-label={`Remove ${recipeTag.title}`}
-								title={`Remove ${recipeTag.title}`}
-								className="grid size-4 shrink-0 place-items-center rounded-full text-fr-accent/70 opacity-0 transition-opacity hover:text-fr-text group-hover/recipe:opacity-100"
+								onClick={pipelineTag.onRemove}
+								aria-label={`Remove ${pipelineTag.title}`}
+								title={`Remove ${pipelineTag.title}`}
+								className="grid size-4 shrink-0 place-items-center rounded-full text-fr-accent/70 opacity-0 transition-opacity hover:text-fr-text group-hover/pipeline:opacity-100"
 							>
 								<Icon name="x" size={11} strokeWidth={2.5} />
 							</button>
@@ -1441,7 +1441,7 @@ function useComposerFieldProps(props: ComposerProps): ComposerFieldProps {
 		onAttachmentsChange,
 		pasteAttachments: controlledPasteAttachments,
 		onPasteAttachmentsChange,
-		recipeTag,
+		pipelineTag,
 		contextTag,
 		primedSkills,
 		voice,
@@ -1852,7 +1852,7 @@ function useComposerFieldProps(props: ComposerProps): ComposerFieldProps {
 		committed: committedCommand,
 		onRemoveCommand,
 		onRemoveChip,
-		recipeTag,
+		pipelineTag,
 		contextTag,
 		primedSkills,
 	};

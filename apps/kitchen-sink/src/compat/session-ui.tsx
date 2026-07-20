@@ -1,5 +1,6 @@
-import type { AgentEvent, AgentEventStream, SessionDriver, SessionDriverEvent, SessionRef } from "@fraym/driver";
+import { createEventStreamSessionDriver, type AgentEvent, type AgentEventStream, type SessionDriver, type SessionDriverEvent, type SessionRef } from "@fraym/driver";
 import {
+	SessionProvider as UiSessionProvider,
 	Composer,
 	GoalComposerSurface,
 	MessageBlockProvider,
@@ -133,7 +134,12 @@ type ConnectedThreadProps = Omit<React.ComponentProps<typeof PublicThread>, "sou
 	readonly verberProfile?: string | undefined;
 };
 
-export function ConnectedMessageThread({ presence: _presence, verberProfile: _profile, ...props }: ConnectedThreadProps) {
+export function ConnectedMessageThread({ presence, verberProfile: _profile, ...props }: ConnectedThreadProps) {
 	const { source } = useSession();
-	return <PublicThread source={source} {...props} />;
+	const adapter = useMemo(() => createEventStreamSessionDriver(source), [source]);
+	return (
+		<UiSessionProvider driver={adapter} sessionRef={adapter.sessionRef} initialSnapshot={null}>
+			<PublicThread presence={presence} {...props} />
+		</UiSessionProvider>
+	);
 }

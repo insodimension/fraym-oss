@@ -151,7 +151,7 @@ export function editorCaretOffset(root: HTMLElement, selection: Selection | null
 	return offset;
 }
 
-const LOOP_AGENT_SEED_RE = /@(?:\.fraym)\/agents\/([^/\s]+)\/agent\.md/g;
+const LOOP_AGENT_SEED_RE = /@\.fraym\/agents\/([^/\s]+)\/agent\.md/g;
 
 function loopAgentLabel(slug: string): string {
 	try {

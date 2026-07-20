@@ -34,16 +34,20 @@ export interface SessionItem {
 	readonly id: string;
 	readonly sessionRef?: SessionRef;
 	readonly title: string;
-	/** A pending background session with no catalog row yet. It renders as a
-	 * non-clickable locating shimmer until the next refresh finds the row. */
+	/** A confirmed background tick with no catalog session yet. Renders as a
+	 * non-clickable locating shimmer until the relist replaces it with a real row. */
 	readonly locating?: boolean;
+	/** Session origin, from the driver `SessionSnapshot.source`. `"autonomy"` marks a
+	 *  Loop tick; the Loops grouping classifies runs by this (with the `loop: ` title
+	 *  prefix as display + pre-source fallback). Absent → a human session. */
 	readonly source?: "user" | "autonomy";
 	/** Leading glyph shown in place of the status dot. Absent → the normal status
 	 *  dot / presence avatar renders. */
 	readonly icon?: IconName;
-	/** Explicit activity state for this row's dot. It wins over `icon` and the
-	 * derived status dot: `needs-you` awaits input, `background` is active,
-	 * `off` is paused or unknown, and `ok` is healthy. */
+	/** Explicit activity STATE for this row's dot — wins over `icon` and the
+	 *  derived `status` dot. The Loops rows set it to say live status (see
+	 *  {@link ActivityState}): `needs-you` = a run awaits you (violet + ping),
+	 *  `background` = attention, `off` = paused/unknown, `ok` = healthy. */
 	readonly dotState?: ActivityState;
 	readonly time: string;
 	/** The rail dot's semantic state, derived once in `sessionDot` from the
@@ -371,9 +375,10 @@ const FLYOUT_MAX_PX = 360;
 const FLYOUT_CLOSE_MS = 90;
 
 /**
- * A project group when the rail is compact: one folder icon carries an active
- * accent and a running-session indicator. Hover or focus opens a portaled
- * flyout with the same session rows as the expanded rail.
+ * A project group when the rail is compact: a single folder icon carrying an
+ * active-project accent bar and a running-session activity badge. Hover/focus opens
+ * a portaled flyout (right of the icon) with the full session list — the same
+ * SessionRailItem rows the expanded rail uses, so nothing is hand-ported.
  */
 const CompactRailGroup = memo(function CompactRailGroup({
 	group,
@@ -437,7 +442,7 @@ const CompactRailGroup = memo(function CompactRailGroup({
 				{hasRunning && (
 					<span
 						aria-hidden="true"
-						className="absolute right-1.5 top-1.5 size-1.5 rounded-full bg-fr-accent shadow-[0_0_0_3px_var(--fr-rail)] animate-ping"
+						className="absolute right-1.5 top-1.5 size-1.5 rounded-full bg-fr-accent shadow-[0_0_0_3px_var(--fr-rail)] animate-[fr-breathe_1.6s_infinite]"
 					/>
 				)}
 				{group.worktree && (

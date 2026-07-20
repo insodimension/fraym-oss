@@ -1,1 +1,1 @@
-export * from "./permission-menu";
+export { type PermissionDef, PermissionMenu, type PermissionMenuProps } from "./permission-menu";

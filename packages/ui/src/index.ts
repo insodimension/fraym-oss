@@ -7,7 +7,9 @@ export type { IconSpec } from "@fraym/config";
 export type { ActiveToolCall } from "./hooks/session-types";
 export { type LineStream, useLineStream } from "./hooks/use-line-stream";
 
-export { Thread, ThreadView, type ThreadProps, type ThreadViewProps } from "./Thread";
+export { Fraym, type FraymProps, type FraymSettingsPanel } from "./fraym-root-core";
+export { SessionProvider, type SessionProviderProps } from "./hooks/session-provider";
+export { useSession, useSessionOptional, useVibr } from "./hooks/use-session";
 export { ThreadMessage } from "./features/thread";
 export { SessionThread, type SessionThreadProps } from "./SessionThread";
 export { ApprovalCard, type ApprovalCardProps } from "./ApprovalCard";
@@ -65,4 +67,7 @@ export * from "./components";
 export * from "./pages";
 export * from "./registries";
 export * from "./features";
+// `features/message` and `registries` both surface message-block shapes; the
+// registry versions are the canonical public ones.
+export type { MessageBlock, MessageData } from "./registries";
 export * from "./theme";

@@ -1,60 +1,173 @@
-import type { ReactNode } from "react";
+// surface-kit — shared foundation for the agent-surface features. Holds the
+// cross-cutting surface config types, density/tone style helpers, and small
+// view-model helpers used by multiple feature folders. Knows only tokens + icons.
+
 import type { TaskPhase } from "@fraym/driver";
+import type { IconName } from "../icons";
 
 export type FraymDensity = "compact" | "comfortable" | "spacious";
 export type FraymMotion = "system" | "reduced" | "full";
 export type FraymSurfacePlacement = "inline" | "dock" | "modal" | "bottom" | "hidden";
-export type ComposerControlTone = "default" | "accent" | "add" | "warn" | "del" | "blue";
-export type ToolTimelineStatus = "queued" | "running" | "waiting" | "success" | "failed";
 
 export interface FraymSurfaceConfig {
-  readonly density?: FraymDensity;
-  readonly motion?: FraymMotion;
-  readonly placement?: FraymSurfacePlacement;
-  readonly visible?: boolean;
+	readonly density?: FraymDensity;
+	readonly motion?: FraymMotion;
+	readonly placement?: FraymSurfacePlacement;
+	readonly visible?: boolean;
 }
 
+export type ComposerControlTone = "default" | "accent" | "add" | "warn" | "del" | "blue";
+
+export type ToolTimelineStatus = "queued" | "running" | "waiting" | "success" | "failed";
+
 export interface ToolMetadataItem {
-  readonly id: string;
-  readonly label: string;
-  readonly value: ReactNode;
-  readonly tone?: ComposerControlTone | "mute";
-  readonly hidden?: boolean;
+	readonly id: string;
+	readonly label: string;
+	readonly value: React.ReactNode;
+	readonly tone?: ComposerControlTone | "mute";
+	readonly hidden?: boolean;
 }
 
 export interface DisplaySurfaceAction {
-  readonly id: string;
-  readonly label: string;
-  readonly icon?: ReactNode;
-  readonly variant?: "default" | "outline" | "ghost";
+	readonly id: string;
+	readonly label: string;
+	readonly icon?: IconName;
+	readonly variant?: "default" | "outline" | "ghost";
 }
 
+// ── Density as information architecture, not whitespace ──────────────────────
+// The three density modes are deliberately DIFFERENT layouts, not the same
+// layout with different padding. Each component switches on `mode` (or the
+// `isCompact`/`isSpacious` flags) to pick a structurally distinct treatment:
+//
+//   compact      → "console": one hairline-divided line per item, mono-leaning,
+//                  status as a single dot/glyph, no card chrome. Maximal density.
+//   comfortable  → "card":    bordered surface cards, icon tile + label + one
+//                  metadata line + badge. The balanced product default.
+//   spacious     → "dashboard": large tinted icon tiles, two-line content with
+//                  descriptions, progress meters, generous grouping. Editorial.
+//
+// The class tokens below tune the *within-mode* rhythm; the real differentiation
+// lives in each feature's render branch. `card` is intentionally empty in compact
+// so list features render a flat, divided surface instead of nested cards.
 export interface DensityKit {
-  readonly mode: FraymDensity;
-  readonly isCompact: boolean;
-  readonly isSpacious: boolean;
-  readonly gap: string;
-  readonly pad: string;
-  readonly row: string;
-  readonly text: string;
-  readonly title: string;
-  readonly label: string;
-  readonly card: string;
-  readonly icon: number;
-  readonly tile: string;
-  readonly tileRadius: string;
+	readonly mode: FraymDensity;
+	readonly isCompact: boolean;
+	readonly isSpacious: boolean;
+	/** flex/grid gap between sibling blocks */
+	readonly gap: string;
+	/** padding for a card/section interior */
+	readonly pad: string;
+	/** padding for a single list row */
+	readonly row: string;
+	/** body text size */
+	readonly text: string;
+	/** heading / title size */
+	readonly title: string;
+	/** secondary label / caption size */
+	readonly label: string;
+	/** card surface chrome (border + bg + radius); empty in compact */
+	readonly card: string;
+	/** glyph pixel size for the mode */
+	readonly icon: number;
+	/** icon-tile box size class */
+	readonly tile: string;
+	/** icon-tile corner radius class */
+	readonly tileRadius: string;
 }
 
-const kits: Record<FraymDensity, DensityKit> = {
-  compact: { mode: "compact", isCompact: true, isSpacious: false, gap: "fraym-density--tight", pad: "fraym-pad--compact", row: "fraym-row--compact", text: "fraym-text--xs", title: "fraym-text--sm", label: "fraym-text--2xs", card: "fraym-surface--flat", icon: 12, tile: "fraym-tile--compact", tileRadius: "fraym-radius--sm" },
-  comfortable: { mode: "comfortable", isCompact: false, isSpacious: false, gap: "fraym-density--normal", pad: "fraym-pad--comfortable", row: "fraym-row--comfortable", text: "fraym-text--sm", title: "fraym-text--base", label: "fraym-text--xs", card: "fraym-surface--card", icon: 14, tile: "fraym-tile--comfortable", tileRadius: "fraym-radius--md" },
-  spacious: { mode: "spacious", isCompact: false, isSpacious: true, gap: "fraym-density--loose", pad: "fraym-pad--spacious", row: "fraym-row--spacious", text: "fraym-text--base", title: "fraym-text--md", label: "fraym-text--xs", card: "fraym-surface--dashboard", icon: 18, tile: "fraym-tile--spacious", tileRadius: "fraym-radius--lg" },
-};
+const densityKit = {
+	compact: {
+		mode: "compact",
+		isCompact: true,
+		isSpacious: false,
+		gap: "gap-px",
+		pad: "p-2",
+		row: "px-2 py-1",
+		text: "text-fr-xs",
+		title: "text-fr-sm",
+		label: "text-fr-2xs",
+		card: "",
+		icon: 12,
+		tile: "size-4",
+		tileRadius: "rounded-[4px]",
+	},
+	comfortable: {
+		mode: "comfortable",
+		isCompact: false,
+		isSpacious: false,
+		gap: "gap-2",
+		pad: "p-3",
+		row: "px-3 py-2",
+		text: "text-fr-sm",
+		title: "text-fr-base",
+		label: "text-fr-xs",
+		card: "rounded-[10px] border border-fr-border-soft bg-fr-surface",
+		icon: 14,
+		tile: "size-7",
+		tileRadius: "rounded-[8px]",
+	},
+	spacious: {
+		mode: "spacious",
+		isCompact: false,
+		isSpacious: true,
+		gap: "gap-3",
+		pad: "p-4",
+		row: "px-4 py-3",
+		text: "text-fr-base",
+		title: "text-fr-md",
+		label: "text-fr-xs",
+		card: "rounded-[14px] border border-fr-border bg-fr-surface",
+		icon: 18,
+		tile: "size-10",
+		tileRadius: "rounded-[11px]",
+	},
+} as const satisfies Record<FraymDensity, DensityKit>;
 
-export function resolveDensity(density: FraymDensity = "comfortable"): DensityKit { return kits[density]; }
-export function dotToneClass(tone: ComposerControlTone | "mute" = "mute"): string { return `fraym-tone-dot--${tone}`; }
-export function toneClass(tone: ComposerControlTone = "default", active = false): string { return `fraym-tone--${tone}${active ? " is-active" : ""}`; }
-export function taskStatusTone(status: string): ComposerControlTone { return status === "completed" ? "add" : status === "in_progress" ? "accent" : status === "abandoned" ? "del" : "default"; }
-export function taskStatusIcon(status: string): string { return status === "completed" ? "✓" : status === "in_progress" ? "✦" : status === "abandoned" ? "×" : "◷"; }
-export function taskCounts(phases: readonly TaskPhase[]) { let total = 0; let completed = 0; let active = 0; for (const phase of phases) for (const task of phase.tasks) { total += 1; if (task.status === "completed") completed += 1; else if (task.status === "in_progress") active += 1; } return { total, completed, active }; }
-export function currentTask(phases: readonly TaskPhase[]) { for (const phase of phases) for (const task of phase.tasks) if (task.status === "in_progress") return task; return undefined; }
+export function resolveDensity(density?: FraymDensity): DensityKit {
+	return densityKit[density ?? "comfortable"];
+}
+
+/** Solid fill color for a status dot / meter fill, keyed to the tone palette. */
+export function dotToneClass(tone?: ComposerControlTone | "mute"): string {
+	if (tone === "accent") return "bg-fr-accent";
+	if (tone === "add") return "bg-fr-add";
+	if (tone === "warn") return "bg-fr-warn";
+	if (tone === "del") return "bg-fr-del";
+	if (tone === "blue") return "bg-fr-blue";
+	return "bg-fr-text-3";
+}
+
+export function toneClass(tone: ComposerControlTone | undefined, active?: boolean) {
+	if (tone === "accent") return active ? "bg-fr-accent-dim text-fr-accent" : "text-fr-accent";
+	if (tone === "add") return active ? "bg-fr-add-bg text-fr-add" : "text-fr-add";
+	if (tone === "warn") return active ? "bg-fr-accent-dim text-fr-warn" : "text-fr-warn";
+	if (tone === "del") return active ? "bg-fr-del-bg text-fr-del" : "text-fr-del";
+	if (tone === "blue") return active ? "bg-fr-accent-dim text-fr-blue" : "text-fr-blue";
+	return active ? "bg-fr-surface-2 text-fr-text" : "text-fr-text-2";
+}
+
+export function taskStatusTone(status: string): ComposerControlTone {
+	if (status === "completed") return "add";
+	if (status === "in_progress") return "accent";
+	if (status === "abandoned") return "del";
+	return "default";
+}
+
+export function taskStatusIcon(status: string): IconName {
+	if (status === "completed") return "check";
+	if (status === "in_progress") return "spark";
+	if (status === "abandoned") return "x";
+	return "clock";
+}
+
+export function taskCounts(phases: readonly TaskPhase[]) {
+	const tasks = phases.flatMap(phase => phase.tasks);
+	const completed = tasks.filter(task => task.status === "completed").length;
+	const active = tasks.filter(task => task.status === "in_progress").length;
+	return { total: tasks.length, completed, active };
+}
+
+export function currentTask(phases: readonly TaskPhase[]) {
+	return phases.flatMap(phase => phase.tasks).find(task => task.status === "in_progress");
+}

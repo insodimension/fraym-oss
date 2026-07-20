@@ -19,14 +19,14 @@ export interface FindListBodyProps {
 	/** Relative paths; a trailing `/` marks a directory (mirrors the TUI `entry.endsWith("/")`). */
 	readonly files: readonly string[];
 	/** Dim truncation reasons (e.g. `limit 1000 results`, `line limit`). */
-	readonly truncationReasons?: readonly string[] | undefined;
+	readonly truncationReasons?: readonly string[];
 	/** `artifact://…` reference for the full spilled output. */
-	readonly artifact?: string | undefined;
+	readonly artifact?: string;
 	/** Non-fatal skipped paths whose base directory was missing on disk. */
-	readonly missingPaths?: readonly string[] | undefined;
+	readonly missingPaths?: readonly string[];
 	/** Auto-scroll to the tail as the list grows (streaming). */
-	readonly followTail?: boolean | undefined;
-	readonly className?: string | undefined;
+	readonly followTail?: boolean;
+	readonly className?: string;
 }
 
 /** One listing row: file/folder icon + relative path. Directories are accent-colored. */
@@ -76,7 +76,7 @@ export function FindListBody({
 	className,
 }: FindListBodyProps) {
 	if (files.length === 0) {
-		return <FindEmptyBody {...(missingPaths === undefined ? {} : { missingPaths })} />;
+		return <FindEmptyBody missingPaths={missingPaths} />;
 	}
 	return (
 		<ToolBodyCard className={className}>

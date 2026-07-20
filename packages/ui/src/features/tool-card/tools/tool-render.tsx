@@ -9,7 +9,7 @@
 import { resolveToolIcon } from "@fraym/config";
 import { type ReactNode, useMemo } from "react";
 import type { ActiveToolCall } from "../../../hooks/session-types";
-import { useToolStream } from "../../../hooks/use-tool-stream";
+import { useToolStream } from "../../../hooks/use-session";
 import { Icon } from "../../../icons";
 import { cn } from "../../../lib/cn";
 import {
@@ -48,8 +48,8 @@ export function ToolGlyph({ name, size = 14 }: { readonly name: string; readonly
 		<Icon
 			name={config.icon}
 			size={size}
-			{...(config.filled === undefined ? {} : { filled: config.filled })}
-			{...(config.viewBox === undefined ? {} : { viewBox: config.viewBox })}
+			filled={config.filled}
+			viewBox={config.viewBox}
 			className={cn("shrink-0", config.iconColor)}
 		/>
 	);
@@ -74,11 +74,11 @@ function fallbackToolStatus(status: ActiveToolCall["status"]): ToolView["status"
 export interface ToolRenderProps {
 	readonly call: ActiveToolCall;
 	/** Override the registry-resolved renderer for this call. */
-	readonly renderer?: ToolRenderer | undefined;
-	readonly defaultOpen?: boolean | undefined;
+	readonly renderer?: ToolRenderer;
+	readonly defaultOpen?: boolean;
 	/** Card density (head/body geometry): comfortable · compact · spacious. */
-	readonly density?: FraymDensity | undefined;
-	readonly className?: string | undefined;
+	readonly density?: FraymDensity;
+	readonly className?: string;
 }
 
 interface ToolRenderModel {
@@ -166,8 +166,8 @@ export function ToolRender({ call, renderer, defaultOpen, density, className }: 
 }
 
 export interface ConnectedToolStreamProps {
-	readonly className?: string | undefined;
-	readonly emptyState?: React.ReactNode | undefined;
+	readonly className?: string;
+	readonly emptyState?: React.ReactNode;
 }
 
 /** Live tool calls from the session driver, each rendered via the registry. */

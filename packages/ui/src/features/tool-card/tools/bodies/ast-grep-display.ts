@@ -19,34 +19,34 @@ const BAR = "\u2502"; // │
 
 export interface AstGrepLine {
 	/** 1-based source line number (undefined for meta rows / unnumbered lines). */
-	readonly line?: number | undefined;
+	readonly line?: number;
 	/** Content to the right of the gutter `│` (or the serialized captures for a meta row). */
 	readonly text: string;
 	/** True for the match node's first line (`*` marker); false for continuation lines. */
 	readonly isMatch: boolean;
 	/** True for a `meta: …` capture row attached to the preceding match. */
-	readonly meta?: boolean | undefined;
+	readonly meta?: boolean;
 }
 
 export interface AstGrepFileGroup {
 	/** Directory the file lives in (no trailing slash); undefined for root-level / single-file. */
-	readonly dir?: string | undefined;
+	readonly dir?: string;
 	/** File name (basename for grouped output). Empty when a single-file search emitted no header. */
 	readonly file: string;
 	/** Trailing `#<hash>` content-hash from the file header, when present. */
-	readonly hash?: string | undefined;
+	readonly hash?: string;
 	readonly lines: readonly AstGrepLine[];
 }
 
 interface MutableGroup {
-	dir?: string | undefined;
+	dir?: string;
 	file: string;
-	hash?: string | undefined;
+	hash?: string;
 	lines: AstGrepLine[];
 }
 
 /** Peel a trailing ` (suffix)` annotation and a `#<hash>` off a file-header name. */
-function splitHeaderName(raw: string): { name: string; hash?: string | undefined } {
+function splitHeaderName(raw: string): { name: string; hash?: string } {
 	const noSuffix = raw.replace(/\s+\([^)]*\)\s*$/, "").trimEnd();
 	const hashMatch = noSuffix.match(/#([0-9a-f]+)$/);
 	if (hashMatch && hashMatch.index !== undefined) {

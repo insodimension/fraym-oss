@@ -96,7 +96,7 @@ export function McpModal({ servers, onToggle, onClose, className }: McpModalProp
 						<Icon name="shield" size={16} strokeWidth={1.8} />
 					</div>
 					<div>
-						<h2 className="font-display text-fr-lg font-semibold">MCP connections</h2>
+						<h2 className="font-display text-fr-lg font-semibold">MCP &amp; Plugins</h2>
 						<div className="text-xs text-fr-text-3">Connect tools and data sources to Fraym</div>
 					</div>
 					<button type="button" className="ml-auto text-fr-text-3 hover:text-fr-text" onClick={onClose}>

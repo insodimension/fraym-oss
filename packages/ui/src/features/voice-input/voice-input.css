@@ -1,0 +1,480 @@
+/* Voice input — mic button ⇄ listening pill with a living Nebula core and a
+ * HERO nebula-gradient waveform.
+ *
+ * All color rides the --fr-* tokens (accent for the live state); every
+ * animation gates on prefers-reduced-motion. The pill blooms from the mic
+ * button with a halo ripple; a nebula haze breathes behind it driven by
+ * --voice-level (the REAL voice amplitude); the pill's own surface carries
+ * a faint aurora wash so the waveform floats in a gas cloud. No text chrome
+ * — timer + icon-only actions; the transcript floats ABOVE as a frameless
+ * glass caption. */
+
+.fr-voice {
+	position: relative;
+	display: inline-flex;
+	align-items: center;
+}
+
+/* ── Idle mic button ─────────────────────────────────────────────────────── */
+
+.fr-voice-btn {
+	position: relative;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 30px;
+	height: 30px;
+	border-radius: 999px;
+	border: 1px solid var(--fr-border-soft);
+	background: transparent;
+	color: var(--fr-text-2);
+	cursor: pointer;
+	transition:
+		color 160ms ease,
+		border-color 160ms ease,
+		background-color 160ms ease,
+		box-shadow 260ms ease,
+		transform 160ms cubic-bezier(0.2, 0.9, 0.3, 1.4);
+}
+
+.fr-voice-btn:hover:not(:disabled) {
+	color: var(--fr-accent);
+	border-color: var(--fr-accent-line);
+	background: var(--fr-accent-dim);
+	transform: scale(1.06);
+	box-shadow:
+		0 0 12px -2px color-mix(in srgb, var(--fr-accent) 45%, transparent),
+		0 0 28px -6px color-mix(in srgb, var(--fr-accent) 30%, transparent);
+}
+
+.fr-voice-btn:active:not(:disabled) {
+	transform: scale(0.94);
+}
+
+.fr-voice-btn:disabled {
+	opacity: 0.45;
+	cursor: default;
+}
+
+.fr-voice-btn:focus-visible {
+	outline: 2px solid var(--fr-accent);
+	outline-offset: 1px;
+}
+/* ── Listening pill ──────────────────────────────────────────────────────── */
+
+.fr-voice-pill {
+	position: relative;
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	min-width: 300px;
+	max-width: 460px;
+	padding: 4px 7px 4px 4px;
+	border-radius: 999px;
+	border: 1px solid var(--fr-accent-line);
+	/* Aurora wash INSIDE the pill — two faint hue lobes under the waveform. */
+	background:
+		radial-gradient(
+			120% 160% at 12% 0%,
+			color-mix(in srgb, var(--fr-accent) 13%, transparent) 0%,
+			transparent 55%
+		),
+		radial-gradient(
+			110% 150% at 78% 100%,
+			color-mix(in srgb, var(--fr-accent-2) 11%, transparent) 0%,
+			transparent 58%
+		),
+		color-mix(in srgb, var(--fr-accent) 6%, var(--fr-surface));
+	box-shadow:
+		0 0 0 3px var(--fr-accent-dim),
+		0 6px 24px -12px color-mix(in srgb, var(--fr-accent) 45%, transparent);
+	/* Bloom out of the mic button's spot: grow rightward-anchored, so the pill
+	 * unfurls IN PLACE in the toolbar row (host hides its model picker). */
+	transform-origin: right center;
+	animation: fr-voice-pill-in 380ms cubic-bezier(0.2, 0.9, 0.25, 1.15);
+}
+
+@keyframes fr-voice-pill-in {
+	from {
+		transform: scaleX(0.12) scaleY(0.6);
+		opacity: 0;
+		filter: blur(4px);
+	}
+	60% {
+		filter: blur(0);
+	}
+	to {
+		transform: scale(1);
+		opacity: 1;
+	}
+}
+
+/* Nebula haze — a soft multi-stop bloom BEHIND the pill that breathes with
+ * the live voice level. Two hue stops (accent + accent-2) so it reads as a
+ * nebula, not a flat glow. */
+.fr-voice-pill::before {
+	content: "";
+	position: absolute;
+	inset: -22px -30px;
+	z-index: -1;
+	border-radius: 999px;
+	pointer-events: none;
+	background:
+		radial-gradient(
+			55% 90% at 18% 50%,
+			color-mix(in srgb, var(--fr-accent) calc(14% + var(--voice-level, 0) * 26%), transparent) 0%,
+			transparent 70%
+		),
+		radial-gradient(
+			50% 80% at 62% 40%,
+			color-mix(in srgb, var(--fr-accent-2) calc(10% + var(--voice-level, 0) * 22%), transparent) 0%,
+			transparent 72%
+		),
+		radial-gradient(
+			45% 75% at 85% 60%,
+			color-mix(in srgb, var(--fr-accent) calc(7% + var(--voice-level, 0) * 16%), transparent) 0%,
+			transparent 75%
+		);
+	filter: blur(10px);
+	animation: fr-voice-haze 5.2s ease-in-out infinite alternate;
+	transition: opacity 200ms ease;
+}
+
+@keyframes fr-voice-haze {
+	from {
+		transform: scale(0.98) translateX(-1.5%);
+	}
+	to {
+		transform: scale(1.04) translateX(1.5%);
+	}
+}
+
+/* Entrance halo — one expanding ring, fired when the pill mounts. */
+.fr-voice-pill::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	border-radius: 999px;
+	pointer-events: none;
+	border: 1.5px solid color-mix(in srgb, var(--fr-accent) 55%, transparent);
+	opacity: 0;
+	animation: fr-voice-halo 700ms cubic-bezier(0.2, 0.7, 0.3, 1) 80ms;
+}
+
+@keyframes fr-voice-halo {
+	from {
+		transform: scale(0.9);
+		opacity: 0.9;
+	}
+	to {
+		transform: scale(1.25);
+		opacity: 0;
+	}
+}
+
+/* ── Orb — a porthole into deep space, the living Nebula inside ─────────── */
+
+.fr-voice-orb {
+	position: relative;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 32px;
+	height: 32px;
+	flex: none;
+	overflow: hidden;
+	border-radius: 999px;
+	color: #fff;
+	/* Deep-space void: near-black violet with faint star specks, so the
+	 * nebula's blurred blobs read as a glowing gas cloud, not a white smear. */
+	background:
+		radial-gradient(1px 1px at 22% 28%, rgba(255, 255, 255, 0.7) 45%, transparent 55%),
+		radial-gradient(1px 1px at 70% 18%, rgba(255, 255, 255, 0.45) 45%, transparent 55%),
+		radial-gradient(1.5px 1.5px at 82% 66%, rgba(255, 255, 255, 0.55) 45%, transparent 55%),
+		radial-gradient(1px 1px at 38% 78%, rgba(255, 255, 255, 0.4) 45%, transparent 55%),
+		radial-gradient(1px 1px at 58% 44%, rgba(255, 255, 255, 0.3) 45%, transparent 55%),
+		radial-gradient(
+			circle at 42% 34%,
+			color-mix(in srgb, var(--fr-accent) 26%, #0a0714),
+			#07050f 76%
+		);
+	cursor: pointer;
+	border: 1px solid color-mix(in srgb, var(--fr-accent) 60%, transparent);
+	/* level-driven glow: quiet = tight ring, loud = wide nebula bloom */
+	box-shadow:
+		0 0 0 calc(2px + var(--voice-level, 0) * 10px)
+			color-mix(in srgb, var(--fr-accent) calc(16% + var(--voice-level, 0) * 30%), transparent),
+		0 0 calc(10px + var(--voice-level, 0) * 26px)
+			color-mix(in srgb, var(--fr-accent-2) calc(20% + var(--voice-level, 0) * 40%), transparent);
+	transition: box-shadow 90ms linear;
+}
+
+/* Glass dome over the void — a specular arc up top + inner rim shading, so
+ * the orb reads as a lens you're looking THROUGH at the nebula. */
+.fr-voice-orb::before {
+	content: "";
+	position: absolute;
+	inset: 0;
+	z-index: 2;
+	border-radius: 999px;
+	pointer-events: none;
+	background:
+		radial-gradient(120% 65% at 50% -12%, rgba(255, 255, 255, 0.28) 0%, transparent 42%),
+		radial-gradient(90% 90% at 50% 118%, color-mix(in srgb, var(--fr-accent) 22%, transparent) 0%, transparent 55%);
+	box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.55);
+}
+
+/* vibr Nebula fills the orb; its own drop-shadow glow rides along.
+ * The avatar's palette reads `--accent`/`--accent-2` (vibr's presence vars) —
+ * map them from the live --fr-* tokens. The custom class lands ON the nebula
+ * root, so chain (same element) to retint. Oversized relative to the orb so
+ * the morphing blobs bleed past the rim — a cloud seen through a porthole. */
+.fr-voice-nebula {
+	/* vibr's .nebula sets its own width/height (--disp) — inset can't size it.
+	 * Center the stage on the orb explicitly. */
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	pointer-events: none;
+	--accent: var(--fr-accent);
+	--accent-2: var(--fr-accent-2);
+	--accent-line: var(--fr-accent-line);
+	/* Nebula sizes via --disp (display px) against its internal --big stage. */
+	--disp: 64px;
+	/* Punch the cloud's saturation/glow up inside the dark void. */
+	filter: saturate(1.5) brightness(1.12);
+}
+
+.fr-voice-nebula.nebula {
+	/* Keep the top layers IN HUE — bright violet core, cool rim, no white-out. */
+	--nb1: var(--fr-accent);
+	--nb2: var(--fr-accent-2);
+	--nb3: color-mix(in srgb, var(--fr-accent) 55%, #7fd4ff);
+	--nb4: color-mix(in srgb, var(--fr-accent) 72%, #fff);
+}
+
+/* Mic glyph floats above the nebula core, shadowed so it stays legible. */
+.fr-voice-orb-glyph {
+	position: relative;
+	z-index: 3;
+	filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.7)) drop-shadow(0 0 5px rgba(0, 0, 0, 0.45));
+}
+
+.fr-voice-orb:focus-visible {
+	outline: 2px solid var(--fr-accent);
+	outline-offset: 2px;
+}
+
+/* Requesting-permission spinner ring around the orb. */
+.fr-voice-orb[data-phase="requesting"]::after {
+	content: "";
+	position: absolute;
+	inset: -4px;
+	border-radius: 999px;
+	border: 2px solid transparent;
+	border-top-color: var(--fr-accent);
+	animation: fr-voice-spin 800ms linear infinite;
+}
+
+@keyframes fr-voice-spin {
+	to {
+		transform: rotate(360deg);
+	}
+}
+
+/* ── Hero waveform ───────────────────────────────────────────────────────── */
+
+.fr-voice-wave {
+	flex: 1 1 auto;
+	min-width: 0;
+	height: 34px;
+	display: block;
+}
+
+.fr-voice-timer {
+	flex: none;
+	font-size: 11px;
+	font-variant-numeric: tabular-nums;
+	color: var(--fr-text-2);
+	padding: 0 2px;
+}
+
+/* Icon-only actions — borderless ghosts; hover lights them accent/ok. */
+.fr-voice-act {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 28px;
+	height: 28px;
+	flex: none;
+	border-radius: 999px;
+	border: none;
+	background: transparent;
+	color: var(--fr-text-2);
+	cursor: pointer;
+	transition:
+		color 120ms ease,
+		background-color 120ms ease,
+		transform 140ms cubic-bezier(0.2, 0.9, 0.3, 1.4);
+}
+
+.fr-voice-act:hover {
+	color: var(--fr-text);
+	background: var(--fr-accent-dim);
+	transform: scale(1.12);
+}
+
+.fr-voice-act[data-tone="commit"]:hover {
+	color: var(--fr-ok, #4ade80);
+	background: color-mix(in srgb, var(--fr-ok, #4ade80) 14%, transparent);
+}
+
+.fr-voice-act:focus-visible {
+	outline: 2px solid var(--fr-accent);
+	outline-offset: 1px;
+}
+
+/* ── Live transcript caption (ABOVE the pill — frameless glass) ─────────── */
+
+.fr-voice-transcript {
+	position: absolute;
+	bottom: calc(100% + 10px);
+	right: 0;
+	z-index: 30;
+	max-width: min(560px, 82vw);
+	width: max-content;
+	padding: 7px 13px;
+	border-radius: 14px;
+	background: color-mix(in srgb, var(--fr-surface) 72%, transparent);
+	backdrop-filter: blur(14px) saturate(1.3);
+	-webkit-backdrop-filter: blur(14px) saturate(1.3);
+	box-shadow:
+		inset 0 0 0 1px color-mix(in srgb, var(--fr-accent) 18%, transparent),
+		0 8px 28px -16px color-mix(in srgb, var(--fr-accent) 50%, transparent);
+	font-size: 13px;
+	line-height: 1.55;
+	color: var(--fr-text);
+	animation: fr-voice-transcript-in 240ms cubic-bezier(0.2, 0.9, 0.3, 1.15);
+}
+
+@keyframes fr-voice-transcript-in {
+	from {
+		transform: translateY(6px) scale(0.98);
+		opacity: 0;
+	}
+	to {
+		transform: translateY(0) scale(1);
+		opacity: 1;
+	}
+}
+
+/* Freshly-finalized phrase — pops in accent-bright, settles to text color. */
+.fr-voice-committed {
+	animation: fr-voice-commit 600ms cubic-bezier(0.2, 0.8, 0.3, 1);
+}
+
+@keyframes fr-voice-commit {
+	from {
+		color: var(--fr-accent);
+		text-shadow: 0 0 14px color-mix(in srgb, var(--fr-accent) 70%, transparent);
+	}
+	to {
+		color: inherit;
+		text-shadow: none;
+	}
+}
+
+/* Interim tail — the words still forming. Shimmer sweep, dimmed. */
+.fr-voice-interim {
+	color: var(--fr-text-2);
+	background: linear-gradient(
+		90deg,
+		var(--fr-text-2) 0%,
+		var(--fr-text) 45%,
+		var(--fr-text-2) 90%
+	);
+	background-size: 200% 100%;
+	-webkit-background-clip: text;
+	background-clip: text;
+	-webkit-text-fill-color: transparent;
+	animation: fr-voice-shimmer 1.4s linear infinite;
+}
+
+@keyframes fr-voice-shimmer {
+	from {
+		background-position: 200% 0;
+	}
+	to {
+		background-position: -200% 0;
+	}
+}
+
+/* Blinking "listening" caret at the transcript tail. */
+.fr-voice-caret {
+	display: inline-block;
+	width: 2px;
+	height: 1em;
+	margin-left: 2px;
+	vertical-align: text-bottom;
+	background: var(--fr-accent);
+	box-shadow: 0 0 6px color-mix(in srgb, var(--fr-accent) 80%, transparent);
+	animation: fr-voice-caret 1s steps(2, start) infinite;
+}
+
+@keyframes fr-voice-caret {
+	50% {
+		opacity: 0;
+	}
+}
+
+/* ── Error / denied note ─────────────────────────────────────────────────── */
+
+.fr-voice-note {
+	position: absolute;
+	top: calc(100% + 8px);
+	right: 0;
+	z-index: 30;
+	width: max-content;
+	max-width: 320px;
+	padding: 7px 11px;
+	border-radius: 10px;
+	border: 1px solid color-mix(in srgb, var(--fr-danger, #e5484d) 35%, transparent);
+	background: color-mix(in srgb, var(--fr-danger, #e5484d) 8%, var(--fr-surface));
+	font-size: 12px;
+	color: var(--fr-text);
+	animation: fr-voice-transcript-in 180ms ease-out;
+}
+
+/* ── Reduced motion — kill every animation; keep the level glow (static). ── */
+
+@media (prefers-reduced-motion: reduce) {
+	.fr-voice-pill,
+	.fr-voice-pill::before,
+	.fr-voice-pill::after,
+	.fr-voice-transcript,
+	.fr-voice-note,
+	.fr-voice-committed {
+		animation: none;
+	}
+	.fr-voice-btn,
+	.fr-voice-orb,
+	.fr-voice-act {
+		transition: none;
+	}
+	.fr-voice-orb[data-phase="requesting"]::after {
+		animation: none;
+		border-color: var(--fr-accent-line);
+	}
+	.fr-voice-interim {
+		animation: none;
+		background: none;
+		-webkit-text-fill-color: currentColor;
+	}
+	.fr-voice-caret {
+		animation: none;
+	}
+}

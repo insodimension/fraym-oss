@@ -1,16 +1,16 @@
-import { useState, type ReactNode } from "react";
-
-import type { AgentEventStream, ApprovalResponseEvent } from "@fraym/driver";
+import { useMemo, type ReactNode } from "react";
 
 import {
-  Composer,
-  type ComposerProps,
-} from "./features/composer";
+  type AgentEventStream,
+  type ApprovalResponseEvent,
+  createEventStreamSessionDriver,
+} from "@fraym/driver";
+
 import { ContextUsage } from "./Composer";
 import { Code } from "./elements/code";
 import { classNames } from "./elements/utils";
-import { ThreadView } from "./Thread";
-import { useAgentSession } from "./useAgentSession";
+import type { ComposerProps } from "./features/composer";
+import { WorkspaceSessionPane } from "./shell/workspace-session-pane";
 
 export interface SessionThreadProps {
   source: AgentEventStream;
@@ -19,21 +19,24 @@ export interface SessionThreadProps {
   placeholder?: string;
   model?: string;
   contextUsage?: number;
-  slashCommands?: ComposerProps["slashCommands"];
   composerLeftSlot?: ReactNode;
   composerRightSlot?: ReactNode;
-  transcriptFooter?: ReactNode;
   onSubmit?: ComposerProps["onSubmit"];
   onStop?: () => void;
   onApprovalResponse?: (event: ApprovalResponseEvent) => void;
 }
 
+/**
+ * The complete conversation surface — transcript + composer — over any
+ * `AgentEventStream`. Renders through the SAME workspace session pane the app
+ * shell uses (one thread implementation everywhere); the stream is adapted
+ * into the session-driver contract client-side.
+ */
 export function SessionThread({
   className,
-  slashCommands,
   composerLeftSlot,
   composerRightSlot,
-  contextUsage = 42,
+  contextUsage = 0,
   model = "Agent",
   onApprovalResponse,
   onStop,
@@ -41,40 +44,38 @@ export function SessionThread({
   placeholder,
   source,
   title = "Agent session",
-  transcriptFooter,
 }: SessionThreadProps) {
-  const session = useAgentSession(source);
-  const [composerValue, setComposerValue] = useState("");
-  const stop = () => {
-    session.stop();
-    onStop?.();
-  };
-  const submit: ComposerProps["onSubmit"] = (value, attachments) => {
-    onSubmit?.(value, attachments);
-    setComposerValue("");
-  };
-  const composerProps = {
-    value: composerValue,
-    onChange: setComposerValue,
-    onSubmit: submit,
-    streaming: session.streaming,
-    leftSlot: composerLeftSlot ?? <Code>{model}</Code>,
-    rightSlot: composerRightSlot ?? <ContextUsage value={contextUsage} />,
-    onStop: stop,
-    ...(slashCommands === undefined ? {} : { slashCommands }),
-    ...(placeholder === undefined ? {} : { placeholder }),
-  };
-  const threadProps = {
-    state: session.state,
-    title: `${title} transcript`,
-    ...(onApprovalResponse === undefined ? {} : { onApprovalResponse }),
-    ...(transcriptFooter === undefined ? {} : { transcriptFooter }),
-  };
-
+  const driver = useMemo(
+    () =>
+      createEventStreamSessionDriver(source, {
+        title,
+        model,
+        prompt: (input) => {
+          onSubmit?.(input.text, []);
+        },
+        cancel: onStop,
+        respondToApproval: onApprovalResponse,
+      }),
+    // The adapter binds once per stream; labels/handlers ride the initial options.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [source],
+  );
   return (
     <section aria-label={title} className={classNames("fraym-session-thread", className)}>
-      <ThreadView {...threadProps} />
-      <Composer {...composerProps} />
+      <WorkspaceSessionPane
+        driver={driver}
+        sessionRef={driver.sessionRef}
+        chrome={{
+          avatar: "blob",
+          showTailPresence: true,
+          showAvatars: false,
+          agentMeta: model,
+          placeholder: placeholder ?? "Reply, or type / for commands...",
+          leftSlot: composerLeftSlot ?? <Code>{model}</Code>,
+          rightSlot: composerRightSlot ?? <ContextUsage value={contextUsage} />,
+        }}
+        active
+      />
     </section>
   );
 }

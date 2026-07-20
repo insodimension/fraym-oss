@@ -17,12 +17,12 @@ const SEARCH_BODY_MAX_HEIGHT = 240;
 export interface SearchResultsBodyProps {
 	readonly groups: readonly SearchFileGroup[];
 	/** Dim truncation reasons (e.g. `first 20 files (skip to paginate)`). */
-	readonly truncationReasons?: readonly string[] | undefined;
+	readonly truncationReasons?: readonly string[];
 	/** `artifact://…` reference for the full spilled output. */
-	readonly artifact?: string | undefined;
+	readonly artifact?: string;
 	/** Non-fatal skipped paths whose base directory was missing on disk. */
-	readonly missingPaths?: readonly string[] | undefined;
-	readonly className?: string | undefined;
+	readonly missingPaths?: readonly string[];
+	readonly className?: string;
 }
 
 /** One code-frame row: right-aligned line number + content, match emphasized / context dim. */
@@ -94,7 +94,7 @@ export function SearchResultsBody({
 	className,
 }: SearchResultsBodyProps) {
 	if (groups.length === 0) {
-		return <SearchEmptyBody {...(missingPaths === undefined ? {} : { missingPaths })} />;
+		return <SearchEmptyBody missingPaths={missingPaths} />;
 	}
 	let lastDir: string | undefined;
 	return (

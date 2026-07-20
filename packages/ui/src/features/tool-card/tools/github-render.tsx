@@ -18,48 +18,52 @@ import type { ToolRenderer, ToolView } from "../../../registries/tool-renderer-r
 import { ToolBodyCard, ToolBodySection } from "../tool-body-card";
 import { ToolBodyTerm } from "../tool-card";
 import { EditErrorBody } from "./bodies/edit-diff-body";
-import { readNumberField } from "./renderer-utils";
 
 // ─── Types (local; mirrors Engine's GhToolDetails) ──────────────────────────
 
 interface GhRunWatchJobDetails {
 	id: number;
 	name: string;
-	status?: string | undefined;
-	conclusion?: string | undefined;
-	durationSeconds?: number | undefined;
-	url?: string | undefined;
+	status?: string;
+	conclusion?: string;
+	durationSeconds?: number;
+	url?: string;
 }
 
 interface GhRunWatchRunDetails {
 	id: number;
-	workflowName?: string | undefined;
-	displayTitle?: string | undefined;
-	branch?: string | undefined;
-	headSha?: string | undefined;
-	status?: string | undefined;
-	conclusion?: string | undefined;
-	url?: string | undefined;
+	workflowName?: string;
+	displayTitle?: string;
+	branch?: string;
+	headSha?: string;
+	status?: string;
+	conclusion?: string;
+	url?: string;
 	jobs: GhRunWatchJobDetails[];
 }
 
 interface GhRunWatchFailedLogDetails {
 	runId: number;
-	workflowName?: string | undefined;
+	workflowName?: string;
 	jobName: string;
-	available?: boolean | undefined;
-	tail?: string | undefined;
+	available?: boolean;
+	tail?: string;
 }
 
 interface GhRunWatchViewDetails {
 	mode: "run" | "commit";
 	state: "watching" | "completed";
 	repo: string;
-	headSha?: string | undefined;
-	note?: string | undefined;
-	run?: GhRunWatchRunDetails | undefined;
-	runs?: GhRunWatchRunDetails[] | undefined;
-	failedLogs?: GhRunWatchFailedLogDetails[] | undefined;
+	headSha?: string;
+	note?: string;
+	run?: GhRunWatchRunDetails;
+	runs?: GhRunWatchRunDetails[];
+	failedLogs?: GhRunWatchFailedLogDetails[];
+}
+
+function readNumberField(value: unknown, key: string): number | undefined {
+	const v = readField(value, key);
+	return typeof v === "number" ? v : undefined;
 }
 
 function readArrayField<T>(value: unknown, key: string): T[] | undefined {
@@ -177,7 +181,7 @@ const OP_LABELS: Record<string, string> = {
 function opBadge(op: string): ReactNode {
 	const label = OP_LABELS[op] ?? op;
 	return (
-		<Badge key="operation" variant="code" tone="accent">
+		<Badge variant="code" tone="accent">
 			{label}
 		</Badge>
 	);

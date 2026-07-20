@@ -15,7 +15,7 @@ export interface LspLocationsBodyProps {
 	readonly subKind: string;
 	readonly count: number;
 	readonly groups: LocationFileGroup[];
-	readonly maxHeight?: number | undefined;
+	readonly maxHeight?: number;
 }
 
 export function LspLocationsEmptyBody({ subKind }: { subKind: string }): ReactNode {

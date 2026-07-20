@@ -48,17 +48,17 @@ interface DebugDetails {
 		readonly id: string;
 		readonly adapter: string;
 		readonly cwd: string;
-		readonly program?: string | undefined;
+		readonly program?: string;
 		readonly status: string;
-		readonly stopReason?: string | undefined;
-		readonly frameName?: string | undefined;
-		readonly instructionPointerReference?: string | undefined;
-		readonly source?: { path?: string | undefined } | undefined;
-		readonly line?: number | undefined;
-		readonly column?: number | undefined;
-		readonly exitCode?: number | undefined;
-		readonly needsConfigurationDone?: boolean | undefined;
-	} | undefined;
+		readonly stopReason?: string;
+		readonly frameName?: string;
+		readonly instructionPointerReference?: string;
+		readonly source?: { path?: string };
+		readonly line?: number;
+		readonly column?: number;
+		readonly exitCode?: number;
+		readonly needsConfigurationDone?: boolean;
+	};
 }
 
 function readDebugDetails(call: ActiveToolCall): DebugDetails | undefined {

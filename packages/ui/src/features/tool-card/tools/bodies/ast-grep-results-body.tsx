@@ -18,8 +18,8 @@ const ASTGREP_BODY_MAX_HEIGHT = 240;
 export interface AstGrepResultsBodyProps {
 	readonly groups: readonly AstGrepFileGroup[];
 	/** Dim footer notes (limit reached / N parse errors / scope). */
-	readonly footerNotes?: readonly string[] | undefined;
-	readonly className?: string | undefined;
+	readonly footerNotes?: readonly string[];
+	readonly className?: string;
 }
 
 /** One frame row: a captured-metavariable line, or a code line (match emphasized / continuation dim). */

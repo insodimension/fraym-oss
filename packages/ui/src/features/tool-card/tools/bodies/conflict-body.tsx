@@ -16,7 +16,7 @@ export interface ConflictBodyProps {
 	/** Shiki language id (resolved from the conflict's real file path). */
 	readonly language: string;
 	/** Original file line of the first rendered line, for the gutter. */
-	readonly startLine?: number | undefined;
+	readonly startLine?: number;
 }
 
 // Above this, skip Shiki grammar tokenization (see file header).
@@ -76,7 +76,7 @@ export function ConflictBody({ text, language, startLine = 1 }: ConflictBodyProp
 		<pre className="fr-shiki-code m-0 overflow-auto whitespace-pre bg-transparent p-0 font-secondary text-fr-xs leading-[1.65] text-fr-text">
 			<code>
 				{parsed.map((line, i) => (
-						<ConflictRow key={i} line={line} {...(lineHtml?.[i] === undefined ? {} : { html: lineHtml[i] })} />
+					<ConflictRow key={i} line={line} html={lineHtml?.[i]} />
 				))}
 			</code>
 		</pre>

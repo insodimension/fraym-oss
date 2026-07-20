@@ -235,7 +235,8 @@ export function sessionGroupsFromSnapshot(
 	status: string | undefined,
 	updatedAt: string | undefined,
 ): RepoGroup[] {
-	if (!workspace || !sessionRef) return SESSIONS;
+	if (!workspace) return SESSIONS;
+	if (!sessionRef) return [];
 	return [snapshotSessionGroup(workspace, sessionRef, title, status, updatedAt)];
 }
 

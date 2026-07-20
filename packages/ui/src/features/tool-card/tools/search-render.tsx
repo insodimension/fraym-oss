@@ -16,9 +16,38 @@ import { EditErrorBody } from "./bodies/edit-diff-body";
 import { parseSearchDisplay, type SearchFileGroup } from "./bodies/search-display";
 import { SearchEmptyBody, SearchPendingBody, SearchPlainBody, SearchResultsBody } from "./bodies/search-results-body";
 import { dimChip, truncatingChip } from "./chip";
-import { readFirstTextResult, readNumberField, readStringArrayField, toPathList } from "./renderer-utils";
 
 // --- defensive parse (local; no coupling to the monolith) -------------------
+
+function readNumberField(value: unknown, key: string): number | undefined {
+	const v = readField(value, key);
+	return typeof v === "number" ? v : undefined;
+}
+
+function readStringArray(value: unknown, key: string): string[] {
+	const v = readField(value, key);
+	return Array.isArray(v) ? v.filter((s): s is string => typeof s === "string") : [];
+}
+
+/** `paths` is a string or string[] in the schema. */
+function toPathList(input: unknown): string[] {
+	if (typeof input === "string") return [input];
+	return Array.isArray(input) ? input.filter((s): s is string => typeof s === "string") : [];
+}
+
+/** First text part out of an `AgentToolResult`-shaped output. */
+function readResultText(output: unknown): string | undefined {
+	const content = readField(output, "content");
+	if (Array.isArray(content)) {
+		for (const part of content) {
+			if (readField(part, "type") === "text") {
+				const text = readField(part, "text");
+				if (typeof text === "string") return text;
+			}
+		}
+	}
+	return undefined;
+}
 
 interface SearchContext {
 	readonly pattern: string;
@@ -83,7 +112,7 @@ function readSearchText(
 	plainLines: string[];
 } {
 	const displayContent = readStringField(details, "displayContent");
-	const plainText = displayContent ?? (typeof call.text === "string" ? call.text : readFirstTextResult(call.output));
+	const plainText = displayContent ?? (typeof call.text === "string" ? call.text : readResultText(call.output));
 	return {
 		displayContent,
 		plainLines: plainText ? plainText.split("\n").filter(line => line.trim() !== "") : [],
@@ -102,7 +131,7 @@ function readSearchError(
 	const rawError =
 		errorText ??
 		(typeof call.text === "string" ? call.text : undefined) ??
-		readFirstTextResult(call.output) ??
+		readResultText(call.output) ??
 		"Search failed";
 	return { isError, errorText: rawError.replace(/^Error:\s*/, "") };
 }
@@ -134,7 +163,7 @@ function readSearchContext(call: ActiveToolCall): SearchContext {
 		truncated,
 		truncationReasons: reasons,
 		artifact,
-		missingPaths: readStringArrayField(details, "missingPaths"),
+		missingPaths: readStringArray(details, "missingPaths"),
 		groups,
 		plainLines: text.plainLines,
 	};

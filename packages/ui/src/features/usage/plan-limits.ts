@@ -38,6 +38,7 @@ export function toPlanLimits(limits: readonly UsageLimitView[]): PlanLimit[] {
 			name: token ? `${limit.label} · ${token}` : limit.label,
 			pct: limit.usedPercent == null ? 0 : Math.round(limit.usedPercent),
 			resets: formatResetCountdown(limit.window?.resetsAt) ?? limit.window?.label ?? "",
+			status: limit.status,
 		};
 	});
 }

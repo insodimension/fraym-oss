@@ -13,13 +13,13 @@
 import { type ReactNode, useEffect, useRef, useState } from "react";
 import { Icon, type IconName } from "../../icons";
 import { cn } from "../../lib/cn";
-import { type OpenTarget, useToolOpenCommands } from "./tool-open-target";
+import { type OpenTarget, useWorkbenchDock } from "../workbench-dock";
 
 export interface ToolBodyCardProps {
 	/** Optional strip above the sections (e.g. edit's `1 file` + Unified/Split toggle). */
-	readonly toolbar?: ReactNode | undefined;
+	readonly toolbar?: ReactNode;
 	readonly children: ReactNode;
-	readonly className?: string | undefined;
+	readonly className?: string;
 }
 
 function useFollowTail(
@@ -56,7 +56,7 @@ function useOverflowState(
 }
 
 function useOpenTarget(openTarget: OpenTarget | undefined): readonly [boolean, () => void] {
-	const dock = useToolOpenCommands();
+	const dock = useWorkbenchDock();
 	const canOpen =
 		(openTarget?.kind === "file" && typeof dock.openFile === "function") ||
 		(openTarget?.kind === "diff" && typeof dock.openDiff === "function");
@@ -68,10 +68,10 @@ function useOpenTarget(openTarget: OpenTarget | undefined): readonly [boolean, (
 }
 
 interface ToolBodySectionHeaderProps {
-	readonly icon?: IconName | null | undefined;
-	readonly title?: ReactNode | undefined;
-	readonly meta?: ReactNode | undefined;
-	readonly stat?: ReactNode | undefined;
+	readonly icon?: IconName | null;
+	readonly title?: ReactNode;
+	readonly meta?: ReactNode;
+	readonly stat?: ReactNode;
 }
 
 function ToolBodySectionHeader({ icon, title, meta, stat }: ToolBodySectionHeaderProps) {
@@ -87,7 +87,7 @@ function ToolBodySectionHeader({ icon, title, meta, stat }: ToolBodySectionHeade
 }
 
 interface ToolBodySectionFooterProps {
-	readonly footer?: ReactNode | undefined;
+	readonly footer?: ReactNode;
 	readonly showToggle: boolean;
 	readonly expanded: boolean;
 	readonly onToggle: () => void;
@@ -163,27 +163,27 @@ export function ToolBodyCard({ toolbar, children, className }: ToolBodyCardProps
 
 export interface ToolBodySectionProps {
 	/** Header icon (default `file`). Pass `null` to omit the icon but keep the header. */
-	readonly icon?: IconName | null | undefined;
+	readonly icon?: IconName | null;
 	/** Header primary text (path or command). Omit (with no `stat`) to drop the header row. */
-	readonly title?: ReactNode | undefined;
+	readonly title?: ReactNode;
 	/** Inline chips after the title (new / deleted / failed). */
-	readonly meta?: ReactNode | undefined;
+	readonly meta?: ReactNode;
 	/** Right-aligned stat (e.g. `+26 −9`, `11 lines`, wall time). */
-	readonly stat?: ReactNode | undefined;
+	readonly stat?: ReactNode;
 	/** Optional footer row (e.g. "Open full diff/output") — caller supplies full styling. */
-	readonly footer?: ReactNode | undefined;
+	readonly footer?: ReactNode;
 	/** When set + a matching dock opener is in context, render an "Open ↗" affordance. */
-	readonly openTarget?: OpenTarget | undefined;
+	readonly openTarget?: OpenTarget;
 	/** Cap (px) for the content scroll window. */
-	readonly maxHeight?: number | undefined;
+	readonly maxHeight?: number;
 	/** Auto-scroll to the tail as content grows (streaming). */
-	readonly followTail?: boolean | undefined;
+	readonly followTail?: boolean;
 	/** Re-arm follow-tail when this value changes (e.g. the streamed text/lines). */
-	readonly tailKey?: unknown | undefined;
+	readonly tailKey?: unknown;
 	/** Pad the content area (for plain text / terminal output). Code/diff with own gutters: false. */
-	readonly padContent?: boolean | undefined;
+	readonly padContent?: boolean;
 	readonly children: ReactNode;
-	readonly className?: string | undefined;
+	readonly className?: string;
 }
 
 /** One section: header (icon + title + meta + stat) → capped scroll content → footer. */

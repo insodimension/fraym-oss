@@ -200,7 +200,7 @@ function renderRunBody(ctx: BrowserRenderContext): ReactNode {
 			<ToolBodySection
 				icon="code"
 				title={title}
-					footer={ctx.truncated ? <BashTruncationNote {...(ctx.artifact === undefined ? {} : { artifact: ctx.artifact })} /> : null}
+				footer={ctx.truncated ? <BashTruncationNote artifact={ctx.artifact} /> : null}
 				maxHeight={BROWSER_BODY_MAX_HEIGHT}
 				followTail={ctx.streaming}
 				tailKey={ctx.text}

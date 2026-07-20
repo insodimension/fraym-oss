@@ -63,7 +63,7 @@ export function UsageMeter({ limit, compact, className }: UsageMeterProps) {
 						</div>
 						<div className={cn("h-1.5 overflow-hidden rounded-full bg-fr-surface-3", compact && "h-1")}>
 							<div
-								className={cn("h-full rounded-full", usageStatusBarClass(limit.status as never))}
+								className={cn("h-full rounded-full", usageStatusBarClass(limit.status))}
 								style={{ width: `${view.width}%` }}
 							/>
 						</div>

@@ -4,14 +4,14 @@
 // (`renderEdit` in default-renderers.tsx). See docs/design/tools/edit.md.
 
 import { RollingNumber } from "../../../../elements/rolling-number";
-import { DiffViewer, type DiffViewerFile } from "./diff-viewer";
+import { DiffViewer, type DiffViewerFile } from "../../../diff/diff-viewer";
 
 export interface EditDiffBodyProps {
 	/** Pre-parsed files (what `renderEdit` builds from `details`). */
-	readonly files?: readonly DiffViewerFile[] | undefined;
-	readonly maxHeight?: number | undefined;
-	readonly followTail?: boolean | undefined;
-	readonly className?: string | undefined;
+	readonly files?: readonly DiffViewerFile[];
+	readonly maxHeight?: number;
+	readonly followTail?: boolean;
+	readonly className?: string;
 }
 
 export function EditDiffBody({ files, maxHeight, followTail, className }: EditDiffBodyProps) {
@@ -49,7 +49,7 @@ export function EditDiagnostics({
 	summary,
 	messages,
 }: {
-	readonly summary?: string | undefined;
+	readonly summary?: string;
 	readonly messages: readonly string[];
 }) {
 	if (messages.length === 0) return null;
@@ -69,7 +69,7 @@ export function EditDiagnostics({
 
 /** Footer shown while a MULTI-FILE edit streams: the count of files still resolving.
  *  The bare "streaming…" state is intentionally NOT rendered — the head stat already
- *  says it and the stream wisp carries the live activity, so a second animated footer dot
+ *  says it and the stream wisp carries the live motion, so a second animated footer dot
  *  was pure duplication. Single-file edits show nothing here. */
 export function EditStreamingFooter({ pending }: { readonly pending?: number }) {
 	if (!pending || pending <= 0) return null;
@@ -88,18 +88,18 @@ export function EditDiffStat({
 }: {
 	readonly added: number;
 	readonly deleted: number;
-	readonly animate?: boolean | undefined;
+	readonly animate?: boolean;
 }) {
 	return (
 		<span className="inline-flex items-center gap-1.5 font-secondary text-fr-2xs leading-none">
 			{added > 0 ? (
 				<span className="inline-flex items-center text-fr-add">
-						+<RollingNumber value={added} {...(animate === undefined ? {} : { animate })} />
+					+<RollingNumber value={added} animate={animate} />
 				</span>
 			) : null}
 			{deleted > 0 ? (
 				<span className="inline-flex items-center text-fr-del">
-						−<RollingNumber value={deleted} {...(animate === undefined ? {} : { animate })} />
+					−<RollingNumber value={deleted} animate={animate} />
 				</span>
 			) : null}
 		</span>

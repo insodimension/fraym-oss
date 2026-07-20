@@ -10,7 +10,6 @@ import { hostUiInstanceKey } from "./approvals/select-request-picker";
 import {
   anchorCompensationTop,
   nextPinnedState,
-  scrollViewportToBottom,
 } from "./thread/message-thread-viewport";
 import { splitUserPastedText } from "./thread/thread-message";
 import { ToolMetadataRow } from "./tool-metadata";
@@ -70,20 +69,6 @@ describe("chat surface contracts", () => {
         clientHeight: 300,
       }),
     ).toBeNull();
-  });
-
-  test("never forwards a scrolling implementation value as an effect cleanup", () => {
-    let options: ScrollToOptions | undefined;
-    const viewport = {
-      scrollHeight: 640,
-      scrollTo(next: ScrollToOptions) {
-        options = next;
-        return { animation: true } as never;
-      },
-    };
-
-    expect(scrollViewportToBottom(viewport, "auto")).toBeUndefined();
-    expect(options).toEqual({ top: 640, behavior: "auto" });
   });
 
   test("partitions adjacent reasoning and tool blocks into one trace", () => {

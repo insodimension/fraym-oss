@@ -22,8 +22,8 @@ type ResolveAction = "apply" | "discard";
 interface ResolveDetails {
 	readonly action: ResolveAction;
 	readonly reason: string;
-	readonly label?: string | undefined;
-	readonly sourceToolName?: string | undefined;
+	readonly label?: string;
+	readonly sourceToolName?: string;
 }
 
 interface ParsedArgs {

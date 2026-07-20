@@ -15,7 +15,7 @@ export interface LspDiagnosticsBodyProps {
 	readonly errorCount: number;
 	readonly warningCount: number;
 	readonly groups: DiagnosticFileGroup[];
-	readonly maxHeight?: number | undefined;
+	readonly maxHeight?: number;
 }
 
 export function LspDiagnosticsOkBody(): ReactNode {

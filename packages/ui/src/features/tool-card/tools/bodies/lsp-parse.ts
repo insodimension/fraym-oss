@@ -72,7 +72,7 @@ export type LspParseResult =
 	| { readonly kind: "locationsEmpty"; readonly subKind: string }
 	| { readonly kind: "symbols"; readonly fileName: string; readonly symbols: ParsedSymbol[]; readonly raw: string }
 	| { readonly kind: "symbolsWorkspace"; readonly query: string; readonly count: number; readonly raw: string }
-	| { readonly kind: "text"; readonly raw: string; readonly subKind?: string | undefined }
+	| { readonly kind: "text"; readonly raw: string; readonly subKind?: string }
 	| { readonly kind: "json"; readonly parsed: unknown; readonly raw: string }
 	| { readonly kind: "error"; readonly message: string }
 	| { readonly kind: "unknown"; readonly raw: string };

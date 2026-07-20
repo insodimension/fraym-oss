@@ -30,8 +30,6 @@ export interface EngineRecipeRecord { readonly id: string; readonly name?: strin
 export interface PluginConnectFormField { readonly id: string; readonly name?: string; readonly label: string; readonly type?: "text" | "password" | "email" | "url"; readonly placeholder?: string; readonly required?: boolean; readonly description?: string; readonly secret?: boolean; readonly help?: string; readonly helpUrl?: string; readonly helpUrlLabel?: string }
 export type PluginFixKind = "install" | "form" | "oauth" | "open-app" | "reconnect" | "agent";
 
-export type UsageStatus = "ok" | "warning" | "critical" | "exhausted";
-
 
 export interface HostUiLocation {
   readonly path: string;
@@ -283,6 +281,7 @@ export function createReplayDriver(
 
 export { codingSessionFixture } from "./fixtures/coding-session";
 export * from "./session-driver";
+export * from "./event-stream-session-driver";
 export * from "./drivers";
 export * from "./config-types";
 export * from "./analytics-types";

@@ -54,11 +54,11 @@ export interface KindConfig {
 	icon: IconName;
 	iconColor: string;
 	/** Render the icon as a filled solid shape (no stroke). Used for logo-style icons like the GitHub Octocat. */
-	filled?: boolean | undefined;
+	filled?: boolean;
 	/** Override the SVG viewBox (default "0 0 24 24"). Used for icons designed in a different coordinate space. */
-	viewBox?: string | undefined;
+	viewBox?: string;
 	/** Override the default icon size for this kind. Default varies by density. */
-	iconSize?: number | undefined;
+	iconSize?: number;
 }
 const KIND_CONFIG: Record<ToolKind, KindConfig> = {
 	read: { icon: "file", iconColor: "text-fr-text-3" },
@@ -127,40 +127,40 @@ function statusPillLabel(status: ToolStatus): string {
 }
 
 export interface ToolCardProps {
-	readonly kind?: ToolKind | undefined;
+	readonly kind?: ToolKind;
 	/** Per-call icon override (from the tool-icon policy); wins over the kind's default icon. */
-	readonly icon?: IconSpec | undefined;
+	readonly icon?: IconSpec;
 	/** Renderer-supplied head icon node; wins over `icon`/kind. */
-	readonly headIcon?: React.ReactNode | undefined;
+	readonly headIcon?: React.ReactNode;
 	/** Full custom head (replaces the compact strip) — e.g. the rich animated skill
 	 *  header. The card still adds the status pill + caret + collapsible body. */
-	readonly header?: React.ReactNode | undefined;
+	readonly header?: React.ReactNode;
 	readonly label: React.ReactNode;
 	/** Pills rendered between the label and the stat, vertically centered with the row. */
-	readonly badges?: React.ReactNode | undefined;
-	readonly stat?: string | undefined;
-	readonly success?: boolean | undefined;
+	readonly badges?: React.ReactNode;
+	readonly stat?: string;
+	readonly success?: boolean;
 	/** Lifecycle status for the head indicator; overrides `success` when set. */
-	readonly status?: ToolStatus | undefined;
-	readonly children?: React.ReactNode | undefined;
+	readonly status?: ToolStatus;
+	readonly children?: React.ReactNode;
 	/** Selects the open-body geometry. Pair with `ToolBodyTerm` and set `"term"`. */
-	readonly bodyVariant?: ToolBodyVariant | undefined;
-	readonly defaultOpen?: boolean | undefined;
-	readonly density?: FraymDensity | undefined;
-	readonly className?: string | undefined;
+	readonly bodyVariant?: ToolBodyVariant;
+	readonly defaultOpen?: boolean;
+	readonly density?: FraymDensity;
+	readonly className?: string;
 }
 
 interface ToolCardRenderModel {
 	readonly kind: ToolKind;
-	readonly icon?: IconSpec | undefined;
-	readonly headIcon?: React.ReactNode | undefined;
-	readonly header?: React.ReactNode | undefined;
+	readonly icon?: IconSpec;
+	readonly headIcon?: React.ReactNode;
+	readonly header?: React.ReactNode;
 	readonly label: React.ReactNode;
-	readonly badges?: React.ReactNode | undefined;
-	readonly stat?: string | undefined;
-	readonly children?: React.ReactNode | undefined;
+	readonly badges?: React.ReactNode;
+	readonly stat?: string;
+	readonly children?: React.ReactNode;
 	readonly bodyVariant: ToolBodyVariant;
-	readonly className?: string | undefined;
+	readonly className?: string;
 	readonly density: FraymDensity;
 	readonly d: ReturnType<typeof resolveDensity>;
 	readonly config: (typeof KIND_CONFIG)[ToolKind];
@@ -188,7 +188,7 @@ export function ToolCard({
 	density: densityProp,
 }: ToolCardProps) {
 	const settings = useToolDisplaySettings();
-	const density = densityProp ?? settings.density ?? "comfortable";
+	const density = densityProp ?? settings.density;
 	const [open, setOpen] = useState(defaultOpen);
 	const userToggledRef = useRef(false);
 	const config = KIND_CONFIG[kind];
@@ -308,8 +308,8 @@ function ToolHeadIcon({ model, size }: { readonly model: ToolCardRenderModel; re
 		<Icon
 			name={model.config.icon}
 			size={size}
-			{...(model.config.filled === undefined ? {} : { filled: model.config.filled })}
-			{...(model.config.viewBox === undefined ? {} : { viewBox: model.config.viewBox })}
+			filled={model.config.filled}
+			viewBox={model.config.viewBox}
 			strokeWidth={1.9}
 		/>
 	);

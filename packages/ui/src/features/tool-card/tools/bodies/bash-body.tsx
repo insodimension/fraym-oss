@@ -15,9 +15,9 @@
 
 export interface BashStatsRowProps {
 	/** Wall time in seconds, pre-formatted (e.g. "0.42"). From `details.wallTimeMs`. */
-	readonly wallSeconds?: string | undefined;
-	readonly timeoutSeconds?: number | undefined;
-	readonly requestedTimeoutSeconds?: number | undefined;
+	readonly wallSeconds?: string;
+	readonly timeoutSeconds?: number;
+	readonly requestedTimeoutSeconds?: number;
 }
 
 /** Dim, bracketed `[Wall: Xs · Timeout: Ns]` line below the output (TUI-faithful). */

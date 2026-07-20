@@ -23,7 +23,7 @@ import type { ActiveToolCall } from "../../../hooks/session-types";
 import { Icon, type IconName } from "../../../icons";
 import { asText, readField, readStringField, toTermLines } from "../../../registries/default-renderer-utils";
 import type { ToolRenderer, ToolView } from "../../../registries/tool-renderer-registry";
-import { DataInspectorBody } from "./data-inspector-body";
+import { DataInspectorBody } from "../../data-inspector/data-inspector";
 import { ImageBlock } from "../../message/messages/image-block";
 import { ToolBodySection } from "../tool-body-card";
 import { ToolBodyTerm, type ToolStatus } from "../tool-card";
@@ -39,16 +39,16 @@ interface EvalStatusEvent {
 }
 
 interface EvalCell {
-	readonly index?: number | undefined;
-	readonly title?: string | undefined;
-	readonly code?: string | undefined;
-	readonly language?: string | undefined;
-	readonly output?: string | undefined;
-	readonly status?: string | undefined;
-	readonly durationMs?: number | undefined;
-	readonly exitCode?: number | undefined;
-	readonly hasMarkdown?: boolean | undefined;
-	readonly statusEvents?: readonly EvalStatusEvent[] | undefined;
+	readonly index?: number;
+	readonly title?: string;
+	readonly code?: string;
+	readonly language?: string;
+	readonly output?: string;
+	readonly status?: string;
+	readonly durationMs?: number;
+	readonly exitCode?: number;
+	readonly hasMarkdown?: boolean;
+	readonly statusEvents?: readonly EvalStatusEvent[];
 }
 
 interface EvalImage {
@@ -61,9 +61,9 @@ interface EvalDetails {
 	readonly images: readonly EvalImage[];
 	readonly jsonOutputs: readonly unknown[];
 	readonly statusEvents: readonly EvalStatusEvent[];
-	readonly notice?: string | undefined;
+	readonly notice?: string;
 	readonly truncated: boolean;
-	readonly artifact?: string | undefined;
+	readonly artifact?: string;
 	readonly isError: boolean;
 }
 
@@ -454,7 +454,7 @@ function EvalNotebookBody({ details }: { readonly details: EvalDetails }) {
 			))}
 			<EvalJsonOutputs outputs={details.jsonOutputs} />
 			<EvalFigures images={details.images} />
-				{details.truncated ? <BashTruncationNote {...(details.artifact === undefined ? {} : { artifact: details.artifact })} /> : null}
+			{details.truncated ? <BashTruncationNote artifact={details.artifact} /> : null}
 		</div>
 	);
 }
@@ -496,7 +496,7 @@ function evalFallbackBody(call: ActiveToolCall, details: EvalDetails, streaming 
 			<EvalAgentTree events={agents} />
 			<EvalJsonOutputs outputs={details.jsonOutputs} />
 			<EvalFigures images={details.images} />
-				{details.truncated ? <BashTruncationNote {...(details.artifact === undefined ? {} : { artifact: details.artifact })} /> : null}
+			{details.truncated ? <BashTruncationNote artifact={details.artifact} /> : null}
 		</div>
 	);
 }
