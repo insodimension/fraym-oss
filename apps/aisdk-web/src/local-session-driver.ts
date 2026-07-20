@@ -22,11 +22,13 @@ import type {
   SessionRef,
   SessionSnapshot,
   SessionTranscriptMessage,
+  SessionTranscriptToolCall,
   Unsubscribe,
   WorkspaceRef,
 } from "@fraym/driver";
 import { type ModelMessage, streamText, stepCountIs } from "ai";
 import { PROVIDERS, type ProviderId } from "./providers";
+import { demoTools } from "./tools";
 
 const K_INDEX = "fraym-aisdk-sd-index";
 const MAX_SESSIONS = 60;
@@ -310,10 +312,12 @@ export class LocalSessionDriver implements SessionDriver {
     let text = "";
     let reasoning = "";
     let failed: string | null = null;
+    const toolCalls = new Map<string, SessionTranscriptToolCall>();
     try {
       const result = streamText({
         model: factory(modelId),
         system: this.#system,
+        tools: demoTools,
         messages: rt.history,
         stopWhen: stepCountIs(8),
         abortSignal: controller.signal,
@@ -325,6 +329,35 @@ export class LocalSessionDriver implements SessionDriver {
         } else if (part.type === "reasoning-delta") {
           reasoning += part.text;
           this.#emit(rt, { type: "thinkingDelta", text: part.text });
+        } else if (part.type === "tool-call") {
+          toolCalls.set(part.toolCallId, {
+            callId: part.toolCallId,
+            toolName: part.toolName,
+            input: part.input,
+            status: "running",
+          });
+          this.#emit(rt, { type: "toolStarted", toolName: part.toolName, callId: part.toolCallId, input: part.input });
+        } else if (part.type === "tool-result") {
+          const prev = toolCalls.get(part.toolCallId);
+          toolCalls.set(part.toolCallId, {
+            callId: part.toolCallId,
+            toolName: prev?.toolName ?? part.toolName,
+            input: prev?.input,
+            status: "success",
+            output: part.output,
+          });
+          this.#emit(rt, { type: "toolFinished", callId: part.toolCallId, success: true, output: part.output });
+        } else if (part.type === "tool-error") {
+          const prev = toolCalls.get(part.toolCallId);
+          const message = part.error instanceof Error ? part.error.message : String(part.error);
+          toolCalls.set(part.toolCallId, {
+            callId: part.toolCallId,
+            toolName: prev?.toolName ?? part.toolName,
+            input: prev?.input,
+            status: "error",
+            output: message,
+          });
+          this.#emit(rt, { type: "toolFinished", callId: part.toolCallId, success: false, output: message });
         } else if (part.type === "error") {
           failed = part.error instanceof Error ? part.error.message : String(part.error);
         }
@@ -342,6 +375,7 @@ export class LocalSessionDriver implements SessionDriver {
 
     const blocks: SessionTranscriptMessage["blocks"] = [
       ...(reasoning.length > 0 ? [{ type: "reasoning" as const, text: reasoning }] : []),
+      ...[...toolCalls.values()].map((call) => ({ type: "tool" as const, call })),
       ...(text.length > 0 ? [{ type: "text" as const, text }] : []),
       ...(failed !== null ? [{ type: "notice" as const, level: "error" as const, message: failed }] : []),
     ];
