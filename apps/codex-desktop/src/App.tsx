@@ -1,4 +1,4 @@
-import { CODEX_WORKSPACE, createCodexSessionDriver } from "@fraym/driver-codex";
+import { CODEX_WORKSPACE, createCodexResourceDriver, createCodexSessionDriver } from "@fraym/driver-codex";
 import { FraymHost } from "@fraym/host";
 import { useMemo } from "react";
 
@@ -6,10 +6,11 @@ const bridgeUrl = import.meta.env.VITE_CODEX_BRIDGE_URL ?? "http://localhost:431
 
 export function App() {
 	const driver = useMemo(() => createCodexSessionDriver({ bridgeUrl }), []);
+	const resources = useMemo(() => createCodexResourceDriver({ bridgeUrl }), []);
 
 	return (
 		<FraymHost
-			drivers={{ session: driver }}
+			drivers={{ session: driver, resources }}
 			workspace={CODEX_WORKSPACE}
 			storageKey="fraym-codex-active-session"
 			productLabel="Fraym"

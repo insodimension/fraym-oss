@@ -1,4 +1,13 @@
-import { createEventStreamSessionDriver, type EventStreamSessionDriverHandle, type WorkspaceRef } from "@fraym/driver";
+import {
+	createEventStreamSessionDriver,
+	type EngineMarketplaceEntry,
+	type EngineModelRecord,
+	type EngineResourceDriver,
+	type EngineResourceSnapshot,
+	type EventStreamSessionDriverHandle,
+	type PluginConnectState,
+	type WorkspaceRef,
+} from "@fraym/driver";
 import type {
 	AgentEvent,
 	AgentEventListener,
@@ -46,6 +55,8 @@ export interface CodexDriver extends AgentEventStream {
 	respondToApproval(response: ApprovalResponseEvent): void;
 	/** Cancels the active Codex turn. */
 	cancel(): void;
+	/** Switch the model (and optionally reasoning) sent on the NEXT turn. */
+	setModel(model: string, reasoning?: string): void;
 }
 
 /** Per-turn message ids so streamed deltas aggregate into single thread rows. */
@@ -206,8 +217,8 @@ const APPROVAL_DECISION: Record<string, string> = {
 export function createCodexDriver(options: CodexDriverOptions = {}): CodexDriver {
 	const bridgeUrl = (options.bridgeUrl ?? "http://localhost:4319").replace(/\/$/, "");
 	const sessionId = options.sessionId ?? `codex-${crypto.randomUUID()}`;
-	const model = options.model ?? CODEX_DEFAULT_MODEL;
-	const reasoning = options.reasoning ?? CODEX_DEFAULT_REASONING;
+	let model = options.model ?? CODEX_DEFAULT_MODEL;
+	let reasoning = options.reasoning ?? CODEX_DEFAULT_REASONING;
 	const fullAccess = options.fullAccess ?? true;
 	const doFetch: FetchTransport = options.fetch ?? globalThis.fetch;
 	const listeners = new Set<AgentEventListener>();
@@ -312,6 +323,10 @@ export function createCodexDriver(options: CodexDriverOptions = {}): CodexDriver
 		prompt,
 		respondToApproval,
 		cancel,
+		setModel(nextModel: string, nextReasoning?: string) {
+			model = nextModel;
+			if (nextReasoning) reasoning = nextReasoning;
+		},
 	};
 }
 
@@ -325,9 +340,129 @@ export function createCodexSessionDriver(options: CodexDriverOptions = {}): Even
 		prompt: (input) => stream.prompt(input.text),
 		cancel: () => stream.cancel(),
 		respondToApproval: (response) => stream.respondToApproval(response),
+		setModel: (selection) => stream.setModel(selection.modelId),
 		workspace: CODEX_WORKSPACE,
 		title: "Codex CLI",
 		model: options.model ?? CODEX_DEFAULT_MODEL,
 		provider: "codex",
 	});
+}
+
+interface CodexBridgeModel {
+	readonly model?: string;
+	readonly id?: string;
+	readonly displayName?: string;
+	readonly isDefault?: boolean;
+	readonly supportedReasoningEfforts?: readonly string[];
+}
+
+function codexModelRecords(models: readonly CodexBridgeModel[]): EngineModelRecord[] {
+	return models
+		.map((entry): EngineModelRecord | undefined => {
+			const modelId = entry.model ?? entry.id;
+			if (!modelId) return undefined;
+			return {
+				providerId: "codex",
+				providerName: "Codex",
+				modelId,
+				label: entry.displayName ?? modelId,
+				available: true,
+				authType: "none",
+				reasoning: (entry.supportedReasoningEfforts?.length ?? 0) > 0,
+				supportsImages: false,
+			};
+		})
+		.filter((record): record is EngineModelRecord => record !== undefined);
+}
+
+/** Browser-local `EngineResourceDriver` for Codex: the model catalog surfaced by
+ * the bridge's `GET /models`. Codex owns auth + config, so every mutation is an
+ * honest no-op returning the current snapshot. */
+export function createCodexResourceDriver(options: CodexDriverOptions = {}): EngineResourceDriver {
+	const bridgeUrl = (options.bridgeUrl ?? "http://localhost:4319").replace(/\/$/, "");
+	const doFetch: FetchTransport = options.fetch ?? globalThis.fetch;
+	let snapshot: EngineResourceSnapshot | null = null;
+
+	async function build(): Promise<EngineResourceSnapshot> {
+		let models: EngineModelRecord[] = [];
+		try {
+			const response = await doFetch(`${bridgeUrl}/models`);
+			if (response.ok) {
+				const payload = (await response.json()) as { readonly models?: readonly CodexBridgeModel[] };
+				models = codexModelRecords(payload.models ?? []);
+			}
+		} catch {
+			// Bridge down: no catalog. The chip still shows the default model.
+		}
+		const defaultModel = models[0]?.modelId;
+		snapshot = {
+			workspace: CODEX_WORKSPACE,
+			providers: [
+				{
+					id: "codex",
+					name: "Codex",
+					hasAuth: true,
+					authType: "none",
+					authSource: "external",
+					oauthSupported: false,
+					apiKeySetupSupported: false,
+				},
+			],
+			models,
+			skills: [],
+			extensions: [],
+			mcpServers: [],
+			plugins: [],
+			permissions: [],
+			settings: {
+				defaultProvider: "codex",
+				...(defaultModel ? { defaultModelId: defaultModel } : {}),
+				enableSkillCommands: false,
+				enabledModelPatterns: [],
+			},
+		};
+		return snapshot;
+	}
+
+	async function current(): Promise<EngineResourceSnapshot> {
+		return snapshot ?? build();
+	}
+
+	return {
+		getResourceSnapshot: () => current(),
+		refreshResources: () => build(),
+		getLastSnapshot: () => snapshot,
+		login: () => current(),
+		logout: () => current(),
+		setProviderApiKey: () => current(),
+		pinProviderAccount: () => current(),
+		setProviderAccountPolicy: () => current(),
+		setProviderAccountPriorityOrder: () => current(),
+		removeProviderAccount: () => current(),
+		setDefaultModel: () => current(),
+		setDefaultThinkingLevel: () => current(),
+		setEnableSkillCommands: () => current(),
+		setScopedModelPatterns: () => current(),
+		setSkillEnabled: () => current(),
+		setExtensionEnabled: () => current(),
+		setMcpServerEnabled: () => current(),
+		listMarketplaces: async (): Promise<readonly EngineMarketplaceEntry[]> => [],
+		addMarketplace: async (): Promise<readonly EngineMarketplaceEntry[]> => [],
+		removeMarketplace: async (): Promise<readonly EngineMarketplaceEntry[]> => [],
+		updateMarketplace: async (): Promise<readonly EngineMarketplaceEntry[]> => [],
+		listAvailablePlugins: async () => [],
+		listInstalledPlugins: async () => [],
+		installPlugin: () => current(),
+		uninstallPlugin: () => current(),
+		setPluginEnabled: () => current(),
+		setPluginToolLoading: () => current(),
+		setPluginProjectScope: () => current(),
+		checkPluginUpdates: async () => [],
+		upgradePlugin: () => current(),
+		pluginConnectStatus: async (): Promise<PluginConnectState> => ({ status: "not-connected" }),
+		pluginConnect: async (): Promise<PluginConnectState> => ({ status: "not-connected" }),
+		pluginDisconnect: async (): Promise<PluginConnectState> => ({ status: "not-connected" }),
+		pluginInstallRequirement: async (): Promise<PluginConnectState> => ({ status: "not-connected" }),
+		pluginOAuthConnect: async (): Promise<PluginConnectState> => ({ status: "not-connected" }),
+	};
 }

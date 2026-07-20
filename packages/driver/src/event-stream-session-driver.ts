@@ -19,6 +19,7 @@ import type {
 	SessionDriverEvent,
 	SessionEventListener,
 	SessionMessageInput,
+	SessionModelSelection,
 	SessionRef,
 	SessionSnapshot,
 	SessionTranscriptMessage,
@@ -39,6 +40,9 @@ export interface EventStreamSessionDriverOptions {
 	readonly cancel?: () => void;
 	/** Answer an approval request raised on the stream. */
 	readonly respondToApproval?: (response: ApprovalResponseEvent) => void;
+	/** Switch the model the underlying harness uses for the next turn. When set,
+	 *  the shell's model menu becomes live; absent, `setSessionModel` is a no-op. */
+	readonly setModel?: (selection: SessionModelSelection) => void | Promise<void>;
 	readonly workspace?: WorkspaceRef;
 	readonly title?: string;
 	readonly model?: string;
@@ -249,7 +253,12 @@ class EventStreamSessionDriver implements EventStreamSessionDriverHandle {
 		this.#emit({ type: "runCompleted", snapshot: this.#snapshot });
 	}
 
-	async setSessionModel(): Promise<void> {}
+	async setSessionModel(_ref: SessionRef, selection: SessionModelSelection): Promise<void> {
+		await this.#options.setModel?.(selection);
+		this.#patch({
+			config: { ...this.#snapshot.config, provider: selection.provider, modelId: selection.modelId },
+		});
+	}
 	async setSessionThinkingLevel(): Promise<void> {}
 	async setSessionApprovalMode(): Promise<void> {}
 	async setSessionEphemeral(): Promise<void> {}
