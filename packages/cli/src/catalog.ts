@@ -149,6 +149,7 @@ function publicBarrelItems(
 	type: CatalogItemType,
 	barrel: string,
 	issues: CatalogIssue[],
+	followStar = true,
 	visited = new Set<string>(),
 ): CatalogItem[] {
 	const lexicalBarrel = resolve(barrel);
@@ -210,12 +211,14 @@ function publicBarrelItems(
 			items.push({ type, name, package: packageName, source: sourcePath(root, resolvedBarrel) });
 		}
 	}
-	for (const match of text.matchAll(all)) {
-		const specifier = match[1];
-		if (!specifier?.startsWith(".")) continue;
-		const source = resolveModule(dirname(resolvedBarrel), specifier);
-		if (!source) continue;
-		items.push(...publicBarrelItems(root, packageName, type, source, issues, visited));
+	if (followStar) {
+		for (const match of text.matchAll(all)) {
+			const specifier = match[1];
+			if (!specifier?.startsWith(".")) continue;
+			const source = resolveModule(dirname(resolvedBarrel), specifier);
+			if (!source) continue;
+			items.push(...publicBarrelItems(root, packageName, type, source, issues, followStar, visited));
+		}
 	}
 	return items;
 }
@@ -239,6 +242,13 @@ function uiItems(roots: CatalogRoots, issues: CatalogIssue[]): CatalogItem[] {
 		}
 		items.push(...publicBarrelItems(roots.ui, packageName, type, resolve(roots.ui, target), issues));
 	}
+	const rootTarget = resolveExportTarget(manifest.exports["."]);
+	if (rootTarget?.startsWith("./")) {
+		const tieredNames = new Set(items.map(item => item.name));
+		for (const rootItem of publicBarrelItems(roots.ui, packageName, "component", resolve(roots.ui, rootTarget), issues, false)) {
+			if (!tieredNames.has(rootItem.name)) items.push(rootItem);
+		}
+	}
 	return items;
 }
 
@@ -247,36 +257,32 @@ function vibrItems(roots: CatalogRoots, issues: CatalogIssue[]): CatalogItem[] {
 	const manifest = readPackageManifest(join(roots.vibr, "package.json"), issues);
 	if (!manifest?.exports) return [];
 	const packageName = manifest.name ?? "@fraym/vibr";
-	const rootTarget = resolveExportTarget(manifest.exports["."]);
-	const items =
-		rootTarget?.startsWith("./") === true
-			? publicBarrelItems(roots.vibr, packageName, "avatar", resolve(roots.vibr, rootTarget), issues)
-			: [];
-	if (rootTarget && !rootTarget.startsWith("./")) {
-		issues.push({
-			code: "invalid-manifest",
-			path: join(roots.vibr, "package.json"),
-			message: "The public root export must use a package-relative target.",
-		});
+	const items: CatalogItem[] = [];
+	for (const [subpath, value] of Object.entries(manifest.exports)) {
+		const target = resolveExportTarget(value);
+		if (!target) continue;
+		if (!target.startsWith("./")) {
+			issues.push({
+				code: "invalid-manifest",
+				path: join(roots.vibr, "package.json"),
+				message: `Public export ${subpath} must use a package-relative target.`,
+			});
+			continue;
+		}
+		if (!target.replace(/\\/g, "/").includes("/avatars/")) continue;
+		items.push(...publicBarrelItems(roots.vibr, packageName, "avatar", resolve(roots.vibr, target), issues));
 	}
-	const avatarSources = items.filter(item => item.source.includes("/avatars/"));
-	const wispSource = resolveModule(roots.vibr, "src/cursor/registry-core");
-	if (!wispSource) return avatarSources;
-	const wispText = readFileSync(wispSource, "utf8");
-	const presets = [...wispText.matchAll(/\bid:\s*["']([^"']+)["']/g)].flatMap(match => {
-		const name = match[1];
-		return name
-			? [
-					{
-						type: "wisp-preset" as const,
-						name,
-						package: packageName,
-						source: sourcePath(roots.vibr ?? "", wispSource),
-					},
-				]
-			: [];
-	});
-	return [...avatarSources, ...presets];
+	const wispSource = resolveModule(roots.vibr, "src/registry") ?? resolveModule(roots.vibr, "src/presets");
+	if (wispSource) {
+		const wispText = readFileSync(wispSource, "utf8");
+		for (const match of wispText.matchAll(/\bid:\s*["']([^"']+)["']/g)) {
+			const name = match[1];
+			if (name) {
+				items.push({ type: "wisp-preset", name, package: packageName, source: sourcePath(roots.vibr, wispSource) });
+			}
+		}
+	}
+	return items;
 }
 
 function themeItems(roots: CatalogRoots, issues: CatalogIssue[]): CatalogItem[] {

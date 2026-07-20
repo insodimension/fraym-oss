@@ -60,6 +60,7 @@ function createWorkspace(options: WorkspaceOptions = {}): string {
 		name: "@fraym/ui",
 		version: "1.0.0",
 		exports: {
+			".": "./src/index.ts",
 			"./elements": "./src/elements/index.ts",
 			"./components": { import: "./src/components/index.ts" },
 			"./features": "./src/features/index.ts",
@@ -78,6 +79,8 @@ function createWorkspace(options: WorkspaceOptions = {}): string {
 	writeFixture(root, "packages/ui/src/features/toolbar.ts", "export const Toolbar = {};\n");
 	writeFixture(root, "packages/ui/src/pages/index.ts", 'export { Showcase } from "./showcase";\n');
 	writeFixture(root, "packages/ui/src/pages/showcase.ts", "export const Showcase = {};\n");
+	writeFixture(root, "packages/ui/src/index.ts", 'export { RootWidget } from "./root-widget";\nexport * from "./elements";\n');
+	writeFixture(root, "packages/ui/src/root-widget.ts", "export const RootWidget = {};\n");
 
 	if (options.validTemplate) {
 		writeJsonFixture(root, "templates/welcome/fraym.template.json", {
@@ -106,15 +109,11 @@ function createConsumerProject(): string {
 	writeJsonFixture(root, "node_modules/@fraym/vibr/package.json", {
 		name: "@fraym/vibr",
 		version: "1.0.0",
-		exports: { ".": "./src/index.ts" },
+		exports: { ".": "./src/index.ts", "./glow": "./src/avatars/glow.ts" },
 	});
-	writeFixture(root, "node_modules/@fraym/vibr/src/index.ts", 'export { GlowAvatar } from "./avatars/glow";\n');
+	writeFixture(root, "node_modules/@fraym/vibr/src/index.ts", 'export * from "./avatars/glow";\n');
 	writeFixture(root, "node_modules/@fraym/vibr/src/avatars/glow.ts", "export const GlowAvatar = {};\n");
-	writeFixture(
-		root,
-		"node_modules/@fraym/vibr/src/cursor/registry-core.ts",
-		'export const presets = [{ id: "spark" }];\n',
-	);
+	writeFixture(root, "node_modules/@fraym/vibr/src/registry.ts", 'export const presets = [{ id: "spark" }];\n');
 	mkdirSync(join(root, "src", "nested"), { recursive: true });
 	return root;
 }
@@ -198,6 +197,17 @@ describe("@fraym/cli public contract", () => {
 		expect(partial.total).toBe(2);
 		expect(partial.results).toEqual([expect.objectContaining({ type: "component", name: "ButtonCard", score: 120 })]);
 		expect(unknown).toEqual({ query: "not-a-catalog-entry", results: [], total: 0 });
+	});
+
+	test("indexes root-barrel components without re-listing tiered exports", () => {
+		const catalog = discoverCatalog(createWorkspace());
+		const rootWidget = catalog.items.filter(item => item.name === "RootWidget");
+		const button = catalog.items.filter(item => item.name === "Button");
+
+		expect(rootWidget).toEqual([
+			expect.objectContaining({ type: "component", name: "RootWidget", package: "@fraym/ui" }),
+		]);
+		expect(button).toEqual([expect.objectContaining({ type: "element", name: "Button" })]);
 	});
 
 	test("discovers installed UI and Vibr metadata from a consumer-like nested project", () => {
