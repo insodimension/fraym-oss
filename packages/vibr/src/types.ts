@@ -1,22 +1,4 @@
-export type AvatarId =
-  | "blob"
-  | "static"
-  | "rorschach"
-  | "inkblot"
-  | "aurora"
-  | "nebula"
-  | "siri"
-  | "orbit"
-  | "quasar"
-  | "matrix"
-  | "lattice"
-  | "liquid"
-  | "koi"
-  | "duel"
-  | "ember"
-  | "blackhole"
-  | "smiley"
-  | "none";
+export type AvatarId = "nebula" | "smiley" | "none";
 export type AvatarState = "idle" | "thinking" | "typing";
 export type AvatarMode =
   "" | "search" | "read" | "run" | "edit" | "skill" | "mcp" | "think";
@@ -69,15 +51,7 @@ export type BreakCardFn = (
 export interface WispSceneryRef {
   current: readonly SceneryRect[];
 }
-export type WispPresetId =
-  | "liquid"
-  | "koi"
-  | "duel"
-  | "blade"
-  | "ronin"
-  | "lantern-moth"
-  | "smiley"
-  | "pixel";
+export type WispPresetId = "smiley";
 export interface WispFrame {
   readonly x: number;
   readonly y: number;

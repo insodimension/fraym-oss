@@ -6,7 +6,7 @@ export interface ConnectedPresenceProps
 	readonly avatar?: AvatarId;
 }
 
-export function ConnectedPresence({ avatar = "blob", ...props }: ConnectedPresenceProps) {
+export function ConnectedPresence({ avatar = "nebula", ...props }: ConnectedPresenceProps) {
 	const vibr = useVibr();
 	return <Presence avatar={avatar} state={vibr.state} mode={vibr.mode} energy={vibr.energy} {...props} />;
 }
@@ -18,7 +18,7 @@ export interface OptionalConnectedPresenceProps extends ConnectedPresenceProps {
 }
 
 export function OptionalConnectedPresence({
-	avatar = "blob",
+	avatar = "nebula",
 	fallbackState = "idle",
 	fallbackMode = "",
 	fallbackEnergy = 0,

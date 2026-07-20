@@ -438,7 +438,7 @@ const drivers: FraymDrivers = {
 					<C>userName</C> / <C>userEmail</C> / <C>planLabel</C> / <C>productLabel</C> — profile + branding.
 				</li>
 				<li>
-					<C>defaultAvatar</C> — presence avatar id (e.g. <C>"blob"</C>).
+					<C>defaultAvatar</C> — presence avatar id (e.g. <C>"nebula"</C>).
 				</li>
 				<li>
 					<C>defaultToolOpen</C> — tool-card expansion policy.

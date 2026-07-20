@@ -66,7 +66,7 @@ export function SessionThread({
         driver={driver}
         sessionRef={driver.sessionRef}
         chrome={{
-          avatar: "blob",
+          avatar: "nebula",
           showTailPresence: true,
           showAvatars: false,
           agentMeta: model,

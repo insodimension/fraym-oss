@@ -12,6 +12,7 @@
     { "path": "./packages/verber" },
     { "path": "./packages/vibr" },
     { "path": "./packages/ui" },
+    { "path": "./packages/host" },
     { "path": "./apps/web" },
     { "path": "./apps/kitchen-sink" },
     { "path": "./apps/codex-web" },

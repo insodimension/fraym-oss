@@ -98,7 +98,7 @@ export interface FraymProps {
 	/** Top-bar action button ids the deployment exposes (default all); a profile narrows them. */
 	readonly topBarActions?: readonly string[];
 	/** Allowlist of Vibr (avatar) ids selectable in Appearance; default all. A
-	 *  profile narrows this — e.g. ["blob"] to ship a single Vibr. */
+	 *  profile narrows this — e.g. ["nebula"] to ship a single Vibr. */
 	readonly enabledAvatars?: readonly string[];
 	/** Allowlist of stream-wisp preset ids selectable in Appearance; default all. */
 	readonly enabledWisps?: readonly string[];
@@ -194,7 +194,7 @@ function normalizeFraymProps({
 	workspace = null,
 	workspaces = [],
 	settingsPanels = [],
-	defaultAvatar = "blob",
+	defaultAvatar = "nebula",
 	className,
 	userName = "Local User",
 	userAvatarUrl,

@@ -12,7 +12,7 @@ import { Shimmer } from "../../elements/shimmer";
 import { cn } from "../../lib/cn";
 
 export interface WorkingTailProps {
-	/** Presence node (e.g. `<Presence avatar="blob" />`). */
+	/** Presence node (e.g. `<Presence avatar="nebula" />`). */
 	readonly presence?: ReactNode;
 	/** Working verb to shimmer while streaming (verber-resolved by the caller). */
 	readonly verb?: string;

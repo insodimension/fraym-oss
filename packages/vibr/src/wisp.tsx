@@ -51,7 +51,7 @@ function animate(
   return () => cancelAnimationFrame(frameId);
 }
 export function Wisp({
-  preset = "liquid",
+  preset = "smiley",
   targetRef,
   energy = 0,
   state = "idle",

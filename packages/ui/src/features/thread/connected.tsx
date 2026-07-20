@@ -19,7 +19,7 @@ import { lastUserMessageId } from "./thread-core";
 import { resolveThreadVerber, useStickyToolIntent } from "./verber-status";
 
 export interface ConnectedMessageThreadProps {
-	/** Presence node (e.g. `<OptionalConnectedPresence avatar="blob" />`) pinned in the tail. */
+	/** Presence node (e.g. `<OptionalConnectedPresence avatar="nebula" />`) pinned in the tail. */
 	readonly presence?: React.ReactNode;
 	/** Optional showcase/embed override; otherwise the Fraym UI config profile drives the tail verb. */
 	readonly verberProfile?: VerberProfileId;

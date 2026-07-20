@@ -1,3 +1,4 @@
+/// <reference path="../../asset-imports.d.ts" />
 "use client";
 
 // PdfView — renders a PDF to canvases with pdfjs-dist (the same engine Synara

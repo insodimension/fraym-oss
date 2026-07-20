@@ -47,14 +47,6 @@ const SCENERY_LABEL_PAD_TOP = 96;
 const SCENERY_LABEL_PAD_BOTTOM = 32;
 const DAMAGE_HEAL_MS = 6000;
 const FINISHED_TOOL_GRACE_MS = 4000;
-const IDLE_WANDER_MIN_WAIT_MS = 6500;
-const IDLE_WANDER_MAX_WAIT_MS = 15000;
-const IDLE_WANDER_MIN_HOLD_MS = 2200;
-const IDLE_WANDER_MAX_HOLD_MS = 5600;
-const IDLE_WANDER_MIN_DURATION_MS = 2200;
-const IDLE_WANDER_MAX_DURATION_MS = 6800;
-const IDLE_WANDER_MIN_SPEED = 54;
-const IDLE_WANDER_MAX_SPEED = 92;
 const DAMAGE_MAX_HOLES = 24;
 const DAMAGE_MAX_BANDS = 8;
 
@@ -241,7 +233,7 @@ function measureScenery(target: WispTarget): SceneryRect[] {
 export interface StreamWispProps {
 	/** The wisp's home position when nothing is streaming. */
 	readonly anchorRef: React.RefObject<HTMLElement | null>;
-	/** Vibr renderer preset. Default `"liquid"`. */
+	/** Vibr renderer preset. Default `"smiley"`. */
 	readonly preset?: WispPresetId;
 }
 
@@ -285,77 +277,6 @@ function measureRunningTool(): { readonly target: WispTarget; readonly el: Eleme
 	if (rect.width === 0 && rect.height === 0) return null;
 	return { target: { x: rect.left + 18, y: rect.top + 16 }, el: card };
 }
-interface IdleFlight {
-	from: WispTarget;
-	to: WispTarget;
-	startedAt: number;
-	landsAt: number;
-}
-type IdleState =
-	| { readonly phase: "waiting"; readonly nextAt: number }
-	| { readonly phase: "outbound"; readonly flight: IdleFlight }
-	| { readonly phase: "holding"; readonly spot: WispTarget; readonly until: number }
-	| { readonly phase: "returning"; readonly flight: IdleFlight };
-
-function randomBetween(min: number, max: number): number {
-	return min + Math.random() * (max - min);
-}
-
-function clamp(value: number, min: number, max: number): number {
-	return Math.max(min, Math.min(max, value));
-}
-
-function flightDuration(from: WispTarget, to: WispTarget): number {
-	const distance = Math.hypot(to.x - from.x, to.y - from.y);
-	const speed = randomBetween(IDLE_WANDER_MIN_SPEED, IDLE_WANDER_MAX_SPEED);
-	return clamp((distance / speed) * 1000, IDLE_WANDER_MIN_DURATION_MS, IDLE_WANDER_MAX_DURATION_MS);
-}
-
-function idleWanderSpot(anchor: WispTarget): WispTarget {
-	const thread = document.querySelector("[data-slot='thread']");
-	const rect =
-		thread?.getBoundingClientRect() ??
-		({
-			left: 24,
-			right: window.innerWidth - 24,
-			top: 72,
-			bottom: window.innerHeight - 72,
-			width: window.innerWidth - 48,
-			height: window.innerHeight - 144,
-		} as DOMRect);
-	const side = Math.random() < 0.5 ? -1 : 1;
-	const margin = 18 + Math.random() * 38;
-	const x = side < 0 ? rect.left + margin : rect.right - margin;
-	const top = clamp(rect.top + 48, 36, window.innerHeight - 72);
-	const bottom = clamp(rect.bottom - 48, top + 1, window.innerHeight - 36);
-	let y = randomBetween(top, bottom);
-	if (Math.hypot(x - anchor.x, y - anchor.y) < 120) y = clamp(y + (y < anchor.y ? -140 : 140), top, bottom);
-	return { x: clamp(x, 24, window.innerWidth - 24), y };
-}
-
-function startIdleFlight(from: WispTarget, to: WispTarget, now: number): IdleFlight {
-	const duration = flightDuration(from, to);
-	return { from, to, startedAt: now, landsAt: now + duration };
-}
-
-function sampleIdleFlight(flight: IdleFlight, now: number): WispTarget {
-	const progress = clamp((now - flight.startedAt) / Math.max(1, flight.landsAt - flight.startedAt), 0, 1);
-	const eased = progress * progress * (3 - 2 * progress);
-	const wobble = Math.sin(progress * Math.PI * 6) * Math.sin(progress * Math.PI) * 10;
-	const dx = flight.to.x - flight.from.x;
-	const dy = flight.to.y - flight.from.y;
-	const len = Math.max(1, Math.hypot(dx, dy));
-	const nx = -dy / len;
-	const ny = dx / len;
-	return {
-		x: flight.from.x + dx * eased + nx * wobble,
-		y: flight.from.y + dy * eased + ny * wobble * 0.45,
-	};
-}
-
-function idleWaiting(now: number): IdleState {
-	return { phase: "waiting", nextAt: now + randomBetween(IDLE_WANDER_MIN_WAIT_MS, IDLE_WANDER_MAX_WAIT_MS) };
-}
 
 function clearDamage(): void {
 	for (const [el, st] of holeStates) {
@@ -367,7 +288,7 @@ function clearDamage(): void {
 	rectNodes = new Map();
 }
 
-export function StreamWisp({ anchorRef, preset = "liquid" }: StreamWispProps) {
+export function StreamWisp({ anchorRef, preset = "smiley" }: StreamWispProps) {
 	const session = useSession();
 	const vibr = useVibr();
 
@@ -400,7 +321,6 @@ export function StreamWisp({ anchorRef, preset = "liquid" }: StreamWispProps) {
 		// world, so it forces an immediate re-measure next tick.
 		let sceneryAt = 0;
 		let sceneryDirty = true;
-		let idleState: IdleState = idleWaiting(performance.now());
 		const markDirty = (): void => {
 			sceneryDirty = true;
 		};
@@ -468,54 +388,6 @@ export function StreamWisp({ anchorRef, preset = "liquid" }: StreamWispProps) {
 			};
 		};
 
-		const transitionIdleFlight = (anchor: WispTarget, now: number): WispTarget | null => {
-			if (idleState.phase === "waiting") return null;
-			if (idleState.phase === "outbound") {
-				if (now <= idleState.flight.landsAt) return sampleIdleFlight(idleState.flight, now);
-				idleState = {
-					phase: "holding",
-					spot: idleState.flight.to,
-					until: now + randomBetween(IDLE_WANDER_MIN_HOLD_MS, IDLE_WANDER_MAX_HOLD_MS),
-				};
-				return idleState.spot;
-			}
-			if (idleState.phase === "holding") {
-				if (now <= idleState.until) return idleState.spot;
-				idleState = { phase: "returning", flight: startIdleFlight(idleState.spot, anchor, now) };
-				return sampleIdleFlight(idleState.flight, now);
-			}
-			if (now <= idleState.flight.landsAt) return sampleIdleFlight(idleState.flight, now);
-			idleState = idleWaiting(now);
-			return anchor;
-		};
-
-		const startIdleIfReady = (anchor: WispTarget, now: number): void => {
-			if (idleState.phase !== "waiting" || now < idleState.nextAt) return;
-			const from = targetRef.current ?? anchor;
-			const shouldReturnHome = Math.hypot(from.x - anchor.x, from.y - anchor.y) > 24;
-			idleState = {
-				phase: shouldReturnHome ? "returning" : "outbound",
-				flight: startIdleFlight(from, shouldReturnHome ? anchor : idleWanderSpot(anchor), now),
-			};
-		};
-
-		const idleTarget = (
-			priority: WispTarget | null,
-			isStreaming: boolean,
-			now: number,
-		): { anchor: WispTarget | null; target: WispTarget | null } => {
-			if (preset !== "lantern-moth" || priority || isStreaming) {
-				if (idleState.phase !== "waiting") idleState = idleWaiting(now);
-				return { anchor: null, target: null };
-			}
-			const anchor = measureAnchor();
-			if (!anchor) {
-				if (idleState.phase !== "waiting") idleState = idleWaiting(now);
-				return { anchor: null, target: null };
-			}
-			startIdleIfReady(anchor, now);
-			return { anchor, target: transitionIdleFlight(anchor, now) };
-		};
 
 		const updateScenery = (next: WispTarget | null, now: number): void => {
 			if (next && (sceneryDirty || now - sceneryAt > SCENERY_INTERVAL)) {
@@ -539,8 +411,7 @@ export function StreamWisp({ anchorRef, preset = "liquid" }: StreamWispProps) {
 			const caret = measureLiveCaret();
 			const caretFresh = recordCaret(caret, now);
 			const targets = priorityTarget(caret, caretFresh, isStreaming, hasRunningTool, now);
-			const idle = idleTarget(targets.priority, isStreaming, now);
-			const next = targets.priority ?? idle.target ?? idle.anchor ?? measureAnchor();
+			const next = targets.priority ?? measureAnchor();
 			const ridingTool = next != null && next === targets.tool;
 			if (ridingTool) {
 				toolRiddenAt = now;

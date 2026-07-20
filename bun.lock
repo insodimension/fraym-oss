@@ -18,6 +18,7 @@
         "@ai-sdk/openai-compatible": "1",
         "@fraym/driver": "workspace:*",
         "@fraym/driver-aisdk": "workspace:*",
+        "@fraym/host": "workspace:*",
         "@fraym/ui": "workspace:*",
         "ai": "5",
         "react": "^19.0.0",
@@ -36,7 +37,9 @@
       "name": "fraym-codex-desktop",
       "version": "0.1.0",
       "dependencies": {
+        "@fraym/driver": "workspace:*",
         "@fraym/driver-codex": "workspace:*",
+        "@fraym/host": "workspace:*",
         "@fraym/ui": "workspace:*",
         "@tauri-apps/api": "^2.11.0",
         "react": "^19.0.0",
@@ -58,6 +61,7 @@
       "dependencies": {
         "@fraym/driver": "workspace:*",
         "@fraym/driver-codex": "workspace:*",
+        "@fraym/host": "workspace:*",
         "@fraym/ui": "workspace:*",
         "react": "^19.0.0",
         "react-dom": "^19.0.0",
@@ -180,6 +184,24 @@
       "devDependencies": {
         "@types/bun": "^1.3.0",
         "typescript": "^5.8.0",
+      },
+    },
+    "packages/host": {
+      "name": "@fraym/host",
+      "version": "0.1.0",
+      "dependencies": {
+        "@fraym/driver": "workspace:*",
+        "@fraym/ui": "workspace:*",
+      },
+      "devDependencies": {
+        "@types/react": "^19.0.0",
+        "@types/react-dom": "^19.0.0",
+        "react": "^19.0.0",
+        "react-dom": "^19.0.0",
+      },
+      "peerDependencies": {
+        "react": "^19.0.0",
+        "react-dom": "^19.0.0",
       },
     },
     "packages/ui": {
@@ -365,6 +387,8 @@
     "@fraym/driver-test": ["@fraym/driver-test@workspace:packages/driver-test"],
 
     "@fraym/fixtures": ["@fraym/fixtures@workspace:packages/fixtures"],
+
+    "@fraym/host": ["@fraym/host@workspace:packages/host"],
 
     "@fraym/kitchen-sink": ["@fraym/kitchen-sink@workspace:apps/kitchen-sink"],
 

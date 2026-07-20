@@ -37,7 +37,7 @@ const LOAD_MORE_CHUNK = 5;
 const RETRY_SUCCESS_DISMISS_MS = 4000;
 
 export interface ThreadProps {
-	/** Presence node pinned in the tail (e.g. `<Presence avatar="blob" />`). */
+	/** Presence node pinned in the tail (e.g. `<Presence avatar="nebula" />`). */
 	readonly presence?: ReactNode;
 	/** Working verb shown while streaming (verber-resolved by the caller). Defaults to the session's working status. */
 	readonly verb?: string;
@@ -632,7 +632,7 @@ function renderTailPresence(
 ) {
 	if (!streamWispOn || presence == null) return presence;
 	// Keep the anchor span laid out (StreamWisp measures it as the wisp's home);
-	// fade only the inner avatar so a settled duel wisp can BECOME the tile.
+	// fade only the inner avatar so a settled wisp can take over the tile.
 	return (
 		<span ref={wispAnchorRef} className="inline-flex">
 			<span
@@ -682,27 +682,11 @@ function useThreadFrameProps(props: ThreadProps): ThreadFrameProps {
 	const settings = useToolDisplaySettings();
 	const { config } = useSettings();
 	const streamWispOn = config.streamWisp;
-	// Lore kinship: "auto" follows the avatar's kin; explicit picks are honored
-	// only while compatible — the registry clamps lore-breaking pairs (a black
-	// hole never turns into a koi mid-sentence).
+	// "auto" follows the avatar's kin; explicit picks are honored only while
+	// compatible — the registry clamps incompatible avatar/preset pairs.
 	const streamWispPreset = resolveWispPreset(config.streamWispPreset, config.avatar);
 	const wispAnchorRef = useRef<HTMLSpanElement>(null);
-	// Duel avatar + duel wisp: when the session goes idle the wisp returns to the
-	// tile (its home anchor) and settles into the same meditating fighter, so the
-	// tile <Presence> is redundant — yield it to the wisp. Driven by the existing
-	// session vibrState (the real lifecycle), not a hardcode; a short beat lets the
-	// spring fly home first, and any non-idle state hands the tile straight back.
-	const duelHome = streamWispOn && config.avatar === "duel" && streamWispPreset === "duel";
-	const idle = session.vibrState === "idle";
-	const [wispOwnsTile, setWispOwnsTile] = useState(false);
-	useEffect(() => {
-		if (!duelHome || !idle) {
-			setWispOwnsTile(false);
-			return;
-		}
-		const settleTimer = setTimeout(() => setWispOwnsTile(true), 550);
-		return () => clearTimeout(settleTimer);
-	}, [duelHome, idle]);
+	const wispOwnsTile = false;
 	const resolvedDensity = density ?? settings.density;
 	const resolvedCollapseMode = collapseMode ?? settings.collapseMode;
 	const resolvedMaxBlocks = settings.maxVisibleBlocks ?? 10;

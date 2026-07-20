@@ -731,34 +731,17 @@ function SessionPresenceDot({
 
 /** Largest visual size (px) the rail mini-vibr is allowed to occupy. */
 const RAIL_MAX_PX = 30;
-// Natural display sizes (px) of each avatar, mirroring packages/vibr/src/css/avatars.css.
-// A single fixed scale can't normalize the rail mini-vibr: avatars span 15px→46px, and
-// some (e.g. `duel` — a small figure in a big dojo canvas) collapse to a speck when
-// shrunk. So each avatar is scaled down to RAIL_MAX_PX only if it is larger.
+// Natural display sizes (px) of each shipped avatar (see packages/vibr/src/css/avatars.css).
+// Each avatar is scaled down to RAIL_MAX_PX only if it is larger.
 const AVATAR_PX: Partial<Record<AvatarId, number>> = {
-	blob: 20,
-	static: 24,
-	rorschach: 26,
-	inkblot: 26,
-	aurora: 26,
 	nebula: 26,
-	siri: 26,
-	orbit: 26,
-	quasar: 40,
-	matrix: 32,
-	lattice: 15,
-	liquid: 30,
-	koi: 30,
-	duel: 30,
-	ember: 46,
-	blackhole: 42,
+	smiley: 24,
 };
 
 /**
- * The session rail's mini vibr. Avatars self-size from 15px to 46px, so each is
- * scaled to at most RAIL_MAX_PX and absolutely-centered inside the fixed dot slot:
- * the scaled glyph never reflows the row, and small-figure avatars like `duel`
- * stay legible instead of collapsing to a speck (the old fixed 0.58 scale).
+ * The session rail's mini vibr. Each avatar is scaled to at most RAIL_MAX_PX and
+ * absolutely-centered inside the fixed dot slot, so the scaled glyph never
+ * reflows the row.
  */
 export function RailPresence({
 	avatar,

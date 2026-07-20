@@ -63,23 +63,8 @@ export function resolveDockTabs(ids?: readonly string[]): readonly DockTab[] {
 }
 
 export const AVATAR_OPTIONS: { id: AvatarId; label: string }[] = [
-	{ id: "blob", label: "Fraym" },
-	{ id: "aurora", label: "Aurora" },
 	{ id: "nebula", label: "Nebula" },
-	{ id: "ember", label: "Supernova" },
-	{ id: "blackhole", label: "Black Hole" },
-	{ id: "quasar", label: "Quasar" },
-	{ id: "matrix", label: "Matrix" },
-	{ id: "lattice", label: "Lattice" },
-	{ id: "siri", label: "Siri" },
-	{ id: "orbit", label: "Orbit" },
-	{ id: "liquid", label: "Liquid" },
-	{ id: "koi", label: "Koi" },
-	{ id: "duel", label: "Duel" },
 	{ id: "smiley", label: "Smiley" },
-	{ id: "rorschach", label: "Rorschach" },
-	{ id: "inkblot", label: "Inkblot" },
-	{ id: "static", label: "Static" },
 ];
 
 export const PALETTE_CMDS: PaletteCategory[] = [

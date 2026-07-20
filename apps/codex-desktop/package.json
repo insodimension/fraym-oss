@@ -12,7 +12,9 @@
 		"check:types": "tsc -p tsconfig.json --noEmit"
 	},
 	"dependencies": {
+		"@fraym/driver": "workspace:*",
 		"@fraym/driver-codex": "workspace:*",
+		"@fraym/host": "workspace:*",
 		"@fraym/ui": "workspace:*",
 		"@tauri-apps/api": "^2.11.0",
 		"react": "^19.0.0",

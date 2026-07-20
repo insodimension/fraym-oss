@@ -4,16 +4,7 @@ import type {
   WispPresetId,
   WispPresetInstance,
 } from "./types";
-import {
-  createBladeCursorPreset,
-  createDuelCursorPreset,
-  createKoiCursorPreset,
-  createLanternMothCursorPreset,
-  createLiquidCursorPreset,
-  createPixelCursorPreset,
-  createRoninCursorPreset,
-  createSmileyCursorPreset,
-} from "./presets";
+import { createSmileyCursorPreset } from "./presets";
 export interface WispPresetDef {
   readonly id: WispPresetId;
   readonly label: string;
@@ -24,65 +15,11 @@ export interface WispPresetDef {
 }
 export const WISP_PRESET_DEFS: readonly WispPresetDef[] = [
   {
-    id: "liquid",
-    label: "Liquid",
-    description: "Organic droplet",
-    create: createLiquidCursorPreset,
-    kin: ["liquid"],
-    universal: true,
-  },
-  {
-    id: "koi",
-    label: "Koi",
-    description: "Swimming companion",
-    create: createKoiCursorPreset,
-    kin: ["koi"],
-  },
-  {
-    id: "duel",
-    label: "Duel",
-    description: "Two tiny fighters",
-    create: createDuelCursorPreset,
-    kin: ["duel"],
-    universal: true,
-  },
-  {
-    id: "blade",
-    label: "Blade",
-    description: "Fast stream blade",
-    create: createBladeCursorPreset,
-    kin: ["duel"],
-    universal: true,
-  },
-  {
-    id: "ronin",
-    label: "Ronin",
-    description: "Wandering stream fighter",
-    create: createRoninCursorPreset,
-    kin: ["duel"],
-    universal: true,
-  },
-  {
-    id: "lantern-moth",
-    label: "Lantern moth",
-    description: "Orbiting dark familiar",
-    create: createLanternMothCursorPreset,
-    kin: ["blackhole"],
-  },
-  {
     id: "smiley",
     label: "Smiley",
     description: "Expressive face",
     create: createSmileyCursorPreset,
     kin: ["smiley"],
-    universal: true,
-  },
-  {
-    id: "pixel",
-    label: "Pixel",
-    description: "Morphing dot matrix",
-    create: createPixelCursorPreset,
-    kin: ["matrix", "lattice"],
     universal: true,
   },
 ];
@@ -104,7 +41,7 @@ export function wispPresetForAvatar(avatar: string): WispPresetId {
     (
       WISP_PRESET_DEFS.find((item) => item.kin.includes(avatar as AvatarId)) ??
       WISP_PRESET_DEFS.find((item) => item.universal)
-    )?.id ?? "liquid"
+    )?.id ?? "smiley"
   );
 }
 export function resolveWispPreset(

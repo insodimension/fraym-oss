@@ -14,66 +14,17 @@
       "types": "./src/index.ts",
       "import": "./src/index.ts"
     },
-    "./avatars.css": "./src/avatars.css",
     "./presence": {
       "types": "./src/presence.tsx",
       "import": "./src/presence.tsx"
-    },
-    "./blob": {
-      "types": "./src/avatars.tsx",
-      "import": "./src/avatars.tsx"
-    },
-    "./static": {
-      "types": "./src/avatars.tsx",
-      "import": "./src/avatars.tsx"
-    },
-    "./rorschach": {
-      "types": "./src/avatars.tsx",
-      "import": "./src/avatars.tsx"
-    },
-    "./inkblot": {
-      "types": "./src/avatars.tsx",
-      "import": "./src/avatars.tsx"
-    },
-    "./aurora": {
-      "types": "./src/avatars.tsx",
-      "import": "./src/avatars.tsx"
     },
     "./nebula": {
       "types": "./src/avatars/nebula.tsx",
       "import": "./src/avatars/nebula.tsx"
     },
-    "./siri": {
-      "types": "./src/avatars.tsx",
-      "import": "./src/avatars.tsx"
-    },
     "./smiley": {
       "types": "./src/avatars/smiley.tsx",
       "import": "./src/avatars/smiley.tsx"
-    },
-    "./orbit": {
-      "types": "./src/avatars.tsx",
-      "import": "./src/avatars.tsx"
-    },
-    "./quasar": {
-      "types": "./src/avatars.tsx",
-      "import": "./src/avatars.tsx"
-    },
-    "./matrix": {
-      "types": "./src/avatars.tsx",
-      "import": "./src/avatars.tsx"
-    },
-    "./liquid": {
-      "types": "./src/avatars.tsx",
-      "import": "./src/avatars.tsx"
-    },
-    "./ember": {
-      "types": "./src/avatars.tsx",
-      "import": "./src/avatars.tsx"
-    },
-    "./blackhole": {
-      "types": "./src/avatars.tsx",
-      "import": "./src/avatars.tsx"
     }
   },
   "files": [

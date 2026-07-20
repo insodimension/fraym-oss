@@ -13,6 +13,7 @@
 	"dependencies": {
 		"@ai-sdk/openai-compatible": "1",
 		"@fraym/driver": "workspace:*",
+		"@fraym/host": "workspace:*",
 		"@fraym/driver-aisdk": "workspace:*",
 		"@fraym/ui": "workspace:*",
 		"ai": "5",

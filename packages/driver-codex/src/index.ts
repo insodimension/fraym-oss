@@ -1,3 +1,4 @@
+import { createEventStreamSessionDriver, type EventStreamSessionDriverHandle, type WorkspaceRef } from "@fraym/driver";
 import type {
 	AgentEvent,
 	AgentEventListener,
@@ -312,4 +313,21 @@ export function createCodexDriver(options: CodexDriverOptions = {}): CodexDriver
 		respondToApproval,
 		cancel,
 	};
+}
+
+export const CODEX_WORKSPACE: WorkspaceRef = { workspaceId: "codex-local", path: "codex", displayName: "Codex CLI" };
+
+/** The full `SessionDriver` for the Codex bridge: the flat stream wrapped so the
+ * shared shell (rail, composer, approvals) renders around it. */
+export function createCodexSessionDriver(options: CodexDriverOptions = {}): EventStreamSessionDriverHandle {
+	const stream = createCodexDriver(options);
+	return createEventStreamSessionDriver(stream, {
+		prompt: (input) => stream.prompt(input.text),
+		cancel: () => stream.cancel(),
+		respondToApproval: (response) => stream.respondToApproval(response),
+		workspace: CODEX_WORKSPACE,
+		title: "Codex CLI",
+		model: options.model ?? CODEX_DEFAULT_MODEL,
+		provider: "codex",
+	});
 }

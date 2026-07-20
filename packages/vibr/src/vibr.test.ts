@@ -27,10 +27,12 @@ describe("vibr", () => {
     expect(physics.step(dt).x).toBeWithin(0.01, 119.99);
   });
   test("resolves kin and universal presets", () => {
-    expect(wispPresetForAvatar("matrix")).toBe("pixel");
+    expect(wispPresetForAvatar("smiley")).toBe("smiley");
     expect(resolveWispPreset("auto", "smiley")).toBe("smiley");
+    // Unknown avatars fall back to the universal preset.
+    expect(wispPresetForAvatar("nebula")).toBe("smiley");
     expect(
-      compatibleWispPresets("blob").some((item) => item.id === "pixel"),
+      compatibleWispPresets("nebula").some((item) => item.id === "smiley"),
     ).toBe(true);
   });
 });

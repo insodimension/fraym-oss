@@ -12,6 +12,7 @@
 	},
 	"dependencies": {
 		"@fraym/driver": "workspace:*",
+		"@fraym/host": "workspace:*",
 		"@fraym/driver-codex": "workspace:*",
 		"@fraym/ui": "workspace:*",
 		"react": "^19.0.0",
