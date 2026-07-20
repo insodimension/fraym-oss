@@ -1,10 +1,11 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { createRoot } from "react-dom/client";
-import type { SessionRef, SessionSnapshot, WorkspaceRef } from "@fraym/driver";
+import type { SessionRef, SessionSnapshot } from "@fraym/driver";
 import { Fraym, ThemeProvider } from "@fraym/ui";
+import { resourceDriver } from "./local-resource-driver";
 import { createLocalSessionDriver } from "./local-session-driver";
 import { MODELS_SETTINGS_PANEL } from "./models-panel";
-import { loadConnection, PROVIDERS } from "./providers";
+import { loadConnection, PROVIDERS, workspace } from "./providers";
 
 import "@fraym/ui/theme.css";
 import "@fraym/ui/fonts.css";
@@ -12,11 +13,6 @@ import "./styles.css";
 
 const K_ACTIVE_SESSION = "fraym-aisdk-active-session";
 
-const workspace: WorkspaceRef = {
-  workspaceId: "aisdk-local",
-  path: "browser",
-  displayName: "AI SDK",
-};
 
 const connection = loadConnection();
 const driver = createLocalSessionDriver({
@@ -74,7 +70,7 @@ function App() {
 
   return (
     <Fraym
-      drivers={{ session: driver }}
+      drivers={{ session: driver, resources: resourceDriver }}
       workspace={workspace}
       workspaces={[workspace]}
       sessionRef={sessionRef}
@@ -86,6 +82,7 @@ function App() {
       userName="Local profile"
       userEmail="keys stay in this browser"
       enabledModes={["code"]}
+      dockTabs={["insights"]}
       isCreatingSession={creating}
       onSessionSelect={setSessionRef}
       onNewSession={newSession}

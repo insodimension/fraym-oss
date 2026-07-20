@@ -13,9 +13,11 @@ import type { AvatarId, AvatarMode, AvatarState } from "@fraym/vibr";
 import { type ComponentProps, type MouseEvent, type ReactNode, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { ModelSelection, PaletteCategory } from "../components";
 import type { RailMode } from "../components/app-shell";
-import { ComposerChip } from "../features/composer/composer";
+import { ComposerChip, type ComposerChipProps, ContextRadial } from "../features/composer/composer";
+import { Icon } from "../icons";
 import type { RepoGroup, SessionItem } from "../features/session-rail/session-rail";
 import type { ToolDefaultOpen } from "../features/tool-card/tool-display-settings-model";
+import { useLiveContextPercent } from "../hooks/use-live-context-percent";
 import { type RailVibr, useLiveSessionVibrs } from "../hooks/use-live-session-vibrs";
 import { useSessionOptional } from "../hooks/use-session";
 import type { UsageState } from "../hooks/use-usage";
@@ -447,7 +449,43 @@ export function useFraymFrameModel(args: FraymFrameModelArgs): FraymFrameModel {
 	const context = contextModel(session);
 	const ident = identity(props);
 	const model: ModelSelection = modelSelectionFromConfig(session?.snapshot?.config) ?? { name: "Model", effort: "default" };
-	const leftSlot: ReactNode = <ComposerChip tone="warn" dot>{chrome.permission}</ComposerChip>;
+	const permObj = PERMS.find(permission => permission.id === chrome.permission) ?? PERMS[0];
+	const openPermissionMenu = useCallback(
+		(event: MouseEvent<HTMLButtonElement>) =>
+			chrome.setMenu({ type: "perm", rect: event.currentTarget.getBoundingClientRect() }),
+		[chrome.setMenu],
+	);
+	const openContextMenu = useCallback(
+		(event: MouseEvent<HTMLButtonElement>) =>
+			chrome.setMenu({ type: "context", rect: event.currentTarget.getBoundingClientRect() }),
+		[chrome.setMenu],
+	);
+	const openModelMenu = useCallback(
+		(event: MouseEvent<HTMLButtonElement>) =>
+			chrome.setMenu({ type: "model", rect: event.currentTarget.getBoundingClientRect() }),
+		[chrome.setMenu],
+	);
+	const leftSlot: ReactNode = (
+		<ComposerChip
+			tone={permissionTone(chrome.permission)}
+			dot
+			data-chip="permission"
+			aria-label={permObj?.label ?? chrome.permission}
+			onClick={openPermissionMenu}
+		>
+			{permObj?.label ?? chrome.permission}
+		</ComposerChip>
+	);
+	const renderRightSlot = useCallback(
+		() => (
+			<ComposerSessionRightSlot
+				localModel={model}
+				onOpenContext={openContextMenu}
+				onOpenModel={openModelMenu}
+			/>
+		),
+		[model.name, model.effort, openContextMenu, openModelMenu],
+	);
 	const workspaceProps = {
 		className: props.className,
 		workspaceOnly: props.workspaceOnly ?? false,
@@ -478,8 +516,8 @@ export function useFraymFrameModel(args: FraymFrameModelArgs): FraymFrameModel {
 		placeholder: "Message the agent",
 		streaming: session?.isStreaming,
 		leftSlot,
-		rightSlot: null,
-		renderRightSlot: () => null,
+		rightSlot: renderRightSlot(),
+		renderRightSlot,
 		avatar: chrome.avatar,
 		vibrState: activeVibr.state,
 		vibrMode: activeVibr.mode,
@@ -655,4 +693,45 @@ export function useFraymFrameModel(args: FraymFrameModelArgs): FraymFrameModel {
 		overlayProps,
 		workspaceOnly: props.workspaceOnly ?? false,
 	};
+}
+
+function permissionTone(permission: string): NonNullable<ComposerChipProps["tone"]> {
+	if (permission === "yolo") return "del";
+	if (permission === "always-ask") return "add";
+	return "warn";
+}
+
+function ComposerSessionRightSlot({
+	localModel,
+	onOpenContext,
+	onOpenModel,
+}: {
+	readonly localModel: ModelSelection;
+	readonly onOpenContext: (event: MouseEvent<HTMLButtonElement>) => void;
+	readonly onOpenModel: (event: MouseEvent<HTMLButtonElement>) => void;
+}) {
+	const session = useSessionOptional();
+	const visibleModel = modelSelectionFromConfig(session?.snapshot?.config) ?? localModel;
+	const contextPercent = useLiveContextPercent(session) ?? 0;
+	return (
+		<>
+			<ContextRadial percent={contextPercent} onClick={onOpenContext} />
+			<ComposerChip
+				className="font-secondary text-fr-xs"
+				data-chip="model"
+				onClick={onOpenModel}
+				title="Switch model for this session"
+			>
+				{/* Phone posture swaps the full label for the short form (theme.css):
+				    vendor prefix + effort dropped so narrow widths read the model name
+				    without clipping. */}
+				<span data-model-label="full">
+					{visibleModel.name} - {visibleModel.effort}
+				</span>
+				<span data-model-label="short">
+					{visibleModel.name.replace(/^(claude|gpt|gemini|grok|deepseek|qwen|llama|mistral|o)[-.]/i, "")}
+				</span>
+			</ComposerChip>
+		</>
+	);
 }

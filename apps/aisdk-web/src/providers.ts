@@ -1,6 +1,13 @@
+import type { WorkspaceRef } from "@fraym/driver";
 import type { ToolDefaultOpen } from "@fraym/ui";
 
 // Provider catalog + browser-persisted app preferences for the AI SDK host.
+
+export const workspace: WorkspaceRef = {
+  workspaceId: "aisdk-local",
+  path: "browser",
+  displayName: "AI SDK",
+};
 
 export type ProviderId = "openai" | "openrouter";
 

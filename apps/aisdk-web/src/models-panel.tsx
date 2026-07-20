@@ -1,5 +1,7 @@
+import type { EngineModelRecord } from "@fraym/driver";
 import { Button, type FraymSettingsPanel, SettingsGroup, SettingsSub, SettingsTitle } from "@fraym/ui";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { resourceDriver } from "./local-resource-driver";
 import {
   loadConnection,
   persistConnection,
@@ -24,11 +26,12 @@ function loadDraft(id: ProviderId): DraftState {
   };
 }
 
-function ProviderCard({ id }: { readonly id: ProviderId }) {
+function ProviderCard({ id, models }: { readonly id: ProviderId; readonly models: readonly EngineModelRecord[] }) {
   const info = PROVIDERS[id];
   const [draft, setDraft] = useState<DraftState>(() => loadDraft(id));
   const [active, setActive] = useState(() => loadConnection()?.provider === id);
   const hasKey = draft.apiKey.trim().length > 0;
+  const catalog = models.filter((model) => model.providerId === id);
 
   const use = () => {
     const apiKey = draft.apiKey.trim();
@@ -71,14 +74,28 @@ function ProviderCard({ id }: { readonly id: ProviderId }) {
         </label>
         <label className="grid gap-1.5 text-xs text-fr-text-2">
           Model
-          <input
-            className="h-9 rounded-lg border border-fr-border bg-fr-surface-2 px-3 font-mono text-xs text-fr-text outline-none focus:border-fr-accent-line"
-            onChange={(event) => setDraft({ ...draft, model: event.currentTarget.value })}
-            placeholder={info.defaultModel}
-            spellCheck={false}
-            type="text"
-            value={draft.model}
-          />
+          {catalog.length > 0 ? (
+            <select
+              className="h-9 rounded-lg border border-fr-border bg-fr-surface-2 px-2 font-mono text-xs text-fr-text outline-none focus:border-fr-accent-line"
+              onChange={(event) => setDraft({ ...draft, model: event.currentTarget.value })}
+              value={draft.model || info.defaultModel}
+            >
+              {catalog.map((model) => (
+                <option key={model.modelId} value={model.modelId}>
+                  {model.label}
+                </option>
+              ))}
+            </select>
+          ) : (
+            <input
+              className="h-9 rounded-lg border border-fr-border bg-fr-surface-2 px-3 font-mono text-xs text-fr-text outline-none focus:border-fr-accent-line"
+              onChange={(event) => setDraft({ ...draft, model: event.currentTarget.value })}
+              placeholder={info.defaultModel}
+              spellCheck={false}
+              type="text"
+              value={draft.model}
+            />
+          )}
         </label>
       </div>
       <div className="mt-3">
@@ -91,6 +108,21 @@ function ProviderCard({ id }: { readonly id: ProviderId }) {
 }
 
 function ModelsPane() {
+  const [models, setModels] = useState<readonly EngineModelRecord[]>([]);
+  useEffect(() => {
+    let alive = true;
+    void resourceDriver.getResourceSnapshot().then(
+      (snapshot) => {
+        if (alive) setModels(snapshot.models);
+      },
+      () => {
+        // Offline / fetch failure: the cards fall back to free-text model input.
+      },
+    );
+    return () => {
+      alive = false;
+    };
+  }, []);
   return (
     <div>
       <SettingsTitle>Models</SettingsTitle>
@@ -101,7 +133,7 @@ function ModelsPane() {
       <SettingsGroup>
         <div className="grid gap-3">
           {PROVIDER_IDS.map((id) => (
-            <ProviderCard id={id} key={id} />
+            <ProviderCard id={id} key={id} models={models} />
           ))}
         </div>
       </SettingsGroup>

@@ -6,6 +6,8 @@
 import { createOpenAICompatible } from "@ai-sdk/openai-compatible";
 import type {
   CompletionItem,
+  ContextBreakdown,
+  ContextUsage,
   CreateSessionOptions,
   EngineCommandRecord,
   HostUiResponse,
@@ -28,6 +30,8 @@ import { PROVIDERS, type ProviderId } from "./providers";
 
 const K_INDEX = "fraym-aisdk-sd-index";
 const MAX_SESSIONS = 60;
+const DEFAULT_CONTEXT_WINDOW = 128_000;
+const SYSTEM_PROMPT_CHARS = 160;
 const TITLE_MAX = 44;
 
 interface StoredSession {
@@ -354,11 +358,45 @@ export class LocalSessionDriver implements SessionDriver {
     }
     this.#emitJournal(rt);
     this.#emit(rt, { type: "turnEnded", durationMs: Date.now() - startedAt, final: true });
+    const usage = this.#estimateContext(rt);
+    this.#emit(rt, { type: "contextUsage", usage });
     this.#patchSnapshot(rt, {
       status: failed !== null ? "failed" : "idle",
       preview: text.slice(0, 120) || rt.snapshot.preview,
+      contextUsage: usage,
     });
     this.#emit(rt, { type: "runCompleted", snapshot: rt.snapshot });
+  }
+
+  /** Rough client-side estimate: ~4 chars per token over the seeded history. */
+  #estimateContext(rt: Runtime): ContextUsage {
+    const chars = rt.history.reduce((total, message) => {
+      const content = typeof message.content === "string" ? message.content : JSON.stringify(message.content);
+      return total + content.length;
+    }, 0);
+    const tokens = Math.ceil((chars + SYSTEM_PROMPT_CHARS) / 4);
+    return {
+      tokens,
+      contextWindow: DEFAULT_CONTEXT_WINDOW,
+      percent: Math.min(100, Math.round((tokens / DEFAULT_CONTEXT_WINDOW) * 100)),
+    };
+  }
+
+  async getContextBreakdown(ref: SessionRef): Promise<ContextBreakdown | null> {
+    const rt = this.#runtime(ref);
+    const usage = this.#estimateContext(rt);
+    const used = usage.tokens ?? 0;
+    const system = Math.ceil(SYSTEM_PROMPT_CHARS / 4);
+    return {
+      contextWindow: usage.contextWindow,
+      usedTokens: used,
+      autoCompactBufferTokens: 0,
+      freeTokens: Math.max(0, usage.contextWindow - used),
+      categories: [
+        { id: "system", label: "System prompt", tokens: system },
+        { id: "conversation", label: "Conversation", tokens: Math.max(0, used - system) },
+      ],
+    };
   }
 
   async interruptWithQueuedMessage(

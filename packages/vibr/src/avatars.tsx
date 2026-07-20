@@ -1,4 +1,5 @@
 import type { AvatarId, AvatarProps } from "./types";
+import "./avatars.css";
 import { Nebula } from "./avatars/nebula";
 import { Smiley } from "./avatars/smiley";
 
