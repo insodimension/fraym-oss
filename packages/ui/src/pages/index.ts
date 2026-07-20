@@ -1,4 +1,24 @@
+// Pages tier — full screens assembled from features.
+
+export { ModelsHome, type ModelsHomeProps } from "./models-page";
 export {
+	AdvancedConfigExplorer,
+	type AdvancedConfigExplorerProps,
+	AppearancePane,
+	type AppearancePaneProps,
+	EngineConfigPane,
+	type EngineConfigPaneProps,
+	EngineConnectionsPane,
+	type EngineConnectionsPaneProps,
+	EngineModelPane,
+	type EngineModelPaneProps,
+	GeneralPane,
+	type GeneralPaneProps,
+	ProfilePane,
+	type ProfilePaneProps,
+	type ProfileStat,
+	ProviderPreferencesPane,
+	type ProviderPreferencesPaneProps,
 	Segmented,
 	type SegmentedProps,
 	SettingsGroup,
@@ -9,4 +29,7 @@ export {
 	type SettingsRowProps,
 	SettingsSub,
 	SettingsTitle,
+	ShortcutsPane,
+	StackedEngineConfigPane,
+	type StackedEngineConfigPaneProps,
 } from "./settings-page";

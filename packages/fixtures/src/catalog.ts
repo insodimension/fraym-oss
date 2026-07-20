@@ -24,12 +24,6 @@ function snapshot(id: string, title: string): SessionSnapshot {
     updatedAt: "2026-06-06T12:00:00.000Z",
   };
 }
-function event(
-  type: string,
-  fields: Record<string, unknown> = {},
-): ScriptedEvent {
-  return { type, ...fields };
-}
 export function makeToolDemo(
   id: string,
   title: string,
@@ -41,36 +35,45 @@ export function makeToolDemo(
     snapshot: snapshot(id, title),
     intro: [
       {
-        event: event("queuedMessageStarted", {
-          text: `Demonstrate ${toolName}`,
-        }),
+        event: {
+          type: "queuedMessageStarted",
+          message: {
+            id: `${id}-queued`,
+            mode: "followUp",
+            text: `Demonstrate ${toolName}`,
+            createdAt: "2026-06-06T12:00:00.000Z",
+            updatedAt: "2026-06-06T12:00:00.000Z",
+          },
+        } satisfies ScriptedEvent,
       },
       {
         delayMs: 20,
-        event: event("assistantDelta", {
-          messageId: `${id}-assistant`,
-          delta: `I’ll use ${toolName}.`,
-        }),
+        event: {
+          type: "assistantDelta",
+          text: `I’ll use ${toolName}.`,
+        } satisfies ScriptedEvent,
       },
       {
         delayMs: 20,
-        event: event("toolStarted", {
+        event: {
+          type: "toolStarted",
           callId,
           toolName,
           input: { path: "src/example.ts" },
-        }),
+        } satisfies ScriptedEvent,
       },
       {
         delayMs: 30,
-        event: event("toolFinished", {
+        event: {
+          type: "toolFinished",
           callId,
-          toolName,
+          success: true,
           output: { ok: true, summary: `${toolName} completed` },
-        }),
+        } satisfies ScriptedEvent,
       },
       {
         delayMs: 10,
-        event: event("runCompleted", { snapshot: snapshot(id, title) }),
+        event: { type: "runCompleted", snapshot: snapshot(id, title) } satisfies ScriptedEvent,
       },
     ],
   };

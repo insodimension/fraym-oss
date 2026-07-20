@@ -1,0 +1,35 @@
+import type { SessionState } from "./session-types";
+
+export function createInitialState(): SessionState {
+	return {
+		snapshot: null,
+		tree: null,
+		status: "disconnected",
+		isOpening: false,
+		isStreaming: false,
+		reconnecting: false,
+		workingStatus: null,
+		contextUsage: null,
+		tasks: [],
+		planMode: null,
+		goal: null,
+		modes: [],
+		thinkingLevel: null,
+		activeTools: [],
+		toolCount: 0,
+		subagentBatches: [],
+		hasBackgroundWork: false,
+		transcript: [],
+		journalSeq: 0,
+		liveAgentId: null,
+		customMessages: {},
+		hostUiRequests: [],
+		isCompacting: false,
+		compactionReason: null,
+		vibrState: "idle",
+		vibrMode: "",
+		vibrVerb: "",
+		energy: 0,
+		notices: [],
+	};
+}

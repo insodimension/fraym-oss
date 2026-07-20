@@ -5,12 +5,15 @@ export type ToolCallStatus =
   | "failed"
   | "cancelled";
 
-export interface ToolCallMetadata {
-  readonly durationMs?: number;
-  readonly tokens?: number;
-  readonly cachedTokens?: number;
-  readonly extra?: Readonly<Record<string, string | number>>;
-}
+import type {
+  ContextBreakdown,
+  HostUiRequest,
+  HostUiResponse,
+  PermissionOption,
+  TaskItem,
+  TaskPhase,
+  ToolCallMetadata,
+} from "./session-driver";
 
 export type PluginToolRendererUse = "table" | "json" | "keyValue" | "summary";
 export interface PluginToolRendererDescriptor {
@@ -29,80 +32,12 @@ export type PluginFixKind = "install" | "form" | "oauth" | "open-app" | "reconne
 
 export type UsageStatus = "ok" | "warning" | "critical" | "exhausted";
 
-export interface ContextBreakdown {
-  readonly used: number;
-  readonly max: number;
-  readonly system?: number;
-  readonly conversation?: number;
-  readonly tools?: number;
-  readonly files?: number;
-  readonly remaining?: number;
-  readonly [key: string]: number | undefined;
-}
-
-export type TaskStatus = "pending" | "in_progress" | "completed" | "abandoned";
-
-export interface TaskItem {
-  readonly content: string;
-  readonly status: TaskStatus;
-  readonly notes?: readonly string[] | undefined;
-}
-
-export interface TaskPhase {
-  readonly name: string;
-  readonly tasks: readonly TaskItem[];
-}
-
-export interface PermissionOption {
-  readonly optionId: string;
-  readonly name: string;
-  readonly kind: "allow_once" | "allow_always" | "reject_once" | "reject_always";
-}
-
-export interface HostUiSelectOption {
-  readonly label: string;
-  readonly description?: string;
-}
 
 export interface HostUiLocation {
   readonly path: string;
   readonly line?: number;
 }
 
-export interface HostUiRequest {
-  readonly id: string;
-  readonly requestId?: string;
-  readonly kind: "select" | "input" | "confirm" | "permission" | (string & {});
-  readonly title?: string;
-  readonly message?: string;
-  readonly payload?: unknown;
-  readonly options?: readonly (string | HostUiSelectOption | PermissionOption)[];
-  readonly toolName?: string;
-  readonly locations?: readonly HostUiLocation[];
-  readonly paths?: readonly string[];
-  readonly placeholder?: string;
-  readonly initialValue?: string;
-  readonly initialIndex?: number;
-  readonly checkedIndices?: readonly number[];
-  readonly selectionMarker?: "checkbox" | "radio";
-  readonly allowMultiple?: boolean;
-  readonly markableCount?: number;
-  readonly canNavigateBack?: boolean;
-  readonly canNavigateForward?: boolean;
-  readonly defaultValue?: boolean;
-  readonly meta?: Readonly<Record<string, unknown>>;
-}
-
-export interface HostUiResponse {
-  readonly requestId: string;
-  readonly accepted?: boolean;
-  readonly value?: unknown;
-  readonly values?: readonly string[];
-  readonly optionId?: string;
-  readonly confirmed?: boolean;
-  readonly cancelled?: boolean;
-  readonly navigate?: "back" | "forward";
-}
 
 export type ApprovalDecision = "approved" | "rejected";
 
@@ -348,24 +283,14 @@ export function createReplayDriver(
 
 export { codingSessionFixture } from "./fixtures/coding-session";
 export * from "./session-driver";
+export * from "./drivers";
+export * from "./config-types";
+export * from "./analytics-types";
+export * from "./usage-types";
+export * from "./workspace-types";
+export * from "./terminal-types";
+export * from "./fraym-config-types";
+export * from "./resource-types";
+export * from "./scm-ledger";
 
-export interface TurnUsage {
-	readonly input: number;
-	readonly output: number;
-	readonly cacheRead: number;
-	readonly cacheWrite: number;
-	readonly ttftMs?: number;
-	readonly durationMs?: number;
-}
 
-// --- Goal mode ---------------------------------------------------------------
-export type GoalStatus = "active" | "paused" | "budget-limited" | "complete" | "dropped";
-
-export interface Goal {
-	readonly id: string;
-	readonly objective: string;
-	readonly status: GoalStatus;
-	readonly tokenBudget?: number;
-	readonly tokensUsed: number;
-	readonly timeUsedSeconds: number;
-}

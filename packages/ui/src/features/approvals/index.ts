@@ -1,7 +1,18 @@
-export * from "./approval-drawer";
-export * from "./ask-field-control";
-export * from "./fallback-surface";
-export * from "./host-ui-dialog";
-export * from "./host-ui-layer";
-export * from "./permission-approval-card";
-export * from "./select-request-picker";
+// Approvals & host-UI layer (chat-core: safety surfaces).
+
+export { ApprovalDrawer, type ApprovalDrawerProps, type ApprovalDrawerRequest } from "./approval-drawer";
+export {
+	type AskField,
+	AskFieldControl,
+	type AskFieldControlProps,
+	type AskFieldType,
+	readDialogField,
+} from "./ask-field-control";
+export { type DialogHostUiRequest, HostUiDialog, type HostUiDialogProps } from "./host-ui-dialog";
+export {
+	ConnectedHostUiLayer,
+	ConnectedSelectDialog,
+	HostUiDock,
+	HostUiLayer,
+	type HostUiLayerProps,
+} from "./host-ui-layer";

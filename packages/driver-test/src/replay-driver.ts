@@ -1,11 +1,14 @@
 import type {
   SessionDriver,
   SessionDriverEvent,
-  SessionMessage,
-  SessionRef,
+  SessionModelSelection,
+  SessionQueuedMessage,
   SessionSnapshot,
+  SessionTranscriptMessage,
   WorkspaceRef,
 } from "@fraym/driver";
+
+
 export function journalMessageEntry(
   sequence: number,
   role: "user" | "assistant",
@@ -22,10 +25,12 @@ export function journalMessageEntry(
     },
   };
 }
+
 export interface ReplayDelivery {
   readonly via: "prompt" | "steer";
   readonly text: string;
 }
+
 export interface ReplayDriverOptions {
   readonly workspace?: WorkspaceRef;
   readonly advertise?: boolean;
@@ -33,6 +38,7 @@ export interface ReplayDriverOptions {
   readonly runtimeStatus?: "idle" | "running";
   readonly steerError?: string;
 }
+
 export interface ReplayDriverHarness {
   readonly driver: SessionDriver;
   readonly workspace: WorkspaceRef;
@@ -48,23 +54,33 @@ export interface ReplayDriverHarness {
   initializeCount(): number;
   killConnection(): void;
 }
+
 const defaultWorkspace: WorkspaceRef = {
   workspaceId: "workspace-1",
   path: "/tmp/project",
   displayName: "project",
 };
+
+function nowIso(): string {
+  return new Date().toISOString();
+}
+
 export function createReplayDriverHarness(
   options: ReplayDriverOptions = {},
 ): ReplayDriverHarness {
   const workspace = options.workspace ?? defaultWorkspace;
   const sessions = new Map<string, SessionSnapshot>();
+  const transcripts = new Map<string, SessionTranscriptMessage[]>();
   const entries = new Map<string, Record<string, unknown>[]>();
+  const queues = new Map<string, readonly SessionQueuedMessage[]>();
+  const journalSeqs = new Map<string, number>();
   const listeners = new Map<string, Set<(event: SessionDriverEvent) => void>>();
   const replies: string[] = [];
   const seen: ReplayDelivery[] = [];
   const replayOffsets: number[] = [];
   let counter = 1;
   let starts = 1;
+
   const ensure = (id: string): SessionSnapshot => {
     const found = sessions.get(id);
     if (found) return found;
@@ -73,81 +89,277 @@ export function createReplayDriverHarness(
       workspace,
       title: "Replay session",
       status: options.runtimeStatus ?? "idle",
-      updatedAt: new Date().toISOString(),
-      transcript: [],
+      updatedAt: nowIso(),
     };
     sessions.set(id, snapshot);
+    transcripts.set(id, []);
     entries.set(id, []);
+    queues.set(id, []);
+    journalSeqs.set(id, 0);
     return snapshot;
   };
-  ensure("session-1");
-  const append = (id: string, role: "user" | "assistant", text: string) => {
-    const snapshot = ensure(id);
-    const message: SessionMessage = {
-      id: `message-${(snapshot.transcript?.length ?? 0) + 1}`,
-      role,
-      blocks: [{ type: "text", text }],
-    };
-    const next = {
-      ...snapshot,
-      transcript: [...(snapshot.transcript ?? []), message],
-      updatedAt: new Date().toISOString(),
-    };
+
+  const update = (
+    id: string,
+    patch: Partial<Omit<SessionSnapshot, "ref" | "workspace">>,
+  ): SessionSnapshot => {
+    const next = { ...ensure(id), ...patch };
     sessions.set(id, next);
-    const journal = entries.get(id)!;
-    journal.push(journalMessageEntry(journal.length + 1, role, text));
     return next;
   };
-  const emit = (
-    ref: SessionRef,
-    event: { readonly type: string; readonly [key: string]: unknown },
-  ) =>
+
+  const append = (
+    id: string,
+    role: "user" | "assistant",
+    text: string,
+  ): SessionSnapshot => {
+    const transcript = transcripts.get(id) ?? [];
+    const message: SessionTranscriptMessage = {
+      id: `message-${transcript.length + 1}`,
+      role: role === "assistant" ? "agent" : "user",
+      blocks: [{ type: "text", text }],
+    };
+    transcripts.set(id, [...transcript, message]);
+    const snapshot = update(id, { updatedAt: nowIso() });
+    const journal = entries.get(id) ?? [];
+    journal.push(journalMessageEntry(journal.length + 1, role, text));
+    entries.set(id, journal);
+    return snapshot;
+  };
+
+  const emit = (event: SessionDriverEvent): void => {
     listeners
-      .get(ref.sessionId)
-      ?.forEach((listener) =>
-        listener({
-          ...event,
-          sessionRef: ref,
-          timestamp: new Date().toISOString(),
-        }),
-      );
+      .get(event.sessionRef.sessionId)
+      ?.forEach((listener) => listener(event));
+  };
+
+  const emitSnapshot = (snapshot: SessionSnapshot): void => {
+    emit({
+      type: "sessionUpdated",
+      snapshot,
+      sessionRef: snapshot.ref,
+      timestamp: nowIso(),
+    });
+  };
+
+  const emitJournal = (snapshot: SessionSnapshot): void => {
+    const sessionId = snapshot.ref.sessionId;
+    const seq = (journalSeqs.get(sessionId) ?? 0) + 1;
+    journalSeqs.set(sessionId, seq);
+    emit({
+      type: "sessionJournalUpdated",
+      seq,
+      transcript: transcripts.get(sessionId) ?? [],
+      customMessages: {},
+      sessionRef: snapshot.ref,
+      timestamp: nowIso(),
+    });
+  };
+  const replaceQueue = (
+    id: string,
+    messages: readonly SessionQueuedMessage[],
+  ): SessionSnapshot => {
+    queues.set(id, messages);
+    return update(id, { queuedMessages: messages, updatedAt: nowIso() });
+  };
+
+
+  ensure("session-1");
+
   const driver: SessionDriver = {
-    async listSessions() {
-      return [...sessions.values()];
+    async listSessions(sessionWorkspace) {
+      return [...sessions.values()].filter(
+        (snapshot) =>
+          snapshot.workspace.workspaceId === sessionWorkspace.workspaceId,
+      );
     },
-    async createSession(_workspace, createOptions) {
+
+    async createSession(sessionWorkspace, createOptions) {
       counter += 1;
-      const snapshot = ensure(`session-${counter}`);
-      const titled = createOptions?.title
-        ? { ...snapshot, title: createOptions.title }
-        : snapshot;
-      sessions.set(titled.ref.sessionId, titled);
-      return titled;
+      const id = `session-${counter}`;
+      const snapshot: SessionSnapshot = {
+        ref: { workspaceId: sessionWorkspace.workspaceId, sessionId: id },
+        workspace: sessionWorkspace,
+        title: createOptions?.title ?? "Replay session",
+        status: "idle",
+        updatedAt: nowIso(),
+        profile: createOptions?.profile,
+        config:
+          createOptions?.initialModel || createOptions?.initialThinkingLevel
+            ? {
+                provider: createOptions.initialModel?.provider,
+                modelId: createOptions.initialModel?.modelId,
+                thinkingLevel: createOptions.initialThinkingLevel,
+              }
+            : undefined,
+      };
+      sessions.set(id, snapshot);
+      transcripts.set(id, []);
+      entries.set(id, []);
+      queues.set(id, []);
+      journalSeqs.set(id, 0);
+      return snapshot;
     },
+
     async openSession(ref) {
       const snapshot = ensure(ref.sessionId);
       replayOffsets.push(0);
-      queueMicrotask(() =>
-        emit(ref, {
-          type: "sessionJournalUpdated",
-          transcript: snapshot.transcript ?? [],
-        }),
-      );
+      queueMicrotask(() => emitJournal(snapshot));
       return snapshot;
     },
-    async closeSession() {},
+
+    async archiveSession(ref) {
+      const snapshot = update(ref.sessionId, {
+        archivedAt: nowIso(),
+        updatedAt: nowIso(),
+      });
+      emitSnapshot(snapshot);
+    },
+
+    async unarchiveSession(ref) {
+      const { archivedAt: _archivedAt, ...rest } = ensure(ref.sessionId);
+      const snapshot = { ...rest, updatedAt: nowIso() };
+      sessions.set(ref.sessionId, snapshot);
+      emitSnapshot(snapshot);
+    },
+
+    async pinSession(ref) {
+      const snapshot = update(ref.sessionId, { pinnedAt: nowIso() });
+      emitSnapshot(snapshot);
+    },
+
+    async unpinSession(ref) {
+      const { pinnedAt: _pinnedAt, ...rest } = ensure(ref.sessionId);
+      sessions.set(ref.sessionId, rest);
+      emitSnapshot(rest);
+    },
+
+    async deleteSession(ref) {
+      const snapshot = sessions.get(ref.sessionId);
+      if (!snapshot) return;
+      emit({
+        type: "sessionClosed",
+        reason: "deleted",
+        sessionRef: ref,
+        timestamp: nowIso(),
+      });
+      sessions.delete(ref.sessionId);
+      transcripts.delete(ref.sessionId);
+      entries.delete(ref.sessionId);
+      queues.delete(ref.sessionId);
+      journalSeqs.delete(ref.sessionId);
+      listeners.delete(ref.sessionId);
+    },
+
     async sendUserMessage(ref, input) {
       const lane =
         input.deliverAs === "steer" && !options.steerError ? "steer" : "prompt";
       seen.push({ via: lane, text: input.text });
-      let snapshot = append(ref.sessionId, "user", input.text);
-      snapshot = append(ref.sessionId, "assistant", replies.shift() ?? "ok");
-      emit(ref, {
-        type: "sessionJournalUpdated",
-        transcript: snapshot.transcript ?? [],
+      append(ref.sessionId, "user", input.text);
+      const snapshot = append(ref.sessionId, "assistant", replies.shift() ?? "ok");
+      emitJournal(snapshot);
+      emit({
+        type: "runCompleted",
+        snapshot,
+        sessionRef: ref,
+        timestamp: nowIso(),
       });
-      emit(ref, { type: "runCompleted", snapshot });
     },
+
+    async interruptWithQueuedMessage(ref, next, remaining) {
+      const snapshot = replaceQueue(ref.sessionId, remaining);
+      emitSnapshot(snapshot);
+      await driver.sendUserMessage(ref, next);
+    },
+
+    async replaceQueuedMessages(ref, messages) {
+      const snapshot = replaceQueue(ref.sessionId, messages);
+      emitSnapshot(snapshot);
+    },
+
+    async cancelCurrentRun() {},
+
+    async setSessionModel(ref, selection: SessionModelSelection) {
+      const snapshot = update(ref.sessionId, {
+        config: {
+          ...ensure(ref.sessionId).config,
+          provider: selection.provider,
+          modelId: selection.modelId,
+        },
+        updatedAt: nowIso(),
+      });
+      emitSnapshot(snapshot);
+    },
+
+    async setSessionThinkingLevel(ref, thinkingLevel) {
+      const snapshot = update(ref.sessionId, {
+        config: { ...ensure(ref.sessionId).config, thinkingLevel },
+        updatedAt: nowIso(),
+      });
+      emitSnapshot(snapshot);
+    },
+
+    async setSessionApprovalMode(ref, approvalMode) {
+      const snapshot = update(ref.sessionId, {
+        config: { ...ensure(ref.sessionId).config, approvalMode },
+        updatedAt: nowIso(),
+      });
+      emitSnapshot(snapshot);
+    },
+
+    async setSessionEphemeral(ref, ephemeral) {
+      const snapshot = update(ref.sessionId, {
+        config: { ...ensure(ref.sessionId).config, ephemeral },
+        updatedAt: nowIso(),
+      });
+      emitSnapshot(snapshot);
+    },
+
+    async renameSession(ref, title) {
+      const snapshot = update(ref.sessionId, { title, updatedAt: nowIso() });
+      emitSnapshot(snapshot);
+    },
+
+    async compactSession(ref) {
+      emit({
+        type: "compactionStarted",
+        reason: "manual",
+        sessionRef: ref,
+        timestamp: nowIso(),
+      });
+      emit({
+        type: "compactionFinished",
+        aborted: false,
+        shortSummary: "Context compacted.",
+        sessionRef: ref,
+        timestamp: nowIso(),
+      });
+    },
+
+    async reloadSession(ref) {
+      emitSnapshot(ensure(ref.sessionId));
+    },
+
+    async getSessionTree() {
+      return { roots: [], leafId: null };
+    },
+
+    async navigateSessionTree() {
+      return { cancelled: false };
+    },
+
+    async getSessionCommands() {
+      return [];
+    },
+
+    async queryCompletions() {
+      return [];
+    },
+
+    async respondToHostUiRequest() {
+      return true;
+    },
+
     subscribe(ref, listener) {
       const set = listeners.get(ref.sessionId) ?? new Set();
       set.add(listener);
@@ -158,7 +370,12 @@ export function createReplayDriverHarness(
         return removed;
       };
     },
+
+    async closeSession(ref) {
+      listeners.delete(ref.sessionId);
+    },
   };
+
   return {
     driver,
     workspace,

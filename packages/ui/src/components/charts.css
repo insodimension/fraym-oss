@@ -1,0 +1,285 @@
+/* Chart kit — hand-rolled SVG/CSS visualizations, fully token-driven.
+ * Companion stylesheet for charts.tsx; classes are fr-chart-* and keyframes
+ * fr-chart-* to stay out of consumer namespaces. */
+
+/* ── sparkline ─────────────────────────────────────────────────────────── */
+
+.fr-chart-spark {
+	display: block;
+	flex: none;
+}
+
+.fr-chart-spark-line {
+	stroke-dasharray: 1;
+	stroke-dashoffset: 1;
+	animation: fr-chart-draw 900ms ease-out 120ms forwards;
+}
+
+@keyframes fr-chart-draw {
+	to {
+		stroke-dashoffset: 0;
+	}
+}
+
+.fr-chart-spark-fill {
+	opacity: 0;
+	animation: fr-chart-pop 600ms ease-out 420ms forwards;
+}
+
+.fr-chart-spark-dot {
+	opacity: 0;
+	animation: fr-chart-pop 300ms ease-out 900ms forwards;
+}
+
+@keyframes fr-chart-pop {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}
+
+/* ── quadrant scatter ──────────────────────────────────────────────────── */
+
+.fr-chart-scatter {
+	width: 100%;
+	height: auto;
+}
+
+.fr-chart-scatter-pt {
+	animation: fr-chart-pop 360ms ease-out backwards;
+}
+
+.fr-chart-tick {
+	font-family: var(--fr-font-secondary, ui-monospace, monospace);
+	font-size: 9.5px;
+	fill: var(--fr-text-3);
+}
+
+.fr-chart-axis {
+	font-family: var(--fr-font-secondary, ui-monospace, monospace);
+	font-size: 9.5px;
+	letter-spacing: 0.12em;
+	text-transform: uppercase;
+	fill: var(--fr-text-3);
+}
+
+.fr-chart-label {
+	font-family: var(--fr-font-secondary, ui-monospace, monospace);
+	font-size: 10px;
+	fill: var(--fr-text-2);
+}
+
+.fr-chart-hint {
+	font-family: var(--fr-font-secondary, ui-monospace, monospace);
+	font-size: 9.5px;
+	letter-spacing: 0.1em;
+	text-transform: uppercase;
+	fill: color-mix(in srgb, var(--fr-add) 70%, var(--fr-text-3));
+}
+
+/* ── ranked horizontal bars ────────────────────────────────────────────── */
+
+.fr-chart-hbars {
+	display: flex;
+	flex-direction: column;
+	gap: 9px;
+}
+
+.fr-chart-hbar-row {
+	display: grid;
+	grid-template-columns: 130px minmax(0, 1fr) 52px;
+	align-items: center;
+	gap: 10px;
+}
+
+.fr-chart-hbar-label {
+	font-size: 12px;
+	color: var(--fr-text-2);
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.fr-chart-hbar-track {
+	height: 8px;
+	border-radius: 4px;
+	background: var(--fr-surface-3);
+	overflow: hidden;
+}
+
+.fr-chart-hbar-fill {
+	height: 100%;
+	border-radius: 4px;
+	transform-origin: left center;
+	animation: fr-chart-grow-x 700ms cubic-bezier(0.2, 0.7, 0.3, 1) backwards;
+}
+
+.fr-chart-hbar-fill[data-tone="accent"] {
+	background: var(--fr-accent-grad, var(--fr-accent));
+}
+
+.fr-chart-hbar-fill[data-tone="blue"] {
+	background: var(--fr-blue-grad, var(--fr-blue));
+}
+
+.fr-chart-hbar-fill[data-tone="add"] {
+	background: var(--fr-add-grad, var(--fr-add));
+}
+
+.fr-chart-hbar-fill[data-tone="del"] {
+	background: var(--fr-del-grad, var(--fr-del));
+}
+
+@keyframes fr-chart-grow-x {
+	from {
+		transform: scaleX(0);
+	}
+	to {
+		transform: scaleX(1);
+	}
+}
+
+.fr-chart-hbar-value {
+	font-family: var(--fr-font-secondary, ui-monospace, monospace);
+	font-size: 11.5px;
+	font-weight: 600;
+	text-align: right;
+	color: var(--fr-text);
+}
+
+/* ── donut gauge ───────────────────────────────────────────────────────── */
+
+.fr-chart-donut {
+	position: relative;
+	flex: none;
+}
+
+.fr-chart-donut svg {
+	display: block;
+}
+
+.fr-chart-donut-arc {
+	animation: fr-chart-pop 700ms ease-out backwards;
+}
+
+.fr-chart-donut-center {
+	position: absolute;
+	inset: 0;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 1px;
+}
+
+.fr-chart-donut-value {
+	font-family: var(--fr-font-secondary, ui-monospace, monospace);
+	font-size: 21px;
+	font-weight: 600;
+	letter-spacing: -0.02em;
+	color: var(--fr-text);
+}
+
+.fr-chart-donut-caption {
+	font-family: var(--fr-font-secondary, ui-monospace, monospace);
+	font-size: 9.5px;
+	letter-spacing: 0.12em;
+	text-transform: uppercase;
+	color: var(--fr-text-3);
+}
+
+/* ── split bar ─────────────────────────────────────────────────────────── */
+
+.fr-chart-split {
+	display: flex;
+	flex-direction: column;
+	gap: 7px;
+	min-width: 0;
+}
+
+.fr-chart-split-track {
+	display: flex;
+	height: 10px;
+	border-radius: 5px;
+	overflow: hidden;
+	background: var(--fr-surface-3);
+}
+
+.fr-chart-split-seg {
+	height: 100%;
+	transform-origin: left center;
+	animation: fr-chart-grow-x 700ms cubic-bezier(0.2, 0.7, 0.3, 1) backwards;
+}
+
+.fr-chart-split-seg[data-tone="accent"] {
+	background: var(--fr-accent-grad, var(--fr-accent));
+}
+
+.fr-chart-split-seg[data-tone="blue"] {
+	background: var(--fr-blue-grad, var(--fr-blue));
+}
+
+/* ── legend ────────────────────────────────────────────────────────────── */
+
+.fr-chart-legend {
+	display: flex;
+	gap: 14px;
+	font-family: var(--fr-font-secondary, ui-monospace, monospace);
+	font-size: 10.5px;
+	color: var(--fr-text-3);
+}
+
+.fr-chart-legend span {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+}
+
+.fr-chart-swatch {
+	display: inline-block;
+	width: 8px;
+	height: 8px;
+	border-radius: 2px;
+	background: var(--fr-text-3);
+}
+
+.fr-chart-swatch[data-tone="accent"] {
+	background: var(--fr-accent);
+}
+
+.fr-chart-swatch[data-tone="blue"] {
+	background: var(--fr-blue);
+}
+
+.fr-chart-swatch[data-tone="add"] {
+	background: var(--fr-add);
+}
+
+.fr-chart-swatch[data-tone="del"] {
+	background: var(--fr-del);
+}
+
+/* ── motion safety ─────────────────────────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+	.fr-chart-spark-line,
+	.fr-chart-spark-fill,
+	.fr-chart-spark-dot,
+	.fr-chart-hbar-fill,
+	.fr-chart-split-seg,
+	.fr-chart-scatter-pt,
+	.fr-chart-donut-arc {
+		animation: none;
+	}
+
+	.fr-chart-spark-line {
+		stroke-dashoffset: 0;
+	}
+
+	.fr-chart-spark-fill,
+	.fr-chart-spark-dot {
+		opacity: 1;
+	}
+}

@@ -41,7 +41,7 @@ describe("renderer contracts", () => {
   });
 
   test("resolves surface placement and never drops unknown inputs", () => {
-    const input = { channel: "hostUi", request: { id: "request-1", kind: "select" } } as const;
+    const input = { channel: "hostUi", request: { requestId: "request-1", kind: "select", title: "Pick", options: ["A"] } } as const;
     expect(surfaceKey(input)).toBe("hostUi:select");
     expect(resolveSurfaceRegistration({}, "hostUi:select").placement).toBe("docked");
     expect(typeof resolveSurfaceRegistration({}, "hostUi:unknown").render).toBe("function");

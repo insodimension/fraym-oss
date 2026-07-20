@@ -37,22 +37,52 @@ const Context = createContext<SessionValue | null>(null);
 function toAgentEvent(event: SessionDriverEvent): AgentEvent | null {
 	const sessionId = event.sessionRef.sessionId;
 	switch (event.type) {
-		case "queuedMessageStarted": {
-			const message = event.message as { readonly id?: string; readonly text?: string } | undefined;
-			return { type: "user.message", sessionId, messageId: message?.id ?? "user", content: message?.text ?? "" };
-		}
+		case "queuedMessageStarted":
+			return {
+				type: "user.message",
+				sessionId,
+				messageId: event.message.id,
+				content: event.message.text,
+			};
 		case "assistantDelta":
-			return { type: "assistant.message.delta", sessionId, messageId: "assistant", delta: String(event.text ?? "") };
-		case "reasoningDelta":
-			return { type: "reasoning.delta", sessionId, messageId: "reasoning", delta: String(event.text ?? "") };
+			return {
+				type: "assistant.message.delta",
+				sessionId,
+				messageId: "assistant",
+				delta: event.text,
+			};
+		case "thinkingDelta":
+			return {
+				type: "reasoning.delta",
+				sessionId,
+				messageId: "reasoning",
+				delta: event.text,
+			};
 		case "toolStarted":
-			return { type: "tool_call.start", sessionId, toolCallId: String(event.callId), toolName: String(event.toolName), input: event.input, status: "running" };
+			return {
+				type: "tool_call.start",
+				sessionId,
+				toolCallId: event.callId,
+				toolName: event.toolName,
+				input: event.input,
+				status: "running",
+			};
 		case "toolFinished":
-			return { type: "tool_call.end", sessionId, toolCallId: String(event.callId), status: event.success ? "succeeded" : "failed", output: event.output };
+			return {
+				type: "tool_call.end",
+				sessionId,
+				toolCallId: event.callId,
+				status: event.success ? "succeeded" : "failed",
+				output: event.output,
+			};
 		case "runCompleted":
 			return { type: "session.done", sessionId };
 		case "runFailed":
-			return { type: "session.error", sessionId, message: String((event.error as { message?: string } | undefined)?.message ?? "Run failed") };
+			return {
+				type: "session.error",
+				sessionId,
+				message: event.error.message,
+			};
 		default:
 			return null;
 	}

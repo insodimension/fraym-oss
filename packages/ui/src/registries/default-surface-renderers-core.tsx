@@ -1,27 +1,76 @@
-import { useState, type ReactNode } from "react";
-import { Button } from "../elements/button";
-import { Card, CardContent, CardFooter, CardHeader } from "../elements/card";
-import { Input } from "../elements/input";
-import { Select } from "../elements/select";
-import { Textarea } from "../elements/textarea";
+// Default surface renderers shipped with fraym-ui. The question-shaped host-UI
+// kinds (select/permission/confirm AND input — the ask tool's typed text/number/
+// slider questions ride `input`) are docked registrations (`placement: "docked"`)
+// that render inline above the composer; only `editor` (a full text editor) stays
+// modal. The registry resolver uses the exported `renderFallback` as its
+// never-vanish tail (so no `"*"` entry is needed).
+
+import type { ReactNode } from "react";
+import { FallbackSurface } from "../features/approvals/fallback-surface";
+import { type DialogHostUiRequest, HostUiDialog } from "../features/approvals/host-ui-dialog";
+import { PermissionApprovalCard } from "../features/approvals/permission-approval-card";
+import {
+	ConfirmRequestPicker,
+	InputRequestCard,
+	SelectRequestPicker,
+} from "../features/approvals/select-request-picker";
+import { renderAdvisorNote } from "../features/message/advisor-note-surface";
+import { renderAsyncResult } from "../features/message/async-result-surface";
+import { renderBackgroundTanDispatch } from "../features/message/background-tan-dispatch-surface";
+import { renderBtwAnswer } from "../features/message/btw-answer-surface";
+import { renderFeedbackResult } from "../features/message/feedback-result-surface";
+import { renderHandoffContext } from "../features/message/handoff-context-surface";
+import { renderIrcMessage } from "../features/message/irc-message-surface";
+import { renderLspLateDiagnostic } from "../features/message/lsp-late-diagnostic-surface";
+import { renderSkillPrompt } from "../features/message/skill-prompt-surface";
 import type { SurfaceRenderContext, SurfaceRendererEntry, SurfaceRenderInput } from "./surface-renderer-registry";
 
-function payload(input: SurfaceRenderInput): Record<string, unknown> { const value = input.channel === "hostUi" ? input.request.payload : input.payload; return value && typeof value === "object" && !Array.isArray(value) ? value as Record<string, unknown> : {}; }
-function text(value: unknown, fallback = "") { return typeof value === "string" ? value : fallback; }
-function HostQuestion({ input, context }: { input: Extract<SurfaceRenderInput, { channel: "hostUi" }>; context: SurfaceRenderContext }) {
-  const data = payload(input); const options = Array.isArray(data.options) ? data.options.filter((option): option is string => typeof option === "string") : [];
-  const [value, setValue] = useState(() => text(data.defaultValue));
-  const respond = (accepted: boolean) => context.respond({ requestId: input.request.id, accepted, ...(accepted ? { value } : {}) });
-	return <Card className="fraym-host-surface"><CardHeader><strong>{input.request.title ?? "Input requested"}</strong>{input.request.message ? <p>{input.request.message}</p> : null}</CardHeader><CardContent>{input.request.kind === "select" ? <Select aria-label={input.request.title ?? "Select an option"} options={options.map(option => ({ label: option, value: option }))} value={value} onChange={event => setValue(event.currentTarget.value)} /> : input.request.kind === "editor" ? <Textarea aria-label={input.request.title ?? "Editor"} rows={10} value={value} onChange={event => setValue(event.currentTarget.value)} /> : input.request.kind === "confirm" || input.request.kind === "permission" ? null : <Input aria-label={input.request.title ?? "Response"} value={value} onChange={event => setValue(event.currentTarget.value)} />}</CardContent><CardFooter><Button variant={input.request.kind === "permission" ? "default" : "outline"} onClick={() => respond(true)}>{input.request.kind === "permission" ? "Allow" : input.request.kind === "confirm" ? "Confirm" : "Submit"}</Button><Button variant="ghost" onClick={() => respond(false)}>Cancel</Button></CardFooter></Card>;
+function renderDialog(input: SurfaceRenderInput, ctx: SurfaceRenderContext): ReactNode {
+	if (input.channel !== "hostUi") return null;
+	return <HostUiDialog request={input.request as DialogHostUiRequest} onRespond={ctx.respond} />;
 }
-function renderQuestion(input: SurfaceRenderInput, context: SurfaceRenderContext): ReactNode { return input.channel === "hostUi" ? <HostQuestion context={context} input={input} /> : null; }
-export function renderFallback(input: SurfaceRenderInput, context: SurfaceRenderContext): ReactNode {
-  const label = input.channel === "hostUi" ? input.request.title ?? input.request.kind : input.customType;
-  const detail = input.channel === "hostUi" ? input.request.message : input.text;
-  return <Card className="fraym-host-surface"><CardHeader><strong>{label}</strong></CardHeader>{detail ? <CardContent>{detail}</CardContent> : null}{input.channel === "hostUi" ? <CardFooter><Button onClick={() => context.respond({ requestId: input.request.id, accepted: true })}>Continue</Button><Button variant="ghost" onClick={() => context.respond({ requestId: input.request.id, accepted: false })}>Dismiss</Button></CardFooter> : null}</Card>;
+
+/** The docked question renderer — select / confirm share the AskPicker; a
+ * permission gate gets the distinct approval card (it is a decision about a
+ * tool action, not a question — different anatomy, kind-styled actions). */
+function renderDockedQuestion(input: SurfaceRenderInput, ctx: SurfaceRenderContext): ReactNode {
+	if (input.channel !== "hostUi") return null;
+	const request = input.request;
+	switch (request.kind) {
+		case "select":
+			return <SelectRequestPicker request={request} onRespond={ctx.respond} />;
+		case "permission":
+			return <PermissionApprovalCard request={request} onRespond={ctx.respond} />;
+		case "confirm":
+			return <ConfirmRequestPicker request={request} onRespond={ctx.respond} />;
+		case "input":
+			// One surface for every ask question type: typed fields (text/number/
+			// slider) and plain input elicitations dock inline — never a popup.
+			return <InputRequestCard request={request} onRespond={ctx.respond} />;
+		default:
+			return renderFallback(input, ctx);
+	}
 }
-const message = (input: SurfaceRenderInput, context: SurfaceRenderContext) => renderFallback(input, context);
+
+export function renderFallback(input: SurfaceRenderInput, ctx: SurfaceRenderContext): ReactNode {
+	return <FallbackSurface input={input} ctx={ctx} />;
+}
+
 export const DEFAULT_SURFACE_RENDERERS: Record<string, SurfaceRendererEntry> = {
-  "hostUi:input": { render: renderQuestion, placement: "docked" }, "hostUi:editor": renderQuestion, "hostUi:select": { render: renderQuestion, placement: "docked" }, "hostUi:permission": { render: renderQuestion, placement: "docked" }, "hostUi:confirm": { render: renderQuestion, placement: "docked" },
-  "msg:advisor": message, "msg:async-result": message, "msg:feedback-result": message, "msg:handoff": message, "msg:skill-prompt": message, "msg:lsp-late-diagnostic": message,
+	"hostUi:input": { render: renderDockedQuestion, placement: "docked" },
+	"hostUi:editor": renderDialog,
+	"hostUi:select": { render: renderDockedQuestion, placement: "docked" },
+	"hostUi:permission": { render: renderDockedQuestion, placement: "docked" },
+	"hostUi:confirm": { render: renderDockedQuestion, placement: "docked" },
+	"msg:advisor": renderAdvisorNote,
+	"msg:btw-answer": renderBtwAnswer,
+	"msg:async-result": renderAsyncResult,
+	"msg:background-tan-dispatch": renderBackgroundTanDispatch,
+	"msg:feedback-result": renderFeedbackResult,
+	"msg:handoff": renderHandoffContext,
+	"msg:irc:incoming": renderIrcMessage,
+	"msg:irc:relay": renderIrcMessage,
+	"msg:irc:autoreply": renderIrcMessage,
+	"msg:skill-prompt": renderSkillPrompt,
+	"msg:lsp-late-diagnostic": renderLspLateDiagnostic,
 };

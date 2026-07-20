@@ -108,26 +108,31 @@ describe("chat surface contracts", () => {
   });
 
   test("derives context allocation rows and a clamped percentage", () => {
-    const breakdown = { used: 75, max: 100, system: 20, tools: 15 };
+    const breakdown = {
+      contextWindow: 100_000,
+      usedTokens: 75_000,
+      autoCompactBufferTokens: 0,
+      freeTokens: 25_000,
+      categories: [
+        { id: "system", label: "System", tokens: 20_000 },
+        { id: "tools", label: "Tools", tokens: 15_000 },
+      ],
+    };
     expect(contextBreakdownPercent(breakdown)).toBe(75);
-    expect(contextBreakdownToRows(breakdown).map((row) => row.name)).toEqual([
-      "System",
-      "Tools",
-    ]);
+    expect(contextBreakdownToRows(breakdown).map((row) => row.name)).toEqual(
+      expect.arrayContaining(["System", "Tools"]),
+    );
   });
 
   test("keeps checkbox host requests mounted across request-id refreshes", () => {
     const base = {
-      id: "one",
       requestId: "one",
       kind: "select" as const,
       title: "Choose",
       selectionMarker: "checkbox" as const,
       options: ["A", "B"],
     };
-    expect(hostUiInstanceKey(base)).toBe(
-      hostUiInstanceKey({ ...base, id: "two", requestId: "two" }),
-    );
+    expect(hostUiInstanceKey(base)).toBe(hostUiInstanceKey({ ...base, requestId: "two" }));
   });
 
   test("renders only visible tool metadata", () => {

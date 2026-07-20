@@ -2,7 +2,7 @@
 // and the generic control for any OTHER host-UI `input` request that carries no
 // typed field spec at all (e.g. the `/goal` and TTSR-amend slash commands' plain
 // `ui.input()` prompts — see InputRequestCard's `text` fallback).
-// When an `input`/`select` host-UI request carries `_meta["example/dialog"].field`
+// When an `input`/`select` host-UI request carries `_meta["fraym/dialog"].field`
 // (the fork's typed-field extension), the plain text box / option list is
 // replaced by a real control: a text input, a number input with stepper +
 // min/max/step + unit suffix, the shared @fraym/ui Slider, a Switch toggle, or
@@ -34,13 +34,13 @@ import { Input } from "../../elements/input";
 import { Kbd } from "../../elements/kbd";
 import { Slider } from "../../elements/slider";
 import { Switch } from "../../elements/switch";
-import { Icon } from "../../icons/icon";
+import { Icon } from "../../icons";
 import { cn } from "../../lib/cn";
 
 /** The five typed controls this component can render. */
 export type AskFieldType = "text" | "number" | "toggle" | "slider" | "tags";
 
-/** Parsed `_meta["example/dialog"].field` payload — the typed-field contract. */
+/** Parsed `_meta["fraym/dialog"].field` payload — the typed-field contract. */
 export interface AskField {
 	readonly type: AskFieldType;
 	/** Text placeholder (text / tags fields). */
@@ -72,16 +72,6 @@ function toNumber(value: unknown): number | undefined {
 	return undefined;
 }
 
-function toString(value: unknown): string | undefined {
-	return typeof value === "string" ? value : undefined;
-}
-
-function toDefault(value: unknown): string | number | boolean | undefined {
-	return typeof value === "string" || typeof value === "boolean" || (typeof value === "number" && Number.isFinite(value))
-		? value
-		: undefined;
-}
-
 /** Decimal places implied by a step like 0.05 → 2, so a snapped value reads cleanly. */
 function precisionOf(step: number): number {
 	if (!Number.isFinite(step) || Math.floor(step) === step) return 0;
@@ -109,30 +99,29 @@ function clampNumber(
 
 /** Read + validate the typed-field payload off a request's dialog meta. */
 export function readDialogField(meta: Readonly<Record<string, unknown>> | undefined): AskField | null {
-	const dialog = meta?.["example/dialog"];
+	const dialog = meta?.["fraym/dialog"];
 	const raw = dialog && typeof dialog === "object" ? (dialog as Record<string, unknown>).field : undefined;
 	if (!raw || typeof raw !== "object") return null;
 	const field = raw as Record<string, unknown>;
 	const type = field.type;
 	if (type !== "text" && type !== "number" && type !== "toggle" && type !== "slider" && type !== "tags") return null;
-	const placeholder = toString(field.placeholder);
-	const min = toNumber(field.min);
-	const max = toNumber(field.max);
-	const step = toNumber(field.step);
-	const defaultValue = toDefault(field.default);
-	const unit = toString(field.unit);
+	const str = (value: unknown): string | undefined => (typeof value === "string" ? value : undefined);
+	const def = (value: unknown): string | number | boolean | undefined =>
+		typeof value === "string" || typeof value === "boolean" || (typeof value === "number" && Number.isFinite(value))
+			? value
+			: undefined;
 	const suggestions = Array.isArray(field.suggestions)
 		? field.suggestions.filter((entry): entry is string => typeof entry === "string")
 		: undefined;
 	return {
 		type,
-		...(placeholder === undefined ? {} : { placeholder }),
-		...(min === undefined ? {} : { min }),
-		...(max === undefined ? {} : { max }),
-		...(step === undefined ? {} : { step }),
-		...(defaultValue === undefined ? {} : { default: defaultValue }),
-		...(unit === undefined ? {} : { unit }),
-		...(suggestions === undefined ? {} : { suggestions }),
+		placeholder: str(field.placeholder),
+		min: toNumber(field.min),
+		max: toNumber(field.max),
+		step: toNumber(field.step),
+		default: def(field.default),
+		unit: str(field.unit),
+		suggestions,
 	};
 }
 
@@ -472,16 +461,16 @@ export function AskFieldControl({
 				<span className="font-primary text-fr-base font-semibold text-fr-text">{question}</span>
 			</div>
 			{field.type === "text" && (
-				<TextField field={field} {...(initialValue === undefined ? {} : { initialValue })} onSubmit={onSubmit} onCancel={onCancel} />
+				<TextField field={field} initialValue={initialValue} onSubmit={onSubmit} onCancel={onCancel} />
 			)}
 			{field.type === "number" && (
-				<NumberField field={field} {...(initialValue === undefined ? {} : { initialValue })} onSubmit={onSubmit} onCancel={onCancel} />
+				<NumberField field={field} initialValue={initialValue} onSubmit={onSubmit} onCancel={onCancel} />
 			)}
 			{field.type === "slider" && (
 				<SliderField
 					question={question}
 					field={field}
-					{...(initialValue === undefined ? {} : { initialValue })}
+					initialValue={initialValue}
 					onSubmit={onSubmit}
 					onCancel={onCancel}
 				/>
@@ -490,13 +479,13 @@ export function AskFieldControl({
 				<ToggleField
 					question={question}
 					field={field}
-					{...(toggleSubmit === undefined ? {} : { toggleSubmit })}
+					toggleSubmit={toggleSubmit}
 					onSubmit={onSubmit}
 					onCancel={onCancel}
 				/>
 			)}
 			{field.type === "tags" && (
-				<TagsField field={field} {...(initialValue === undefined ? {} : { initialValue })} onSubmit={onSubmit} onCancel={onCancel} />
+				<TagsField field={field} initialValue={initialValue} onSubmit={onSubmit} onCancel={onCancel} />
 			)}
 		</div>
 	);
