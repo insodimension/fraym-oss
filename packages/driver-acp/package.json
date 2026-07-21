@@ -8,9 +8,7 @@
       "import": "./src/index.ts"
     }
   },
-  "files": [
-    "src"
-  ],
+  "files": ["src", "!src/**/*.test.ts", "!src/**/*.test.tsx"],
   "scripts": {
     "typecheck": "tsc --noEmit",
     "test": "bun test"

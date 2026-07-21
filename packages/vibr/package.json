@@ -27,11 +27,7 @@
       "import": "./src/avatars/smiley.tsx"
     }
   },
-  "files": [
-    "src",
-    "README.md",
-    "LICENSE"
-  ],
+  "files": ["src", "README.md", "LICENSE", "!src/**/*.test.ts", "!src/**/*.test.tsx"],
   "peerDependencies": {
     "react": "^19.0.0",
     "react-dom": "^19.0.0"

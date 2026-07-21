@@ -9,7 +9,7 @@
 			"import": "./src/index.ts"
 		}
 	},
-	"files": ["src", "bridge.ts"],
+	"files": ["src", "bridge.ts", "!src/**/*.test.ts", "!src/**/*.test.tsx"],
 	"scripts": {
 		"typecheck": "tsc --noEmit",
 		"test": "bun test",

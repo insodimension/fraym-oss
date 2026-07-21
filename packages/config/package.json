@@ -17,11 +17,7 @@
     },
     "./*.js": "./src/*.ts"
   },
-  "files": [
-    "src",
-    "README.md",
-    "LICENSE"
-  ],
+  "files": ["src", "README.md", "LICENSE", "!src/**/*.test.ts", "!src/**/*.test.tsx"],
   "scripts": {
     "typecheck": "tsc --noEmit",
     "test": "bun test"

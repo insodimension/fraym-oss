@@ -1,6 +1,7 @@
 {
   "name": "@fraym/ui",
   "version": "0.1.0",
+  "files": ["src", "!src/**/*.test.ts", "!src/**/*.test.tsx"],
   "type": "module",
   "exports": {
     ".": {

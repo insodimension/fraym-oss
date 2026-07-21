@@ -9,7 +9,9 @@
     "dev": "bun --filter @fraym/web dev",
     "dev:sink": "bun --filter @fraym/kitchen-sink dev",
     "typecheck": "tsc -b",
-    "test": "bun test"
+    "test": "bun test",
+    "publish:dry": "bun scripts/publish.ts --dry-run",
+    "publish:all": "bun scripts/publish.ts"
   },
   "devDependencies": {
     "@types/bun": "^1.3.0",

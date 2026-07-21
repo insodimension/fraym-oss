@@ -12,9 +12,7 @@
       "import": "./src/mock.ts"
     }
   },
-  "files": [
-    "src"
-  ],
+  "files": ["src", "!src/**/*.test.ts", "!src/**/*.test.tsx"],
   "scripts": {
     "typecheck": "tsc --noEmit",
     "test": "bun test"
