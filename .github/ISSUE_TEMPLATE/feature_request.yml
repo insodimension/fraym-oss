@@ -1,0 +1,50 @@
+name: Feature request
+description: Propose a new capability or improvement.
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        For changes to a public API, the `AgentEvent` contract, or the design
+        tokens, please open this issue to discuss **before** sending a PR.
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What are you trying to do that Fraym makes hard or impossible today?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: What would you like Fraym to do? API sketches welcome.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+    validations:
+      required: false
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - "UI / components (@fraym-ai/ui)"
+        - "Driver contract / AgentEvent (@fraym-ai/driver)"
+        - "A driver adapter (acp / codex / aisdk)"
+        - "App shell (@fraym-ai/host)"
+        - "CLI / templates (@fraym-ai/cli)"
+        - "Design tokens / theme"
+        - "Other"
+    validations:
+      required: true
+  - type: checkboxes
+    id: boundary
+    attributes:
+      label: Driver boundary
+      options:
+        - label: This keeps agent behavior behind the driver; the UI stays data-only.
+          required: false

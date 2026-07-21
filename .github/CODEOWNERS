@@ -1,0 +1,4 @@
+# Code owners for fraym-oss.
+# Every pull request requires review from the project owner before merge.
+# (Enforce by enabling "Require review from Code Owners" in branch protection.)
+* @insodimension

@@ -1,0 +1,44 @@
+name: Release
+
+# Publishes @fraym-ai/* to npm via npm OIDC trusted publishing — no stored token,
+# no 2FA tap. GitHub proves the workflow's identity to npm; npm checks it against
+# the per-package "trusted publisher" config (repo insodimension/fraym-oss +
+# workflow release.yml + environment npm-release) and allows the publish.
+#
+# Only a maintainer with write access can trigger this (push a v* tag, or run it
+# manually). Fork PRs cannot: they get no id-token and npm trusts only this exact
+# repo. The `npm-release` environment adds a required-reviewer approval gate on top.
+#
+# Cut a release: bump every package version + the template, commit, then
+#   git tag vX.Y.Z && git push origin vX.Y.Z
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write # REQUIRED for npm OIDC trusted publishing
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    # Configure this environment in repo Settings → Environments → npm-release
+    # with "Required reviewers" = you, so every release waits for your approval.
+    environment: npm-release
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: "1.3.14"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          registry-url: "https://registry.npmjs.org"
+      - name: Use an npm that supports OIDC trusted publishing
+        run: npm install -g npm@latest
+      - name: Install (frozen lockfile keeps the tree clean)
+        run: bun install --frozen-lockfile
+      - name: Publish all packages (OIDC auth + provenance)
+        run: bun scripts/publish.ts --provenance

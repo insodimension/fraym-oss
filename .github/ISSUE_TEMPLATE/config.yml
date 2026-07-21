@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Security vulnerability
+    url: https://github.com/insodimension/fraym-oss/security/advisories/new
+    about: Report vulnerabilities privately — never in a public issue. See SECURITY.md.
+  - name: Documentation
+    url: https://github.com/insodimension/fraym-oss#documentation
+    about: README, DEV runbook, DESIGN system, and nomenclature.
+  - name: Contributing guide
+    url: https://github.com/insodimension/fraym-oss/blob/main/CONTRIBUTING.md
+    about: Dev setup, the driver boundary, DCO sign-off, and the PR flow.

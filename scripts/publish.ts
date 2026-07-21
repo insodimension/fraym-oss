@@ -21,6 +21,7 @@ import { join } from "node:path";
 
 const ROOT = join(import.meta.dir, "..");
 const dryRun = process.argv.includes("--dry-run");
+const provenance = process.argv.includes("--provenance");
 
 // Leaves first, so the registry stays internally consistent as it fills.
 const ORDER = [
@@ -84,7 +85,8 @@ for (const rel of ORDER) {
   }
 
   // Inherit the real terminal so npm can prompt for 2FA / open the browser.
-  const result = Bun.spawnSync(["npm", "publish", tgz, "--access", "public"], {
+  const publishArgs = ["publish", tgz, "--access", "public", ...(provenance ? ["--provenance"] : [])];
+  const result = Bun.spawnSync(["npm", ...publishArgs], {
     cwd: dir,
     stdio: ["inherit", "inherit", "inherit"],
   });
