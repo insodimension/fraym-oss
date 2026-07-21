@@ -466,9 +466,10 @@ function CliBody() {
 			<Section id="cli-purpose">What it is</Section>
 			<P>
 				The CLI never runs your app or imports React. It reads package metadata and public barrels off disk to
-				answer four questions: <strong>what commands exist</strong> (<C>manifest</C>),{" "}
+				answer five questions: <strong>what commands exist</strong> (<C>manifest</C>),{" "}
 				<strong>what’s in the catalog</strong> (<C>search</C>), <strong>is this workspace healthy</strong> (
-				<C>doctor</C>), and <strong>what would this template write</strong> (<C>template</C>). Responses are
+				<C>doctor</C>), <strong>what would this template write</strong> (<C>template</C>), and{" "}
+				<strong>what agent skills ship</strong> (<C>skills</C>). Responses are
 				versioned and error codes are append-only, so scripts and agents can depend on the shapes.
 			</P>
 			<Section id="cli-install">Install &amp; invoke</Section>
@@ -523,7 +524,8 @@ fraym doctor --json`}
       { "name": "manifest", "arguments": [], "options": [], "response": "CliEnvelope<CliManifest>" },
       { "name": "search", "response": "CliEnvelope<SearchReport>" },
       { "name": "template", "response": "CliEnvelope<TemplateList | TemplateDetail | InstallResult>" },
-      { "name": "doctor", "response": "CliEnvelope<DoctorReport>" }
+      { "name": "doctor", "response": "CliEnvelope<DoctorReport>" },
+      { "name": "skills", "response": "CliEnvelope<SkillList | InstallResult>" }
     ],
     "errorCodes": ["CLI_UNKNOWN_COMMAND", "CLI_INVALID_TYPE", "…"]
   }
@@ -732,7 +734,8 @@ fraym skills install build-with-fraym --dest . --target both --apply`}
 				<C>CLI_UNKNOWN_OPTION</C>, <C>CLI_MISSING_ARGUMENT</C>, <C>CLI_INVALID_ARGUMENT</C>,{" "}
 				<C>CLI_INVALID_LIMIT</C>, <C>CLI_INVALID_TYPE</C>, <C>CLI_CATALOG_UNAVAILABLE</C>,{" "}
 				<C>CLI_INVALID_METADATA</C>, <C>CLI_TEMPLATE_NOT_FOUND</C>, <C>CLI_TEMPLATE_DUPLICATE_ID</C>,{" "}
-				<C>CLI_TEMPLATE_COLLISION</C>, <C>CLI_TEMPLATE_PATH_ESCAPE</C>, <C>CLI_TEMPLATE_APPLY_FAILED</C>, and{" "}
+				<C>CLI_TEMPLATE_COLLISION</C>, <C>CLI_TEMPLATE_PATH_ESCAPE</C>, <C>CLI_TEMPLATE_APPLY_FAILED</C>,{" "}
+				<C>CLI_SKILL_NOT_FOUND</C>, <C>CLI_SKILL_COLLISION</C>, <C>CLI_ENVELOPE_VERSION</C>, and{" "}
 				<C>CLI_INTERNAL_ERROR</C>. Without <C>--json</C>, errors print to stderr as <C>Error [CODE]: message</C> and
 				the process exits <C>1</C>.
 			</P>
@@ -920,6 +923,16 @@ function ArchitectureBody() {
 				</li>
 				<li>
 					<C>@fraym-ai/fixtures</C> — demo session data + scripted driver for the showcase and tests.
+				</li>
+				<li>
+					<C>@fraym-ai/host</C> — a reusable app shell (session rail, settings, routing) wired to any driver bundle.
+				</li>
+				<li>
+					<C>@fraym-ai/cli</C> — the filesystem discovery, template, and skill-install CLI (the <C>fraym</C> bin).
+				</li>
+				<li>
+					<C>@fraym-ai/driver-acp</C> / <C>-codex</C> / <C>-aisdk</C> — ready-made <C>SessionDriver</C> adapters
+					(Agent Client Protocol, the local Codex CLI bridge, and the in-browser Vercel AI SDK).
 				</li>
 			</Bullets>
 			<Section id="arch-imports">Import surface</Section>
