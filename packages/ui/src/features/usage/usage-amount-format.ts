@@ -1,4 +1,4 @@
-import type { UsageLimitView, UsageUnit } from "@fraym/driver";
+import type { UsageLimitView, UsageUnit } from "@fraym-ai/driver";
 
 const COMPACT_NUMBER = new Intl.NumberFormat("en", {
 	notation: "compact",

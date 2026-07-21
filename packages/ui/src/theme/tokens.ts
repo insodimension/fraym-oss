@@ -5,9 +5,9 @@ export {
   type AccentPalette,
   type MotionPref,
   type ThemeMode,
-} from "@fraym/config";
+} from "@fraym-ai/config";
 
-import type { AccentPalette, MotionPref, ThemeMode } from "@fraym/config";
+import type { AccentPalette, MotionPref, ThemeMode } from "@fraym-ai/config";
 
 export interface AccentDef {
   readonly name: string;

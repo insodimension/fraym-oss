@@ -39,7 +39,7 @@
 	--fr-text: #ececee;
 	--fr-text-2-base: #9a9aa2;
 	--fr-text-3-base: #65656d;
-	/* User-controllable display knobs (driven by @fraym/config; identity at defaults). */
+	/* User-controllable display knobs (driven by @fraym-ai/config; identity at defaults). */
 	--fr-ui-size: 14px;
 	--fr-code-size: 12px;
 	--fr-contrast: 50;

@@ -1,4 +1,4 @@
-import type { AgentEvent, ApprovalDecision, ToolCallStatus } from "@fraym/driver";
+import type { AgentEvent, ApprovalDecision, ToolCallStatus } from "@fraym-ai/driver";
 
 export type ThreadMessageRole = "user" | "assistant";
 

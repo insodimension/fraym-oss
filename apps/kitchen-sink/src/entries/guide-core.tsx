@@ -1,4 +1,4 @@
-import { CodeBlock, cn, Icon } from "@fraym/ui";
+import { CodeBlock, cn, Icon } from "@fraym-ai/ui";
 import type { ComponentType, ReactNode } from "react";
 import { useEffect, useState } from "react";
 import type { ShowcaseEntry } from "../showcase/types";
@@ -307,15 +307,15 @@ function InstallationBody() {
 			</Lead>
 			<Section id="install-package">Install the package</Section>
 			<Steps>
-				<Step n={1} title="Add @fraym/ui and the React peers">
+				<Step n={1} title="Add @fraym-ai/ui and the React peers">
 					<P>
 						Fraym ships as source ESM, so your bundler (Vite, Next, etc.) transpiles it like first-party code. The
 						only peers are <C>react</C> and <C>react-dom</C> 19+.
 					</P>
 					<Code
 						lang="bash"
-						code={`bun add @fraym/ui react react-dom
-# or: npm i @fraym/ui react react-dom`}
+						code={`bun add @fraym-ai/ui react react-dom
+# or: npm i @fraym-ai/ui react react-dom`}
 					/>
 				</Step>
 				<Step n={2} title="Import the CSS at your entry">
@@ -326,8 +326,8 @@ function InstallationBody() {
 					</P>
 					<Code
 						code={`// main.tsx
-import "@fraym/ui/theme.css";
-import "@fraym/ui/fonts.css";`}
+import "@fraym-ai/ui/theme.css";
+import "@fraym-ai/ui/fonts.css";`}
 					/>
 				</Step>
 				<Step n={3} title="Render the cockpit" last>
@@ -335,7 +335,7 @@ import "@fraym/ui/fonts.css";`}
 						That's the whole setup. Continue to <strong>Quick start</strong> for the render call.
 					</P>
 					<Code
-						code={`import { Fraym } from "@fraym/ui";
+						code={`import { Fraym } from "@fraym-ai/ui";
 
 export function App() {
   return <Fraym drivers={drivers} />;
@@ -360,7 +360,7 @@ export function App() {
 			<Bullets>
 				<li>
 					<strong>Unstyled components</strong> — the theme CSS isn't loaded; check the{" "}
-					<C>@fraym/ui/theme.css</C> import is first in your entry.
+					<C>@fraym-ai/ui/theme.css</C> import is first in your entry.
 				</li>
 				<li>
 					<strong>Font picker falls back to system fonts</strong> — <C>fonts.css</C> isn't imported.
@@ -383,15 +383,15 @@ function QuickStartBody() {
 			</Lead>
 			<Section id="qs-demo">Zero-engine demo</Section>
 			<P>
-				<C>@fraym/fixtures</C> ships a scripted driver and demo session data — the same data that powers this
+				<C>@fraym-ai/fixtures</C> ships a scripted driver and demo session data — the same data that powers this
 				showcase. This is a complete, runnable <C>main.tsx</C>:
 			</P>
 			<Code
-				code={`import "@fraym/ui/theme.css";
-import "@fraym/ui/fonts.css";
+				code={`import "@fraym-ai/ui/theme.css";
+import "@fraym-ai/ui/fonts.css";
 
-import { createFraymDemoDriver, FRAYM_DEMO_SESSION_REF } from "@fraym/fixtures";
-import { Fraym } from "@fraym/ui";
+import { createFraymDemoDriver, FRAYM_DEMO_SESSION_REF } from "@fraym-ai/fixtures";
+import { Fraym } from "@fraym-ai/ui";
 import { createRoot } from "react-dom/client";
 
 createRoot(document.getElementById("root")!).render(
@@ -413,7 +413,7 @@ createRoot(document.getElementById("root")!).render(
 				terminals, analytics, …) attach to the same bundle — see <strong>Drivers</strong> for each slot.
 			</P>
 			<Code
-				code={`import type { FraymDrivers } from "@fraym/driver";
+				code={`import type { FraymDrivers } from "@fraym-ai/driver";
 
 const drivers: FraymDrivers = {
   session: createMySessionDriver(engine), // required
@@ -459,7 +459,7 @@ function CliBody() {
 	return (
 		<>
 			<Lead>
-				<C>@fraym/cli</C> is Fraym’s filesystem-only discovery, diagnostics, and template-install surface —
+				<C>@fraym-ai/cli</C> is Fraym’s filesystem-only discovery, diagnostics, and template-install surface —
 				legible to both humans and agents. Commands describe the CLI, search the public catalog, diagnose a
 				workspace, and install declared template files through a stable JSON contract.
 			</Lead>
@@ -560,7 +560,7 @@ fraym doctor --json`}
       {
         "type": "element",
         "name": "Button",
-        "package": "@fraym/ui",
+        "package": "@fraym-ai/ui",
         "source": "src/elements/button.tsx",
         "score": 200
       }
@@ -579,7 +579,7 @@ fraym doctor --json`}
 			<Code
 				lang="bash"
 				code={`# Package acquisition is explicit; the OSS CLI does not fetch templates
-bun add -d @fraym/cli @fraym/template-web-agent
+bun add -d @fraym-ai/cli @fraym-ai/template-web-agent
 
 fraym template list --json
 fraym template show web-agent --json
@@ -592,7 +592,7 @@ fraym template install web-agent --dest ./my-agent --apply --json`}
 			/>
 			<Section id="cli-web-agent">web-agent reference</Section>
 			<P>
-				<C>@fraym/template-web-agent</C> is the smallest complete Fraym application: a full-height Vite 6 + React
+				<C>@fraym-ai/template-web-agent</C> is the smallest complete Fraym application: a full-height Vite 6 + React
 				19 cockpit, a canonical <C>FraymDrivers</C> bundle, and a scripted fixture session that renders immediately.
 				It is a starter shell: not a model, hosted agent, backend, or private runtime.
 			</P>
@@ -634,7 +634,7 @@ bun run --cwd templates/web-agent/template dev -- --port 5193
   "id": "web-agent",
   "version": "0.1.0",
   "description": "A self-contained Vite and React Fraym agent cockpit",
-  "package": "@fraym/template-web-agent",
+  "package": "@fraym-ai/template-web-agent",
   "source": "template",
   "files": ["**/*"],
   "requires": []
@@ -741,14 +741,14 @@ function DriversBody() {
 	return (
 		<>
 			<Lead>
-				A driver is how Fraym stays engine-agnostic. <C>@fraym/driver</C> is a <strong>data-only</strong>{" "}
+				A driver is how Fraym stays engine-agnostic. <C>@fraym-ai/driver</C> is a <strong>data-only</strong>{" "}
 				contract — plain shapes and events, no React — that a driver maps your engine onto.
 			</Lead>
 			<Section id="drivers-contract">The session contract</Section>
 			<P>
 				The session model describes a coding-agent session: workspace, messages, streaming deltas, tool calls,
 				reasoning, tasks, plans, goals, and host-UI requests (approvals, pickers). Your <C>SessionDriver</C> turns
-				concrete engine events into these shapes; <C>@fraym/ui</C> renders them. Because the contract is
+				concrete engine events into these shapes; <C>@fraym-ai/ui</C> renders them. Because the contract is
 				data-only, the same driver works in web, desktop, and test environments.
 			</P>
 			<Section id="drivers-bundle">The drivers bundle</Section>
@@ -776,12 +776,12 @@ function DriversBody() {
 			</Callout>
 			<Section id="drivers-mock">The mock driver</Section>
 			<P>
-				For demos and tests, <C>@fraym/driver/mock</C> provides <C>createScriptedDriver(script)</C> — it replays
+				For demos and tests, <C>@fraym-ai/driver/mock</C> provides <C>createScriptedDriver(script)</C> — it replays
 				authored <C>DemoScript</C> events through the real contract, so demo content exercises exactly the same code
-				paths as production. <C>@fraym/fixtures</C> builds on it to drive this showcase.
+				paths as production. <C>@fraym-ai/fixtures</C> builds on it to drive this showcase.
 			</P>
 			<Code
-				code={`import { createScriptedDriver } from "@fraym/driver/mock";
+				code={`import { createScriptedDriver } from "@fraym-ai/driver/mock";
 
 const driver = createScriptedDriver({
   snapshot,            // initial session state
@@ -843,14 +843,14 @@ function ThemingBody() {
 				All knobs live in the settings contract, read through <C>SettingsProvider</C> / <C>useSettings</C>:
 			</P>
 			<Code
-				code={`import { useSettings } from "@fraym/ui/settings";
+				code={`import { useSettings } from "@fraym-ai/ui/settings";
 
 const { config, update } = useSettings();
 update("themePreset", "aerogel");
 update("accentStyle", "gradient");`}
 			/>
 			<P>
-				For building your own picker, <C>@fraym/ui/theme/theme-presets</C> exports <C>THEME_PRESETS</C> with each
+				For building your own picker, <C>@fraym-ai/ui/theme/theme-presets</C> exports <C>THEME_PRESETS</C> with each
 				preset's name, note, and full token sets. Settings persist through the host's <C>fraymConfig</C> driver, so
 				a user's choice survives reloads.
 			</P>
@@ -862,7 +862,7 @@ function ArchitectureBody() {
 	return (
 		<>
 			<Lead>
-				<C>@fraym/ui</C> is organized into five tiers. Each tier may import only from the tiers below it — a rule
+				<C>@fraym-ai/ui</C> is organized into five tiers. Each tier may import only from the tiers below it — a rule
 				enforced in CI by <C>check-tiers</C>.
 			</Lead>
 			<Section id="arch-tiers">The tiers</Section>
@@ -881,27 +881,27 @@ function ArchitectureBody() {
 			<Section id="arch-packages">Packages</Section>
 			<Bullets>
 				<li>
-					<C>@fraym/ui</C> — the component library (the tiers above + shell, hooks, registries).
+					<C>@fraym-ai/ui</C> — the component library (the tiers above + shell, hooks, registries).
 				</li>
 				<li>
-					<C>@fraym/driver</C> — the data-only session contract (types, events, driver interface, mock).
+					<C>@fraym-ai/driver</C> — the data-only session contract (types, events, driver interface, mock).
 				</li>
 				<li>
-					<C>@fraym/config</C> — the typed display/surface settings contract.
+					<C>@fraym-ai/config</C> — the typed display/surface settings contract.
 				</li>
 				<li>
-					<C>@fraym/vibr</C> — animated presence and avatars.
+					<C>@fraym-ai/vibr</C> — animated presence and avatars.
 				</li>
 				<li>
-					<C>@fraym/verber</C> — the agent working-status phrase resolver.
+					<C>@fraym-ai/verber</C> — the agent working-status phrase resolver.
 				</li>
 				<li>
-					<C>@fraym/fixtures</C> — demo session data + scripted driver for the showcase and tests.
+					<C>@fraym-ai/fixtures</C> — demo session data + scripted driver for the showcase and tests.
 				</li>
 			</Bullets>
 			<Section id="arch-imports">Import surface</Section>
 			<P>
-				The root barrel <C>@fraym/ui</C> exports the cockpit; tier barrels (<C>@fraym/ui/elements</C>,{" "}
+				The root barrel <C>@fraym-ai/ui</C> exports the cockpit; tier barrels (<C>@fraym-ai/ui/elements</C>,{" "}
 				<C>/components</C>, <C>/features</C>, <C>/pages</C>) and focused subpaths (<C>/settings</C>,{" "}
 				<C>/theme/theme-presets</C>, <C>/icons</C>, …) let you import exactly one layer when you're composing your
 				own surfaces.

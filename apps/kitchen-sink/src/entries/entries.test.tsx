@@ -1,7 +1,7 @@
 import { describe, expect, test } from "bun:test";
 import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
-import { ThemeProvider, TooltipProvider } from "@fraym/ui";
+import { ThemeProvider, TooltipProvider } from "@fraym-ai/ui";
 import { ToolConfigProvider } from "../showcase/tool-config";
 import { TIERS } from "./registry";
 

@@ -1,4 +1,4 @@
-import type { ApprovalDecision } from "@fraym/driver";
+import type { ApprovalDecision } from "@fraym-ai/driver";
 
 import { Button } from "./elements/button";
 import type { ThreadApproval } from "./thread-state";

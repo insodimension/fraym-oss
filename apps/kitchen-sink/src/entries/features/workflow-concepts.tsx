@@ -5,8 +5,8 @@ import {
 	type WorkflowConcept,
 	WORKFLOW_NOW_MS,
 	type WorkflowPhase,
-} from "@fraym/fixtures";
-import { cn, Icon, type IconName, RollingNumber, Spinner } from "@fraym/ui";
+} from "@fraym-ai/fixtures";
+import { cn, Icon, type IconName, RollingNumber, Spinner } from "@fraym-ai/ui";
 import { type ReactNode, useLayoutEffect, useRef, useState } from "react";
 import { Demo } from "../../showcase/demo";
 import type { ShowcaseEntry } from "../../showcase/types";
@@ -29,7 +29,7 @@ import type { ShowcaseEntry } from "../../showcase/types";
 //   C · Flight Board     — mini timeline card: thin per-agent bars over a shared
 //       axis, a NOW scrubber, tiny legend — a mini-Gantt sized for a card.
 //
-// Tokens-only (--fr-*), @fraym/ui primitives, font-primary/secondary, no hex.
+// Tokens-only (--fr-*), @fraym-ai/ui primitives, font-primary/secondary, no hex.
 // ─────────────────────────────────────────────────────────────────────────────
 
 // --- shared formatting / mapping --------------------------------------------

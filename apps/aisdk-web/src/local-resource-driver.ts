@@ -12,7 +12,7 @@ import type {
   EngineResourceSnapshot,
   PluginConnectState,
   WorkspaceRef,
-} from "@fraym/driver";
+} from "@fraym-ai/driver";
 import { PROVIDER_IDS, PROVIDERS, type ProviderId, workspace } from "./providers";
 
 interface OpenRouterModel {

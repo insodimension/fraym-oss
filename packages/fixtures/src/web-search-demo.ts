@@ -1,13 +1,13 @@
 // Web search demo script — a `web_search`-focused conversation expressed as
-// pure session-driver events. Replayed through @fraym/driver/mock so the web
+// pure session-driver events. Replayed through @fraym-ai/driver/mock so the web
 // search tool renders inside a real thread via the production renderer
 // (`renderWebSearch`). Walks two shapes: a normal search (answer + sources)
 // and an answer-only result.
 //
 // Pure data: no JSX, no fraym-ui.
 
-import type { SessionRef, SessionSnapshot, WorkspaceRef } from "@fraym/driver";
-import type { DemoScript, ScriptedEvent, ScriptStep } from "@fraym/driver/mock";
+import type { SessionRef, SessionSnapshot, WorkspaceRef } from "@fraym-ai/driver";
+import type { DemoScript, ScriptedEvent, ScriptStep } from "@fraym-ai/driver/mock";
 
 const NOW = "2026-06-07T12:00:00.000Z";
 

@@ -7,8 +7,8 @@ import {
 	RESOLVE_INPUT,
 	RESOLVE_OUTPUT_TEXT,
 	type ResolveVariation,
-} from "@fraym/fixtures";
-import type { ActiveToolCall } from "@fraym/ui";
+} from "@fraym-ai/fixtures";
+import type { ActiveToolCall } from "@fraym-ai/ui";
 import type { ControlsSchema } from "../../showcase/controls";
 import { Demo } from "../../showcase/demo";
 import type { EntryDocs } from "../../showcase/docs";
@@ -27,7 +27,7 @@ import type { ShowcaseEntry } from "../../showcase/types";
 // `resolve` tool showcase.
 //
 // Rendered by the PRODUCTION renderer (`renderResolve`, registered in
-// @fraym/ui's DEFAULT_TOOL_RENDERERS) fed a synthetic `ActiveToolCall`.
+// @fraym-ai/ui's DEFAULT_TOOL_RENDERERS) fed a synthetic `ActiveToolCall`.
 //
 // Axes (control knobs):
 //   VARIATION  apply-accept · discard · apply-with-source · apply-failed · pending
@@ -137,7 +137,7 @@ function ResolveEntry() {
 }
 
 const resolveDocs: EntryDocs = {
-	import: 'import { Thread, DEFAULT_TOOL_RENDERERS } from "@fraym/ui";',
+	import: 'import { Thread, DEFAULT_TOOL_RENDERERS } from "@fraym-ai/ui";',
 	anatomy: JSON.stringify(
 		[
 			"// Tool cards render automatically inside <Thread>: DEFAULT_TOOL_RENDERERS",

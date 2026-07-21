@@ -6,7 +6,7 @@ import type {
 	AnalyticsRange,
 	AnalyticsRecentRequest,
 	AnalyticsSnapshot,
-} from "@fraym/driver";
+} from "@fraym-ai/driver";
 import { memo, type ReactNode, useMemo, useState } from "react";
 import { Skeleton, SkeletonGroup } from "../../elements";
 import { Icon } from "../../icons";

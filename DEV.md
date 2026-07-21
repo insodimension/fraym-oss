@@ -33,7 +33,7 @@ use, stop the existing listener rather than allowing a different port.
 
 ## Fraym CLI
 
-`@fraym/cli` provides machine-readable discovery, diagnostics, and transactional
+`@fraym-ai/cli` provides machine-readable discovery, diagnostics, and transactional
 template installation. Run it from this checkout:
 
 ```bash
@@ -58,7 +58,7 @@ while an applied installation is running.
 
 ## Web Agent template
 
-`templates/web-agent` (`@fraym/template-web-agent`) is a self-contained Vite and
+`templates/web-agent` (`@fraym-ai/template-web-agent`) is a self-contained Vite and
 React reference application. Its integration seam is
 `templates/web-agent/template/src/driver.ts`; replace the generated driver
 implementation when integrating a runtime.
@@ -94,32 +94,32 @@ bun run --cwd packages/cli test
 theme (tokens) -> elements -> components -> features -> pages
 ```
 
-The UI receives session data through `@fraym/driver`. `@fraym/driver-acp` adapts
-Agent Client Protocol sessions and `@fraym/driver-codex` adapts the Codex CLI
+The UI receives session data through `@fraym-ai/driver`. `@fraym-ai/driver-acp` adapts
+Agent Client Protocol sessions and `@fraym-ai/driver-codex` adapts the Codex CLI
 app-server bridge; both emit the same `AgentEventStream`. Fraym extension
 messages use the `_fraym/*` namespace. Custom drivers can implement the same
 public contract.
 
 ## Publishable artifacts
 
-The workspace contains eleven `@fraym/*` packages plus the
-`@fraym/template-web-agent` template package. Their manifests declare public
+The workspace contains eleven `@fraym-ai/*` packages plus the
+`@fraym-ai/template-web-agent` template package. Their manifests declare public
 publish configuration; do not infer distribution status from that configuration.
 
 | Artifact | Purpose |
 | --- | --- |
-| `@fraym/aethr` | Companion presence and cinematic text. |
-| `@fraym/cli` | Discovery, diagnostics, and safe template installation. |
-| `@fraym/config` | Typed display and surface settings. |
-| `@fraym/driver` | Data-only session-driver contract and replay driver. |
-| `@fraym/driver-acp` | Agent Client Protocol adapter. |
-| `@fraym/driver-codex` | Codex CLI driver over the app-server bridge. |
-| `@fraym/driver-test` | Driver conformance utilities. |
-| `@fraym/fixtures` | Scripted session fixtures. |
-| `@fraym/ui` | React components, theme, shell, hooks, and registries. |
-| `@fraym/verber` | Configurable working-status language. |
-| `@fraym/vibr` | Animated presence avatars. |
-| `@fraym/template-web-agent` | Vite and React reference cockpit. |
+| `@fraym-ai/aethr` | Companion presence and cinematic text. |
+| `@fraym-ai/cli` | Discovery, diagnostics, and safe template installation. |
+| `@fraym-ai/config` | Typed display and surface settings. |
+| `@fraym-ai/driver` | Data-only session-driver contract and replay driver. |
+| `@fraym-ai/driver-acp` | Agent Client Protocol adapter. |
+| `@fraym-ai/driver-codex` | Codex CLI driver over the app-server bridge. |
+| `@fraym-ai/driver-test` | Driver conformance utilities. |
+| `@fraym-ai/fixtures` | Scripted session fixtures. |
+| `@fraym-ai/ui` | React components, theme, shell, hooks, and registries. |
+| `@fraym-ai/verber` | Configurable working-status language. |
+| `@fraym-ai/vibr` | Animated presence avatars. |
+| `@fraym-ai/template-web-agent` | Vite and React reference cockpit. |
 
 ## Versioning and releases
 

@@ -1,4 +1,4 @@
-import type { SessionRef, SessionSnapshot, WorkspaceAppearance, WorkspaceRef } from "@fraym/driver";
+import type { SessionRef, SessionSnapshot, WorkspaceAppearance, WorkspaceRef } from "@fraym-ai/driver";
 import type { ActivityState } from "../features/activity-state";
 import type { RepoGroup, SessionItem } from "../features/session-rail/session-rail";
 import { iconPaths } from "../icons/paths";

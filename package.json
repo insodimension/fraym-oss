@@ -6,8 +6,8 @@
     "apps/*"
   ],
   "scripts": {
-    "dev": "bun --filter @fraym/web dev",
-    "dev:sink": "bun --filter @fraym/kitchen-sink dev",
+    "dev": "bun --filter @fraym-ai/web dev",
+    "dev:sink": "bun --filter @fraym-ai/kitchen-sink dev",
     "typecheck": "tsc -b",
     "test": "bun test",
     "publish:dry": "bun scripts/publish.ts --dry-run",

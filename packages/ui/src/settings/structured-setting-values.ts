@@ -1,4 +1,4 @@
-import type { EngineConfigSettingRecord, EngineConfigValueRecord } from "@fraym/driver";
+import type { EngineConfigSettingRecord, EngineConfigValueRecord } from "@fraym-ai/driver";
 
 /** The effective value of a setting: the explicit value if set, else its default. */
 export function effectiveStructuredValue(record: EngineConfigSettingRecord, value?: EngineConfigValueRecord): unknown {

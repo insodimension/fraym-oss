@@ -1,4 +1,4 @@
-import { SESSION_COLLAPSE_ALL, SESSION_COLLAPSE_LIMITS } from "@fraym/config";
+import { SESSION_COLLAPSE_ALL, SESSION_COLLAPSE_LIMITS } from "@fraym-ai/config";
 import { useState } from "react";
 import { PopoverDivider, PopoverHeading, PopoverPanel, PopoverRow, revealLabel, Scrim, Slider } from "../elements";
 import { Icon } from "../icons";

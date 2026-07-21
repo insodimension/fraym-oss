@@ -7,7 +7,7 @@ const STROKE = { xs: 2, sm: 2, md: 2.25, lg: 2.5 } as const;
 export type SpinnerSize = keyof typeof SIZE_PX;
 
 /** The loader animation. Each is a distinct "working" affordance; pick per context
- *  the way you'd pick a `@fraym/vibr` avatar or wisp preset. */
+ *  the way you'd pick a `@fraym-ai/vibr` avatar or wisp preset. */
 export type SpinnerKind = "circular" | "dots" | "bars" | "signal" | "orbit" | "bounce";
 
 /** Lifecycle state shared by every kind:
@@ -194,7 +194,7 @@ function KindBody({ kind, ...props }: KindProps & { readonly kind: SpinnerKind }
 
 /**
  * Spinner — the loader category. `kind` selects the animation (circular ring, dots
- * matrix, equalizer bars, signal, orbiting dot, bouncing dots) the way a `@fraym/vibr`
+ * matrix, equalizer bars, signal, orbiting dot, bouncing dots) the way a `@fraym-ai/vibr`
  * avatar/wisp preset is chosen; `state` drives the lifecycle (running / idle /
  * success ✓ / error ✗). Color is inherited via `currentColor` (the `dots` kind
  * owns the semantic palette), so it matches its text context — set

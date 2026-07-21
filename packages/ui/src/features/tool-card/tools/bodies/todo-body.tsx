@@ -6,7 +6,7 @@
 // so both surfaces render one consistent checklist. (`TaskBreakdown` is a
 // separate richer card-per-phase surface, no longer used by the dock.)
 
-import type { TaskPhase, TaskStatus } from "@fraym/driver";
+import type { TaskPhase, TaskStatus } from "@fraym-ai/driver";
 import { Icon } from "../../../../icons";
 import { cn } from "../../../../lib/cn";
 

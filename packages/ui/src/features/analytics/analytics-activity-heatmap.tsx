@@ -1,4 +1,4 @@
-import type { AnalyticsActivityBucket, AnalyticsRange } from "@fraym/driver";
+import type { AnalyticsActivityBucket, AnalyticsRange } from "@fraym-ai/driver";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../../elements";
 import { cn } from "../../lib/cn";
 import {

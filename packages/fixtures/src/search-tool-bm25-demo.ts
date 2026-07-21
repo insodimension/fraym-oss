@@ -1,6 +1,6 @@
-import type { SessionRef, SessionSnapshot, WorkspaceRef } from "@fraym/driver";
-import type { DemoScript, ScriptStep } from "@fraym/driver/mock";
-import { createScriptedDriver } from "@fraym/driver/mock";
+import type { SessionRef, SessionSnapshot, WorkspaceRef } from "@fraym-ai/driver";
+import type { DemoScript, ScriptStep } from "@fraym-ai/driver/mock";
+import { createScriptedDriver } from "@fraym-ai/driver/mock";
 import { SEARCH_TOOL_BM25_DETAILS } from "./search-tool-bm25-outputs";
 import { toolResult } from "./tool-call-utils";
 

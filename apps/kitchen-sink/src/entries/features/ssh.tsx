@@ -1,5 +1,5 @@
-import { createSshDemoDriver, pendingToolCall, SSH_DEMO_SESSION_REF, toolResult } from "@fraym/fixtures";
-import { type ActiveToolCall, useLineStream } from "@fraym/ui";
+import { createSshDemoDriver, pendingToolCall, SSH_DEMO_SESSION_REF, toolResult } from "@fraym-ai/fixtures";
+import { type ActiveToolCall, useLineStream } from "@fraym-ai/ui";
 import { useState } from "react";
 import {
 	DEPLOY_OUTPUT,
@@ -28,7 +28,7 @@ import type { ShowcaseEntry } from "../../showcase/types";
 // `ssh` tool showcase.
 //
 // No bespoke sketch: the card is rendered by the PRODUCTION renderer (`renderSsh`,
-// registered in @fraym/ui's DEFAULT_TOOL_RENDERERS) fed a synthetic `ActiveToolCall`
+// registered in @fraym-ai/ui's DEFAULT_TOOL_RENDERERS) fed a synthetic `ActiveToolCall`
 // built from the knobs. SSH shows an "SSH" head + a `[host]` badge + the `$ command`
 // row + remote output on the term surface; truncation spills to an artifact. Output
 // rides the partial-output channel while streaming, exactly like a live run. Unlike
@@ -161,7 +161,7 @@ function SshEntry() {
 }
 
 const sshDocs: EntryDocs = {
-	import: 'import { Thread, DEFAULT_TOOL_RENDERERS } from "@fraym/ui";',
+	import: 'import { Thread, DEFAULT_TOOL_RENDERERS } from "@fraym-ai/ui";',
 	anatomy: JSON.stringify(
 		[
 			"// Tool cards render automatically inside <Thread>: DEFAULT_TOOL_RENDERERS",

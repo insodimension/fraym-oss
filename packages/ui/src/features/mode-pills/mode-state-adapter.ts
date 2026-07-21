@@ -1,4 +1,4 @@
-import type { ModeState } from "@fraym/driver";
+import type { ModeState } from "@fraym-ai/driver";
 import type { IconName } from "../../icons";
 import type { ModePillItem } from "./mode-pills";
 

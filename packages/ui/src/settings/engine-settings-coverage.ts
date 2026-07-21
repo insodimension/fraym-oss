@@ -1,4 +1,4 @@
-import type { EngineConfigSettingRecord } from "@fraym/driver";
+import type { EngineConfigSettingRecord } from "@fraym-ai/driver";
 
 export type EngineSettingsPaneId =
 	| "appearance"

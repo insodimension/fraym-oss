@@ -8,7 +8,7 @@
 // `else` branch), so this avoids the separate `ui.editor` follow-up entirely — no
 // 2-step, no deadlock.
 
-import type { HostUiRequest as DriverHostUiRequest, HostUiResponse, HostUiSelectOption } from "@fraym/driver";
+import type { HostUiRequest as DriverHostUiRequest, HostUiResponse, HostUiSelectOption } from "@fraym-ai/driver";
 import { useEffect, useState } from "react";
 import { AskPicker, type AskPickerOption } from "../../components/ask-picker";
 import { AskFieldControl, readDialogField } from "./ask-field-control";

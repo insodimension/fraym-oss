@@ -1,5 +1,5 @@
 {
-  "name": "@fraym/driver-test",
+  "name": "@fraym-ai/driver-test",
   "version": "0.1.0",
   "type": "module",
   "license": "MIT",
@@ -23,7 +23,7 @@
     "test": "bun test"
   },
   "dependencies": {
-    "@fraym/driver": "workspace:*"
+    "@fraym-ai/driver": "workspace:*"
   },
   "devDependencies": {
     "@types/bun": "^1.3.0",

@@ -1,5 +1,5 @@
-import { ASK_DETAILS, ASK_INPUT, type AskVariation, optionalToolResult, pendingToolCall } from "@fraym/fixtures";
-import type { ActiveToolCall } from "@fraym/ui";
+import { ASK_DETAILS, ASK_INPUT, type AskVariation, optionalToolResult, pendingToolCall } from "@fraym-ai/fixtures";
+import type { ActiveToolCall } from "@fraym-ai/ui";
 import type { ControlsSchema } from "../../showcase/controls";
 import { Demo } from "../../showcase/demo";
 import type { EntryDocs } from "../../showcase/docs";
@@ -18,7 +18,7 @@ import type { ShowcaseEntry } from "../../showcase/types";
 // `ask` tool showcase.
 //
 // Rendered by the PRODUCTION renderer (`renderAsk`, registered in
-// @fraym/ui's DEFAULT_TOOL_RENDERERS) fed a synthetic `ActiveToolCall`.
+// @fraym-ai/ui's DEFAULT_TOOL_RENDERERS) fed a synthetic `ActiveToolCall`.
 //
 // Axes (control knobs):
 //   VARIATION  single · multi-select · with-description · multi-part · custom-input · error · pending
@@ -122,7 +122,7 @@ function AskEntry() {
 }
 
 const askDocs: EntryDocs = {
-	import: 'import { Thread, DEFAULT_TOOL_RENDERERS } from "@fraym/ui";',
+	import: 'import { Thread, DEFAULT_TOOL_RENDERERS } from "@fraym-ai/ui";',
 	anatomy: JSON.stringify(
 		[
 			"// Tool cards render automatically inside <Thread>: DEFAULT_TOOL_RENDERERS",

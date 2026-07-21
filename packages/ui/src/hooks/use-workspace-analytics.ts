@@ -4,7 +4,7 @@ import type {
 	AnalyticsRange,
 	AnalyticsSnapshot,
 	WorkspaceRef,
-} from "@fraym/driver";
+} from "@fraym-ai/driver";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 export interface WorkspaceAnalyticsState {

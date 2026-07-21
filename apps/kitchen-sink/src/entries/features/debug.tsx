@@ -1,5 +1,5 @@
-import { pendingToolCall, toolResult } from "@fraym/fixtures";
-import type { ActiveToolCall } from "@fraym/ui";
+import { pendingToolCall, toolResult } from "@fraym-ai/fixtures";
+import type { ActiveToolCall } from "@fraym-ai/ui";
 import {
 	BREAKPOINT_OUTPUT,
 	CONTINUE_OUTPUT,
@@ -32,7 +32,7 @@ import type { ShowcaseEntry } from "../../showcase/types";
 // `debug` tool showcase.
 //
 // No bespoke sketch: the card is rendered by the PRODUCTION renderer
-// (`renderDebug`, registered in @fraym/ui's DEFAULT_TOOL_RENDERERS) fed a
+// (`renderDebug`, registered in @fraym-ai/ui's DEFAULT_TOOL_RENDERERS) fed a
 // synthetic `ActiveToolCall` built from the knobs. Debug shows a "Debug" head
 // + an action badge (launch, stack_trace, evaluate, etc.) + output text on the
 // term surface; session snapshot details render as a structured section when
@@ -171,7 +171,7 @@ function DebugEntry() {
 }
 
 const debugDocs: EntryDocs = {
-	import: 'import { Thread, DEFAULT_TOOL_RENDERERS } from "@fraym/ui";',
+	import: 'import { Thread, DEFAULT_TOOL_RENDERERS } from "@fraym-ai/ui";',
 	anatomy: JSON.stringify(
 		[
 			"// Tool cards render automatically inside <Thread>: DEFAULT_TOOL_RENDERERS",

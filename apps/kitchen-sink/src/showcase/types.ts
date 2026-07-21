@@ -3,9 +3,9 @@ import type {
 	ToolDefaultOpen,
 	ToolDisplaySettings,
 	ToolRendererMap,
-} from "@fraym/ui";
-import type { SessionDriver, SessionRef } from "@fraym/driver";
-import type { VerberProfileId } from "@fraym/verber";
+} from "@fraym-ai/ui";
+import type { SessionDriver, SessionRef } from "@fraym-ai/driver";
+import type { VerberProfileId } from "@fraym-ai/verber";
 import type { ComponentType, ReactNode } from "react";
 import type { ControlsSchema } from "./controls";
 import type { EntryDocs } from "./docs";

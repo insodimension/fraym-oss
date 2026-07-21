@@ -1,4 +1,4 @@
-import { compatibleWispPresets, WispPreview, wispPresetForAvatar } from "@fraym/vibr";
+import { compatibleWispPresets, WispPreview, wispPresetForAvatar } from "@fraym-ai/vibr";
 import { applyGate, useDeploymentGates } from "../deployment-gates";
 import { AvatarSelect } from "./avatar-select";
 

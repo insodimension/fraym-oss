@@ -1,4 +1,4 @@
-import type { UsageLimitView } from "@fraym/driver";
+import type { UsageLimitView } from "@fraym-ai/driver";
 import type { PlanLimit } from "../context-popover/context-popover";
 import { formatResetCountdown } from "./usage-format";
 

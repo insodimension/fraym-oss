@@ -1,4 +1,4 @@
-import type { SessionDriver, SessionDriverEvent, SessionRef, Unsubscribe } from "@fraym/driver";
+import type { SessionDriver, SessionDriverEvent, SessionRef, Unsubscribe } from "@fraym-ai/driver";
 import { useEffect, useRef, useState } from "react";
 import { describeTool } from "../registries/describe-tool";
 import { KIND_TO_VIBR } from "./session-tools";

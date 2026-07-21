@@ -4,7 +4,7 @@ import type {
   EngineConfigDriver,
   EngineConfigSnapshot,
   WorkspaceRef,
-} from "@fraym/driver";
+} from "@fraym-ai/driver";
 export interface ReferenceConfigDriverOptions {
   readonly withSubscriptions?: boolean;
 }

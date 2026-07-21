@@ -1,5 +1,5 @@
-import { createReadDemoDriver, READ_DEMO_SESSION_REF } from "@fraym/fixtures";
-import { type ActiveToolCall, ToolRender } from "@fraym/ui";
+import { createReadDemoDriver, READ_DEMO_SESSION_REF } from "@fraym-ai/fixtures";
+import { type ActiveToolCall, ToolRender } from "@fraym-ai/ui";
 import {
 	BASE_PATH,
 	CODE_FULL,
@@ -23,7 +23,7 @@ import type { ShowcaseEntry } from "../../showcase/types";
 // `read` tool showcase.
 //
 // There is no bespoke sketch here: the card is rendered by the PRODUCTION renderer
-// (`renderRead`, registered in @fraym/ui's DEFAULT_TOOL_RENDERERS) fed a synthetic
+// (`renderRead`, registered in @fraym-ai/ui's DEFAULT_TOOL_RENDERERS) fed a synthetic
 // `ActiveToolCall` built from the config knobs — the exact `{ input, output }` shape
 // a live `read` call carries. What you preview IS what ships. The Demo Dock drives
 // the full streamed conversation through the same renderer (createReadDemoDriver).
@@ -187,7 +187,7 @@ function ReadEntry() {
 }
 
 const readDocs: EntryDocs = {
-	import: 'import { Thread, DEFAULT_TOOL_RENDERERS } from "@fraym/ui";',
+	import: 'import { Thread, DEFAULT_TOOL_RENDERERS } from "@fraym-ai/ui";',
 	anatomy: JSON.stringify(
 		[
 			"// Tool cards render automatically inside <Thread>: DEFAULT_TOOL_RENDERERS",

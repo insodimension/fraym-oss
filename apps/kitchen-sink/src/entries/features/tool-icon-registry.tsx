@@ -6,7 +6,7 @@ import {
 	type ToolKind,
 	ToolRender,
 	toolIconNode,
-} from "@fraym/ui";
+} from "@fraym-ai/ui";
 import { Demo, Note } from "../../showcase/demo";
 import type { ShowcaseEntry } from "../../showcase/types";
 
@@ -139,7 +139,7 @@ function ToolIconRegistryEntry() {
 	return (
 		<Demo
 			summary="Config-driven tool→icon policy. UE/MCP tools resolve to specific icons — the official Unreal logo, tinted lucide marks for Blueprint / Data Asset / Data Table / Struct·Enum, and mono category marks — layered over each card's kind icon via DEFAULT_TOOL_ICON_POLICY. Non-UE tools match no rule and keep their kind icon."
-			importPath="@fraym/ui"
+			importPath="@fraym-ai/ui"
 			stage="stretch"
 		>
 			<Note>kind icons — every ToolKind across pending · success · error · warn</Note>

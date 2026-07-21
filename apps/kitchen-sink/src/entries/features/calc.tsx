@@ -6,9 +6,9 @@ import {
 	createCalcDemoDriver,
 	optionalToolResult,
 	pendingToolCall,
-} from "@fraym/fixtures";
+} from "@fraym-ai/fixtures";
 
-import type { ActiveToolCall } from "@fraym/ui";
+import type { ActiveToolCall } from "@fraym-ai/ui";
 import type { ControlsSchema } from "../../showcase/controls";
 import { Demo } from "../../showcase/demo";
 import type { EntryDocs } from "../../showcase/docs";
@@ -27,7 +27,7 @@ import type { ShowcaseEntry } from "../../showcase/types";
 // `calc` tool showcase.
 //
 // No bespoke sketch: the card is rendered by the PRODUCTION renderer
-// (`renderCalc`, registered in @fraym/ui's DEFAULT_TOOL_RENDERERS) fed a
+// (`renderCalc`, registered in @fraym-ai/ui's DEFAULT_TOOL_RENDERERS) fed a
 // synthetic `ActiveToolCall` built from the knobs. Calc shows a "Calculator"
 // head + an expression badge + the expression→result body.
 //
@@ -121,7 +121,7 @@ function CalcEntry() {
 	);
 }
 const calcDocs: EntryDocs = {
-	import: 'import { Thread, DEFAULT_TOOL_RENDERERS } from "@fraym/ui";',
+	import: 'import { Thread, DEFAULT_TOOL_RENDERERS } from "@fraym-ai/ui";',
 	anatomy: JSON.stringify(
 		[
 			"// Tool cards render automatically inside <Thread>: DEFAULT_TOOL_RENDERERS",

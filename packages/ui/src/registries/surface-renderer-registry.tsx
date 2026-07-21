@@ -1,4 +1,4 @@
-import type { HostUiRequest, HostUiResponse } from "@fraym/driver";
+import type { HostUiRequest, HostUiResponse } from "@fraym-ai/driver";
 import { createContext, type ReactNode, useContext, useMemo } from "react";
 import { DEFAULT_SURFACE_RENDERERS, renderFallback } from "./default-surface-renderers";
 

@@ -1,5 +1,5 @@
 {
-  "name": "@fraym/kitchen-sink",
+  "name": "@fraym-ai/kitchen-sink",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -9,13 +9,13 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@fraym/config": "workspace:*",
-    "@fraym/driver": "workspace:*",
-    "@fraym/driver-test": "workspace:*",
-    "@fraym/fixtures": "workspace:*",
-    "@fraym/ui": "workspace:*",
-    "@fraym/verber": "workspace:*",
-    "@fraym/vibr": "workspace:*",
+    "@fraym-ai/config": "workspace:*",
+    "@fraym-ai/driver": "workspace:*",
+    "@fraym-ai/driver-test": "workspace:*",
+    "@fraym-ai/fixtures": "workspace:*",
+    "@fraym-ai/ui": "workspace:*",
+    "@fraym-ai/verber": "workspace:*",
+    "@fraym-ai/vibr": "workspace:*",
     "clsx": "^2.1.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",

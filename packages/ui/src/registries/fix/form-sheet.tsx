@@ -1,4 +1,4 @@
-import type { PluginConnectFormField } from "@fraym/driver";
+import type { PluginConnectFormField } from "@fraym-ai/driver";
 import { type RefObject, useState } from "react";
 import { Input } from "../../elements/input";
 export interface FormSheetProps { readonly fields: readonly PluginConnectFormField[]; readonly formRef: RefObject<HTMLFormElement | null>; readonly onSubmit: () => void }

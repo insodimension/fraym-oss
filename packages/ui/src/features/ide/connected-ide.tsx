@@ -6,7 +6,7 @@
 // snapshot. Fetches are lazy + cached (open callbacks drive them) so we never
 // pull content the user hasn't asked for.
 
-import type { WorkspaceDriver, WorkspaceRef, WorkspaceScmArea } from "@fraym/driver";
+import type { WorkspaceDriver, WorkspaceRef, WorkspaceScmArea } from "@fraym-ai/driver";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { FileTreeGitStatusEntry } from "../file-tree";
 import { resolveFileKind } from "../file-view";

@@ -2,7 +2,7 @@ import { FitAddon } from "@xterm/addon-fit";
 import { WebglAddon } from "@xterm/addon-webgl";
 import { Terminal } from "@xterm/xterm";
 import "@xterm/xterm/css/xterm.css";
-import type { TerminalSessionSnapshot } from "@fraym/driver";
+import type { TerminalSessionSnapshot } from "@fraym-ai/driver";
 import { useEffect, useRef } from "react";
 import { Button, IconButton } from "../../elements";
 import { Icon } from "../../icons";

@@ -1,4 +1,4 @@
-import type { SessionQueuedMessage, SessionRef } from "@fraym/driver";
+import type { SessionQueuedMessage, SessionRef } from "@fraym-ai/driver";
 import type {
 	ActiveToolCall,
 	SessionState,

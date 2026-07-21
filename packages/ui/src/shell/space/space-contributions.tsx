@@ -1,4 +1,4 @@
-import type { EngineSpaceRecord } from "@fraym/driver";
+import type { EngineSpaceRecord } from "@fraym-ai/driver";
 import type { IconName } from "../../icons/paths";
 import type { RailActionDef, RailActionTarget } from "../types";
 import type { SpaceUiDef } from "./space-def";

@@ -1,4 +1,4 @@
-import type { AnalyticsBenchmarkMeta, AnalyticsModelStats } from "@fraym/driver";
+import type { AnalyticsBenchmarkMeta, AnalyticsModelStats } from "@fraym-ai/driver";
 import { useEffect, useMemo, useState } from "react";
 import { Select } from "../../elements";
 import { Icon, type IconName } from "../../icons";

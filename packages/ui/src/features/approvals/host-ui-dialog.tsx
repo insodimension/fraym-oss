@@ -4,7 +4,7 @@
 // docked ConnectedSelectDialog. confirm/permission are also docked, not modal.
 // Mount with `key={request.requestId}` so editable state resets per request.
 
-import type { HostUiRequest as DriverHostUiRequest, HostUiResponse } from "@fraym/driver";
+import type { HostUiRequest as DriverHostUiRequest, HostUiResponse } from "@fraym-ai/driver";
 import { useEffect, useState } from "react";
 import { Button } from "../../elements/button";
 import { Input } from "../../elements/input";

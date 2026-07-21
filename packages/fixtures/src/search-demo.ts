@@ -1,5 +1,5 @@
 // Search demo script — a `search`-focused conversation expressed as pure session-driver
-// events. Replayed through @fraym/driver/mock so the search tool renders inside a real
+// events. Replayed through @fraym-ai/driver/mock so the search tool renders inside a real
 // thread via the production renderer (`renderSearch`). Walks the shapes: a directory
 // search (grouped # dir/ + ## file + match/context/gap lines), a single-file search, and
 // a truncated search (file-window cap + artifact spill).
@@ -8,8 +8,8 @@
 // gutter format the renderer parses) + counts (`matchCount` / `fileCount`) + truncation
 // detail. There is NO streaming — search is a single grep call. Pure data: no JSX, no fraym-ui.
 
-import type { SessionRef, SessionSnapshot, WorkspaceRef } from "@fraym/driver";
-import type { DemoScript, ScriptedEvent, ScriptStep } from "@fraym/driver/mock";
+import type { SessionRef, SessionSnapshot, WorkspaceRef } from "@fraym-ai/driver";
+import type { DemoScript, ScriptedEvent, ScriptStep } from "@fraym-ai/driver/mock";
 import { assistantDelta as say, queuedMessage, runCompleted, scriptedStep as step, toolFinished as toolDone, toolStarted, workingStatus as verb } from "./scripted-event-utils";
 
 const NOW = "2026-06-04T12:00:00.000Z";

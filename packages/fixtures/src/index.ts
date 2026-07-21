@@ -1,6 +1,6 @@
-import type { SessionDriver, SessionRef } from "@fraym/driver";
-import type { DemoScript } from "@fraym/driver/mock";
-import { createScriptedDriver } from "@fraym/driver/mock";
+import type { SessionDriver, SessionRef } from "@fraym-ai/driver";
+import type { DemoScript } from "@fraym-ai/driver/mock";
+import { createScriptedDriver } from "@fraym-ai/driver/mock";
 import { astEditDemoScript } from "./ast-edit-demo";
 import { astGrepDemoScript } from "./ast-grep-demo";
 import { bashDemoScript } from "./bash-demo";

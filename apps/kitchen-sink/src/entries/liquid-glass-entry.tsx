@@ -4,7 +4,7 @@ import {
 	LiquidGlassSurface,
 	type LiquidGlassVariant,
 	useTheme,
-} from "@fraym/ui";
+} from "@fraym-ai/ui";
 import { useControls } from "../showcase/controls";
 import { Demo } from "../showcase/demo";
 import type { EntryDocs } from "../showcase/docs";
@@ -25,7 +25,7 @@ function LiquidGlassEntry() {
 	return (
 		<Demo
 			summary="Real WebGL refraction (ported from ogtirth/liquidglass-oss). A LiquidGlassBackdrop paints a drifting monochrome field; LiquidGlassSurface / LiquidGlassButton mount WebGL lenses that bend it with chromatic aberration, fresnel + specular. This is the engine behind the Liquid Glass + Liquid Glass Lumen themes; here it runs in a self-contained stage so it shows under any theme."
-			importPath="@fraym/ui"
+			importPath="@fraym-ai/ui"
 			controls={panel}
 			stage="stretch"
 			clip={false}
@@ -60,7 +60,7 @@ function LiquidGlassEntry() {
 }
 
 const liquidGlassDocs: EntryDocs = {
-	import: 'import { LiquidGlassBackdrop, LiquidGlassSurface, LiquidGlassButton } from "@fraym/ui";',
+	import: 'import { LiquidGlassBackdrop, LiquidGlassSurface, LiquidGlassButton } from "@fraym-ai/ui";',
 	anatomy: `<LiquidGlassBackdrop contained tone="dark">
   <LiquidGlassSurface variant="frosted" radius={22} className="p-6">
     Refractive content

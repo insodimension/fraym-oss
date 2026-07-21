@@ -1,8 +1,8 @@
 // Browser tool fixtures — demo data for the kitchen-sink `browser` entry.
 //
-// Lives in @fraym/fixtures (the canonical home for tool fixture data; the
+// Lives in @fraym-ai/fixtures (the canonical home for tool fixture data; the
 // kitchen-sink `src/fixtures/` dir is a trap — see SKILL G10). The entry imports
-// these via `@fraym/fixtures`; the Demo-Dock conversation is `browser-demo.ts`
+// these via `@fraym-ai/fixtures`; the Demo-Dock conversation is `browser-demo.ts`
 // (which reuses `SCREENSHOT_B64` from here).
 //
 // Browser has two output shapes by action: `run` (JS code + text output + inline

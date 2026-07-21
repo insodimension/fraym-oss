@@ -1,5 +1,5 @@
-import type { SessionSnapshot } from "@fraym/driver";
-import type { ScriptedEvent, ScriptStep } from "@fraym/driver/mock";
+import type { SessionSnapshot } from "@fraym-ai/driver";
+import type { ScriptedEvent, ScriptStep } from "@fraym-ai/driver/mock";
 
 export function scriptedStep(event: ScriptedEvent, delayMs = 0): ScriptStep {
   return { event, delayMs };

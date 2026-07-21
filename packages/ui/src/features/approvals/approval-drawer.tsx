@@ -5,7 +5,7 @@
 // allow/deny options with keyboard focus. Answering posts a `HostUiResponse`
 // back through the driver (`optionId` or `cancelled`).
 
-import type { HostUiResponse, PermissionLocation, PermissionOption } from "@fraym/driver";
+import type { HostUiResponse, PermissionLocation, PermissionOption } from "@fraym-ai/driver";
 import { Button } from "../../elements/button";
 import { Icon } from "../../icons";
 import { cn } from "../../lib/cn";

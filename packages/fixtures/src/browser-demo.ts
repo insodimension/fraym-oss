@@ -1,13 +1,13 @@
 // Browser demo script — a `browser`-focused conversation expressed as pure
-// session-driver events. Replayed through @fraym/driver/mock so the browser tool
+// session-driver events. Replayed through @fraym-ai/driver/mock so the browser tool
 // renders inside a real thread via the production renderer (`renderBrowser`). Walks
 // the action shapes: open a headless tab, run JS (observe the a11y tree), capture a
 // screenshot (an INLINE image block in `content[]`), and close. Browser has NO
 // result streaming (`_onUpdate` is unused) — every phase is static (toolStarted →
 // toolFinished). Pure data: no JSX, no fraym-ui.
 
-import type { SessionRef, SessionSnapshot, WorkspaceRef } from "@fraym/driver";
-import type { DemoScript, ScriptedEvent, ScriptStep } from "@fraym/driver/mock";
+import type { SessionRef, SessionSnapshot, WorkspaceRef } from "@fraym-ai/driver";
+import type { DemoScript, ScriptedEvent, ScriptStep } from "@fraym-ai/driver/mock";
 import { SCREENSHOT_B64 } from "./browser-outputs";
 import { assistantDelta as say, queuedMessage, runCompleted, scriptedStep as step, toolFinished as toolDone, toolStarted, workingStatus as verb } from "./scripted-event-utils";
 import { toolResult } from "./tool-call-utils";

@@ -11,8 +11,8 @@ import {
 	BROWSER_SCREENSHOT_B64 as SCREENSHOT_B64,
 	BROWSER_TRUNCATED_OUTPUT as TRUNCATED_OUTPUT,
 	toolResult,
-} from "@fraym/fixtures";
-import type { ActiveToolCall } from "@fraym/ui";
+} from "@fraym-ai/fixtures";
+import type { ActiveToolCall } from "@fraym-ai/ui";
 import type { ControlsSchema } from "../../showcase/controls";
 import { Demo } from "../../showcase/demo";
 import type { EntryDocs } from "../../showcase/docs";
@@ -31,14 +31,14 @@ import type { ShowcaseEntry } from "../../showcase/types";
 // `browser` tool showcase.
 //
 // No bespoke sketch: the card is rendered by the PRODUCTION renderer
-// (`renderBrowser`, registered in @fraym/ui's DEFAULT_TOOL_RENDERERS) fed a
+// (`renderBrowser`, registered in @fraym-ai/ui's DEFAULT_TOOL_RENDERERS) fed a
 // synthetic `ActiveToolCall`. Browser has TWO shapes by `action`: `run` → a JS code
 // cell + text output + INLINE screenshots/figures (real <img> with a lightbox —
 // parity+ over the TUI, which only fakes images via the terminal image protocol);
 // `open`/`close` → a status line. Head = a `web`/globe kind + action + tab +
 // browser-kind + url badges. NO result streaming (browser never calls onUpdate).
 //
-// All demo DATA lives in @fraym/fixtures (browser-outputs.ts / browser-demo.ts) per
+// All demo DATA lives in @fraym-ai/fixtures (browser-outputs.ts / browser-demo.ts) per
 // the house rule (SKILL G10) — this entry holds only call-assembly logic + controls.
 //
 // Axes (control knobs):
@@ -139,7 +139,7 @@ function BrowserEntry() {
 }
 
 const browserDocs: EntryDocs = {
-	import: 'import { Thread, DEFAULT_TOOL_RENDERERS } from "@fraym/ui";',
+	import: 'import { Thread, DEFAULT_TOOL_RENDERERS } from "@fraym-ai/ui";',
 	anatomy: JSON.stringify(
 		[
 			"// Tool cards render automatically inside <Thread>: DEFAULT_TOOL_RENDERERS",

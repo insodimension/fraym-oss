@@ -13,7 +13,7 @@
 // head. The two compose — sub-threshold runs still fall through to `coalesceReadGroups`,
 // so short read bursts keep their summary card.
 
-import { type IconSpec, resolveToolIcon, type ToolIconPolicy } from "@fraym/config";
+import { type IconSpec, resolveToolIcon, type ToolIconPolicy } from "@fraym-ai/config";
 import { Fragment, type ReactNode, useMemo } from "react";
 import { Badge } from "../../../elements/badge";
 import type { ActiveToolCall } from "../../../hooks/session-types";

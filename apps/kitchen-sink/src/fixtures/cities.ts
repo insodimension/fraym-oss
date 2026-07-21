@@ -1,4 +1,4 @@
-import type { SelectorMenuCategory } from "@fraym/ui";
+import type { SelectorMenuCategory } from "@fraym-ai/ui";
 
 export interface CityItem {
 	readonly id: string;

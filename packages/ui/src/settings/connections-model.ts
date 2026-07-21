@@ -4,7 +4,7 @@
 // plus deterministic monogram tiles (no brand-asset dependency) and
 // search/filter predicates for the ~45-provider grid.
 
-import type { EngineProviderAuthSource, EngineProviderRecord } from "@fraym/driver";
+import type { EngineProviderAuthSource, EngineProviderRecord } from "@fraym-ai/driver";
 import { providerBrand } from "./provider-brand";
 
 export { providerMonogram } from "./provider-brand";

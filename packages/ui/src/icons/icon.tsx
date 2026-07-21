@@ -1,4 +1,4 @@
-import type { IconSpec } from "@fraym/config";
+import type { IconSpec } from "@fraym-ai/config";
 import { memo, type ReactNode } from "react";
 import { cn } from "../lib/cn";
 import { type IconName, iconPaths } from "./paths";

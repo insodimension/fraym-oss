@@ -5,7 +5,7 @@ import type {
 	SessionModelSelection,
 	SessionQueuedMessage,
 	SessionRef,
-} from "@fraym/driver";
+} from "@fraym-ai/driver";
 import { type Dispatch, useCallback, useMemo } from "react";
 import { errorMessageText } from "./session-error";
 import { undeliveredQueuedMessages } from "./session-transcript";

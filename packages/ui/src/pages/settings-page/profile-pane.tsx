@@ -1,4 +1,4 @@
-import type { AnalyticsRange, AnalyticsSnapshot } from "@fraym/driver";
+import type { AnalyticsRange, AnalyticsSnapshot } from "@fraym-ai/driver";
 import { useState } from "react";
 import { AnalyticsProfileSections, AnalyticsWorkspaceSummaryCard } from "../../features/analytics";
 import { Icon } from "../../icons";

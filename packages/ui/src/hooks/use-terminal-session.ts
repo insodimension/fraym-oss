@@ -1,4 +1,4 @@
-import type { TerminalDriver, TerminalSessionSnapshot, WorkspaceRef } from "@fraym/driver";
+import type { TerminalDriver, TerminalSessionSnapshot, WorkspaceRef } from "@fraym-ai/driver";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 export interface TerminalSessionState {

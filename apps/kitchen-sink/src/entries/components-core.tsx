@@ -1,4 +1,4 @@
-import { type AskField, AskFieldControl, Button, ConfirmDialog, type ConfirmDialogIntent, DiffBlock, DockSplit, Icon, IconButton, InputGroup, Menu, MenuBar, MenuItem, PageHeader, PopoverDivider, PopoverHeading, PopoverPanel, PopoverRow, Scrim, SelectorMenu } from "@fraym/ui";
+import { type AskField, AskFieldControl, Button, ConfirmDialog, type ConfirmDialogIntent, DiffBlock, DockSplit, Icon, IconButton, InputGroup, Menu, MenuBar, MenuItem, PageHeader, PopoverDivider, PopoverHeading, PopoverPanel, PopoverRow, Scrim, SelectorMenu } from "@fraym-ai/ui";
 import { useState } from "react";
 import type { CityItem } from "../fixtures";
 import { CITY_CATEGORIES } from "../fixtures";
@@ -40,7 +40,7 @@ function DiffBlockEntry() {
 	return (
 		<Demo
 			summary="A compact, syntax-toned diff with a path header and +added / −deleted counts. The lightweight inline diff (see Features ▸ Diff viewer for the full split/unified viewer)."
-			importPath="@fraym/ui/components/diff-block"
+			importPath="@fraym-ai/ui/components/diff-block"
 			controls={panel}
 			stage="stretch"
 		>
@@ -60,7 +60,7 @@ function DockSplitEntry() {
 	return (
 		<Demo
 			summary="A segmented panel-toggle + caret used in the top bar to open the dock and pick a dock tab."
-			importPath="@fraym/ui/components/dock-split"
+			importPath="@fraym-ai/ui/components/dock-split"
 			controls={panel}
 		>
 			<DockSplit label={values.label} onToggle={() => {}} onCaret={() => {}} />
@@ -160,7 +160,7 @@ function SelectorMenuEntry() {
 	return (
 		<Demo
 			summary="The generic SelectorMenu<TItem> component: searchable categories with a hover flyout, built for any data type. This demo uses cities."
-			importPath="@fraym/ui/components/selector-menu"
+			importPath="@fraym-ai/ui/components/selector-menu"
 			controls={panel}
 		>
 			<Button variant="outline" onClick={e => setRect(e.currentTarget.getBoundingClientRect())}>
@@ -217,7 +217,7 @@ function PopoverEntry() {
 	return (
 		<Demo
 			summary="The overlay toolkit: a fixed-position PopoverPanel anchored to a trigger rect, composed from PopoverHeading / PopoverRow / PopoverDivider, over a Scrim backdrop. Menus and pickers are built from these."
-			importPath="@fraym/ui/components/popover"
+			importPath="@fraym-ai/ui/components/popover"
 			controls={panel}
 		>
 			<Button variant="outline" onClick={e => setRect(e.currentTarget.getBoundingClientRect())}>
@@ -265,7 +265,7 @@ function MenuEntry() {
 	return (
 		<Demo
 			summary="A menubar of triggers, each opening an anchored dropdown of MenuItems. One menu open at a time; outside-click and Escape close. Defaults match desktop titlebar chrome — used by the Fraym shell's File/Edit/View menus."
-			importPath="@fraym/ui/components/menu"
+			importPath="@fraym-ai/ui/components/menu"
 			controls={panel}
 		>
 			<div
@@ -309,7 +309,7 @@ function PageHeaderEntry() {
 	return (
 		<Demo
 			summary="A doc/section header: monospace eyebrow, display title, and a lede paragraph."
-			importPath="@fraym/ui/components/page-header"
+			importPath="@fraym-ai/ui/components/page-header"
 			controls={panel}
 			stage="stretch"
 		>
@@ -374,8 +374,8 @@ function AskFieldControlEntry() {
 	};
 	return (
 		<Demo
-			summary="AskFieldControl — the native typed controls behind the `ask` FIELD vocabulary: a number stepper (min/max/step + unit), the @fraym/ui Slider, a Switch toggle, and a tags chip picker (suggestions + add-your-own; submits comma-joined). Rendered when a request carries _meta['fraym/dialog'].field; each answers the same plain control shape. This walks a 4-field form one field at a time."
-			importPath="@fraym/ui"
+			summary="AskFieldControl — the native typed controls behind the `ask` FIELD vocabulary: a number stepper (min/max/step + unit), the @fraym-ai/ui Slider, a Switch toggle, and a tags chip picker (suggestions + add-your-own; submits comma-joined). Rendered when a request carries _meta['fraym/dialog'].field; each answers the same plain control shape. This walks a 4-field form one field at a time."
+			importPath="@fraym-ai/ui"
 		>
 			<div className="mx-auto w-full max-w-[620px] rounded-[14px] border border-fr-border bg-fr-surface p-3 shadow-[0_16px_44px_-12px_rgba(0,0,0,0.45)]">
 				{done || !current ? (
@@ -423,7 +423,7 @@ function InputGroupEntry() {
 	return (
 		<Demo
 			summary="A search/entry row: leading icon, bare input, optional trailing slot. Replaces the 4+ hand-rolled `flex items-center gap-2 rounded-[9px] border bg-fr-surface px-[11px]` patterns across marketplace-shell, selector-menu, connect-provider-wizard, and command-palette."
-			importPath="@fraym/ui/components/input-group"
+			importPath="@fraym-ai/ui/components/input-group"
 			controls={panel}
 			stage="start"
 		>
@@ -491,7 +491,7 @@ function ConfirmDialogEntry() {
 	return (
 		<Demo
 			summary="A confirmation dialog built on Modal chrome (not browser alert()): an intent-toned icon chip, title + description, an optional details panel, and Cancel / Confirm buttons. The danger intent reddens the confirm action."
-			importPath="@fraym/ui/components/confirm-dialog"
+			importPath="@fraym-ai/ui/components/confirm-dialog"
 			controls={panel}
 		>
 			<Button variant="outline" onClick={() => setOpen(true)}>
@@ -523,7 +523,7 @@ function ConfirmDialogEntry() {
 }
 
 const popoverDocs: EntryDocs = {
-	import: 'import { Modal, Scrim, PopoverPanel, PopoverHeading, PopoverDivider, PopoverRow } from "@fraym/ui";',
+	import: 'import { Modal, Scrim, PopoverPanel, PopoverHeading, PopoverDivider, PopoverRow } from "@fraym-ai/ui";',
 	anatomy: `<PopoverPanel anchorRect={triggerRect} place="below" width={260}>
   <PopoverHeading>Switch model</PopoverHeading>
   <PopoverRow icon={icon} label="GPT-5" value="default" selected />
@@ -600,7 +600,7 @@ const popoverDocs: EntryDocs = {
 };
 
 const menuDocs: EntryDocs = {
-	import: 'import { MenuBar, Menu, MenuItem } from "@fraym/ui";',
+	import: 'import { MenuBar, Menu, MenuItem } from "@fraym-ai/ui";',
 	anatomy: `<MenuBar>
   <Menu label="File">
     <MenuItem onClick={newSession}>New session</MenuItem>
@@ -654,7 +654,7 @@ const menuDocs: EntryDocs = {
 };
 
 const pageHeaderDocs: EntryDocs = {
-	import: 'import { PageHeader } from "@fraym/ui";',
+	import: 'import { PageHeader } from "@fraym-ai/ui";',
 	anatomy:
 		'<PageHeader\n  eyebrow="Block · zoom-in"\n  title="SessionDriver — the one contract"\n  lede="The seam between every surface and the engine."\n/>',
 	examples: [
@@ -695,7 +695,7 @@ const pageHeaderDocs: EntryDocs = {
 };
 
 const selectorMenuDocs: EntryDocs = {
-	import: 'import { SelectorMenu, type SelectorMenuCategory, type SelectorMenuProps } from "@fraym/ui";',
+	import: 'import { SelectorMenu, type SelectorMenuCategory, type SelectorMenuProps } from "@fraym-ai/ui";',
 	anatomy:
 		'<SelectorMenu<TItem>\n  categories={categories}\n  selectedId={selectedId}\n  getItemId={item => item.id}\n  query={query}\n  onQueryChange={setQuery}\n  renderItem={(item, selected, onPick) => <Row item={item} selected={selected} onClick={onPick} />}\n  anchorRect={rect}\n  place="below"\n  onPick={item => setSelectedId(item.id)}\n  onClose={() => setRect(null)}\n/>',
 	examples: [
@@ -817,7 +817,7 @@ const selectorMenuDocs: EntryDocs = {
 };
 
 const askFieldControlDocs: EntryDocs = {
-	import: 'import { AskFieldControl } from "@fraym/ui";',
+	import: 'import { AskFieldControl } from "@fraym-ai/ui";',
 	anatomy:
 		'<AskFieldControl\n  question="How many replicas?"\n  field={{ type: "number", min: 1, max: 16, step: 1, default: 3, unit: "pods" }}\n  onSubmit={(value) => answer(value)}\n  onCancel={cancel}\n/>',
 	examples: [
@@ -871,7 +871,7 @@ const askFieldControlDocs: EntryDocs = {
 };
 
 const dockSplitDocs: EntryDocs = {
-	import: 'import { DockSplit } from "@fraym/ui";',
+	import: 'import { DockSplit } from "@fraym-ai/ui";',
 	anatomy: '<DockSplit\n  label="Plan"\n  onToggle={() => togglePanel()}\n  onCaret={() => openTabMenu()}\n/>',
 	examples: [
 		{
@@ -905,7 +905,7 @@ const dockSplitDocs: EntryDocs = {
 };
 
 const diffBlockDocs: EntryDocs = {
-	import: 'import { DiffBlock } from "@fraym/ui";',
+	import: 'import { DiffBlock } from "@fraym-ai/ui";',
 	anatomy:
 		'<DiffBlock\n  path="src/lib/rateLimit.ts"\n  added={5}\n  deleted={2}\n  lines={[\n    { kind: "ctx", lineNo: "22", code: "  check(key) {" },\n    { kind: "del", lineNo: "23", code: "    const hits = this.buckets.get(key) ?? []" },\n    { kind: "add", lineNo: "23", code: "    const now = Date.now()" },\n  ]}\n/>',
 	examples: [
@@ -952,7 +952,7 @@ const diffBlockDocs: EntryDocs = {
 };
 
 const confirmDialogDocs: EntryDocs = {
-	import: 'import { ConfirmDialog } from "@fraym/ui";',
+	import: 'import { ConfirmDialog } from "@fraym-ai/ui";',
 	anatomy: `<ConfirmDialog
   intent="danger"
   title="Delete session?"
@@ -1036,7 +1036,7 @@ const confirmDialogDocs: EntryDocs = {
 };
 
 const inputGroupDocs: EntryDocs = {
-	import: 'import { InputGroup } from "@fraym/ui";',
+	import: 'import { InputGroup } from "@fraym-ai/ui";',
 	anatomy: JSON.stringify(
 		'<InputGroup\n  leading={<Icon name="search" />}\n  trailing={<IconButton aria-label="Clear"><Icon name="x" /></IconButton>}\n  placeholder="Search…"\n  value={query}\n  onChange={event => setQuery(event.target.value)}\n/>',
 	),

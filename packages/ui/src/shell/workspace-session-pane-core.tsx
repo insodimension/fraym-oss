@@ -14,8 +14,8 @@ import type {
 	SessionMessageInput,
 	SessionRef,
 	SessionSnapshot,
-} from "@fraym/driver";
-import { type AvatarId, Presence } from "@fraym/vibr";
+} from "@fraym-ai/driver";
+import { type AvatarId, Presence } from "@fraym-ai/vibr";
 import type { ComponentProps, ReactNode } from "react";
 import { useEffect } from "react";
 import { Button, Skeleton, SkeletonGroup, SkeletonText } from "../elements";

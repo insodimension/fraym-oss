@@ -1,4 +1,4 @@
-import type { EngineModelRecord, EngineProviderRecord } from "@fraym/driver";
+import type { EngineModelRecord, EngineProviderRecord } from "@fraym-ai/driver";
 import { useCallback, useMemo, useState } from "react";
 import { buildCategories, type EngineModelChoice, modelKey, selectedKey, sortModels } from "./model-category-data";
 import type { ModelCategory, ModelSelection } from "./model-picker";

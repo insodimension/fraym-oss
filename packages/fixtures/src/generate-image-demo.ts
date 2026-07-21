@@ -1,7 +1,7 @@
 // generate_image demo script — generates two landscape images
 
-import type { SessionRef, SessionSnapshot, WorkspaceRef } from "@fraym/driver";
-import type { DemoScript, ScriptedEvent, ScriptStep } from "@fraym/driver/mock";
+import type { SessionRef, SessionSnapshot, WorkspaceRef } from "@fraym-ai/driver";
+import type { DemoScript, ScriptedEvent, ScriptStep } from "@fraym-ai/driver/mock";
 
 const NOW = "2026-06-07T12:00:00.000Z";
 const WORKSPACE: WorkspaceRef = { workspaceId: "fraym-genimg", path: "/work/genimg", displayName: "Image generation" };

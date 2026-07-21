@@ -1,4 +1,4 @@
-import type { FraymUiConfig, StreamWispPreset, VerberProfileSetting } from "@fraym/config";
+import type { FraymUiConfig, StreamWispPreset, VerberProfileSetting } from "@fraym-ai/config";
 import type {
 	AgentChoice,
 	FraymDrivers,
@@ -7,8 +7,8 @@ import type {
 	SessionSnapshot,
 	UsageDriver,
 	WorkspaceRef,
-} from "@fraym/driver";
-import type { AvatarId } from "@fraym/vibr";
+} from "@fraym-ai/driver";
+import type { AvatarId } from "@fraym-ai/vibr";
 import { useMemo } from "react";
 import { DeploymentGatesProvider } from "./deployment-gates";
 import type { ToolDefaultOpen } from "./features";

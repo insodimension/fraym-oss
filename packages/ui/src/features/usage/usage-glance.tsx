@@ -1,4 +1,4 @@
-import type { UsageLimitView } from "@fraym/driver";
+import type { UsageLimitView } from "@fraym-ai/driver";
 import { Icon } from "../../icons";
 import { cn } from "../../lib/cn";
 import { UsageMeter } from "./usage-meter";

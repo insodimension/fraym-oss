@@ -4,7 +4,7 @@ import {
   type AgentEventStream,
   type ApprovalResponseEvent,
   createEventStreamSessionDriver,
-} from "@fraym/driver";
+} from "@fraym-ai/driver";
 
 import { ContextUsage } from "./Composer";
 import { Code } from "./elements/code";

@@ -1,4 +1,4 @@
-import type { TaskPhase } from "@fraym/driver";
+import type { TaskPhase } from "@fraym-ai/driver";
 import { Badge } from "../../elements/badge";
 import { Icon } from "../../icons";
 import { cn } from "../../lib/cn";

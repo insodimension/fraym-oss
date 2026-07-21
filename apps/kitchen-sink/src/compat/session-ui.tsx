@@ -1,4 +1,4 @@
-import { createEventStreamSessionDriver, type AgentEvent, type AgentEventStream, type SessionDriver, type SessionDriverEvent, type SessionRef } from "@fraym/driver";
+import { createEventStreamSessionDriver, type AgentEvent, type AgentEventStream, type SessionDriver, type SessionDriverEvent, type SessionRef } from "@fraym-ai/driver";
 import {
 	SessionProvider as UiSessionProvider,
 	Composer,
@@ -12,7 +12,7 @@ import {
 	type ToolDefaultOpen,
 	type ToolDisplaySettings,
 	type ToolRendererMap,
-} from "@fraym/ui";
+} from "@fraym-ai/ui";
 import {
 	createContext,
 	type ReactNode,

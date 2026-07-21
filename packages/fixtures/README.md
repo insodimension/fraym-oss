@@ -1,6 +1,6 @@
-# @fraym/fixtures
+# @fraym-ai/fixtures
 
-Synthetic, deterministic session fixtures replayed through `@fraym/driver/mock`.
+Synthetic, deterministic session fixtures replayed through `@fraym-ai/driver/mock`.
 
 ## Contents
 

@@ -1,4 +1,4 @@
-import type { SessionRef } from "@fraym/driver";
+import type { SessionRef } from "@fraym-ai/driver";
 import type { SessionItem } from "./session-rail";
 
 const FRAYM_SESSION_DRAG_TYPE = "application/x-fraym-session";

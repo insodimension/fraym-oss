@@ -1,6 +1,6 @@
-import type { SessionRailStyle } from "@fraym/config";
-import type { SessionRef, WorkspaceRef } from "@fraym/driver";
-import { type AvatarId, type AvatarMode, type AvatarState, Presence } from "@fraym/vibr";
+import type { SessionRailStyle } from "@fraym-ai/config";
+import type { SessionRef, WorkspaceRef } from "@fraym-ai/driver";
+import { type AvatarId, type AvatarMode, type AvatarState, Presence } from "@fraym-ai/vibr";
 import {
 	createContext,
 	memo,

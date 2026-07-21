@@ -1,4 +1,4 @@
-import type { IconSpec } from "@fraym/config";
+import type { IconSpec } from "@fraym-ai/config";
 import { useEffect, useRef, useState } from "react";
 import { CollapseRegion } from "../../elements/collapse-region";
 import { Shimmer } from "../../elements/shimmer";

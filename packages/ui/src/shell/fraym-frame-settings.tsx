@@ -1,4 +1,4 @@
-import { type AvatarId, Presence } from "@fraym/vibr";
+import { type AvatarId, Presence } from "@fraym-ai/vibr";
 import type { ComponentProps } from "react";
 import { AvatarSelect } from "../components";
 import { applyGate, useDeploymentGates } from "../deployment-gates";

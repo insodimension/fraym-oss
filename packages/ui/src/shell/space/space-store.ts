@@ -3,7 +3,7 @@ import type {
 	EnginePluginRecord,
 	EngineSpacePluginState,
 	EngineSpaceRecord,
-} from "@fraym/driver";
+} from "@fraym-ai/driver";
 import type { SpaceUiDef } from "./space-def";
 
 /** A space the host compiled into its shell configuration. It has no plugin

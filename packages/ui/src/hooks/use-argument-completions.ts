@@ -1,4 +1,4 @@
-import type { SessionDriver, SessionRef } from "@fraym/driver";
+import type { SessionDriver, SessionRef } from "@fraym-ai/driver";
 import { useMemo } from "react";
 import type { ArgumentCompletionSource } from "../features/composer";
 import { useSessionOptional } from "./use-session";

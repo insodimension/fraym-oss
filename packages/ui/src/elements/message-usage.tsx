@@ -6,7 +6,7 @@
 // and non-zero. Always-on + dim; the Thread gates it on the `showTokenUsage` display
 // setting. Data rides the shared journal/transcript contract (`TurnUsage`).
 
-import type { TurnUsage } from "@fraym/driver";
+import type { TurnUsage } from "@fraym-ai/driver";
 import { cn } from "../lib/cn";
 
 /** Compact K/M/B token count, matching Engine's `formatNumber` (e.g. "999", "2K", "1.5K", "52K"). */

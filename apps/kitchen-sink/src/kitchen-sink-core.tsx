@@ -1,4 +1,4 @@
-import { Button, Input, TooltipProvider } from "@fraym/ui/elements";
+import { Button, Input, TooltipProvider } from "@fraym-ai/ui/elements";
 import {
 	accents,
 	type ACCENT_PALETTES,
@@ -9,7 +9,7 @@ import {
 	THEME_MODES,
 	THEME_PRESETS,
 	useTheme,
-} from "@fraym/ui/theme";
+} from "@fraym-ai/ui/theme";
 import { cn, FraymBrandMark, Icon, useSettings } from "./compat/ui";
 import {
 	type Dispatch,

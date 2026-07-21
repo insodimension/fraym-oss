@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import type { AgentEvent } from "@fraym/driver";
+import type { AgentEvent } from "@fraym-ai/driver";
 import type { TextStreamPart, ToolSet } from "ai";
 import { MockLanguageModelV2, simulateReadableStream } from "ai/test";
 import { createAiSdkDriver, streamPartToAgentEvents } from "./index";

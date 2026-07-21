@@ -1,5 +1,5 @@
-import { createFraymDemoDriver, FRAYM_DEMO_SESSION_REF } from "@fraym/fixtures";
-import { ToolDisplaySettingsProvider } from "@fraym/ui";
+import { createFraymDemoDriver, FRAYM_DEMO_SESSION_REF } from "@fraym-ai/fixtures";
+import { ToolDisplaySettingsProvider } from "@fraym-ai/ui";
 import { useControls } from "../../showcase/controls";
 import { Demo } from "../../showcase/demo";
 import type { EntryDocs } from "../../showcase/docs";
@@ -39,8 +39,8 @@ function DemoThreadEntry() {
 
 	return (
 		<Demo
-			summary="A scripted SessionDriver (@fraym/fixtures) replayed through the real session-driver pipeline. Finished tool and diff cards persist in the transcript after the run completes — they are part of the conversation record, not the transient live-tool set."
-			importPath="@fraym/ui/features/thread"
+			summary="A scripted SessionDriver (@fraym-ai/fixtures) replayed through the real session-driver pipeline. Finished tool and diff cards persist in the transcript after the run completes — they are part of the conversation record, not the transient live-tool set."
+			importPath="@fraym-ai/ui/features/thread"
 			controls={panel}
 			stage="stretch"
 		>
@@ -64,7 +64,7 @@ function DemoThreadEntry() {
 }
 
 const demoThreadDocs: EntryDocs = {
-	import: 'import { SessionProvider, Thread } from "@fraym/ui";',
+	import: 'import { SessionProvider, Thread } from "@fraym-ai/ui";',
 	anatomy: JSON.stringify(
 		[
 			"// The canonical render path: a scripted SessionDriver replays events,",

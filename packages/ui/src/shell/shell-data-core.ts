@@ -1,6 +1,6 @@
-import { DEFAULT_SESSION_FILTERS, type SessionFilters } from "@fraym/config";
-import type { SessionConfig } from "@fraym/driver";
-import type { AvatarId } from "@fraym/vibr";
+import { DEFAULT_SESSION_FILTERS, type SessionFilters } from "@fraym-ai/config";
+import type { SessionConfig } from "@fraym-ai/driver";
+import type { AvatarId } from "@fraym-ai/vibr";
 import type { ModelSelection, PaletteCategory } from "../components";
 import type { DockTab } from "../features/right-dock";
 import type { PermissionDef } from "../features/permission-menu/permission-menu";

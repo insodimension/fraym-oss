@@ -1,4 +1,4 @@
-# @fraym/verber
+# @fraym-ai/verber
 
 Configurable working-status language for agent interfaces.
 

@@ -1,4 +1,4 @@
-# `@fraym/driver-acp`
+# `@fraym-ai/driver-acp`
 
 ## Contents
 
@@ -8,7 +8,7 @@
 
 ## Purpose
 
-`@fraym/driver-acp` adapts an Agent Client Protocol v1 WebSocket connection into Fraym's framework-free `AgentEvent` contract. It has no React dependency.
+`@fraym-ai/driver-acp` adapts an Agent Client Protocol v1 WebSocket connection into Fraym's framework-free `AgentEvent` contract. It has no React dependency.
 
 ## Usage
 

@@ -4,7 +4,7 @@ import {
   createReplayDriver,
   type SessionDriver,
   type WorkspaceRef,
-} from "@fraym/driver";
+} from "@fraym-ai/driver";
 
 // The workspace this cockpit operates in. The demo exposes one session inside it.
 export const workspace: WorkspaceRef = {

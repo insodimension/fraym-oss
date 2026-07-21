@@ -1,5 +1,5 @@
-import { createToolGroupDemoDriver, TOOL_GROUP_CALLS, TOOL_GROUP_DEMO_SESSION_REF } from "@fraym/fixtures";
-import { type ActiveToolCall, ToolDisplaySettingsProvider, ToolGroupCard, ToolRender } from "@fraym/ui";
+import { createToolGroupDemoDriver, TOOL_GROUP_CALLS, TOOL_GROUP_DEMO_SESSION_REF } from "@fraym-ai/fixtures";
+import { type ActiveToolCall, ToolDisplaySettingsProvider, ToolGroupCard, ToolRender } from "@fraym-ai/ui";
 import type { ControlsSchema } from "../../showcase/controls";
 import { Demo, Note } from "../../showcase/demo";
 import type { EntryDocs } from "../../showcase/docs";
@@ -67,7 +67,7 @@ function ToolGroupEntry() {
 	return (
 		<Demo
 			summary="A run of consecutive tool calls coalesces into ONE ToolGroupCard. Collapsed, it mirrors the latest call's head + a `N tools` count (and `✕ K` when something failed inside); open it to stack every call as its own independently-openable card — children use the same production renderer. The same component the thread will use; the Demo Dock replays the burst live with grouping enabled."
-			importPath="@fraym/ui (ToolGroupCard)"
+			importPath="@fraym-ai/ui (ToolGroupCard)"
 			controls={panel}
 			stage="stretch"
 		>
@@ -96,7 +96,7 @@ function ToolGroupEntry() {
 }
 
 const toolGroupDocs: EntryDocs = {
-	import: 'import { ToolGroupCard, coalesceToolGroups } from "@fraym/ui";',
+	import: 'import { ToolGroupCard, coalesceToolGroups } from "@fraym-ai/ui";',
 	anatomy: JSON.stringify(
 		[
 			"// In the thread, MessageBody coalesces consecutive tool blocks when the",

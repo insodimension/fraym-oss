@@ -1,6 +1,6 @@
 "use client";
 
-import type { SessionRef } from "@fraym/driver";
+import type { SessionRef } from "@fraym-ai/driver";
 import { createContext, type ReactNode, useContext, useMemo } from "react";
 
 export interface SessionNavigation {

@@ -3,7 +3,7 @@
 // than silently dropped when Engine adds something new. (Custom messages fall back to
 // the normal message body in thread-message, so there is no message branch here.)
 
-import type { HostUiRequest, HostUiResponse } from "@fraym/driver";
+import type { HostUiRequest, HostUiResponse } from "@fraym-ai/driver";
 import type { SurfaceRenderContext, SurfaceRenderInput } from "../../registries/surface-renderer-registry";
 
 export interface FallbackSurfaceProps {

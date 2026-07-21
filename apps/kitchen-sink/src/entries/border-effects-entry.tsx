@@ -1,4 +1,4 @@
-import { Card, CardContent, CardHeader, ElectricBorder, GlareHover, StarBorder } from "@fraym/ui";
+import { Card, CardContent, CardHeader, ElectricBorder, GlareHover, StarBorder } from "@fraym-ai/ui";
 import { useControls } from "../showcase/controls";
 import { Demo } from "../showcase/demo";
 import type { EntryDocs } from "../showcase/docs";
@@ -19,7 +19,7 @@ function GlareHoverEntry() {
 	return (
 		<Demo
 			summary="A diagonal specular glare sweeps across the wrapped content on hover. Input-driven, so the short sweep is fine under reduced motion. The glare color defaults to a token-derived white-mix that reads on both light and dark surfaces."
-			importPath="@fraym/ui"
+			importPath="@fraym-ai/ui"
 			controls={panel}
 			clip={false}
 		>
@@ -46,7 +46,7 @@ function GlareHoverEntry() {
 }
 
 const glareHoverDocs: EntryDocs = {
-	import: 'import { GlareHover } from "@fraym/ui";',
+	import: 'import { GlareHover } from "@fraym-ai/ui";',
 	anatomy: `<GlareHover borderRadius={9}>
   <Card>{content}</Card>
 </GlareHover>`,
@@ -101,7 +101,7 @@ function StarBorderEntry() {
 	return (
 		<Demo
 			summary="An orbiting star glow rides the top and bottom edges in opposite directions (two masked radial-gradient bars). Continuous motion, so under reduced motion the glow rests static on the border. The glow defaults to var(--fr-accent) so it reads on any theme."
-			importPath="@fraym/ui"
+			importPath="@fraym-ai/ui"
 			controls={panel}
 			clip={false}
 		>
@@ -121,7 +121,7 @@ function StarBorderEntry() {
 }
 
 const starBorderDocs: EntryDocs = {
-	import: 'import { StarBorder } from "@fraym/ui";',
+	import: 'import { StarBorder } from "@fraym-ai/ui";',
 	anatomy: `<StarBorder speed={6} thickness={2}>
   <div className="px-6 py-4">{content}</div>
 </StarBorder>`,
@@ -156,7 +156,7 @@ function ElectricBorderEntry() {
 	return (
 		<Demo
 			summary="A crackling border warps around the content via an SVG turbulence + displacement filter (inline SMIL drives the flow, since filter-primitive attributes are not CSS-animatable). Continuous motion, so under reduced motion the jagged edge rests still. Color defaults to var(--fr-accent) so the halo reads on any theme."
-			importPath="@fraym/ui"
+			importPath="@fraym-ai/ui"
 			controls={panel}
 			clip={false}
 		>
@@ -177,7 +177,7 @@ function ElectricBorderEntry() {
 }
 
 const electricBorderDocs: EntryDocs = {
-	import: 'import { ElectricBorder } from "@fraym/ui";',
+	import: 'import { ElectricBorder } from "@fraym-ai/ui";',
 	anatomy: `<ElectricBorder speed={1} chaos={1}>
   <div className="bg-fr-surface p-6">{content}</div>
 </ElectricBorder>`,

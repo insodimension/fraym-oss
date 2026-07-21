@@ -1,4 +1,4 @@
-import type { EngineResourceSnapshot, SessionConfig, SessionRef } from "@fraym/driver";
+import type { EngineResourceSnapshot, SessionConfig, SessionRef } from "@fraym-ai/driver";
 import { type ComponentProps, memo } from "react";
 import { CommandPalette, ConfirmDialog, EngineModelMenu } from "../components";
 import { PopoverPanel, Scrim } from "../elements";

@@ -1,5 +1,5 @@
 // Find demo script — a `find`-focused conversation expressed as pure session-driver events.
-// Replayed through @fraym/driver/mock so the find tool renders inside a real thread via the
+// Replayed through @fraym-ai/driver/mock so the find tool renders inside a real thread via the
 // production renderer (`renderFind`). Walks the shapes: a STREAMED glob (the file list grows
 // as matches arrive), a directory listing (entries with trailing `/`), and a truncated find
 // (result-limit cap + artifact spill).
@@ -9,8 +9,8 @@
 // running call carries a growing `details.files` via the partial-output channel. Pure data:
 // no JSX, no fraym-ui.
 
-import type { SessionRef, SessionSnapshot, WorkspaceRef } from "@fraym/driver";
-import type { DemoScript, ScriptedEvent, ScriptStep } from "@fraym/driver/mock";
+import type { SessionRef, SessionSnapshot, WorkspaceRef } from "@fraym-ai/driver";
+import type { DemoScript, ScriptedEvent, ScriptStep } from "@fraym-ai/driver/mock";
 import { assistantDelta as say, queuedMessage, runCompleted, scriptedStep as step, toolFinished as toolDone, toolStarted, toolUpdated as toolUpdate, workingStatus as verb } from "./scripted-event-utils";
 
 const NOW = "2026-06-05T12:00:00.000Z";

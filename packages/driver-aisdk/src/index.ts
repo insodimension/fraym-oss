@@ -1,4 +1,4 @@
-import type { AgentEvent, AgentEventListener, AgentEventStream, Unsubscribe } from "@fraym/driver";
+import type { AgentEvent, AgentEventListener, AgentEventStream, Unsubscribe } from "@fraym-ai/driver";
 import { type LanguageModel, type ModelMessage, type TextStreamPart, type ToolSet, stepCountIs, streamText } from "ai";
 
 /** Default number of agent steps (model + tool rounds) allowed per turn. */

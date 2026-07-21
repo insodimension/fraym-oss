@@ -95,15 +95,15 @@ function findCatalogRoots(start: string): CatalogRoots {
 	}
 
 	const uiPackage = findUp(start, directory =>
-		pathExists(join(directory, "node_modules", "@fraym/ui", "package.json")),
+		pathExists(join(directory, "node_modules", "@fraym-ai/ui", "package.json")),
 	);
 	const vibrPackage = findUp(start, directory =>
-		pathExists(join(directory, "node_modules", "@fraym/vibr", "package.json")),
+		pathExists(join(directory, "node_modules", "@fraym-ai/vibr", "package.json")),
 	);
 	return {
 		root: resolve(start),
-		ui: uiPackage ? join(uiPackage, "node_modules", "@fraym/ui") : undefined,
-		vibr: vibrPackage ? join(vibrPackage, "node_modules", "@fraym/vibr") : undefined,
+		ui: uiPackage ? join(uiPackage, "node_modules", "@fraym-ai/ui") : undefined,
+		vibr: vibrPackage ? join(vibrPackage, "node_modules", "@fraym-ai/vibr") : undefined,
 	};
 }
 
@@ -227,7 +227,7 @@ function uiItems(roots: CatalogRoots, issues: CatalogIssue[]): CatalogItem[] {
 	if (!roots.ui) return [];
 	const manifest = readPackageManifest(join(roots.ui, "package.json"), issues);
 	if (!manifest?.exports) return [];
-	const packageName = manifest.name ?? "@fraym/ui";
+	const packageName = manifest.name ?? "@fraym-ai/ui";
 	const items: CatalogItem[] = [];
 	for (const [type, subpath] of PUBLIC_UI_TIERS) {
 		const target = resolveExportTarget(manifest.exports[subpath]);
@@ -256,7 +256,7 @@ function vibrItems(roots: CatalogRoots, issues: CatalogIssue[]): CatalogItem[] {
 	if (!roots.vibr) return [];
 	const manifest = readPackageManifest(join(roots.vibr, "package.json"), issues);
 	if (!manifest?.exports) return [];
-	const packageName = manifest.name ?? "@fraym/vibr";
+	const packageName = manifest.name ?? "@fraym-ai/vibr";
 	const items: CatalogItem[] = [];
 	for (const [subpath, value] of Object.entries(manifest.exports)) {
 		const target = resolveExportTarget(value);
@@ -296,7 +296,7 @@ function themeItems(roots: CatalogRoots, issues: CatalogIssue[]): CatalogItem[] 
 			{
 				type: "theme" as const,
 				name: theme.id,
-				package: "@fraym/ui",
+				package: "@fraym-ai/ui",
 				source: sourcePath(roots.root, indexPath),
 				...(typeof theme.note === "string" ? { description: theme.note } : {}),
 			},

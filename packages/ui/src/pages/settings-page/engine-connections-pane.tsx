@@ -4,7 +4,7 @@ import type {
 	EngineProviderAccountSelectionPolicy,
 	EngineProviderRecord,
 	EngineResourceSnapshot,
-} from "@fraym/driver";
+} from "@fraym-ai/driver";
 import { useEffect, useMemo, useState } from "react";
 import { ProviderAccountSwitcher } from "../../components/provider-account-switcher";
 import { Input } from "../../elements/input";

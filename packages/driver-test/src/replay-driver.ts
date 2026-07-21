@@ -6,7 +6,7 @@ import type {
   SessionSnapshot,
   SessionTranscriptMessage,
   WorkspaceRef,
-} from "@fraym/driver";
+} from "@fraym-ai/driver";
 
 
 export function journalMessageEntry(

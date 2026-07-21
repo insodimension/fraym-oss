@@ -1,4 +1,4 @@
-import type { EngineModelRecord, EngineProviderRecord } from "@fraym/driver";
+import type { EngineModelRecord, EngineProviderRecord } from "@fraym-ai/driver";
 import {
 	buildCategories,
 	type EngineModelChoice,

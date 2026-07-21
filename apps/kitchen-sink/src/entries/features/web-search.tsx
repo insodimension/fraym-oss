@@ -6,8 +6,8 @@ import {
 	OUTPUT as WEB_SEARCH_OUTPUT,
 	RESPONSE as WEB_SEARCH_RESPONSE,
 	type WebSearchVariation,
-} from "@fraym/fixtures";
-import type { ActiveToolCall } from "@fraym/ui";
+} from "@fraym-ai/fixtures";
+import type { ActiveToolCall } from "@fraym-ai/ui";
 import type { ControlsSchema } from "../../showcase/controls";
 import { Demo } from "../../showcase/demo";
 import type { EntryDocs } from "../../showcase/docs";
@@ -26,7 +26,7 @@ import type { ShowcaseEntry } from "../../showcase/types";
 // `web_search` tool showcase.
 //
 // No bespoke sketch: the card is rendered by the PRODUCTION renderer (registered
-// under `web_search` in @fraym/ui's tool-renderer map) fed a synthetic
+// under `web_search` in @fraym-ai/ui's tool-renderer map) fed a synthetic
 // `ActiveToolCall` built from the knobs — identical to a live run. Web Search
 // shows a "Web Search" head + a provider badge + an `N sources` stat; the body
 // is the query row, an Answer section, a Sources section, and a Metadata
@@ -132,7 +132,7 @@ function WebSearchEntry() {
 }
 
 const webSearchDocs: EntryDocs = {
-	import: 'import { Thread, DEFAULT_TOOL_RENDERERS } from "@fraym/ui";',
+	import: 'import { Thread, DEFAULT_TOOL_RENDERERS } from "@fraym-ai/ui";',
 	anatomy: JSON.stringify(
 		[
 			"// Tool cards render automatically inside <Thread>: DEFAULT_TOOL_RENDERERS",

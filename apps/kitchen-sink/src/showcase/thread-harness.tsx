@@ -4,7 +4,7 @@ import {
 	ToolDisplaySettingsProvider,
 	type ToolRendererMap,
 	ToolRendererProvider,
-} from "@fraym/ui";
+} from "@fraym-ai/ui";
 import { ConnectedMessageThread as Thread, SessionProvider } from "../compat/session-ui";
 import { useMemo, useState } from "react";
 
@@ -15,7 +15,7 @@ import { useMemo, useState } from "react";
 // for the duration of this thread, without touching the global registry.
 
 // Derive driver/ref prop types from SessionProvider so the app needs no direct
-// @fraym/driver dependency.
+// @fraym-ai/driver dependency.
 type ThreadDriver = NonNullable<React.ComponentProps<typeof SessionProvider>["driver"]>;
 type ThreadRef = NonNullable<React.ComponentProps<typeof SessionProvider>["sessionRef"]>;
 

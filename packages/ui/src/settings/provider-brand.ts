@@ -1,4 +1,4 @@
-import type { CustomProviderBrand } from "@fraym/config";
+import type { CustomProviderBrand } from "@fraym-ai/config";
 
 export interface ProviderBrand {
 	readonly tileBg: string;

@@ -1,6 +1,6 @@
 /**
  * Pure math for the usage-limit warning strip's color gradient + dismissal tier.
- * The thresholds themselves are USER CONFIG (`@fraym/config` usageWarn*), passed
+ * The thresholds themselves are USER CONFIG (`@fraym-ai/config` usageWarn*), passed
  * in — this module carries only the fixed gradient palette, never policy numbers.
  */
 

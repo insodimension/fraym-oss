@@ -1,4 +1,4 @@
-import { DEFAULT_FRAYM_UI_CONFIG } from "@fraym/config";
+import { DEFAULT_FRAYM_UI_CONFIG } from "@fraym-ai/config";
 import { use } from "react";
 import { SettingsContext, type SettingsContextValue } from "./settings-provider";
 

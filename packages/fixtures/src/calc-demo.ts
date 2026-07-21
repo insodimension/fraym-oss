@@ -1,12 +1,12 @@
 // Calc demo script — a `calc`-focused conversation expressed as
-// pure session-driver events. Replayed through @fraym/driver/mock so the
+// pure session-driver events. Replayed through @fraym-ai/driver/mock so the
 // calculator tool renders inside a real thread via the production renderer
 // (`renderCalc`). Walks two expressions: simple arithmetic and string concat.
 //
 // Pure data: no JSX, no fraym-ui.
 
-import type { SessionRef, SessionSnapshot, WorkspaceRef } from "@fraym/driver";
-import type { DemoScript, ScriptStep } from "@fraym/driver/mock";
+import type { SessionRef, SessionSnapshot, WorkspaceRef } from "@fraym-ai/driver";
+import type { DemoScript, ScriptStep } from "@fraym-ai/driver/mock";
 
 import { toolResult } from "./tool-call-utils";
 

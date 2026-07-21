@@ -1,6 +1,6 @@
 "use client";
 
-import type { EngineModelInsight, EngineModelRecord, EngineProviderRecord } from "@fraym/driver";
+import type { EngineModelInsight, EngineModelRecord, EngineProviderRecord } from "@fraym-ai/driver";
 import { useContext, useEffect, useMemo, useState } from "react";
 import { BrandTile } from "../components/brand-tile";
 import { dossierFieldFromCatalog, ModelDossier } from "../components/model-dossier";

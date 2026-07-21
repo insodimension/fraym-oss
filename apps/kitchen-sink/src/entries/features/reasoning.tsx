@@ -1,5 +1,5 @@
-import { createReasoningDemoDriver, REASONING_DEMO_SESSION_REF } from "@fraym/fixtures";
-import { ReasoningBlock, useLineStream } from "@fraym/ui";
+import { createReasoningDemoDriver, REASONING_DEMO_SESSION_REF } from "@fraym-ai/fixtures";
+import { ReasoningBlock, useLineStream } from "@fraym-ai/ui";
 import { useState } from "react";
 import { CONTENT_TEXT, CUSTOM_SUMMARY } from "../../fixtures";
 import type { ControlsSchema } from "../../showcase/controls";
@@ -14,7 +14,7 @@ import type { ShowcaseEntry } from "../../showcase/types";
 //
 // Reasoning is a MESSAGE BLOCK, not a tool — so there is no `ActiveToolCall` and no
 // `ToolRender`. This renders the PRODUCTION component directly (`ReasoningBlock`,
-// the same one `renderReasoningBlock` mounts in @fraym/ui's message-block registry).
+// the same one `renderReasoningBlock` mounts in @fraym-ai/ui's message-block registry).
 // What you preview IS what ships. The Demo Dock drives the full streamed
 // conversation through the same component (createReasoningDemoDriver).
 //
@@ -195,8 +195,8 @@ function ReasoningEntry() {
 
 	return (
 		<Demo
-			summary="The `reasoning` (thinking) block, rendered by the PRODUCTION component (ReasoningBlock) — the same one renderReasoningBlock mounts in @fraym/ui's message-block registry. Reasoning is a message block, NOT a tool. The view axis matches the tools (collapsed � comfortable � compact � spacious) AND follows surface-kit's density philosophy: comfortable/spacious are a spark + summary disclosure card on the thread gutter, while `compact` drops all chrome and shows the raw trace inline (italic, muted) — the TUI thinking treatment. Handles short / long / markdown content, default vs custom summary, and STREAMS the trace in line-by-line (state=streaming). The Demo Dock replays the full conversation and honors the view."
-			importPath="@fraym/ui (ReasoningBlock)"
+			summary="The `reasoning` (thinking) block, rendered by the PRODUCTION component (ReasoningBlock) — the same one renderReasoningBlock mounts in @fraym-ai/ui's message-block registry. Reasoning is a message block, NOT a tool. The view axis matches the tools (collapsed � comfortable � compact � spacious) AND follows surface-kit's density philosophy: comfortable/spacious are a spark + summary disclosure card on the thread gutter, while `compact` drops all chrome and shows the raw trace inline (italic, muted) — the TUI thinking treatment. Handles short / long / markdown content, default vs custom summary, and STREAMS the trace in line-by-line (state=streaming). The Demo Dock replays the full conversation and honors the view."
+			importPath="@fraym-ai/ui (ReasoningBlock)"
 			controls={panel}
 			stage="stretch"
 		>
@@ -229,7 +229,7 @@ function ReasoningEntry() {
 }
 
 const reasoningDocs: EntryDocs = {
-	import: 'import { ReasoningBlock } from "@fraym/ui";',
+	import: 'import { ReasoningBlock } from "@fraym-ai/ui";',
 	anatomy: JSON.stringify(
 		[
 			"// Reasoning is a MESSAGE BLOCK, not a tool — the same component the message-block",

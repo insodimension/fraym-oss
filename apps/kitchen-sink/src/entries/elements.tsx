@@ -50,7 +50,7 @@ import {
 	Tooltip,
 	TooltipContent,
 	TooltipTrigger,
-} from "@fraym/ui";
+} from "@fraym-ai/ui";
 import { useEffect, useRef, useState } from "react";
 import { useControls } from "../showcase/controls";
 import { Demo, Note } from "../showcase/demo";
@@ -78,7 +78,7 @@ function ButtonEntry() {
 	return (
 		<Demo
 			summary="The primary action primitive. Pixel-matched to the prototype .btn family with CVA variants and sizes; forwards all native button props and merges className last."
-			importPath="@fraym/ui/elements/button"
+			importPath="@fraym-ai/ui/elements/button"
 			controls={panel}
 		>
 			<Button
@@ -102,7 +102,7 @@ function IconButtonEntry() {
 	return (
 		<Demo
 			summary="A 32×32 square icon affordance for top bars and toolbars. The toggled state lights it with the accent-dim fill + accent-line border."
-			importPath="@fraym/ui/elements/icon-button"
+			importPath="@fraym-ai/ui/elements/icon-button"
 			controls={panel}
 		>
 			<IconButton toggled={values.toggled}>
@@ -126,7 +126,7 @@ function BadgeEntry() {
 	return (
 		<Demo
 			summary="A compact mono status pill. Six semantic tones map onto the token palette (accent/add/blue/warn/mute/del)."
-			importPath="@fraym/ui/elements/badge"
+			importPath="@fraym-ai/ui/elements/badge"
 			controls={panel}
 			stage="start"
 		>
@@ -155,7 +155,7 @@ function InputEntry() {
 	return (
 		<Demo
 			summary="A single-line text field with variants, sizes, validation states, and type adaptations. Forwards all native input props. Number spinners are hidden globally via theme.css."
-			importPath="@fraym/ui/elements/input"
+			importPath="@fraym-ai/ui/elements/input"
 			controls={panel}
 			stage="stretch"
 		>
@@ -190,7 +190,7 @@ function SelectEntry() {
 	return (
 		<Demo
 			summary="A styled native <select>. Keeps the OS-native popup and chevron, so it behaves like a real form control; pass options as data or render <option> children."
-			importPath="@fraym/ui/elements/select"
+			importPath="@fraym-ai/ui/elements/select"
 			controls={panel}
 			stage="stretch"
 		>
@@ -232,7 +232,7 @@ function TextareaEntry() {
 	return (
 		<Demo
 			summary="Multiline text field with variants, resize modes, and validation states. Forwards native textarea props."
-			importPath="@fraym/ui/elements/textarea"
+			importPath="@fraym-ai/ui/elements/textarea"
 			controls={panel}
 			stage="stretch"
 		>
@@ -265,7 +265,7 @@ function FieldEntry() {
 	return (
 		<Demo
 			summary="Composes a Label, a control, and a message line with automatic ARIA wiring. Clones its child to inject id, aria-describedby, aria-invalid, and data-state. Message precedence: error → warning → helper."
-			importPath="@fraym/ui/elements/field"
+			importPath="@fraym-ai/ui/elements/field"
 			controls={panel}
 			stage="start"
 		>
@@ -287,7 +287,7 @@ function LabelEntry() {
 	return (
 		<Demo
 			summary="Standalone form label primitive (text-fr-sm font-medium). Use htmlFor to associate it with a control, or let Field wire it automatically."
-			importPath="@fraym/ui/elements/label"
+			importPath="@fraym-ai/ui/elements/label"
 			stage="start"
 		>
 			<div className="flex w-[320px] flex-col gap-1.5">
@@ -308,7 +308,7 @@ function SwitchEntry() {
 	return (
 		<Demo
 			summary="A Radix-backed on/off switch with controlled checked + onCheckedChange. Use for settings rows."
-			importPath="@fraym/ui/elements/switch"
+			importPath="@fraym-ai/ui/elements/switch"
 			controls={panel}
 		>
 			<Switch checked={checked} onCheckedChange={setChecked} disabled={values.disabled} />
@@ -327,7 +327,7 @@ function CheckboxEntry() {
 	return (
 		<Demo
 			summary="A Radix-backed square checkbox (the box analogue of Switch): controlled checked + onCheckedChange, accent fill when checked. Used read-only in the ask tool's answer card."
-			importPath="@fraym/ui/elements/checkbox"
+			importPath="@fraym-ai/ui/elements/checkbox"
 			controls={panel}
 		>
 			<label className="flex items-center gap-3">
@@ -354,7 +354,7 @@ function RadioEntry() {
 	return (
 		<Demo
 			summary="A Radix-backed radio button (the circle analogue of Checkbox): controlled checked + onCheckedChange, accent fill when selected. Used read-only in the ask tool's answer card."
-			importPath="@fraym/ui/elements/radio"
+			importPath="@fraym-ai/ui/elements/radio"
 			controls={panel}
 		>
 			<label className="flex items-center gap-3">
@@ -380,7 +380,7 @@ function ToggleEntry() {
 	return (
 		<Demo
 			summary="The prototype's pill toggle (role=switch). Lighter-weight than Switch; used inline in settings panes."
-			importPath="@fraym/ui/elements/toggle"
+			importPath="@fraym-ai/ui/elements/toggle"
 			controls={panel}
 		>
 			<Toggle checked={checked} onCheckedChange={setChecked} disabled={values.disabled} />
@@ -395,7 +395,7 @@ function TabsEntry() {
 	return (
 		<Demo
 			summary="One Tabs primitive, two looks: segmented (rail mode-tabs) and dock (panel tabs). Variant is set once on <Tabs> and inherited by list + triggers via context."
-			importPath="@fraym/ui/elements/tabs"
+			importPath="@fraym-ai/ui/elements/tabs"
 			controls={panel}
 			stage="stretch"
 		>
@@ -444,7 +444,7 @@ function TooltipEntry() {
 	return (
 		<Demo
 			summary="Radix tooltip styled with the cx tokens. Wrap your app in <TooltipProvider> once; compose Trigger + Content per use."
-			importPath="@fraym/ui/elements/tooltip"
+			importPath="@fraym-ai/ui/elements/tooltip"
 		>
 			<Tooltip>
 				<TooltipTrigger asChild>
@@ -460,7 +460,7 @@ function CardEntry() {
 	return (
 		<Demo
 			summary="A surface container with optional Header / Content / Footer slots. The neutral building block for dock panels and grouped content."
-			importPath="@fraym/ui/elements/card"
+			importPath="@fraym-ai/ui/elements/card"
 			stage="stretch"
 		>
 			<Card className="max-w-sm">
@@ -480,7 +480,7 @@ function KbdEntry() {
 	return (
 		<Demo
 			summary="A keyboard-shortcut badge. Renders a mono keycap; compose multiple for chords."
-			importPath="@fraym/ui/elements/kbd"
+			importPath="@fraym-ai/ui/elements/kbd"
 		>
 			<div className="flex gap-1.5">
 				<Kbd>⌘K</Kbd>
@@ -498,7 +498,7 @@ function SeparatorEntry() {
 	return (
 		<Demo
 			summary="A 1px divider in either orientation, on the soft border token."
-			importPath="@fraym/ui/elements/separator"
+			importPath="@fraym-ai/ui/elements/separator"
 			controls={panel}
 		>
 			{vertical ? (
@@ -520,7 +520,7 @@ function ScrollAreaEntry() {
 	return (
 		<Demo
 			summary="A Radix scroll viewport with a styled, overlay scrollbar. Use to bound long content (session list, dock panels)."
-			importPath="@fraym/ui/elements/scroll-area"
+			importPath="@fraym-ai/ui/elements/scroll-area"
 			stage="stretch"
 		>
 			<ScrollArea className="h-40 max-w-sm rounded-lg border border-fr-border-soft">
@@ -544,7 +544,7 @@ function ShimmerEntry() {
 	return (
 		<Demo
 			summary="The animated working-status text. When active, sweeps a gradient across the label; otherwise renders flat. Driver-fed in app via useWorkingStatus()."
-			importPath="@fraym/ui/elements/shimmer"
+			importPath="@fraym-ai/ui/elements/shimmer"
 			controls={panel}
 		>
 			<Shimmer active={values.active}>{values.text}</Shimmer>
@@ -556,7 +556,7 @@ function SkeletonEntry() {
 	return (
 		<Demo
 			summary="Block / text / circle loading placeholders. Reuse the fr-shimmer-sweep keyframe + surface tokens; SkeletonGroup adds role=status + aria-busy; freezes under reduced motion."
-			importPath="@fraym/ui/elements/skeleton"
+			importPath="@fraym-ai/ui/elements/skeleton"
 		>
 			<div className="flex w-full max-w-[440px] flex-col gap-7">
 				<div className="flex items-center gap-4">
@@ -585,7 +585,7 @@ function ThinkingDotsEntry() {
 	return (
 		<Demo
 			summary="A labeled 'thinking' indicator: the bouncing-dots loader (Spinner kind='bounce') + a label with a trailing ellipsis. Reconciled with the loader family — the dots are the shared Spinner bounce kind and the label can ride Shimmer; no animation re-rolled here."
-			importPath="@fraym/ui/elements/thinking-dots"
+			importPath="@fraym-ai/ui/elements/thinking-dots"
 			controls={panel}
 		>
 			<ThinkingDots label={values.label} shimmer={values.shimmer as boolean} />
@@ -601,7 +601,7 @@ function CompactionSplitEntry() {
 	return (
 		<Demo
 			summary="The context-compaction divider rendered inline in the thread. It has two distinct states: an animated 'compacting' shimmer on soft lines, and a settled 'Compacted from N tokens' label on accent lines — both shown below."
-			importPath="@fraym/ui/elements/compaction-split"
+			importPath="@fraym-ai/ui/elements/compaction-split"
 			controls={panel}
 			stage="center"
 		>
@@ -617,7 +617,7 @@ function CodeEntry() {
 	return (
 		<Demo
 			summary="Inline monospace code — the <code> chip used in prose and diagram labels."
-			importPath="@fraym/ui/elements/code"
+			importPath="@fraym-ai/ui/elements/code"
 		>
 			<p className="text-fr-md text-fr-text-2">
 				Call <Code>createAgentSession()</Code>, then map <Code>AgentEvent</Code> to the driver.
@@ -683,7 +683,7 @@ function StreamingMarkdownEntry() {
 	return (
 		<Demo
 			summary="The agent prose surface: streamdown (incomplete-markdown tolerant) + Shiki highlighting, with streamdown's native fade-in reveal. Hit Replay to watch markdown stream in token-by-token — fenced code and tables never flash broken mid-stream."
-			importPath="@fraym/ui/elements/streaming-markdown"
+			importPath="@fraym-ai/ui/elements/streaming-markdown"
 			controls={panel}
 			stage="stretch"
 		>
@@ -716,7 +716,7 @@ function DiagramTagEntry() {
 	return (
 		<Demo
 			summary="Inline monospace kicker that precedes a title inside architecture diagrams — a small tonal label like `commands ↓`, `make`, or a step number."
-			importPath="@fraym/ui/elements/diagram-tag"
+			importPath="@fraym-ai/ui/elements/diagram-tag"
 			controls={panel}
 			stage="start"
 		>
@@ -745,8 +745,8 @@ function SpinnerEntry() {
 	const size = values.size as "xs" | "sm" | "md" | "lg";
 	return (
 		<Demo
-			summary="The loader category: pick a `kind` (circular ring, dots matrix, equalizer bars, signal, orbiting dot) the way you'd pick a @fraym/vibr avatar or wisp preset, and a `state` (running / idle / success ✓ / error ✗). Inherits currentColor — the dots kind owns the semantic palette. Powers Button loading and the Labor illusion."
-			importPath="@fraym/ui/elements/spinner"
+			summary="The loader category: pick a `kind` (circular ring, dots matrix, equalizer bars, signal, orbiting dot) the way you'd pick a @fraym-ai/vibr avatar or wisp preset, and a `state` (running / idle / success ✓ / error ✗). Inherits currentColor — the dots kind owns the semantic palette. Powers Button loading and the Labor illusion."
+			importPath="@fraym-ai/ui/elements/spinner"
 			controls={panel}
 		>
 			<div className="flex flex-col items-center gap-7 text-fr-accent">
@@ -790,7 +790,7 @@ function SteppedSliderEntry() {
 	return (
 		<Demo
 			summary="A discrete (stepped) slider for an ordered scale: a track, a dot per step, and a knob at the active step, with optional end captions. Click anywhere (snaps to the nearest step), drag the knob, or use arrow / Home / End keys. Token-only — the consumer owns any value readout or adjacent mode toggle."
-			importPath="@fraym/ui"
+			importPath="@fraym-ai/ui"
 			controls={panel}
 		>
 			<div className="w-64">
@@ -827,7 +827,7 @@ function SliderEntry() {
 	return (
 		<Demo
 			summary="A continuous fill-bar slider: the whole row is the track, a token-tinted fill grows to the value, and you drag anywhere on it (no thumb to hunt for). The optional inline label + right-aligned readout give the customize-row layout; the fill eases on external/keyboard changes and tracks the pointer instantly while dragging. Keyboard: arrows step, PageUp / PageDown jump, Home / End clamp."
-			importPath="@fraym/ui"
+			importPath="@fraym-ai/ui"
 			controls={panel}
 		>
 			<div className="w-72">
@@ -876,7 +876,7 @@ function MermaidDiagramEntry() {
 	return (
 		<Demo
 			summary="Renders a Mermaid diagram from source with a Fraym-aligned base theme (legible nodes/edges over the chat surface) and an expand-to-lightbox affordance. Dynamically imports mermaid at runtime."
-			importPath="@fraym/ui/elements/mermaid-diagram"
+			importPath="@fraym-ai/ui/elements/mermaid-diagram"
 			controls={panel}
 			stage="stretch"
 		>
@@ -904,7 +904,7 @@ function MessageActionsEntry() {
 	return (
 		<Demo
 			summary="The hover-revealed row under a chat message: a compact set of icon affordances plus a short local timestamp. The Thread feeds the action list (Copy today) and gates the hover/focus reveal; `align` flows actions→time (agent) or time→actions (user, under the right bubble)."
-			importPath="@fraym/ui/elements/message-actions"
+			importPath="@fraym-ai/ui/elements/message-actions"
 			controls={panel}
 		>
 			<MessageActions
@@ -926,7 +926,7 @@ function MessageUsageEntry() {
 	return (
 		<Demo
 			summary="The per-turn token readout shown at the end of an agent turn, mirroring the Fraym console footer: ⤵ input (incl. cache-writes) · ⤴ output · cache (read, shown only when non-zero). Always-on + dim; the Thread gates it on the `showTokenUsage` display setting. Data rides the shared journal/transcript contract."
-			importPath="@fraym/ui/elements/message-usage"
+			importPath="@fraym-ai/ui/elements/message-usage"
 			controls={panel}
 		>
 			<MessageUsage
@@ -942,7 +942,7 @@ function MessageUsageEntry() {
 }
 
 const buttonDocs: EntryDocs = {
-	import: 'import { Button } from "@fraym/ui";',
+	import: 'import { Button } from "@fraym-ai/ui";',
 	anatomy: `<Button variant="default" size="default">
   Commit changes
 </Button>`,
@@ -1009,7 +1009,7 @@ const buttonDocs: EntryDocs = {
 	],
 };
 const iconButtonDocs: EntryDocs = {
-	import: 'import { IconButton } from "@fraym/ui";',
+	import: 'import { IconButton } from "@fraym-ai/ui";',
 	anatomy: `<IconButton>
   <Icon name="panel" size={16} />
 </IconButton>`,
@@ -1073,7 +1073,7 @@ const iconButtonDocs: EntryDocs = {
 	],
 };
 const messageActionsDocs: EntryDocs = {
-	import: 'import { MessageActions, type MessageAction } from "@fraym/ui";',
+	import: 'import { MessageActions, type MessageAction } from "@fraym-ai/ui";',
 	anatomy: `<MessageActions
   actions={[{ id: "copy", icon: "copy", label: "Copy", onClick }]}
   timestamp={message.timestamp}
@@ -1126,7 +1126,7 @@ const messageActionsDocs: EntryDocs = {
 	],
 };
 const messageUsageDocs: EntryDocs = {
-	import: 'import { MessageUsage } from "@fraym/ui";',
+	import: 'import { MessageUsage } from "@fraym-ai/ui";',
 	anatomy: "<MessageUsage usage={message.usage} />",
 	examples: [
 		{
@@ -1154,7 +1154,7 @@ const messageUsageDocs: EntryDocs = {
 	],
 };
 const badgeDocs: EntryDocs = {
-	import: 'import { Badge } from "@fraym/ui";',
+	import: 'import { Badge } from "@fraym-ai/ui";',
 	anatomy: `<Badge tone="accent" variant="solid">
   running
 </Badge>`,
@@ -1244,7 +1244,7 @@ const badgeDocs: EntryDocs = {
 };
 
 const inputDocs: EntryDocs = {
-	import: 'import { Input, Field, Label } from "@fraym/ui";',
+	import: 'import { Input, Field, Label } from "@fraym-ai/ui";',
 	anatomy: `<Field label="Email" helper="We never share it.">\n  <Input type="email" />\n</Field>`,
 	examples: [
 		{ label: "Default", code: `<Input placeholder="Search models…" />` },
@@ -1287,7 +1287,7 @@ const inputDocs: EntryDocs = {
 };
 
 const selectDocs: EntryDocs = {
-	import: 'import { Select, Field } from "@fraym/ui";',
+	import: 'import { Select, Field } from "@fraym-ai/ui";',
 	anatomy: `<Select value={value} onChange={e => set(e.target.value)} options={[\n  { value: "a", label: "Option A" },\n]} />`,
 	examples: [
 		{
@@ -1326,7 +1326,7 @@ const selectDocs: EntryDocs = {
 };
 
 const textareaDocs: EntryDocs = {
-	import: 'import { Textarea, Field } from "@fraym/ui";',
+	import: 'import { Textarea, Field } from "@fraym-ai/ui";',
 	anatomy: `<Field label="System prompt" helper="Shown before each turn">\n  <Textarea rows={4} />\n</Field>`,
 	examples: [
 		{ label: "Default", code: `<Textarea placeholder="Type here…" rows={3} />` },
@@ -1357,7 +1357,7 @@ const textareaDocs: EntryDocs = {
 };
 
 const fieldDocs: EntryDocs = {
-	import: 'import { Field, Input } from "@fraym/ui";',
+	import: 'import { Field, Input } from "@fraym-ai/ui";',
 	anatomy: `<Field label="Email" helper="We never share it." required>
   <Input type="email" />
 </Field>`,
@@ -1431,7 +1431,7 @@ const fieldDocs: EntryDocs = {
 };
 
 const labelDocs: EntryDocs = {
-	import: 'import { Label } from "@fraym/ui";',
+	import: 'import { Label } from "@fraym-ai/ui";',
 	anatomy: `<Label htmlFor="email">Email address</Label>`,
 	examples: [
 		{
@@ -1467,7 +1467,7 @@ const labelDocs: EntryDocs = {
 	],
 };
 const cardDocs: EntryDocs = {
-	import: 'import { Card, CardHeader, CardContent, CardFooter } from "@fraym/ui";',
+	import: 'import { Card, CardHeader, CardContent, CardFooter } from "@fraym-ai/ui";',
 	anatomy: `<Card>
   <CardHeader>Working tree</CardHeader>
   <CardContent>
@@ -1540,7 +1540,7 @@ const cardDocs: EntryDocs = {
 };
 
 const tabsDocs: EntryDocs = {
-	import: 'import { Tabs, TabsList, TabsTrigger, TabsContent } from "@fraym/ui";',
+	import: 'import { Tabs, TabsList, TabsTrigger, TabsContent } from "@fraym-ai/ui";',
 	anatomy: `<Tabs variant="segmented" defaultValue="chat">
   <TabsList>
     <TabsTrigger value="chat">Chat</TabsTrigger>
@@ -1671,7 +1671,7 @@ const tabsDocs: EntryDocs = {
 };
 
 const scrollAreaDocs: EntryDocs = {
-	import: 'import { ScrollArea } from "@fraym/ui";',
+	import: 'import { ScrollArea } from "@fraym-ai/ui";',
 	anatomy: `<ScrollArea className="h-40 rounded-lg border border-fr-border-soft">
   <div className="p-3">Scrollable content</div>
 </ScrollArea>`,
@@ -1754,7 +1754,7 @@ const scrollAreaDocs: EntryDocs = {
 };
 
 const separatorDocs: EntryDocs = {
-	import: 'import { Separator } from "@fraym/ui";',
+	import: 'import { Separator } from "@fraym-ai/ui";',
 	anatomy: `<Separator orientation="horizontal" />`,
 	examples: [
 		{
@@ -1809,7 +1809,7 @@ const separatorDocs: EntryDocs = {
 };
 
 const tooltipDocs: EntryDocs = {
-	import: 'import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@fraym/ui";',
+	import: 'import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@fraym-ai/ui";',
 	anatomy: `<TooltipProvider>
   <Tooltip>
     <TooltipTrigger asChild>
@@ -1969,7 +1969,7 @@ const tooltipDocs: EntryDocs = {
 };
 
 const shimmerDocs: EntryDocs = {
-	import: 'import { Shimmer } from "@fraym/ui";',
+	import: 'import { Shimmer } from "@fraym-ai/ui";',
 	anatomy: `<Shimmer active>
   Searching the codebase…
 </Shimmer>`,
@@ -2022,7 +2022,7 @@ const shimmerDocs: EntryDocs = {
 };
 
 const skeletonDocs: EntryDocs = {
-	import: 'import { Skeleton, SkeletonText, SkeletonGroup } from "@fraym/ui";',
+	import: 'import { Skeleton, SkeletonText, SkeletonGroup } from "@fraym-ai/ui";',
 	anatomy: `<SkeletonGroup label="Opening session…" className="flex gap-3">
   <Skeleton circle w={40} h={40} />
   <div className="min-w-0 flex-1">
@@ -2164,7 +2164,7 @@ const skeletonDocs: EntryDocs = {
 };
 
 const codeDocs: EntryDocs = {
-	import: 'import { Code } from "@fraym/ui";',
+	import: 'import { Code } from "@fraym-ai/ui";',
 	anatomy: `<p>
   Call <Code>createAgentSession()</Code> before streaming events.
 </p>`,
@@ -2206,7 +2206,7 @@ const codeDocs: EntryDocs = {
 };
 
 const kbdDocs: EntryDocs = {
-	import: 'import { Kbd } from "@fraym/ui";',
+	import: 'import { Kbd } from "@fraym-ai/ui";',
 	anatomy: `<div className="flex gap-1.5">
   <Kbd>⌘K</Kbd>
   <Kbd>⇧⌘P</Kbd>
@@ -2255,7 +2255,7 @@ const kbdDocs: EntryDocs = {
 };
 
 const toggleDocs: EntryDocs = {
-	import: 'import { Toggle } from "@fraym/ui";',
+	import: 'import { Toggle } from "@fraym-ai/ui";',
 	anatomy: `<Toggle checked={enabled} onCheckedChange={setEnabled} />`,
 	examples: [
 		{
@@ -2306,7 +2306,7 @@ const toggleDocs: EntryDocs = {
 };
 
 const switchDocs: EntryDocs = {
-	import: 'import { Switch } from "@fraym/ui";',
+	import: 'import { Switch } from "@fraym-ai/ui";',
 	anatomy: `<Switch checked={enabled} onCheckedChange={setEnabled} />`,
 	examples: [
 		{
@@ -2375,7 +2375,7 @@ const switchDocs: EntryDocs = {
 };
 
 const checkboxDocs: EntryDocs = {
-	import: 'import { Checkbox } from "@fraym/ui";',
+	import: 'import { Checkbox } from "@fraym-ai/ui";',
 	anatomy: `<Checkbox checked={checked} onCheckedChange={value => setChecked(value === true)} />`,
 	examples: [
 		{
@@ -2455,7 +2455,7 @@ const checkboxDocs: EntryDocs = {
 };
 
 const radioDocs: EntryDocs = {
-	import: 'import { Radio } from "@fraym/ui";',
+	import: 'import { Radio } from "@fraym-ai/ui";',
 	anatomy: `<Radio checked={selected} onCheckedChange={setSelected} />`,
 	examples: [
 		{
@@ -2512,7 +2512,7 @@ const radioDocs: EntryDocs = {
 };
 
 const thinkingDotsDocs: EntryDocs = {
-	import: 'import { ThinkingDots } from "@fraym/ui";',
+	import: 'import { ThinkingDots } from "@fraym-ai/ui";',
 	anatomy: `<ThinkingDots label="Working" />`,
 	examples: [
 		{
@@ -2562,7 +2562,7 @@ const thinkingDotsDocs: EntryDocs = {
 };
 
 const compactionSplitDocs: EntryDocs = {
-	import: 'import { CompactionSplit } from "@fraym/ui";',
+	import: 'import { CompactionSplit } from "@fraym-ai/ui";',
 	anatomy: `<CompactionSplit variant="compacting" auto />`,
 	examples: [
 		{
@@ -2612,7 +2612,7 @@ const compactionSplitDocs: EntryDocs = {
 };
 
 const diagramTagDocs: EntryDocs = {
-	import: 'import { DiagramTag } from "@fraym/ui";',
+	import: 'import { DiagramTag } from "@fraym-ai/ui";',
 	anatomy: `<DiagramTag tone="accent">commands ↓</DiagramTag>`,
 	examples: [
 		{
@@ -2643,7 +2643,7 @@ const diagramTagDocs: EntryDocs = {
 };
 
 const mermaidDiagramDocs: EntryDocs = {
-	import: 'import { MermaidDiagram } from "@fraym/ui";',
+	import: 'import { MermaidDiagram } from "@fraym-ai/ui";',
 	anatomy: `<MermaidDiagram code={diagramSource} />`,
 	examples: [
 		{
@@ -2668,7 +2668,7 @@ const mermaidDiagramDocs: EntryDocs = {
 };
 
 const streamingMarkdownDocs: EntryDocs = {
-	import: 'import { StreamingMarkdown } from "@fraym/ui";',
+	import: 'import { StreamingMarkdown } from "@fraym-ai/ui";',
 	anatomy: `<StreamingMarkdown text={message.text} animate={message.isStreaming} />`,
 	examples: [
 		{
@@ -2718,7 +2718,7 @@ const streamingMarkdownDocs: EntryDocs = {
 	],
 };
 const spinnerDocs: EntryDocs = {
-	import: 'import { Spinner, type SpinnerKind, type SpinnerState } from "@fraym/ui";',
+	import: 'import { Spinner, type SpinnerKind, type SpinnerState } from "@fraym-ai/ui";',
 	anatomy: `<Spinner kind="dots" state="running" size="md" />`,
 	examples: [
 		{
@@ -2757,7 +2757,7 @@ const spinnerDocs: EntryDocs = {
 	],
 };
 const sliderDocs: EntryDocs = {
-	import: 'import { Slider } from "@fraym/ui";',
+	import: 'import { Slider } from "@fraym-ai/ui";',
 	anatomy: '<Slider label="Intensity" value={value} onValueChange={setValue} min={0} max={2} step={0.05} />',
 	examples: [
 		{ label: "Basic range", code: "<Slider value={value} onValueChange={setValue} min={0} max={100} />" },
@@ -2795,7 +2795,7 @@ const sliderDocs: EntryDocs = {
 	],
 };
 const steppedSliderDocs: EntryDocs = {
-	import: 'import { Slider, type SliderStep } from "@fraym/ui";',
+	import: 'import { Slider, type SliderStep } from "@fraym-ai/ui";',
 	anatomy: '<Slider steps={steps} value={value} onValueChange={setValue} startLabel="Faster" endLabel="Smarter" />',
 	examples: [
 		{

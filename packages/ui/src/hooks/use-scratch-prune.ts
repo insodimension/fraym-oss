@@ -1,4 +1,4 @@
-import type { SessionDriver, SessionDriverEvent, SessionRef, SessionSnapshot, Unsubscribe } from "@fraym/driver";
+import type { SessionDriver, SessionDriverEvent, SessionRef, SessionSnapshot, Unsubscribe } from "@fraym-ai/driver";
 import { useCallback, useEffect, useRef } from "react";
 
 /**

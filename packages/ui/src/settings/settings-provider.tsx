@@ -1,5 +1,5 @@
-import { type FraymUiConfig, resolveFraymUiConfig } from "@fraym/config";
-import type { FraymConfigDriver, WorkspaceRef } from "@fraym/driver";
+import { type FraymUiConfig, resolveFraymUiConfig } from "@fraym-ai/config";
+import type { FraymConfigDriver, WorkspaceRef } from "@fraym-ai/driver";
 import { createContext, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { loadDriverSettings, resetDriverUserSettings, writeDriverSetting } from "./settings-driver-state";
 import { applySettingsToDocument, subscribeToSystemThemeChanges } from "./settings-environment";

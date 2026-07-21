@@ -1,4 +1,4 @@
-// A browser-local SessionDriver: the full @fraym/driver session contract backed
+// A browser-local SessionDriver: the full @fraym-ai/driver session contract backed
 // by localStorage (catalog + transcripts) and the Vercel AI SDK (live turns run
 // entirely in the page against the provider key saved on the Models settings
 // pane). This is what lets the real workspace shell — rail, sessions, dock,
@@ -26,7 +26,7 @@ import type {
   SessionTranscriptToolCall,
   Unsubscribe,
   WorkspaceRef,
-} from "@fraym/driver";
+} from "@fraym-ai/driver";
 import { type ModelMessage, streamText, stepCountIs } from "ai";
 import { PROVIDERS, type ProviderId } from "./providers";
 import { demoTools } from "./tools";

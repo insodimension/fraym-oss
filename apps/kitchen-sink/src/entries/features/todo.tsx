@@ -1,5 +1,5 @@
-import { createTodoDemoDriver, TODO_DEMO_SESSION_REF } from "@fraym/fixtures";
-import type { ActiveToolCall } from "@fraym/ui";
+import { createTodoDemoDriver, TODO_DEMO_SESSION_REF } from "@fraym-ai/fixtures";
+import type { ActiveToolCall } from "@fraym-ai/ui";
 import { PHASES_BY_VARIATION } from "../../fixtures";
 import type { ControlsSchema } from "../../showcase/controls";
 import { Demo } from "../../showcase/demo";
@@ -18,7 +18,7 @@ import type { ShowcaseEntry } from "../../showcase/types";
 // `todo` / `todo_write` tool showcase.
 //
 // SEPARATE tool from `task` (subagent dispatch). Rendered by the PRODUCTION
-// renderer (`renderTodo`, registered in @fraym/ui's DEFAULT_TOOL_RENDERERS) fed a
+// renderer (`renderTodo`, registered in @fraym-ai/ui's DEFAULT_TOOL_RENDERERS) fed a
 // synthetic `todo_write` ActiveToolCall whose `output.details.phases` is the
 // checklist — exactly the shape the todo renderer consumes. Mirrors `todoToolRenderer`.
 //
@@ -75,7 +75,7 @@ function TodoEntry() {
 }
 
 const todoDocs: EntryDocs = {
-	import: 'import { Thread, DEFAULT_TOOL_RENDERERS } from "@fraym/ui";',
+	import: 'import { Thread, DEFAULT_TOOL_RENDERERS } from "@fraym-ai/ui";',
 	anatomy: JSON.stringify(
 		[
 			"// Tool cards render automatically inside <Thread>: DEFAULT_TOOL_RENDERERS",

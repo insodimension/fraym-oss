@@ -1,4 +1,4 @@
-import type { SessionDriver, SessionRef, SessionSnapshot, Unsubscribe } from "@fraym/driver";
+import type { SessionDriver, SessionRef, SessionSnapshot, Unsubscribe } from "@fraym-ai/driver";
 import { type Dispatch, type MutableRefObject, useEffect, useReducer, useRef } from "react";
 import { errorMessageText } from "./session-error";
 import { createInitialState, reduceSessionEvent } from "./session-state";

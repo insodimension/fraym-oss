@@ -1,4 +1,4 @@
-import type { PluginToolRendererDescriptor } from "@fraym/driver";
+import type { PluginToolRendererDescriptor } from "@fraym-ai/driver";
 import { Fragment, type ReactNode } from "react";
 import { Badge } from "../elements/badge";
 import { CodeBlock } from "../elements/code-block";

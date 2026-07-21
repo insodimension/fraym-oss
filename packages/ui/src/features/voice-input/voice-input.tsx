@@ -16,7 +16,7 @@
 // is pluggable (Web Speech by default, scripted for demos/tests, an
 // Engine-engine bridge later) — see voice-engine.ts / use-voice-session.ts.
 
-import { Nebula } from "@fraym/vibr";
+import { Nebula } from "@fraym-ai/vibr";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Icon } from "../../icons/icon";
 import { cn } from "../../lib/cn";

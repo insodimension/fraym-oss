@@ -1,4 +1,4 @@
-import type { WispTarget } from "@fraym/vibr";
+import type { WispTarget } from "@fraym-ai/vibr";
 
 export interface WispPriorityInput {
 	/** End-of-revealed-text caret, or null when no live text is on screen. */

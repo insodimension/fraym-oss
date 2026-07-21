@@ -1,4 +1,4 @@
-import type { ContextBreakdown, SessionDriver, SessionRef } from "@fraym/driver";
+import type { ContextBreakdown, SessionDriver, SessionRef } from "@fraym-ai/driver";
 import { useEffect, useState } from "react";
 
 export interface ContextBreakdownState {

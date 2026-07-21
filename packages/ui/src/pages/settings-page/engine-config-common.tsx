@@ -3,7 +3,7 @@ import type {
 	EngineConfigSettingRecord,
 	EngineConfigSnapshot,
 	EngineConfigValueRecord,
-} from "@fraym/driver";
+} from "@fraym-ai/driver";
 import { Skeleton, SkeletonGroup } from "../../elements/skeleton";
 import { SettingControlRenderer } from "../../settings/setting-control-renderer";
 import { SettingsGroup, SettingsRow } from "./settings-controls";

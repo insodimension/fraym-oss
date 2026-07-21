@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 
-import type { ToolCallStatus } from "@fraym/driver";
-import type { IconSpec } from "@fraym/config";
+import type { ToolCallStatus } from "@fraym-ai/driver";
+import type { IconSpec } from "@fraym-ai/config";
 
 import { Badge, type BadgeProps } from "../elements/badge";
 import { classNames } from "../elements/utils";

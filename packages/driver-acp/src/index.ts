@@ -5,7 +5,7 @@ import type {
   ApprovalResponseEvent,
   ToolCallStatus,
   Unsubscribe,
-} from "@fraym/driver";
+} from "@fraym-ai/driver";
 
 type JsonRpcId = number | string;
 

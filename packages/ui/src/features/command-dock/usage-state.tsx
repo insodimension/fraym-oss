@@ -1,4 +1,4 @@
-import type { UsageDriver } from "@fraym/driver";
+import type { UsageDriver } from "@fraym-ai/driver";
 import { createContext, type ReactNode, use } from "react";
 import type { UsageState } from "../../hooks/use-usage";
 

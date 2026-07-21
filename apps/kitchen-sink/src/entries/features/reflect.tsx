@@ -6,8 +6,8 @@ import {
 	REFLECT_INPUT,
 	REFLECT_OUTPUT_TEXT,
 	REFLECT_VARIATIONS,
-} from "@fraym/fixtures";
-import type { ActiveToolCall } from "@fraym/ui";
+} from "@fraym-ai/fixtures";
+import type { ActiveToolCall } from "@fraym-ai/ui";
 import type { ControlsSchema } from "../../showcase/controls";
 import { Demo } from "../../showcase/demo";
 import type { EntryDocs } from "../../showcase/docs";
@@ -55,7 +55,7 @@ function Entry() {
 	return (
 		<Demo
 			summary="Reflect memory tool card."
-			importPath="@fraym/ui · DEFAULT_TOOL_RENDERERS.reflect"
+			importPath="@fraym-ai/ui · DEFAULT_TOOL_RENDERERS.reflect"
 			controls={panel}
 		>
 			<ToolMainPreview keySeed={`${view}-${state}`} call={buildCall(variation, state)} view={view} />
@@ -71,7 +71,7 @@ function Entry() {
 }
 
 const reflectDocs: EntryDocs = {
-	import: 'import { Thread, DEFAULT_TOOL_RENDERERS } from "@fraym/ui";',
+	import: 'import { Thread, DEFAULT_TOOL_RENDERERS } from "@fraym-ai/ui";',
 	anatomy: JSON.stringify(
 		[
 			"// Tool cards render automatically inside <Thread>: DEFAULT_TOOL_RENDERERS",

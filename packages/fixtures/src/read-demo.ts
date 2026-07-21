@@ -1,13 +1,13 @@
 // Read demo script — a `read`-focused conversation expressed as pure
-// session-driver events. Replayed through @fraym/driver/mock so the read tool
+// session-driver events. Replayed through @fraym-ai/driver/mock so the read tool
 // renders inside a real thread via the renderer registry (the kitchen-sink scopes
 // a `read` renderer override around it). The conversation walks every read shape:
 // code → markdown → directory → sqlite → image → url → error.
 //
-// Pure data: depends only on @fraym/driver types. No JSX, no fraym-ui.
+// Pure data: depends only on @fraym-ai/driver types. No JSX, no fraym-ui.
 
-import type { SessionRef, SessionSnapshot, WorkspaceRef } from "@fraym/driver";
-import type { DemoScript, ScriptedEvent, ScriptStep } from "@fraym/driver/mock";
+import type { SessionRef, SessionSnapshot, WorkspaceRef } from "@fraym-ai/driver";
+import type { DemoScript, ScriptedEvent, ScriptStep } from "@fraym-ai/driver/mock";
 import { assistantDelta as say, queuedMessage, runCompleted, scriptedStep as step, toolFinished as toolDone, toolStarted, workingStatus as verb } from "./scripted-event-utils";
 
 const NOW = "2026-06-02T12:00:00.000Z";

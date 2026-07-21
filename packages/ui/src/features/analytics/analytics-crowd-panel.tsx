@@ -1,4 +1,4 @@
-import type { AnalyticsModelStats } from "@fraym/driver";
+import type { AnalyticsModelStats } from "@fraym-ai/driver";
 import { useEffect, useMemo, useState } from "react";
 import { Icon } from "../../icons";
 import { cn } from "../../lib/cn";

@@ -14,7 +14,7 @@ import type {
 	ToolCallMetadata,
 	TurnUsage,
 	WorkingStatus,
-} from "@fraym/driver";
+} from "@fraym-ai/driver";
 
 export type ToolCallStatus = "running" | "success" | "error";
 

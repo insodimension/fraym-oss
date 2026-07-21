@@ -8,8 +8,8 @@
 // (presence node, empty state, content width) via props; the verber lane re-lands
 // its phrase resolution by feeding `verb`. See `docs/design/14-thread-architecture.md`.
 
-import type { SessionAttachment, SessionQueuedMessage } from "@fraym/driver";
-import { resolveWispPreset } from "@fraym/vibr";
+import type { SessionAttachment, SessionQueuedMessage } from "@fraym-ai/driver";
+import { resolveWispPreset } from "@fraym-ai/vibr";
 import { memo, type ReactNode, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { undeliveredQueuedMessages } from "../../hooks/session-transcript";
 import type { SessionNotice, SessionState, SessionTranscriptMessage, TranscriptBlock } from "../../hooks/session-types";

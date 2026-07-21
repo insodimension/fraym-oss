@@ -1,4 +1,4 @@
-import type { Goal, GoalStatus } from "@fraym/driver";
+import type { Goal, GoalStatus } from "@fraym-ai/driver";
 import { memo, type ReactNode, useEffect, useState } from "react";
 import { Modal } from "../../elements/popover";
 import { Icon } from "../../icons";

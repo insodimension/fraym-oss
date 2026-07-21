@@ -1,4 +1,4 @@
-import type { AnalyticsAgentTypeStats, AnalyticsHarnessStats, AnalyticsToolStats } from "@fraym/driver";
+import type { AnalyticsAgentTypeStats, AnalyticsHarnessStats, AnalyticsToolStats } from "@fraym-ai/driver";
 import { useMemo } from "react";
 import { cn } from "../../lib/cn";
 import { compactNumber, currency, formatLatencyMs, formatRate, percent, rateTone } from "./analytics-format";

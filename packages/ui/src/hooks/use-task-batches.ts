@@ -8,7 +8,7 @@
 // too, with no reducer or hydration plumbing — the tool call is the source of
 // truth for that `callId`.
 
-import type { SubagentBatch } from "@fraym/driver";
+import type { SubagentBatch } from "@fraym-ai/driver";
 import { useMemo } from "react";
 import { isTaskTool, taskCallToBatch } from "./session-task-batch";
 import type { ActiveToolCall, SessionTranscriptMessage } from "./session-types";

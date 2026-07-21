@@ -1,5 +1,5 @@
-import { type FraymUiConfig, resolveFraymUiConfig } from "@fraym/config";
-import type { FraymConfigDriver, WorkspaceRef } from "@fraym/driver";
+import { type FraymUiConfig, resolveFraymUiConfig } from "@fraym-ai/config";
+import type { FraymConfigDriver, WorkspaceRef } from "@fraym-ai/driver";
 
 type DriverSettingValue = Parameters<FraymConfigDriver["setValue"]>[2];
 

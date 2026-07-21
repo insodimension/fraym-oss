@@ -1,5 +1,5 @@
-import { AST_GREP_DEMO_SESSION_REF, createAstGrepDemoDriver } from "@fraym/fixtures";
-import type { ActiveToolCall } from "@fraym/ui";
+import { AST_GREP_DEMO_SESSION_REF, createAstGrepDemoDriver } from "@fraym-ai/fixtures";
+import type { ActiveToolCall } from "@fraym-ai/ui";
 import { AST_GREP_BROAD, AST_GREP_CAPTURES, AST_GREP_NODE } from "../../fixtures/ast-operations";
 import type { ControlsSchema } from "../../showcase/controls";
 import { Demo } from "../../showcase/demo";
@@ -19,7 +19,7 @@ import type { ShowcaseEntry } from "../../showcase/types";
 // `ast_grep` tool showcase.
 //
 // No bespoke sketch: the card is rendered by the PRODUCTION renderer (`renderAstGrep`,
-// registered in @fraym/ui's DEFAULT_TOOL_RENDERERS) fed a synthetic `ActiveToolCall`
+// registered in @fraym-ai/ui's DEFAULT_TOOL_RENDERERS) fed a synthetic `ActiveToolCall`
 // built from the knobs. ast_grep parses `details.displayContent` (the `*N│…` gutter +
 // `meta:` capture format) into directory-grouped, line-numbered structural-match lists;
 // the head shows the AST pattern + `N matches · M files` + `searched K` + limit/parse-error
@@ -174,7 +174,7 @@ function AstGrepEntry() {
 }
 
 const astGrepDocs: EntryDocs = {
-	import: 'import { Thread, DEFAULT_TOOL_RENDERERS } from "@fraym/ui";',
+	import: 'import { Thread, DEFAULT_TOOL_RENDERERS } from "@fraym-ai/ui";',
 	anatomy: JSON.stringify(
 		[
 			"// Tool cards render automatically inside <Thread>: DEFAULT_TOOL_RENDERERS",

@@ -17,7 +17,7 @@ import { ActivityDot } from "../activity-state";
 export type JobKind = "bash" | "task";
 export type JobLifecycle = "running" | "completed" | "failed" | "cancelled";
 
-/** One background job row, driver-neutral (mirrors `@fraym/driver`'s `JobDescriptor`). */
+/** One background job row, driver-neutral (mirrors `@fraym-ai/driver`'s `JobDescriptor`). */
 export interface JobsBadgeJob {
 	readonly id: string;
 	readonly type: JobKind;

@@ -8,7 +8,7 @@
 // which now renders the SAME `TodoChecklistBody` checklist so the thread tool
 // card and the dock share one consistent surface.
 
-import type { TaskPhase, TaskStatus } from "@fraym/driver";
+import type { TaskPhase, TaskStatus } from "@fraym-ai/driver";
 import { Badge } from "../../../elements/badge";
 import { readResultContentText } from "../../../registries/default-renderer-utils";
 import type { ToolRenderer, ToolView } from "../../../registries/tool-renderer-registry";

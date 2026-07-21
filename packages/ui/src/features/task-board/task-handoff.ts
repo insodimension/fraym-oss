@@ -4,7 +4,7 @@
 // menu) routes through this, so a handed-off task always reaches the agent as
 // the SAME agent-legible brief: read it with the board tool, then drive it.
 
-import type { SessionDriver, SessionRef, WorkspaceRef } from "@fraym/driver";
+import type { SessionDriver, SessionRef, WorkspaceRef } from "@fraym-ai/driver";
 import type { ReactNode } from "react";
 import type { TaskStore } from "./use-task-board";
 

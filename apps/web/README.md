@@ -6,5 +6,5 @@
 
 ## Purpose
 
-The web app is a Vite-powered playground for developing and demonstrating `@fraym/ui` components.
+The web app is a Vite-powered playground for developing and demonstrating `@fraym-ai/ui` components.
 

@@ -1,10 +1,10 @@
 // GitHub demo script — a `github`-focused conversation expressed as pure
-// session-driver events. Replayed through @fraym/driver/mock so the github tool
+// session-driver events. Replayed through @fraym-ai/driver/mock so the github tool
 // renders inside a real thread via the production renderer (`renderGithub`).
 // Walks a repo view followed by an issue search. Pure data: no JSX, no fraym-ui.
 
-import type { SessionRef, SessionSnapshot, WorkspaceRef } from "@fraym/driver";
-import type { DemoScript, ScriptedEvent, ScriptStep } from "@fraym/driver/mock";
+import type { SessionRef, SessionSnapshot, WorkspaceRef } from "@fraym-ai/driver";
+import type { DemoScript, ScriptedEvent, ScriptStep } from "@fraym-ai/driver/mock";
 import { assistantDelta as say, queuedMessage, runCompleted, scriptedStep as step, toolFinished as toolDone, toolStarted, workingStatus as verb } from "./scripted-event-utils";
 import { toolResult } from "./tool-call-utils";
 

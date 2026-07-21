@@ -7,7 +7,7 @@ import type {
 	EngineResourceSettingsSnapshot,
 	EngineResourceSnapshot,
 	WorkspaceRef,
-} from "@fraym/driver";
+} from "@fraym-ai/driver";
 import {
 	type Dispatch,
 	type MutableRefObject,

@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
 
-import type { AgentEvent } from "@fraym/driver";
+import type { AgentEvent } from "@fraym-ai/driver";
 
 import { createThreadState, reduceThreadEvent } from "./thread-state";
 

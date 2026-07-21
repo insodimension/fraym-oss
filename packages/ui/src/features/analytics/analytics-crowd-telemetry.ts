@@ -23,7 +23,7 @@
 // contributes once it has enough local volume (`MIN_REQUESTS_TO_CONTRIBUTE`) —
 // a one-request average is too easy to correlate back to a single visible event.
 
-import type { AnalyticsModelStats } from "@fraym/driver";
+import type { AnalyticsModelStats } from "@fraym-ai/driver";
 import { modelSlug } from "./analytics-format";
 
 export interface CrowdTelemetryConfig {

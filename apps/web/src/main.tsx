@@ -1,8 +1,8 @@
 import { StrictMode, useMemo, useState, type FormEvent } from "react";
 import { createRoot } from "react-dom/client";
-import { codingSessionFixture, createReplayDriver } from "@fraym/driver";
-import { createAcpDriver } from "@fraym/driver-acp";
-import { Button, Code, SessionThread, type SessionThreadProps } from "@fraym/ui";
+import { codingSessionFixture, createReplayDriver } from "@fraym-ai/driver";
+import { createAcpDriver } from "@fraym-ai/driver-acp";
+import { Button, Code, SessionThread, type SessionThreadProps } from "@fraym-ai/ui";
 
 import "./styles.css";
 

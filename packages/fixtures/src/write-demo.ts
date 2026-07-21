@@ -1,5 +1,5 @@
 // Write demo script — a `write`-focused conversation expressed as pure
-// session-driver events. Replayed through @fraym/driver/mock so the write tool
+// session-driver events. Replayed through @fraym-ai/driver/mock so the write tool
 // renders inside a real thread via the production renderer (`renderWrite`).
 // Walks every write shape: create (streamed) → overwrite → markdown → diagnostics
 // → error (read-only / plan-mode).
@@ -10,8 +10,8 @@
 // content via `partialInput` exactly like a live run (see docs/design/tools/streaming-tool-args.md).
 // Pure data: no JSX, no fraym-ui.
 
-import type { SessionRef, SessionSnapshot, WorkspaceRef } from "@fraym/driver";
-import type { DemoScript, ScriptedEvent, ScriptStep } from "@fraym/driver/mock";
+import type { SessionRef, SessionSnapshot, WorkspaceRef } from "@fraym-ai/driver";
+import type { DemoScript, ScriptedEvent, ScriptStep } from "@fraym-ai/driver/mock";
 
 const NOW = "2026-06-03T12:00:00.000Z";
 

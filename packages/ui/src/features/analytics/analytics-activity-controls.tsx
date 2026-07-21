@@ -1,4 +1,4 @@
-import type { AnalyticsFreshness, AnalyticsRange } from "@fraym/driver";
+import type { AnalyticsFreshness, AnalyticsRange } from "@fraym-ai/driver";
 import { cn } from "../../lib/cn";
 import { ANALYTICS_RANGES } from "./analytics-activity-data";
 import { relativeTime } from "./analytics-format";

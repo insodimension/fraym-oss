@@ -1,4 +1,4 @@
-import type { UsageFreshness, UsageSnapshot } from "@fraym/driver";
+import type { UsageFreshness, UsageSnapshot } from "@fraym-ai/driver";
 import { Card, CardContent, IconButton, Shimmer } from "../../elements";
 import { Icon } from "../../icons";
 import { cn } from "../../lib/cn";

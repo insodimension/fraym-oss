@@ -1,4 +1,4 @@
-import type { EngineModelRecord, EngineProviderRecord } from "@fraym/driver";
+import type { EngineModelRecord, EngineProviderRecord } from "@fraym-ai/driver";
 import type { ModelCapability, ModelCategory, ModelDef, ModelMeta } from "./model-picker";
 
 export interface EngineModelChoice {

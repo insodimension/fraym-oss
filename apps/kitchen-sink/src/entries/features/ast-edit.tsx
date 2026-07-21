@@ -1,5 +1,5 @@
-import { AST_EDIT_DEMO_SESSION_REF, createAstEditDemoDriver } from "@fraym/fixtures";
-import type { ActiveToolCall } from "@fraym/ui";
+import { AST_EDIT_DEMO_SESSION_REF, createAstEditDemoDriver } from "@fraym-ai/fixtures";
+import type { ActiveToolCall } from "@fraym-ai/ui";
 import { AST_EDIT_BROAD, AST_EDIT_MULTI, AST_EDIT_SINGLE } from "../../fixtures/ast-operations";
 import type { ControlsSchema } from "../../showcase/controls";
 import { Demo } from "../../showcase/demo";
@@ -19,7 +19,7 @@ import type { ShowcaseEntry } from "../../showcase/types";
 // `ast_edit` tool showcase.
 //
 // No bespoke sketch: the card is rendered by the PRODUCTION renderer (`renderAstEdit`,
-// registered in @fraym/ui's DEFAULT_TOOL_RENDERERS) fed a synthetic `ActiveToolCall`
+// registered in @fraym-ai/ui's DEFAULT_TOOL_RENDERERS) fed a synthetic `ActiveToolCall`
 // built from the knobs. ast_edit parses `details.displayContent` (the `-<n>│old` / `+<n>│new`
 // grouped diff) into directory-grouped before/after change rows; the head shows the op
 // pattern (or `N rewrites`) + a `proposed` badge + `N replacements · M files` + `searched K`
@@ -184,7 +184,7 @@ function AstEditEntry() {
 }
 
 const astEditDocs: EntryDocs = {
-	import: 'import { Thread, DEFAULT_TOOL_RENDERERS } from "@fraym/ui";',
+	import: 'import { Thread, DEFAULT_TOOL_RENDERERS } from "@fraym-ai/ui";',
 	anatomy: JSON.stringify(
 		[
 			"// Tool cards render automatically inside <Thread>: DEFAULT_TOOL_RENDERERS",

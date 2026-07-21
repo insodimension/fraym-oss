@@ -1,5 +1,5 @@
 {
-  "name": "@fraym/driver",
+  "name": "@fraym-ai/driver",
   "version": "0.1.0",
   "type": "module",
   "exports": {

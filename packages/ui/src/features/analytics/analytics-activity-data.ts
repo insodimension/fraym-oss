@@ -1,4 +1,4 @@
-import type { AnalyticsActivityBucket, AnalyticsRange } from "@fraym/driver";
+import type { AnalyticsActivityBucket, AnalyticsRange } from "@fraym-ai/driver";
 import { compactNumber } from "./analytics-format";
 
 export const HEATMAP_WEEKS = 52;

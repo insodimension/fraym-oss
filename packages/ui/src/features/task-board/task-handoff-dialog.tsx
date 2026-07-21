@@ -17,7 +17,7 @@
 // is also why goal mode has no image attachment affordance here: the objective
 // is replayed as plain text every continuation turn, and a second delivery path
 // for images would reintroduce the same stranding risk.
-import type { SessionAttachment } from "@fraym/driver";
+import type { SessionAttachment } from "@fraym-ai/driver";
 import { useRef, useState } from "react";
 import { Modal } from "../../elements/popover";
 import { Icon } from "../../icons";

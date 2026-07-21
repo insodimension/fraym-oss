@@ -8,8 +8,8 @@ import type {
 	SceneryRect,
 	WispPresetId,
 	WispTarget,
-} from "@fraym/vibr";
-import { Wisp } from "@fraym/vibr";
+} from "@fraym-ai/vibr";
+import { Wisp } from "@fraym-ai/vibr";
 import { useEffect, useRef } from "react";
 import { useSession, useVibr } from "../../hooks/use-session";
 import { pickWispPriority } from "./wisp-target";

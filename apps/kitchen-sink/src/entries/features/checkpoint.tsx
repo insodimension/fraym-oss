@@ -6,8 +6,8 @@ import {
 	CHECKPOINT_VARIATIONS,
 	createCheckpointDemoDriver,
 	pendingToolCall,
-} from "@fraym/fixtures";
-import type { ActiveToolCall } from "@fraym/ui";
+} from "@fraym-ai/fixtures";
+import type { ActiveToolCall } from "@fraym-ai/ui";
 import type { ControlsSchema } from "../../showcase/controls";
 import { Demo } from "../../showcase/demo";
 import type { EntryDocs } from "../../showcase/docs";
@@ -60,7 +60,7 @@ function Entry() {
 	return (
 		<Demo
 			summary="Checkpoint tool card."
-			importPath="@fraym/ui · DEFAULT_TOOL_RENDERERS.checkpoint"
+			importPath="@fraym-ai/ui · DEFAULT_TOOL_RENDERERS.checkpoint"
 			controls={panel}
 		>
 			<ToolMainPreview keySeed={`${view}-${state}`} call={buildCall(variation, state)} view={view} />
@@ -76,7 +76,7 @@ function Entry() {
 }
 
 const checkpointDocs: EntryDocs = {
-	import: 'import { Thread, DEFAULT_TOOL_RENDERERS } from "@fraym/ui";',
+	import: 'import { Thread, DEFAULT_TOOL_RENDERERS } from "@fraym-ai/ui";',
 	anatomy: JSON.stringify(
 		[
 			"// Tool cards render automatically inside <Thread>: DEFAULT_TOOL_RENDERERS",

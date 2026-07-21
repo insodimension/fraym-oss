@@ -1,4 +1,4 @@
-import { resolveSlashEntryLayered, type SlashEntryPolicy, type SlashEntrySpec, slashEntryKey } from "@fraym/config";
+import { resolveSlashEntryLayered, type SlashEntryPolicy, type SlashEntrySpec, slashEntryKey } from "@fraym-ai/config";
 import { createContext, useContext, useMemo } from "react";
 import { Icon, type IconName, iconPaths } from "../../icons";
 import { cn } from "../../lib/cn";

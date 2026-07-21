@@ -1,4 +1,4 @@
-import type { UsageDriver, UsageSnapshot } from "@fraym/driver";
+import type { UsageDriver, UsageSnapshot } from "@fraym-ai/driver";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 export interface UsageState {

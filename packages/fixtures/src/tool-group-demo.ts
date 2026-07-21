@@ -1,12 +1,12 @@
 // Tool-group demo script — a Forge-editor / Arc probe conversation expressed as pure
-// session-driver events. Replayed through @fraym/driver/mock so a long run of
+// session-driver events. Replayed through @fraym-ai/driver/mock so a long run of
 // consecutive tool calls lands in a real thread; with `groupConsecutiveTools` on
 // (the entry's dock `threadSettings`), the run collapses into ONE `ToolGroupCard`
 // instead of a wall of cards. Reuses `TOOL_GROUP_CALLS` so the live thread matches
 // the standalone preview. Pure data: no JSX, no fraym-ui.
 
-import type { SessionRef, SessionSnapshot, WorkspaceRef } from "@fraym/driver";
-import type { DemoScript, ScriptedEvent, ScriptStep } from "@fraym/driver/mock";
+import type { SessionRef, SessionSnapshot, WorkspaceRef } from "@fraym-ai/driver";
+import type { DemoScript, ScriptedEvent, ScriptStep } from "@fraym-ai/driver/mock";
 import { TOOL_GROUP_CALLS, type ToolGroupCallSpec } from "./tool-group-outputs";
 
 const NOW = "2026-06-18T12:00:00.000Z";

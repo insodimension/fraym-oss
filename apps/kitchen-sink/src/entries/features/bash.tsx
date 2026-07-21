@@ -1,5 +1,5 @@
-import { BASH_DEMO_SESSION_REF, createBashDemoDriver, pendingToolCall, toolResult } from "@fraym/fixtures";
-import { type ActiveToolCall, useLineStream } from "@fraym/ui";
+import { BASH_DEMO_SESSION_REF, createBashDemoDriver, pendingToolCall, toolResult } from "@fraym-ai/fixtures";
+import { type ActiveToolCall, useLineStream } from "@fraym-ai/ui";
 import { useState } from "react";
 import {
 	BUILD_OUTPUT,
@@ -28,7 +28,7 @@ import type { ShowcaseEntry } from "../../showcase/types";
 // `bash` tool showcase.
 //
 // No bespoke sketch: the card is rendered by the PRODUCTION renderer (`renderBash`,
-// registered in @fraym/ui's DEFAULT_TOOL_RENDERERS) fed a synthetic `ActiveToolCall`
+// registered in @fraym-ai/ui's DEFAULT_TOOL_RENDERERS) fed a synthetic `ActiveToolCall`
 // built from the knobs. Bash shows the command (`$ cd…/env command`, highlighted) +
 // its streamed output on the term surface, a `Wall: Xs` stat, and bg-job / truncated
 // badges. Output rides `input`/the partial-output channel exactly like a live run.
@@ -191,7 +191,7 @@ function BashEntry() {
 }
 
 const bashDocs: EntryDocs = {
-	import: 'import { Thread, DEFAULT_TOOL_RENDERERS } from "@fraym/ui";',
+	import: 'import { Thread, DEFAULT_TOOL_RENDERERS } from "@fraym-ai/ui";',
 	anatomy: JSON.stringify(
 		[
 			"// Tool cards render automatically inside <Thread>: DEFAULT_TOOL_RENDERERS",

@@ -4,7 +4,7 @@ import type {
   SessionDriver,
   SessionDriverEvent,
   WorkspaceRef,
-} from "@fraym/driver";
+} from "@fraym-ai/driver";
 export interface ConformanceDelivery {
   readonly via: "prompt" | "steer";
   readonly text: string;

@@ -6,7 +6,7 @@
 // live `useToolStream()` feed through it — the pluggable replacement for a
 // hardcoded tool timeline.
 
-import { resolveToolIcon } from "@fraym/config";
+import { resolveToolIcon } from "@fraym-ai/config";
 import { type ReactNode, useMemo } from "react";
 import type { ActiveToolCall } from "../../../hooks/session-types";
 import { useToolStream } from "../../../hooks/use-session";

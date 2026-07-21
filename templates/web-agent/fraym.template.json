@@ -3,7 +3,7 @@
   "name": "Web agent",
   "version": "0.2.0",
   "description": "A self-contained Vite and React cockpit on the full Fraym shell",
-  "package": "@fraym/template-web-agent",
+  "package": "@fraym-ai/template-web-agent",
   "source": "template",
   "files": [
     "README.md",

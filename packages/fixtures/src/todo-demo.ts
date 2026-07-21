@@ -1,5 +1,5 @@
 // Todo demo script — a `todo_write`-focused conversation expressed as pure
-// session-driver events. Replayed through @fraym/driver/mock so the todo tool
+// session-driver events. Replayed through @fraym-ai/driver/mock so the todo tool
 // renders inside a real thread via the production renderer (`renderTodo` →
 // `TodoChecklistBody`). Walks the real usage pattern: the agent writes a plan,
 // then calls `todo_write` again as it starts and finishes items — each call is
@@ -9,8 +9,8 @@
 // The card reads `call.output.details.phases` (Engine `TodoToolDetails`). Pure data:
 // no JSX, no fraym-ui.
 
-import type { SessionRef, SessionSnapshot, WorkspaceRef } from "@fraym/driver";
-import type { DemoScript, ScriptedEvent, ScriptStep } from "@fraym/driver/mock";
+import type { SessionRef, SessionSnapshot, WorkspaceRef } from "@fraym-ai/driver";
+import type { DemoScript, ScriptedEvent, ScriptStep } from "@fraym-ai/driver/mock";
 
 const NOW = "2026-06-06T12:00:00.000Z";
 

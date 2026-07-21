@@ -1,20 +1,20 @@
 // Fraym demo script — the "atlas Code × Codex" showcase conversation, expressed
-// as pure session-driver events. Replayed through @fraym/driver/mock so the
+// as pure session-driver events. Replayed through @fraym-ai/driver/mock so the
 // UI renders it via the exact same path a live engine would: no mock-mode branch.
 //
 // Pacing mirrors the design prototype (docs/design/fraym-ui-remix): each phase
 // announces a working verb, pauses to "think" (600–1300ms), reveals its block,
 // then a short gap — so the causal working is visible, not a superfast flash.
 //
-// Pure data: depends only on @fraym/driver types. No JSX, no @fraym/ui —
+// Pure data: depends only on @fraym-ai/driver types. No JSX, no @fraym-ai/ui —
 // tool/diff/search cards are produced by the renderer registries from these events.
 
-import type { SessionRef, SessionSnapshot, WorkspaceRef } from "@fraym/driver";
-import type { DemoScript, ScriptedEvent, ScriptStep } from "@fraym/driver/mock";
+import type { SessionRef, SessionSnapshot, WorkspaceRef } from "@fraym-ai/driver";
+import type { DemoScript, ScriptedEvent, ScriptStep } from "@fraym-ai/driver/mock";
 
 const NOW = "2026-05-31T12:00:00.000Z";
 
-const SOURCE = { path: "fraym-demo", source: "@fraym/fixtures", scope: "temporary", origin: "package" } as const;
+const SOURCE = { path: "fraym-demo", source: "@fraym-ai/fixtures", scope: "temporary", origin: "package" } as const;
 
 const WORKSPACE: WorkspaceRef = {
 	workspaceId: "fraym-api",

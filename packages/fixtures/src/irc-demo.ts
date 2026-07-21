@@ -1,6 +1,6 @@
-import type { SessionRef, SessionSnapshot, WorkspaceRef } from "@fraym/driver";
-import type { DemoScript, ScriptStep } from "@fraym/driver/mock";
-import { createScriptedDriver } from "@fraym/driver/mock";
+import type { SessionRef, SessionSnapshot, WorkspaceRef } from "@fraym-ai/driver";
+import type { DemoScript, ScriptStep } from "@fraym-ai/driver/mock";
+import { createScriptedDriver } from "@fraym-ai/driver/mock";
 import { LIST_DETAILS, LIST_INPUT, LIST_OUTPUT, SEND_DETAILS, SEND_INPUT, SEND_OUTPUT } from "./irc-outputs";
 import { toolResult } from "./tool-call-utils";
 

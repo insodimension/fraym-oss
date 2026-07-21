@@ -1,4 +1,4 @@
-import type { ContextUsage, Goal, PlanModeState, SubagentBatch, TaskPhase, WorkingStatus } from "@fraym/driver";
+import type { ContextUsage, Goal, PlanModeState, SubagentBatch, TaskPhase, WorkingStatus } from "@fraym-ai/driver";
 import { use, useMemo } from "react";
 import { SessionContext, type SessionContextValue } from "./session-provider";
 import type { ActiveToolCall, VibrMode, VibrState } from "./session-types";

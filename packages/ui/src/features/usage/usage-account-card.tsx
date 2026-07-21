@@ -1,4 +1,4 @@
-import type { UsageAccountView } from "@fraym/driver";
+import type { UsageAccountView } from "@fraym-ai/driver";
 import { ProviderBrandIcon } from "../../components";
 import { Badge, Card, CardContent } from "../../elements";
 import { UsageMeter } from "./usage-meter";

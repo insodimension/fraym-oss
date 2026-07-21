@@ -1,9 +1,9 @@
 // Checkpoint demo script — checkpoint followed by rewind during an investigation.
-// Pure session-driver events replayed through @fraym/driver/mock.
+// Pure session-driver events replayed through @fraym-ai/driver/mock.
 
-import type { SessionRef, SessionSnapshot, WorkspaceRef } from "@fraym/driver";
-import type { DemoScript, ScriptStep } from "@fraym/driver/mock";
-import { createScriptedDriver } from "@fraym/driver/mock";
+import type { SessionRef, SessionSnapshot, WorkspaceRef } from "@fraym-ai/driver";
+import type { DemoScript, ScriptStep } from "@fraym-ai/driver/mock";
+import { createScriptedDriver } from "@fraym-ai/driver/mock";
 import { CHECKPOINT_DETAILS, CHECKPOINT_INPUT, CHECKPOINT_OUTPUT_TEXT } from "./checkpoint-outputs";
 import { toolResult } from "./tool-call-utils";
 

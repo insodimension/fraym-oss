@@ -1,4 +1,4 @@
-import type { UsageLimitView } from "@fraym/driver";
+import type { UsageLimitView } from "@fraym-ai/driver";
 import { memo, useEffect, useState } from "react";
 import { useSessionOptional, useUsage } from "../../hooks";
 import { Icon } from "../../icons";

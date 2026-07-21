@@ -1,4 +1,4 @@
-import type { FraymUiConfig } from "@fraym/config";
+import type { FraymUiConfig } from "@fraym-ai/config";
 import { applySettingsVarsToRoot } from "./settings-document-vars";
 
 export function applySettingsToDocument(config: FraymUiConfig): void {

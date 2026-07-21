@@ -1,5 +1,5 @@
 {
-	"name": "@fraym/driver-aisdk",
+	"name": "@fraym-ai/driver-aisdk",
 	"version": "0.1.0",
 	"type": "module",
 	"description": "Fraym AgentEventStream backed by the Vercel AI SDK, running fully in the browser",
@@ -15,7 +15,7 @@
 		"test": "bun test"
 	},
 	"dependencies": {
-		"@fraym/driver": "workspace:*"
+		"@fraym-ai/driver": "workspace:*"
 	},
 	"peerDependencies": {
 		"ai": "^5.0.0"

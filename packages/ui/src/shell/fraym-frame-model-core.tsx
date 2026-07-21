@@ -8,8 +8,8 @@ import type {
 	TerminalDriver,
 	WorkspaceDriver,
 	WorkspaceRef,
-} from "@fraym/driver";
-import type { AvatarId, AvatarMode, AvatarState } from "@fraym/vibr";
+} from "@fraym-ai/driver";
+import type { AvatarId, AvatarMode, AvatarState } from "@fraym-ai/vibr";
 import { type ComponentProps, type MouseEvent, type ReactNode, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { ModelSelection, PaletteCategory } from "../components";
 import type { RailMode } from "../components/app-shell";

@@ -12,7 +12,7 @@
 // `ConnectedHostUiLayer` / `ConnectedSelectDialog` are the wired, mounted
 // surfaces — mount once per session subtree; they answer through the driver.
 
-import type { HostUiRequest as DriverHostUiRequest, HostUiResponse } from "@fraym/driver";
+import type { HostUiRequest as DriverHostUiRequest, HostUiResponse } from "@fraym-ai/driver";
 import { type ReactNode, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useSession } from "../../hooks/use-session";
 import {

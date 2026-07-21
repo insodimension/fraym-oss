@@ -8,7 +8,7 @@
 // Keyboard: Enter approves (the first allow_* option), Esc rejects (cancel →
 // the engine's reject path), 1–9 pick any option by position.
 
-import type { HostUiRequest as DriverHostUiRequest, HostUiResponse, PermissionOption } from "@fraym/driver";
+import type { HostUiRequest as DriverHostUiRequest, HostUiResponse, PermissionOption } from "@fraym-ai/driver";
 import { useEffect, useEffectEvent } from "react";
 import { Button } from "../../elements/button";
 import { Kbd } from "../../elements/kbd";

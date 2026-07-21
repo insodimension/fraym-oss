@@ -1,4 +1,4 @@
-import type { AccentPalette, FraymUiConfig, MdBoldColor, ThemeMode } from "@fraym/config";
+import type { AccentPalette, FraymUiConfig, MdBoldColor, ThemeMode } from "@fraym-ai/config";
 import { findFontPreset } from "../theme/font-presets";
 import {
 	DEFAULT_THEME_ID,

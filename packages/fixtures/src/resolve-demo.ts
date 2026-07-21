@@ -1,12 +1,12 @@
 // Resolve demo script — a `resolve`-focused conversation expressed as
-// pure session-driver events. Replayed through @fraym/driver/mock so the
+// pure session-driver events. Replayed through @fraym-ai/driver/mock so the
 // resolve tool renders inside a real thread via the production renderer
 // (`renderResolve`). Walks through a proposed edit that gets accepted.
 //
 // Pure data: no JSX, no fraym-ui.
 
-import type { SessionRef, SessionSnapshot, WorkspaceRef } from "@fraym/driver";
-import type { DemoScript, ScriptStep } from "@fraym/driver/mock";
+import type { SessionRef, SessionSnapshot, WorkspaceRef } from "@fraym-ai/driver";
+import type { DemoScript, ScriptStep } from "@fraym-ai/driver/mock";
 import { RESOLVE_DETAILS, RESOLVE_INPUT } from "./resolve-outputs";
 
 const NOW = "2026-06-08T12:00:00.000Z";

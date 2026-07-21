@@ -1,4 +1,4 @@
-import type { UsageLimitView, UsageSnapshot } from "@fraym/driver";
+import type { UsageLimitView, UsageSnapshot } from "@fraym-ai/driver";
 
 export interface UsageLimitSelectionOptions {
 	readonly provider?: string | null;

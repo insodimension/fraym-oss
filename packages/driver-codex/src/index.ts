@@ -7,14 +7,14 @@ import {
 	type EventStreamSessionDriverHandle,
 	type PluginConnectState,
 	type WorkspaceRef,
-} from "@fraym/driver";
+} from "@fraym-ai/driver";
 import type {
 	AgentEvent,
 	AgentEventListener,
 	AgentEventStream,
 	ApprovalResponseEvent,
 	Unsubscribe,
-} from "@fraym/driver";
+} from "@fraym-ai/driver";
 
 /** JSON-RPC notification or bridge control frame emitted by `codex app-server`. */
 export interface CodexFrame {

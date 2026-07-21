@@ -1,5 +1,5 @@
 {
-	"name": "@fraym/host",
+	"name": "@fraym-ai/host",
 	"version": "0.1.0",
 	"type": "module",
 	"license": "MIT",
@@ -15,8 +15,8 @@
 		"typecheck": "tsc --noEmit"
 	},
 	"dependencies": {
-		"@fraym/driver": "workspace:*",
-		"@fraym/ui": "workspace:*"
+		"@fraym-ai/driver": "workspace:*",
+		"@fraym-ai/ui": "workspace:*"
 	},
 	"peerDependencies": {
 		"react": "^19.0.0",

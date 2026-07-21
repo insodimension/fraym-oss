@@ -3,7 +3,7 @@ import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 import { devServerWatch, devVitePlugins } from "../../scripts/vite-dev-hardening";
 
-// Kitchen sink — showcase app for @fraym/ui + fraym-vibr. Own port so it
+// Kitchen sink — showcase app for @fraym-ai/ui + fraym-vibr. Own port so it
 // can run alongside the main web app.
 export default defineConfig({
 	base: "./",

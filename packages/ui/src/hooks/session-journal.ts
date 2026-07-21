@@ -1,4 +1,4 @@
-import type { SessionJournalUpdatedEvent, SessionQueuedMessage } from "@fraym/driver";
+import type { SessionJournalUpdatedEvent, SessionQueuedMessage } from "@fraym-ai/driver";
 import type {
 	LatestCustomMessage,
 	SessionState,

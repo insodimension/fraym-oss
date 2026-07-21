@@ -1,4 +1,4 @@
-import type { EngineRecipeRecord } from "@fraym/driver";
+import type { EngineRecipeRecord } from "@fraym-ai/driver";
 import { createContext, type ReactNode, useContext, useMemo } from "react";
 import type { IconName } from "../icons";
 export interface CommandTagDisplay { readonly label: string; readonly icon?: IconName }

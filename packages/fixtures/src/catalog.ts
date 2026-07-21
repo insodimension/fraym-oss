@@ -3,12 +3,12 @@ import type {
   SessionRef,
   SessionSnapshot,
   WorkspaceRef,
-} from "@fraym/driver";
+} from "@fraym-ai/driver";
 import {
   createScriptedDriver,
   type DemoScript,
   type ScriptedEvent,
-} from "@fraym/driver/mock";
+} from "@fraym-ai/driver/mock";
 
 const workspace: WorkspaceRef = {
   workspaceId: "fixture-workspace",

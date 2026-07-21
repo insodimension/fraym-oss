@@ -1,4 +1,4 @@
-import type { JobDescriptor } from "@fraym/driver";
+import type { JobDescriptor } from "@fraym-ai/driver";
 import { useMemo } from "react";
 import { useJobs } from "../../hooks/use-jobs";
 import { useSessionOptional } from "../../hooks/use-session";

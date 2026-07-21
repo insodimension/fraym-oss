@@ -1,4 +1,4 @@
-import type { ToolIconPolicy } from "@fraym/config";
+import type { ToolIconPolicy } from "@fraym-ai/config";
 import { DEFAULT_TOOL_ICON_POLICY } from "../../registries/tool-icon-policy";
 import type { FraymDensity } from "../surface-kit";
 

@@ -1,5 +1,5 @@
 {
-	"name": "@fraym/driver-codex",
+	"name": "@fraym-ai/driver-codex",
 	"version": "0.1.0",
 	"type": "module",
 	"description": "Fraym SessionDriver backed by the local Codex CLI bridge",
@@ -16,6 +16,6 @@
 		"bridge": "bun bridge.ts"
 	},
 	"dependencies": {
-		"@fraym/driver": "workspace:*"
+		"@fraym-ai/driver": "workspace:*"
 	}
 }

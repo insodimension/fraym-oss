@@ -3,7 +3,7 @@
 // the driver) a colocated connected.tsx.
 //
 // Curation rule: operator-only settings-schema surfaces are NOT re-exported here.
-// They live in pages/settings-schema and are reachable via "@fraym/ui/agent-surfaces".
+// They live in pages/settings-schema and are reachable via "@fraym-ai/ui/agent-surfaces".
 
 export * from "./active-work-strip";
 export * from "./activity-state";

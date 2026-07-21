@@ -1,4 +1,4 @@
-import { Badge, BranchName, cn, Icon } from "@fraym/ui";
+import { Badge, BranchName, cn, Icon } from "@fraym-ai/ui";
 import { type ReactNode, useState } from "react";
 import type { ControlsSchema } from "../../showcase/controls";
 import { useControls } from "../../showcase/controls";
@@ -758,7 +758,7 @@ function EnvironmentCardEntry() {
 	return (
 		<Demo
 			summary="Environment card — DESIGN MOCK v4 (fixture data, approval gate before implementation). Ledger layout: typographic header (branch + location truth), navigation row into the Diff dock, state-dependent Repos (quiet when healthy, escalated on pin drift), and a dialog-style footer with one context-dependent primary action. The Repos section is the part no other agent product has: superproject + submodules with branch, ahead/behind, dirty count, and pin status vs the recorded gitlink."
-			importPath="design mock — target: @fraym/ui features/environment"
+			importPath="design mock — target: @fraym-ai/ui features/environment"
 			controls={panel}
 			stage="stretch"
 		>
@@ -782,7 +782,7 @@ function EnvironmentCardEntry() {
 }
 
 const environmentCardDocs: EntryDocs = {
-	import: "design mock — not yet exported from @fraym/ui",
+	import: "design mock — not yet exported from @fraym-ai/ui",
 	anatomy: [
 		"// Card anatomy (v4 ledger):",
 		"// ┌──────────────────────────────────────┐",

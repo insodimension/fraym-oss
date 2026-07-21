@@ -1,4 +1,4 @@
-import { type AvatarId, Presence } from "@fraym/vibr";
+import { type AvatarId, Presence } from "@fraym-ai/vibr";
 import { useSessionOptional, useVibr } from "../../hooks/use-session";
 
 export interface ConnectedPresenceProps

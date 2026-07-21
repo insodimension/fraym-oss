@@ -1,5 +1,5 @@
 {
-  "name": "@fraym/web",
+  "name": "@fraym-ai/web",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -9,9 +9,9 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@fraym/driver": "workspace:*",
-    "@fraym/driver-acp": "workspace:*",
-    "@fraym/ui": "workspace:*",
+    "@fraym-ai/driver": "workspace:*",
+    "@fraym-ai/driver-acp": "workspace:*",
+    "@fraym-ai/ui": "workspace:*",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },

@@ -1,4 +1,4 @@
-import type { EngineConfigSettingRecord, EngineConfigValueRecord } from "@fraym/driver";
+import type { EngineConfigSettingRecord, EngineConfigValueRecord } from "@fraym-ai/driver";
 import { useId, useState } from "react";
 import { Button } from "../elements/button";
 import { Input } from "../elements/input";

@@ -1,4 +1,4 @@
-import type { CustomProviderBrand } from "@fraym/config";
+import type { CustomProviderBrand } from "@fraym-ai/config";
 import type { CSSProperties } from "react";
 import { cn } from "../lib/cn";
 import { providerBrand } from "../settings/provider-brand";

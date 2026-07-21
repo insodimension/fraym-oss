@@ -1,4 +1,4 @@
-import { ChromaGrid } from "@fraym/ui";
+import { ChromaGrid } from "@fraym-ai/ui";
 import { useControls } from "../showcase/controls";
 import { Demo } from "../showcase/demo";
 import type { EntryDocs } from "../showcase/docs";
@@ -24,7 +24,7 @@ function ChromaGridEntry() {
 	return (
 		<Demo
 			summary="Chroma follows the cursor: the wrapped grid rests desaturated and color blooms in a smoothed window around the pointer (two masked backdrop-filter layers). A wrapper, not a card system: hand it any grid. Hover-capable pointers only, so touch never sticks gray."
-			importPath="@fraym/ui"
+			importPath="@fraym-ai/ui"
 			controls={panel}
 			stage="stretch"
 			clip={false}
@@ -52,7 +52,7 @@ function ChromaGridEntry() {
 }
 
 const chromaGridDocs: EntryDocs = {
-	import: 'import { ChromaGrid } from "@fraym/ui";',
+	import: 'import { ChromaGrid } from "@fraym-ai/ui";',
 	anatomy: `<ChromaGrid radius={320}>
   <div className="grid grid-cols-3 gap-3">{cards}</div>
 </ChromaGrid>`,

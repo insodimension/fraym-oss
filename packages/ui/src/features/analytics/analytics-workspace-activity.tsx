@@ -1,4 +1,4 @@
-import type { AnalyticsFreshness, AnalyticsRange, AnalyticsSnapshot } from "@fraym/driver";
+import type { AnalyticsFreshness, AnalyticsRange, AnalyticsSnapshot } from "@fraym-ai/driver";
 import { AnalyticsFreshnessBadge, AnalyticsRangeControl } from "./analytics-activity-controls";
 import { activitySpanDays, analyticsRangeLabel, dayCountLabel, heatmapDaysForRange } from "./analytics-activity-data";
 import { AnalyticsActivityHeatmap } from "./analytics-activity-heatmap";

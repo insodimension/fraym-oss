@@ -3,7 +3,7 @@ import "./styles.css";
 export { Icon, type IconProps, toolIconNode } from "./icons/icon";
 export { type IconName, iconPaths } from "./icons/paths";
 export { cn } from "./lib/cn";
-export type { IconSpec } from "@fraym/config";
+export type { IconSpec } from "@fraym-ai/config";
 export type { ActiveToolCall } from "./hooks/session-types";
 export { type LineStream, useLineStream } from "./hooks/use-line-stream";
 

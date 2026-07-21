@@ -1,4 +1,4 @@
-import type { EngineSpacePluginState, EngineSpaceRecord } from "@fraym/driver";
+import type { EngineSpacePluginState, EngineSpaceRecord } from "@fraym-ai/driver";
 
 /** The verbose, HONEST install plan for a Space — the labor illusion done right:
  *  every step maps to a REAL operation (install/enable a required plugin, enable

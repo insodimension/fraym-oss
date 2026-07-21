@@ -139,9 +139,9 @@ export function runDoctor(cwd = process.cwd()): DoctorReport {
 				},
 	);
 
-	const packageNames = [...new Set(catalog.items.map(item => item.package).filter(name => name.startsWith("@fraym/")))];
-	const uiVisible = packageNames.includes("@fraym/ui");
-	const vibrVisible = packageNames.includes("@fraym/vibr");
+	const packageNames = [...new Set(catalog.items.map(item => item.package).filter(name => name.startsWith("@fraym-ai/")))];
+	const uiVisible = packageNames.includes("@fraym-ai/ui");
+	const vibrVisible = packageNames.includes("@fraym-ai/vibr");
 	if (uiVisible || vibrVisible) {
 		checks.push({
 			id: "packages",
@@ -160,7 +160,7 @@ export function runDoctor(cwd = process.cwd()): DoctorReport {
 		checks.push({
 			id: "packages",
 			status: "warn",
-			message: "No @fraym/ui or @fraym/vibr package is visible from this directory.",
+			message: "No @fraym-ai/ui or @fraym-ai/vibr package is visible from this directory.",
 			fix: "Run from a Fraym workspace or install the Fraym packages in this project.",
 		});
 	}
@@ -185,7 +185,7 @@ export function runDoctor(cwd = process.cwd()): DoctorReport {
 			id: "catalog",
 			status: "warn",
 			message: "No Fraym catalog entries were found in this directory.",
-			fix: "Install @fraym/ui or run from a Fraym workspace.",
+			fix: "Install @fraym-ai/ui or run from a Fraym workspace.",
 		});
 	}
 

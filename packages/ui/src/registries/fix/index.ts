@@ -1,4 +1,4 @@
-import type { PluginFixKind } from "@fraym/driver";
+import type { PluginFixKind } from "@fraym-ai/driver";
 export { AgentSetup, type AgentSetupProps, agentSetupBrief } from "./agent-setup";
 export { FormSheet, type FormSheetProps } from "./form-sheet";
 export { InstallProgress, type InstallProgressProps } from "./install-progress";

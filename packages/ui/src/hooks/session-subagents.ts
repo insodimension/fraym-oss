@@ -1,4 +1,4 @@
-import type { SubagentBatch, SubagentRun } from "@fraym/driver";
+import type { SubagentBatch, SubagentRun } from "@fraym-ai/driver";
 import type { SessionState, SessionStateAction } from "./session-types";
 
 type SessionEventOf<T extends SessionStateAction["type"]> = Extract<SessionStateAction, { readonly type: T }>;

@@ -1,4 +1,4 @@
-# @fraym/config
+# @fraym-ai/config
 
 Typed, dependency-free presentation settings for Fraym.
 

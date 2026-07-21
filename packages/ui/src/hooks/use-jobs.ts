@@ -1,4 +1,4 @@
-import type { JobsSnapshot, SessionDriver, SessionRef } from "@fraym/driver";
+import type { JobsSnapshot, SessionDriver, SessionRef } from "@fraym-ai/driver";
 import { useCallback, useState } from "react";
 
 export interface JobsState {

@@ -1,11 +1,11 @@
 // Goal demo script — a `goal`-focused conversation expressed as
-// pure session-driver events. Replayed through @fraym/driver/mock so the
+// pure session-driver events. Replayed through @fraym-ai/driver/mock so the
 // goal tool renders inside a real thread via the same renderer/sketch path.
 //
 // Pure data: no JSX, no fraym-ui.
 
-import type { SessionRef, SessionSnapshot, WorkspaceRef } from "@fraym/driver";
-import type { DemoScript, ScriptStep } from "@fraym/driver/mock";
+import type { SessionRef, SessionSnapshot, WorkspaceRef } from "@fraym-ai/driver";
+import type { DemoScript, ScriptStep } from "@fraym-ai/driver/mock";
 
 import { GOAL_DETAILS, GOAL_INPUT, GOAL_OUTPUT_TEXT, type GoalVariation } from "./goal-outputs";
 import { toolResult } from "./tool-call-utils";

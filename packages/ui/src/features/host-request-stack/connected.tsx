@@ -1,4 +1,4 @@
-import type { HostUiRequest as DriverHostUiRequest } from "@fraym/driver";
+import type { HostUiRequest as DriverHostUiRequest } from "@fraym-ai/driver";
 import { useMemo } from "react";
 import { useSession } from "../../hooks/use-session";
 import type { FraymSurfaceConfig } from "../surface-kit";

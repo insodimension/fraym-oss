@@ -1,4 +1,4 @@
-import type { EngineConfigSettingRecord, EngineConfigValueRecord } from "@fraym/driver";
+import type { EngineConfigSettingRecord, EngineConfigValueRecord } from "@fraym-ai/driver";
 import { cn } from "../lib/cn";
 
 export interface SettingSourceBadgeProps {

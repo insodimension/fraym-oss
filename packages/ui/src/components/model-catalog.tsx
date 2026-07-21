@@ -1,4 +1,4 @@
-import type { EngineModelRecord, EngineProviderRecord } from "@fraym/driver";
+import type { EngineModelRecord, EngineProviderRecord } from "@fraym-ai/driver";
 import { useMemo, useState } from "react";
 import { Badge } from "../elements/badge";
 import { Skeleton, SkeletonGroup } from "../elements/skeleton";

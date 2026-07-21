@@ -1,4 +1,4 @@
-import type { AgentEvent } from "@fraym/driver";
+import type { AgentEvent } from "@fraym-ai/driver";
 
 import type { Entry } from "./entry";
 

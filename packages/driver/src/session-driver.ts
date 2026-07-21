@@ -1,4 +1,4 @@
-// @fraym/driver — the data-only session contract every Fraym consumer speaks.
+// @fraym-ai/driver — the data-only session contract every Fraym consumer speaks.
 //
 // The full session-driver surface a production agent workbench needs: session
 // lifecycle + catalog, transcript snapshots, queued messages, model/thinking/
@@ -1074,7 +1074,7 @@ export interface GoalChangedEvent extends SessionEventBase {
 // editor) are unaffected — they keep their own rich `onSelect`; this event
 // only owns presence/label/tone/status/close.
 
-/** Tone hint for a mode pill; mirrors `ModePillTone` in `@fraym/ui`. */
+/** Tone hint for a mode pill; mirrors `ModePillTone` in `@fraym-ai/ui`. */
 export const MODE_STATE_TONES = ["accent", "add", "blue", "warn", "del", "mute"] as const;
 export type ModeStateTone = (typeof MODE_STATE_TONES)[number];
 

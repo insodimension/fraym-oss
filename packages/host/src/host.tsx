@@ -1,5 +1,5 @@
-import type { FraymDrivers, SessionRef, SessionSnapshot, WorkspaceRef } from "@fraym/driver";
-import { Fraym, type FraymProps, ThemeProvider } from "@fraym/ui";
+import type { FraymDrivers, SessionRef, SessionSnapshot, WorkspaceRef } from "@fraym-ai/driver";
+import { Fraym, type FraymProps, ThemeProvider } from "@fraym-ai/ui";
 import { type ComponentProps, useCallback, useEffect, useState } from "react";
 
 type ManagedProps =

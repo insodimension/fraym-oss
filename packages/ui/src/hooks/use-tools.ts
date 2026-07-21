@@ -1,4 +1,4 @@
-import type { SessionDriver, SessionRef, ToolDescriptor } from "@fraym/driver";
+import type { SessionDriver, SessionRef, ToolDescriptor } from "@fraym-ai/driver";
 import { useEffect, useState } from "react";
 
 export interface ToolsState {

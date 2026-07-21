@@ -1,5 +1,5 @@
-import { CODEX_WORKSPACE, createCodexResourceDriver, createCodexSessionDriver } from "@fraym/driver-codex";
-import { FraymHost } from "@fraym/host";
+import { CODEX_WORKSPACE, createCodexResourceDriver, createCodexSessionDriver } from "@fraym-ai/driver-codex";
+import { FraymHost } from "@fraym-ai/host";
 import { useMemo } from "react";
 
 const bridgeUrl = import.meta.env.VITE_CODEX_BRIDGE_URL ?? "http://localhost:4319";

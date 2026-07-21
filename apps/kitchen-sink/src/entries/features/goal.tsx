@@ -9,8 +9,8 @@ import {
 	type GoalVariation,
 	optionalToolResult,
 	pendingToolCall,
-} from "@fraym/fixtures";
-import { type ActiveToolCall, Composer, GoalComposerSurface } from "@fraym/ui";
+} from "@fraym-ai/fixtures";
+import { type ActiveToolCall, Composer, GoalComposerSurface } from "@fraym-ai/ui";
 import type { ComponentProps } from "react";
 import type { ControlsSchema } from "../../showcase/controls";
 import { Demo } from "../../showcase/demo";
@@ -76,8 +76,8 @@ function GoalEntry() {
 
 	return (
 		<Demo
-			summary="`goal` has two production surfaces: a Codex-like strip pinned above the composer for the live goal, plus a history card for individual goal tool calls. All fixture data comes from @fraym/fixtures; this entry only assembles synthetic ActiveToolCalls."
-			importPath="@fraym/ui · GoalComposerSurface + DEFAULT_TOOL_RENDERERS.goal"
+			summary="`goal` has two production surfaces: a Codex-like strip pinned above the composer for the live goal, plus a history card for individual goal tool calls. All fixture data comes from @fraym-ai/fixtures; this entry only assembles synthetic ActiveToolCalls."
+			importPath="@fraym-ai/ui · GoalComposerSurface + DEFAULT_TOOL_RENDERERS.goal"
 			controls={panel}
 			stage="stretch"
 		>
@@ -110,7 +110,7 @@ function GoalEntry() {
 }
 
 const goalDocs: EntryDocs = {
-	import: 'import { Thread, DEFAULT_TOOL_RENDERERS, Composer, GoalComposerSurface } from "@fraym/ui";',
+	import: 'import { Thread, DEFAULT_TOOL_RENDERERS, Composer, GoalComposerSurface } from "@fraym-ai/ui";',
 	anatomy: JSON.stringify(
 		[
 			"// goal has TWO production surfaces:",

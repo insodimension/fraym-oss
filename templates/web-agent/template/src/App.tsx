@@ -1,4 +1,4 @@
-import { FraymHost } from "@fraym/host";
+import { FraymHost } from "@fraym-ai/host";
 import { session, workspace } from "./driver";
 
 // The full Fraym shell: session rail, composer, thread, and settings. FraymHost

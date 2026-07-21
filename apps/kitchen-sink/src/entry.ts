@@ -81,7 +81,7 @@ export function elementEntry(composedDescription: (title: string) => string) {
     subgroup,
     tier: "Element",
     description,
-    importCode: `import { ${names} } from "@fraym/ui"`,
+    importCode: `import { ${names} } from "@fraym-ai/ui"`,
     Demo,
     knobs: [],
     code: () => code,

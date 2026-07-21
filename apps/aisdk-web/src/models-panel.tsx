@@ -1,5 +1,5 @@
-import type { EngineModelRecord } from "@fraym/driver";
-import { Button, type FraymSettingsPanel, SettingsGroup, SettingsSub, SettingsTitle } from "@fraym/ui";
+import type { EngineModelRecord } from "@fraym-ai/driver";
+import { Button, type FraymSettingsPanel, SettingsGroup, SettingsSub, SettingsTitle } from "@fraym-ai/ui";
 import { useEffect, useState } from "react";
 import { resourceDriver } from "./local-resource-driver";
 import {

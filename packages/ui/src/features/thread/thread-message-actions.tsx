@@ -8,7 +8,7 @@
 // ConfirmDialog. The hook returns the actions plus an `overlay` node (the confirm dialog when
 // open) the message component renders.
 
-import type { SessionRef } from "@fraym/driver";
+import type { SessionRef } from "@fraym-ai/driver";
 import { type ReactNode, useCallback, useMemo, useState } from "react";
 import { ConfirmDialog } from "../../components/confirm-dialog";
 import type { MessageAction } from "../../elements/message-actions";

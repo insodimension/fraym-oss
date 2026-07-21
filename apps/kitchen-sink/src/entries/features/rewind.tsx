@@ -6,8 +6,8 @@ import {
 	REWIND_INPUT,
 	REWIND_OUTPUT_TEXT,
 	REWIND_VARIATIONS,
-} from "@fraym/fixtures";
-import type { ActiveToolCall } from "@fraym/ui";
+} from "@fraym-ai/fixtures";
+import type { ActiveToolCall } from "@fraym-ai/ui";
 import type { ControlsSchema } from "../../showcase/controls";
 import { Demo } from "../../showcase/demo";
 import type { EntryDocs } from "../../showcase/docs";
@@ -53,7 +53,7 @@ function Entry() {
 	const state = selectControlValue(values.state, STATES, "success");
 	const view = toolPreviewView(values.view);
 	return (
-		<Demo summary="Rewind tool card." importPath="@fraym/ui · DEFAULT_TOOL_RENDERERS.rewind" controls={panel}>
+		<Demo summary="Rewind tool card." importPath="@fraym-ai/ui · DEFAULT_TOOL_RENDERERS.rewind" controls={panel}>
 			<ToolMainPreview keySeed={`${view}-${state}`} call={buildCall(variation, state)} view={view} />
 			<ToolVariationGrid
 				label="rewind variations"
@@ -67,7 +67,7 @@ function Entry() {
 }
 
 const rewindDocs: EntryDocs = {
-	import: 'import { Thread, DEFAULT_TOOL_RENDERERS } from "@fraym/ui";',
+	import: 'import { Thread, DEFAULT_TOOL_RENDERERS } from "@fraym-ai/ui";',
 	anatomy: JSON.stringify(
 		[
 			"// Tool cards render automatically inside <Thread>: DEFAULT_TOOL_RENDERERS",

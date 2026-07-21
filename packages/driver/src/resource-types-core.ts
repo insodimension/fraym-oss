@@ -1,4 +1,4 @@
-// @fraym/driver - engine resource contract.
+// @fraym-ai/driver - engine resource contract.
 //
 // This is live engine inventory and domain mutations: provider auth, model
 // registry, skills, extensions, commands, and model defaults. Persistent raw
@@ -516,7 +516,7 @@ export interface EngineEvaluatorRecord {
 /** An artifactory PACK a plugin contributes via `the plugin manifest`
  *  `artifactories[]` (doc 44 §15, 2026-07-17 transport ruling: the renderer
  *  bundle runs in a sandboxed iframe, served by the engine's `/plugin-assets`
- *  route; `@fraym/ui`'s bridged host adapts it into the stage registry).
+ *  route; `@fraym-ai/ui`'s bridged host adapts it into the stage registry).
  *  Mirrors the engine's `EngineArtifactoryRecord`. */
 export interface EngineArtifactoryRecord {
 	readonly id: string;
@@ -545,7 +545,7 @@ export interface EngineSpacePluginState {
  *  PURE DATA (assembly tier, ruled 2026-07-17: no plugin JS ships — the def
  *  mounts built-in surfaces and the classic kind implementations). Mirrors the
  *  engine's `EngineSpaceRecord`; the UI slice is structurally `SpaceUiDef`
- *  (`@fraym/ui`), the agent/dependency fields are the Space SDK's territory. */
+ *  (`@fraym-ai/ui`), the agent/dependency fields are the Space SDK's territory. */
 export interface EngineSpaceRecord {
 	readonly specVersion: 1;
 	readonly id: string;

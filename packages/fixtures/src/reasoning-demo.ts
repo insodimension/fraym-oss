@@ -1,5 +1,5 @@
 // Reasoning demo script — a thinking-focused conversation expressed as pure
-// session-driver events. Replayed through @fraym/driver/mock so the reasoning
+// session-driver events. Replayed through @fraym-ai/driver/mock so the reasoning
 // block renders inside a real thread via the production renderer
 // (`renderReasoningBlock` → <ReasoningBlock>).
 //
@@ -16,8 +16,8 @@
 // interleaves a tool call so you can verify the reasoning row aligns with the tool
 // gutter down the thread. Pure data: no JSX, no fraym-ui.
 
-import type { SessionRef, SessionSnapshot, WorkspaceRef } from "@fraym/driver";
-import type { DemoScript, ScriptedEvent, ScriptStep } from "@fraym/driver/mock";
+import type { SessionRef, SessionSnapshot, WorkspaceRef } from "@fraym-ai/driver";
+import type { DemoScript, ScriptedEvent, ScriptStep } from "@fraym-ai/driver/mock";
 
 const NOW = "2026-06-03T12:00:00.000Z";
 

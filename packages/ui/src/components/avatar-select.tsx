@@ -6,7 +6,7 @@ import { AvatarSelectTrigger } from "./avatar-select-trigger";
 export interface AvatarOption {
 	readonly id: string;
 	readonly label: string;
-	/** Live preview node (e.g. a @fraym/vibr <Presence>). Kept vibr-agnostic. */
+	/** Live preview node (e.g. a @fraym-ai/vibr <Presence>). Kept vibr-agnostic. */
 	readonly preview: React.ReactNode;
 }
 

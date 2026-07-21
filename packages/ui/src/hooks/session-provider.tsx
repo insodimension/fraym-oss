@@ -6,7 +6,7 @@ import type {
 	SessionQueuedMessage,
 	SessionRef,
 	SessionSnapshot,
-} from "@fraym/driver";
+} from "@fraym-ai/driver";
 import { createContext, useMemo } from "react";
 import { useSessionActions } from "./session-provider-actions";
 import { useSessionReducer } from "./session-provider-session";

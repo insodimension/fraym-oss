@@ -14,7 +14,7 @@ export interface MenuState {
 	readonly project?: string;
 }
 
-export type { ProjectFilterOverride, ProjectFilters, SessionFilters } from "@fraym/config";
+export type { ProjectFilterOverride, ProjectFilters, SessionFilters } from "@fraym-ai/config";
 
 export interface FraymSettingsPanelActions {
 	readonly onOpenModels?: () => void;

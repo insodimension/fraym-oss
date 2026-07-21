@@ -5,7 +5,7 @@
 // When an `input`/`select` host-UI request carries `_meta["fraym/dialog"].field`
 // (the fork's typed-field extension), the plain text box / option list is
 // replaced by a real control: a text input, a number input with stepper +
-// min/max/step + unit suffix, the shared @fraym/ui Slider, a Switch toggle, or
+// min/max/step + unit suffix, the shared @fraym-ai/ui Slider, a Switch toggle, or
 // a tags chip picker.
 //
 // The `ask` TOOL specifically never sends `field.type: "text"` (removed from

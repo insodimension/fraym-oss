@@ -1,8 +1,8 @@
 // render_mermaid demo script — agent renders a flowchart, then a sequence diagram.
-// Pure session-driver events replayed through @fraym/driver/mock.
+// Pure session-driver events replayed through @fraym-ai/driver/mock.
 
-import type { SessionRef, SessionSnapshot, WorkspaceRef } from "@fraym/driver";
-import type { DemoScript, ScriptStep } from "@fraym/driver/mock";
+import type { SessionRef, SessionSnapshot, WorkspaceRef } from "@fraym-ai/driver";
+import type { DemoScript, ScriptStep } from "@fraym-ai/driver/mock";
 import { RENDER_MERMAID_DETAILS, RENDER_MERMAID_INPUT, RENDER_MERMAID_OUTPUT_TEXT } from "./render-mermaid-outputs";
 import { toolResult } from "./tool-call-utils";
 

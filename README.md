@@ -13,7 +13,7 @@ Fraym is licensed under the [MIT License](LICENSE).
 Install the UI and driver contract in a React 19 app:
 
 ```sh
-npm i @fraym/ui @fraym/driver
+npm i @fraym-ai/ui @fraym-ai/driver
 ```
 
 Mount a complete conversation surface with a driver. This example uses the
@@ -21,8 +21,8 @@ included deterministic fixture:
 
 ```tsx
 import { createRoot } from "react-dom/client";
-import { codingSessionFixture, createReplayDriver } from "@fraym/driver";
-import { SessionThread } from "@fraym/ui";
+import { codingSessionFixture, createReplayDriver } from "@fraym-ai/driver";
+import { SessionThread } from "@fraym-ai/ui";
 
 const driver = createReplayDriver(codingSessionFixture, { delay: 120, loop: true });
 
@@ -36,7 +36,7 @@ createRoot(document.getElementById("root")!).render(
 );
 ```
 
-`@fraym/ui` ships its token stylesheet, so the surface renders the moment the
+`@fraym-ai/ui` ships its token stylesheet, so the surface renders the moment the
 package is imported. Override the Fraym CSS custom properties or select a theme
 token set to make it yours.
 
@@ -60,7 +60,7 @@ Every integration follows the same path:
 - `createAcpDriver(url, { cwd })` connects a live Agent Client Protocol
   WebSocket session, mapping ACP chunks, thoughts, tool lifecycles, plans,
   permissions, and errors into the same Fraym event contract. Install it with
-  `npm i @fraym/driver-acp`.
+  `npm i @fraym-ai/driver-acp`.
 - A custom harness only needs to implement `AgentEventStream.subscribe(listener)`.
   No React dependency is required in either driver package.
 
@@ -69,19 +69,19 @@ Every integration follows the same path:
 ```text
 fraym/
   packages/
-    aethr/        @fraym/aethr — companion presence and cinematic text
-    cli/          @fraym/cli — discovery, diagnostics, and template installation
-    config/       @fraym/config — typed UI display and surface settings
-    driver/       @fraym/driver — data-only session driver contract + replay driver
-    driver-acp/   @fraym/driver-acp — Agent Client Protocol adapter
-    driver-codex/ @fraym/driver-codex — Codex CLI driver over the app-server bridge
-    driver-test/  @fraym/driver-test — driver conformance kit
-    fixtures/     @fraym/fixtures — scripted demo sessions
-    ui/           @fraym/ui — React components, tokens, theme, and tool renderers
-    verber/       @fraym/verber — working-status language
-    vibr/         @fraym/vibr — animated presence avatars
+    aethr/        @fraym-ai/aethr — companion presence and cinematic text
+    cli/          @fraym-ai/cli — discovery, diagnostics, and template installation
+    config/       @fraym-ai/config — typed UI display and surface settings
+    driver/       @fraym-ai/driver — data-only session driver contract + replay driver
+    driver-acp/   @fraym-ai/driver-acp — Agent Client Protocol adapter
+    driver-codex/ @fraym-ai/driver-codex — Codex CLI driver over the app-server bridge
+    driver-test/  @fraym-ai/driver-test — driver conformance kit
+    fixtures/     @fraym-ai/fixtures — scripted demo sessions
+    ui/           @fraym-ai/ui — React components, tokens, theme, and tool renderers
+    verber/       @fraym-ai/verber — working-status language
+    vibr/         @fraym-ai/vibr — animated presence avatars
   templates/
-    web-agent/    @fraym/template-web-agent — Vite + React reference app
+    web-agent/    @fraym-ai/template-web-agent — Vite + React reference app
   apps/
     web/          replay + live ACP playground
     kitchen-sink/ component and fixture showcase (http://localhost:5184)
@@ -89,21 +89,21 @@ fraym/
     codex-desktop/ native Codex CLI shell, Tauri (http://localhost:5188)
 ```
 
-Eleven publishable packages plus the `@fraym/template-web-agent` template:
+Eleven publishable packages plus the `@fraym-ai/template-web-agent` template:
 twelve artifacts in total. The package manifests declare their intended public
 publish configuration; this repository makes no claim about current registry
 availability. Use the source workspace or a verified registry release.
 
 ## Driver boundary
 
-`@fraym/ui` consumes Fraym packages only. A session driver supplies session
+`@fraym-ai/ui` consumes Fraym packages only. A session driver supplies session
 state and events; the UI renders them and sends explicit host actions back
 through the driver. The UI never owns an agent runtime.
 
 ```text
-agent runtime <-> ACP adapter / Codex driver / custom driver <-> @fraym/ui
-@fraym/fixtures -> @fraym/driver -> @fraym/ui
-@fraym/config + @fraym/vibr + @fraym/verber + @fraym/aethr -> @fraym/ui
+agent runtime <-> ACP adapter / Codex driver / custom driver <-> @fraym-ai/ui
+@fraym-ai/fixtures -> @fraym-ai/driver -> @fraym-ai/ui
+@fraym-ai/config + @fraym-ai/vibr + @fraym-ai/verber + @fraym-ai/aethr -> @fraym-ai/ui
 ```
 
 Fraym ACP is the generic adapter for the public Agent Client Protocol.
@@ -111,7 +111,7 @@ Fraym-owned extension messages use the `_fraym/*` namespace.
 
 ## Drive a real Codex CLI
 
-`@fraym/driver-codex` speaks the same `AgentEventStream` contract over the Codex
+`@fraym-ai/driver-codex` speaks the same `AgentEventStream` contract over the Codex
 CLI app-server bridge, so Fraym renders a live Codex session — streaming text,
 reasoning, and real tool cards — with the CLI doing the work. Two example hosts
 mount it:
@@ -124,7 +124,7 @@ Both reuse the same `SessionThread` UI as the replay and ACP paths.
 
 ## Start with the Web Agent template
 
-`@fraym/template-web-agent` is a starter application, not an agent runtime or
+`@fraym-ai/template-web-agent` is a starter application, not an agent runtime or
 hosted service. Its integration seam is
 `templates/web-agent/template/src/driver.ts`; after installation, replace the
 generated driver with your own.
@@ -168,7 +168,7 @@ Fraym was built feature by feature through Codex CLI driving GPT-5.6. Each slice
 started with a concrete specification and acceptance tests; Codex inspected the
 workspace, wrote the implementation, ran the typechecker and test suite, and
 iterated against the real demo. The live path was verified against an agent host
-over ACP — and, later, against the real Codex CLI through `@fraym/driver-codex`.
+over ACP — and, later, against the real Codex CLI through `@fraym-ai/driver-codex`.
 
 Codex carried meaningful weight where the architecture matters most: the typed
 event contract, the deterministic replay driver, the tool renderer registry with

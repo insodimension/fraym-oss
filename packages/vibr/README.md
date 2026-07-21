@@ -1,4 +1,4 @@
-# @fraym/vibr
+# @fraym-ai/vibr
 
 Animated presence avatars and physics-driven stream wisps.
 

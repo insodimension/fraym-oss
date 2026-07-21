@@ -1,7 +1,7 @@
 import { describe, expect, test } from "bun:test";
 import type { ServerWebSocket } from "bun";
 
-import type { AgentEvent } from "@fraym/driver";
+import type { AgentEvent } from "@fraym-ai/driver";
 
 import { createAcpDriver } from "./index";
 

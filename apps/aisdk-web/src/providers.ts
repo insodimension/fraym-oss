@@ -1,5 +1,5 @@
-import type { WorkspaceRef } from "@fraym/driver";
-import type { ToolDefaultOpen } from "@fraym/ui";
+import type { WorkspaceRef } from "@fraym-ai/driver";
+import type { ToolDefaultOpen } from "@fraym-ai/ui";
 
 // Provider catalog + browser-persisted app preferences for the AI SDK host.
 

@@ -7,7 +7,7 @@ import {
 	type StartupView,
 	type StreamWispPreset,
 	type VerberProfileSetting,
-} from "@fraym/config";
+} from "@fraym-ai/config";
 import { type ReactNode, useEffect, useRef, useState } from "react";
 import { StreamWispSelect } from "../../components/stream-wisp-select";
 import { Toggle } from "../../elements/toggle";

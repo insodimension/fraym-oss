@@ -1,9 +1,9 @@
-import type { EngineConfigSettingRecord, EngineConfigValueRecord } from "@fraym/driver";
+import type { EngineConfigSettingRecord, EngineConfigValueRecord } from "@fraym-ai/driver";
 
 /**
  * Pure model for the Advanced config explorer — a power-user view over the
  * *entire* engine config catalog (not just the curated panes). Engine-agnostic:
- * everything here reads only the `@fraym/driver` contract shape, so a third-party
+ * everything here reads only the `@fraym-ai/driver` contract shape, so a third-party
  * engine's catalog browses exactly the same way.
  */
 

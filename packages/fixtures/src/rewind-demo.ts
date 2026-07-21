@@ -1,5 +1,5 @@
-import type { SessionRef, SessionSnapshot, WorkspaceRef } from "@fraym/driver";
-import type { DemoScript, ScriptStep } from "@fraym/driver/mock";
+import type { SessionRef, SessionSnapshot, WorkspaceRef } from "@fraym-ai/driver";
+import type { DemoScript, ScriptStep } from "@fraym-ai/driver/mock";
 import { REWIND_DETAILS, REWIND_INPUT, REWIND_OUTPUT_TEXT } from "./rewind-outputs";
 import { toolResult } from "./tool-call-utils";
 

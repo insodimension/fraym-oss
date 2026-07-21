@@ -15,7 +15,7 @@ import type {
 	SubagentReviewFinding,
 	SubagentRun,
 	SubagentStatus,
-} from "@fraym/driver";
+} from "@fraym-ai/driver";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Badge } from "../../elements/badge";
 import { RollingNumber } from "../../elements/rolling-number";
@@ -28,8 +28,8 @@ import { Icon } from "../../icons";
 import { cn } from "../../lib/cn";
 import { type ComposerControlTone, type FraymDensity, type FraymSurfaceConfig, resolveDensity } from "../surface-kit";
 
-// Re-export the contract shapes so consumers can build view-models from "@fraym/ui"
-// without reaching into "@fraym/driver" directly.
+// Re-export the contract shapes so consumers can build view-models from "@fraym-ai/ui"
+// without reaching into "@fraym-ai/driver" directly.
 export type {
 	SubagentBatch,
 	SubagentBatchStatus,
@@ -37,7 +37,7 @@ export type {
 	SubagentReviewFinding,
 	SubagentRun,
 	SubagentStatus,
-} from "@fraym/driver";
+} from "@fraym-ai/driver";
 
 // --- formatting -------------------------------------------------------------
 

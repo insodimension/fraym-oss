@@ -2,7 +2,7 @@
 // cross-cutting surface config types, density/tone style helpers, and small
 // view-model helpers used by multiple feature folders. Knows only tokens + icons.
 
-import type { TaskPhase } from "@fraym/driver";
+import type { TaskPhase } from "@fraym-ai/driver";
 import type { IconName } from "../icons";
 
 export type FraymDensity = "compact" | "comfortable" | "spacious";

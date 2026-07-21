@@ -1,4 +1,4 @@
-import type { EngineConfigSettingRecord, EngineConfigValueRecord } from "@fraym/driver";
+import type { EngineConfigSettingRecord, EngineConfigValueRecord } from "@fraym-ai/driver";
 import {
 	effectiveStructuredValue,
 	isNonEmptyStringRecordValue,
@@ -31,7 +31,7 @@ export function structuredSourceKey(record: EngineConfigSettingRecord, value?: E
 
 /**
  * Decide which structured editor should render an `array`/`record` setting,
- * based purely on the `@fraym/driver` contract: the declared `type` plus the
+ * based purely on the `@fraym-ai/driver` contract: the declared `type` plus the
  * *shape* of the effective value, default, and any declared value `options`.
  * This stays engine-agnostic — no provider- or engine-specific paths — so it
  * works for any driver's catalog. Anything richer than a flat string list or a

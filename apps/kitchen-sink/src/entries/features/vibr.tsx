@@ -4,7 +4,7 @@ import {
 	WispPreview,
 	type AvatarMode,
 	type AvatarState,
-} from "@fraym/vibr";
+} from "@fraym-ai/vibr";
 import { useControls } from "../../showcase/controls";
 import { Cell, Demo } from "../../showcase/demo";
 import type { EntryDocs } from "../../showcase/docs";
@@ -42,7 +42,7 @@ function VibrEntry() {
 	return (
 		<Demo
 			summary="Animated presence surfaces driven by the shared session state, activity mode, and energy signals."
-			importPath="@fraym/vibr"
+			importPath="@fraym-ai/vibr"
 			controls={panel}
 		>
 			<div className="grid w-full grid-cols-1 gap-6 sm:grid-cols-3">
@@ -82,7 +82,7 @@ function VibrEntry() {
 }
 
 const vibrDocs: EntryDocs = {
-	import: 'import { Nebula, Smiley, WispPreview } from "@fraym/vibr";',
+	import: 'import { Nebula, Smiley, WispPreview } from "@fraym-ai/vibr";',
 	anatomy: JSON.stringify(
 		[
 			'<Nebula state="thinking" mode="search" energy={0.5} />',

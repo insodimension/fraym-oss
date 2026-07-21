@@ -28,7 +28,7 @@ import type {
 	WorkspaceScmBranch,
 	WorkspaceScmSnapshot,
 	WorktreeMergeMode,
-} from "@fraym/driver";
+} from "@fraym-ai/driver";
 import { type ReactNode, useCallback, useEffect, useMemo, useState } from "react";
 import { Badge } from "../../elements/badge";
 import { BranchName } from "../../elements/branch-name";

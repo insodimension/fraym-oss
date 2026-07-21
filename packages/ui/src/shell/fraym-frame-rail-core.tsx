@@ -1,6 +1,6 @@
-import { type BenchId, type LayoutConfig, resolveBenchLayout, sortRailItems } from "@fraym/config";
-import type { AgentChoice, WorkspaceRef } from "@fraym/driver";
-import type { AvatarId, AvatarMode, AvatarState } from "@fraym/vibr";
+import { type BenchId, type LayoutConfig, resolveBenchLayout, sortRailItems } from "@fraym-ai/config";
+import type { AgentChoice, WorkspaceRef } from "@fraym-ai/driver";
+import type { AvatarId, AvatarMode, AvatarState } from "@fraym-ai/vibr";
 import { type MouseEvent, memo, type RefObject, useCallback, useLayoutEffect, useMemo, useRef, useState } from "react";
 import type { RailMode } from "../components/app-shell";
 import { FraymBrandMark } from "../components/fraym-brand-mark";

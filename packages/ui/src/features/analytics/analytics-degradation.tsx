@@ -1,4 +1,4 @@
-import type { AnalyticsDegradation, AnalyticsModelDegradation } from "@fraym/driver";
+import type { AnalyticsDegradation, AnalyticsModelDegradation } from "@fraym-ai/driver";
 import { cn } from "../../lib/cn";
 import { compactNumber, formatDeltaPct } from "./analytics-format";
 

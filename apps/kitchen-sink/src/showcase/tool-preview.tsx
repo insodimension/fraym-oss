@@ -1,4 +1,4 @@
-import { type ActiveToolCall, type FraymDensity, ToolRender } from "@fraym/ui";
+import { type ActiveToolCall, type FraymDensity, ToolRender } from "@fraym-ai/ui";
 import type { ControlDef } from "./controls";
 import { Note } from "./demo";
 

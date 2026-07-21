@@ -22,7 +22,7 @@ import type {
 	SubagentReviewFinding,
 	SubagentRun,
 	SubagentStatus,
-} from "@fraym/driver";
+} from "@fraym-ai/driver";
 import type { ActiveToolCall, ToolCallStatus } from "./session-types";
 
 // --- defensive readers ------------------------------------------------------

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useReducer, useRef, useState } from "react";
 
-import type { AgentEventStream, Unsubscribe } from "@fraym/driver";
+import type { AgentEventStream, Unsubscribe } from "@fraym-ai/driver";
 
 import { createThreadState, reduceThreadEvent, type ThreadState } from "./thread-state";
 

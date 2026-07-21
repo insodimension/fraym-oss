@@ -1,6 +1,6 @@
 {
 	"type": "module",
-	"name": "@fraym/cli",
+	"name": "@fraym-ai/cli",
 	"version": "0.1.0",
 	"license": "MIT",
 	"publishConfig": {

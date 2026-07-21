@@ -1,4 +1,4 @@
-import type { EngineConfigCatalog, EngineConfigSnapshot } from "@fraym/driver";
+import type { EngineConfigCatalog, EngineConfigSnapshot } from "@fraym-ai/driver";
 import { useMemo, useState } from "react";
 import { Collapsible } from "../../components/collapsible";
 import { Button } from "../../elements/button";
@@ -32,7 +32,7 @@ export interface AdvancedConfigExplorerProps {
 /**
  * Power-user view over the *entire* engine config catalog — search, group filter,
  * changed-only toggle, and collapsible per-group sections — covering settings the
- * curated panes don't surface. Engine-agnostic: reads only the `@fraym/driver`
+ * curated panes don't surface. Engine-agnostic: reads only the `@fraym-ai/driver`
  * catalog, so a third-party engine browses identically.
  */
 function useAdvancedConfigExplorerState(

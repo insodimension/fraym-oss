@@ -1,4 +1,4 @@
-import type { SessionAttachment, SessionMessageInput } from "@fraym/driver";
+import type { SessionAttachment, SessionMessageInput } from "@fraym-ai/driver";
 import { useState } from "react";
 import { useLiveContextPercent } from "../../hooks/use-live-context-percent";
 import { useSession } from "../../hooks/use-session";

@@ -6,7 +6,7 @@ import type {
 	WorkspaceFileContent,
 	WorkspaceFileStatusEntry,
 	WorkspaceRef,
-} from "@fraym/driver";
+} from "@fraym-ai/driver";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ConfirmDialog } from "../components/confirm-dialog";
 import { FileTypeIcon } from "../elements/file-type-icon";

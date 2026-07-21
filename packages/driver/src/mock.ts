@@ -1,4 +1,4 @@
-// @fraym/driver/mock — a scripted SessionDriver implementation.
+// @fraym-ai/driver/mock — a scripted SessionDriver implementation.
 //
 // Replays a `DemoScript` (pure SessionDriverEvent data) through the real
 // SessionDriver contract, so every consumer renders demo content through exactly

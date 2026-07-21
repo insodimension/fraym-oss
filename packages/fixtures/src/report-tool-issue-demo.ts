@@ -1,10 +1,10 @@
 // Report tool issue demo script — a `report_tool_issue`-focused conversation
-// expressed as pure session-driver events. Replayed through @fraym/driver/mock
+// expressed as pure session-driver events. Replayed through @fraym-ai/driver/mock
 // so success, consent-denied, pending, and skipped report states render through
 // the production tool-call path.
 
-import type { SessionRef, SessionSnapshot, WorkspaceRef } from "@fraym/driver";
-import type { DemoScript, ScriptStep } from "@fraym/driver/mock";
+import type { SessionRef, SessionSnapshot, WorkspaceRef } from "@fraym-ai/driver";
+import type { DemoScript, ScriptStep } from "@fraym-ai/driver/mock";
 import {
 	REPORT_TOOL_ISSUE_DETAILS,
 	REPORT_TOOL_ISSUE_INPUT,

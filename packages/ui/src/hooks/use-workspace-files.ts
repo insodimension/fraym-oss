@@ -4,7 +4,7 @@ import type {
 	WorkspaceFileStatusEntry,
 	WorkspaceFileTreeSnapshot,
 	WorkspaceRef,
-} from "@fraym/driver";
+} from "@fraym-ai/driver";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 export interface WorkspaceFilesState {

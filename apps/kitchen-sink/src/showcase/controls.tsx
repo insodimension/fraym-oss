@@ -1,4 +1,4 @@
-import { Input, Slider, Switch } from "@fraym/ui";
+import { Input, Slider, Switch } from "@fraym-ai/ui";
 import { cn } from "../compat/ui";
 import { type ReactNode, useState } from "react";
 

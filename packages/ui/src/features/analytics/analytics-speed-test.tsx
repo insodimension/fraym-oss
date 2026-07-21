@@ -1,4 +1,4 @@
-import type { AnalyticsBenchResult, AnalyticsModelStats } from "@fraym/driver";
+import type { AnalyticsBenchResult, AnalyticsModelStats } from "@fraym-ai/driver";
 import { useCallback, useMemo, useState } from "react";
 import { Icon } from "../../icons";
 import { cn } from "../../lib/cn";

@@ -1,7 +1,7 @@
 // SessionTreeView — depth-indented render of Engine's session checkpoint/branch tree
 // (`SessionState.tree`). The dock wires `onNavigate` to `SessionDriver.navigateSessionTree`.
 
-import type { SessionTreeNodeKind, SessionTreeNodeSnapshot, SessionTreeSnapshot } from "@fraym/driver";
+import type { SessionTreeNodeKind, SessionTreeNodeSnapshot, SessionTreeSnapshot } from "@fraym-ai/driver";
 import type { ReactNode } from "react";
 import { Badge } from "../../elements/badge";
 import { cn } from "../../lib/cn";

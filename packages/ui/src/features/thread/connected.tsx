@@ -5,7 +5,7 @@
 // cards render inline in arrival order and persist after the run completes.
 // Presence + the working verb are pinned in the thread tail while streaming.
 
-import type { VerberProfileId } from "@fraym/verber";
+import type { VerberProfileId } from "@fraym-ai/verber";
 import { memo, useMemo } from "react";
 import { Shimmer } from "../../elements/shimmer";
 import type { SessionTranscriptMessage } from "../../hooks/session-types";

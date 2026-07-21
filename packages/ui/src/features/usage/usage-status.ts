@@ -1,4 +1,4 @@
-import type { UsageStatus } from "@fraym/driver";
+import type { UsageStatus } from "@fraym-ai/driver";
 import { dotToneClass } from "../surface-kit";
 
 export function usageStatusTone(status: UsageStatus): "accent" | "warn" | "del" | "mute" {

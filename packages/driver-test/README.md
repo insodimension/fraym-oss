@@ -1,4 +1,4 @@
-# @fraym/driver-test
+# @fraym-ai/driver-test
 
 Reusable behavioral checks and in-memory reference drivers.
 

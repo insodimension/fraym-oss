@@ -7,7 +7,7 @@
 
 import { toolResult } from "./tool-call-utils";
 
-/** Structurally compatible with `@fraym/ui`'s `ActiveToolCall` (cast at the use site). */
+/** Structurally compatible with `@fraym-ai/ui`'s `ActiveToolCall` (cast at the use site). */
 export interface ToolGroupCallSpec {
 	readonly callId: string;
 	readonly toolName: string;

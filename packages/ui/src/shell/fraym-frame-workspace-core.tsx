@@ -11,8 +11,8 @@ import type {
 	TerminalDriver,
 	WorkspaceDriver,
 	WorkspaceRef,
-} from "@fraym/driver";
-import { type AvatarId, Presence } from "@fraym/vibr";
+} from "@fraym-ai/driver";
+import { type AvatarId, Presence } from "@fraym-ai/vibr";
 import {
 	type ComponentProps,
 	type DragEvent,

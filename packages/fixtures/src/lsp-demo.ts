@@ -1,14 +1,14 @@
 // LSP demo script — a `lsp`-focused conversation expressed as pure session-driver
-// events. Replayed through @fraym/driver/mock so the lsp tool renders inside a real
+// events. Replayed through @fraym-ai/driver/mock so the lsp tool renders inside a real
 // thread via the renderer registry. The conversation walks every LSP shape:
 // hover → diagnostics → diagnostics OK → references → definition → symbols →
 // code actions → rename → status → capabilities → request → error.
 //
 // All display content lives in `content[].text` (text-parse-driven renderer).
-// Pure data: depends only on @fraym/driver types. No JSX, no fraym-ui.
+// Pure data: depends only on @fraym-ai/driver types. No JSX, no fraym-ui.
 
-import type { SessionRef, SessionSnapshot, WorkspaceRef } from "@fraym/driver";
-import type { DemoScript, ScriptedEvent, ScriptStep } from "@fraym/driver/mock";
+import type { SessionRef, SessionSnapshot, WorkspaceRef } from "@fraym-ai/driver";
+import type { DemoScript, ScriptedEvent, ScriptStep } from "@fraym-ai/driver/mock";
 
 const NOW = "2026-06-06T12:00:00.000Z";
 

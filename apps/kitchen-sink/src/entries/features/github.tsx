@@ -7,8 +7,8 @@ import {
 	GITHUB_OUTPUT as OUTPUT,
 	pendingToolCall,
 	toolResult,
-} from "@fraym/fixtures";
-import type { ActiveToolCall } from "@fraym/ui";
+} from "@fraym-ai/fixtures";
+import type { ActiveToolCall } from "@fraym-ai/ui";
 import type { ControlsSchema } from "../../showcase/controls";
 import { Demo } from "../../showcase/demo";
 import type { EntryDocs } from "../../showcase/docs";
@@ -27,7 +27,7 @@ import type { ShowcaseEntry } from "../../showcase/types";
 // `github` tool showcase.
 //
 // No bespoke sketch: the card is rendered by the PRODUCTION renderer (registered
-// under `github` in @fraym/ui's tool-renderer map) fed a synthetic
+// under `github` in @fraym-ai/ui's tool-renderer map) fed a synthetic
 // `ActiveToolCall` built from the knobs — identical to a live run. GitHub shows
 // a "GitHub" head + an op badge + repo/branch/chips; the body is text output
 // for most ops and a structured Actions run-watch for `run_watch`.
@@ -122,7 +122,7 @@ function GithubEntry() {
 }
 
 const githubDocs: EntryDocs = {
-	import: 'import { Thread, DEFAULT_TOOL_RENDERERS } from "@fraym/ui";',
+	import: 'import { Thread, DEFAULT_TOOL_RENDERERS } from "@fraym-ai/ui";',
 	anatomy: JSON.stringify(
 		[
 			"// Tool cards render automatically inside <Thread>: DEFAULT_TOOL_RENDERERS",

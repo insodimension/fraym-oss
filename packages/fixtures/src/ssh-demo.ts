@@ -1,5 +1,5 @@
 // SSH demo script — an `ssh`-focused conversation expressed as pure session-driver
-// events. Replayed through @fraym/driver/mock so the ssh tool renders inside a real
+// events. Replayed through @fraym-ai/driver/mock so the ssh tool renders inside a real
 // thread via the production renderer (`renderSsh`). Walks the remote-exec shapes: a
 // quick remote command, a long STREAMED command (output follows the tail), a failure
 // (service down / nonzero exit), and a truncated command (artifact spill).
@@ -9,8 +9,8 @@
 // streaming (`partialResult` stored as `call.output`); details carry only
 // `meta.truncation` (NO wallTimeMs — unlike bash). Pure data: no JSX, no fraym-ui.
 
-import type { SessionRef, SessionSnapshot, WorkspaceRef } from "@fraym/driver";
-import type { DemoScript, ScriptedEvent, ScriptStep } from "@fraym/driver/mock";
+import type { SessionRef, SessionSnapshot, WorkspaceRef } from "@fraym-ai/driver";
+import type { DemoScript, ScriptedEvent, ScriptStep } from "@fraym-ai/driver/mock";
 import { assistantDelta as say, queuedMessage, runCompleted, scriptedStep as step, toolFinished as toolDone, toolStarted, toolUpdated as toolUpdate, workingStatus as verb } from "./scripted-event-utils";
 import { toolResult } from "./tool-call-utils";
 

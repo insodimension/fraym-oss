@@ -9,7 +9,7 @@ interface RecallFixtureCase {
 const FOUND_RESULTS_TEXT = [
 	"Found 3 relevant memories for query: tool renderer parity",
 	"",
-	"1. Tool renderers return ToolView data only; demos must replay through @fraym/driver/mock instead of importing fraym-ui.",
+	"1. Tool renderers return ToolView data only; demos must replay through @fraym-ai/driver/mock instead of importing fraym-ui.",
 	"2. Tool parity fixtures should cover success, empty, error, and pending states before wiring the Demo Dock.",
 	"3. The TUI renderer is the source of truth for compact labels, badges, body text, and failure copy.",
 ].join("\n");

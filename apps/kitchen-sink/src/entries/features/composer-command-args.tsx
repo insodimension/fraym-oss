@@ -1,4 +1,4 @@
-import { type ArgumentCompletion, Composer, type SlashCommandOption } from "@fraym/ui";
+import { type ArgumentCompletion, Composer, type SlashCommandOption } from "@fraym-ai/ui";
 import { useState } from "react";
 import { Demo, Note } from "../../showcase/demo";
 import type { ShowcaseEntry } from "../../showcase/types";
@@ -106,7 +106,7 @@ function CommandArgsEntry() {
 	return (
 		<Demo
 			summary="Staged pill + argument chips on the real Composer: committing a command keeps the menu open in an argument stage — declarative subcommands join the pill as a second segment (usage becomes the ghost placeholder), dynamic flags from the engine's completion lane become removable chips (enum values complete after their flag), free-text hints render as ghost placeholders, and zero-arg commands behave like before. Backspace on an empty editor pops the last chip/segment; the value string stays the single source of truth."
-			importPath="@fraym/ui/features/composer"
+			importPath="@fraym-ai/ui/features/composer"
 			stage="stretch"
 		>
 			<Note>

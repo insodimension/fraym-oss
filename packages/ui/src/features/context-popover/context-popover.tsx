@@ -1,4 +1,4 @@
-import type { ContextBreakdown, UsageStatus } from "@fraym/driver";
+import type { ContextBreakdown, UsageStatus } from "@fraym-ai/driver";
 import { type Placement, popoverStyle, Scrim } from "../../elements/popover";
 import { Icon } from "../../icons";
 import { BodyPortal } from "../../lib/body-portal";

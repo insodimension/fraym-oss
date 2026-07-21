@@ -1,4 +1,4 @@
-import { CodeBlock } from "@fraym/ui";
+import { CodeBlock } from "@fraym-ai/ui";
 import { cn, Icon } from "../compat/ui";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { EntryDocs } from "./docs";

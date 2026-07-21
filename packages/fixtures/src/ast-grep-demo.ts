@@ -1,5 +1,5 @@
 // AST-grep demo script — an `ast_grep`-focused conversation expressed as pure session-driver
-// events. Replayed through @fraym/driver/mock so the ast_grep tool renders inside a real
+// events. Replayed through @fraym-ai/driver/mock so the ast_grep tool renders inside a real
 // thread via the production renderer (`renderAstGrep`). Walks the shapes: a multi-file
 // structural search with captured metavariables, a multi-line match node, and a limit-reached
 // sweep with parse errors.
@@ -9,8 +9,8 @@
 // + `limitReached` / `parseErrors`. There is NO streaming — ast_grep is a single native AST
 // query. Pure data: no JSX, no fraym-ui.
 
-import type { SessionRef, SessionSnapshot, WorkspaceRef } from "@fraym/driver";
-import type { DemoScript, ScriptedEvent, ScriptStep } from "@fraym/driver/mock";
+import type { SessionRef, SessionSnapshot, WorkspaceRef } from "@fraym-ai/driver";
+import type { DemoScript, ScriptedEvent, ScriptStep } from "@fraym-ai/driver/mock";
 import { assistantDelta as say, queuedMessage, runCompleted, scriptedStep as step, toolFinished as toolDone, toolStarted, workingStatus as verb } from "./scripted-event-utils";
 
 const NOW = "2026-06-05T12:00:00.000Z";

@@ -5,7 +5,7 @@ import type {
 	EngineModelInsightsResult,
 	EngineResourceSettingsSnapshot,
 	EngineResourceSnapshot,
-} from "@fraym/driver";
+} from "@fraym-ai/driver";
 import { useEffect, useMemo, useState } from "react";
 import { ModelCatalog } from "../../components/model-catalog";
 import type { ModelProfiles } from "../../components/model-intelligence";

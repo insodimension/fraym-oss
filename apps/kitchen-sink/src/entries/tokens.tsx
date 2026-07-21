@@ -17,7 +17,7 @@ function SurfacesEntry() {
 	return (
 		<Demo
 			summary="Background and surface elevation tokens. Every component reads these — switch theme/accent in the top bar and they re-resolve live."
-			importPath="@fraym/ui/theme/tokens"
+			importPath="@fraym-ai/ui/theme/tokens"
 			stage="start"
 		>
 			<div className="flex flex-wrap gap-4">
@@ -33,7 +33,7 @@ function TextEntry() {
 	return (
 		<Demo
 			summary="Foreground text ramp — primary, secondary, and tertiary."
-			importPath="@fraym/ui/theme/tokens"
+			importPath="@fraym-ai/ui/theme/tokens"
 			stage="start"
 		>
 			<div className="flex flex-wrap gap-4">
@@ -49,7 +49,7 @@ function StateEntry() {
 	return (
 		<Demo
 			summary="Semantic state + accent tokens (accent, add, blue, warn, del) used by badges, tones, and surfaces across the kit."
-			importPath="@fraym/ui/theme/tokens"
+			importPath="@fraym-ai/ui/theme/tokens"
 			stage="start"
 		>
 			<div className="flex flex-wrap gap-4">
@@ -64,8 +64,8 @@ function StateEntry() {
 function TypographyEntry() {
 	return (
 		<Demo
-			summary="IBM Plex Sans for UI, IBM Plex Mono for code/metadata. Loaded via @fraym/ui/fonts.css; theme.css only declares the family names."
-			importPath="@fraym/ui/fonts.css"
+			summary="IBM Plex Sans for UI, IBM Plex Mono for code/metadata. Loaded via @fraym-ai/ui/fonts.css; theme.css only declares the family names."
+			importPath="@fraym-ai/ui/fonts.css"
 			stage="start"
 		>
 			<div className="flex flex-col gap-2">
@@ -80,7 +80,7 @@ function TypographyEntry() {
 	);
 }
 const surfacesDocs: EntryDocs = {
-	import: 'import "@fraym/ui/theme.css";',
+	import: 'import "@fraym-ai/ui/theme.css";',
 	anatomy: `<div className="bg-fr-bg text-fr-text">
   Surface tokens live on the CSS custom properties cascade.
 </div>`,
@@ -101,7 +101,7 @@ const surfacesDocs: EntryDocs = {
 };
 
 const textDocs: EntryDocs = {
-	import: 'import "@fraym/ui/theme.css";',
+	import: 'import "@fraym-ai/ui/theme.css";',
 	anatomy: `<span className="text-fr-text">Foreground text</span>
 <span className="text-fr-text-2">Secondary text</span>`,
 	examples: [
@@ -121,7 +121,7 @@ const textDocs: EntryDocs = {
 };
 
 const stateDocs: EntryDocs = {
-	import: 'import "@fraym/ui/theme.css";',
+	import: 'import "@fraym-ai/ui/theme.css";',
 	anatomy: `<span className="text-fr-accent">Accent text</span>`,
 	examples: [
 		{
@@ -142,7 +142,7 @@ const stateDocs: EntryDocs = {
 };
 
 const typographyDocs: EntryDocs = {
-	import: 'import "@fraym/ui/fonts.css";',
+	import: 'import "@fraym-ai/ui/fonts.css";',
 	anatomy: `<span className="text-fr-sm font-secondary">UI text</span>`,
 	examples: [
 		{

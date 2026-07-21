@@ -4,7 +4,7 @@ import type {
 	EngineModelInsightsResult,
 	EngineModelRecord,
 	EngineProviderRecord,
-} from "@fraym/driver";
+} from "@fraym-ai/driver";
 import { type DragEvent, Fragment, useEffect, useMemo, useRef, useState } from "react";
 import { Button } from "../elements/button";
 import { Input } from "../elements/input";

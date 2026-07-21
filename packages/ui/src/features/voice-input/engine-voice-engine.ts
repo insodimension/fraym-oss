@@ -12,7 +12,7 @@
 // the Web Speech engine's AnalyserNode loop) so the waveform stays live even
 // while the engine is still warming the model.
 
-import type { SpeechToTextEvents, SpeechToTextHandle } from "@fraym/driver";
+import type { SpeechToTextEvents, SpeechToTextHandle } from "@fraym-ai/driver";
 import { errorMessageText } from "../../hooks/session-error";
 import type { VoiceEngine, VoiceSessionEvents, VoiceTranscript } from "./voice-engine";
 

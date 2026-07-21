@@ -61,7 +61,7 @@ function listFiles(root: string, path = ""): string[] {
 
 function createTemplateWorkspace(): string {
 	const root = makeTemporaryDirectory();
-	writeJsonFixture(root, "packages/ui/package.json", { name: "@fraym/ui", version: "1.0.0" });
+	writeJsonFixture(root, "packages/ui/package.json", { name: "@fraym-ai/ui", version: "1.0.0" });
 	return root;
 }
 
@@ -127,7 +127,7 @@ afterEach(() => {
 	for (const directory of temporaryDirectories.splice(0)) rmSync(directory, { force: true, recursive: true });
 });
 
-describe("@fraym/cli template installation", () => {
+describe("@fraym-ai/cli template installation", () => {
 	test("discovers manifest summaries in deterministic id order", () => {
 		const root = createTemplateWorkspace();
 		writeTemplate(root, "z-last", { id: "z-last", package: "fraym-example-z-template" });
@@ -418,11 +418,11 @@ describe("@fraym/cli template installation", () => {
 		const workspace = resolve(import.meta.dir, "../../..");
 		const sourcePackage = join(workspace, "templates", "web-agent");
 		const consumer = makeTemporaryDirectory();
-		const installedPackage = join(consumer, "node_modules", "@fraym/template-web-agent");
+		const installedPackage = join(consumer, "node_modules", "@fraym-ai/template-web-agent");
 		const manifestPath = join(installedPackage, "fraym.template.json");
 		writeJsonFixture(consumer, "package.json", {
 			name: "fraym-example-web-agent-consumer",
-			devDependencies: { "@fraym/template-web-agent": "^0.2.0" },
+			devDependencies: { "@fraym-ai/template-web-agent": "^0.2.0" },
 		});
 		copyPackageForConsumer(sourcePackage, installedPackage);
 		writeFixture(installedPackage, "template/dist/assets/web-agent.js", "generated output\n");
@@ -445,7 +445,7 @@ describe("@fraym/cli template installation", () => {
 			name: "Web agent",
 			version: "0.2.0",
 			description: "A self-contained Vite and React cockpit on the full Fraym shell",
-			package: "@fraym/template-web-agent",
+			package: "@fraym-ai/template-web-agent",
 			source: "template",
 			files: ["README.md", "index.html", "package.json", "src/**/*", "tsconfig.json", "vite.config.ts"],
 			requires: [],
@@ -457,8 +457,8 @@ describe("@fraym/cli template installation", () => {
 					id: "web-agent",
 					version: "0.2.0",
 					description: "A self-contained Vite and React cockpit on the full Fraym shell",
-					package: "@fraym/template-web-agent",
-					source: "node_modules/@fraym/template-web-agent/fraym.template.json",
+					package: "@fraym-ai/template-web-agent",
+					source: "node_modules/@fraym-ai/template-web-agent/fraym.template.json",
 					requires: [],
 				},
 			],
@@ -499,22 +499,22 @@ describe("@fraym/cli template installation", () => {
 		expect(listFiles(destination)).toEqual(expectedFiles);
 		expect(JSON.parse(readFileSync(join(destination, "package.json"), "utf8"))).toMatchObject({
 			dependencies: {
-				"@fraym/driver": "^0.1.0",
-				"@fraym/host": "^0.1.0",
-				"@fraym/ui": "^0.1.0",
+				"@fraym-ai/driver": "^0.1.0",
+				"@fraym-ai/host": "^0.1.0",
+				"@fraym-ai/ui": "^0.1.0",
 				react: "^19.2.5",
 				"react-dom": "^19.2.5",
 			},
 		});
-		expect(readFileSync(join(destination, "src", "main.tsx"), "utf8")).toContain('import "@fraym/ui/theme.css";');
-		expect(readFileSync(join(destination, "src", "main.tsx"), "utf8")).toContain('import "@fraym/ui/fonts.css";');
+		expect(readFileSync(join(destination, "src", "main.tsx"), "utf8")).toContain('import "@fraym-ai/ui/theme.css";');
+		expect(readFileSync(join(destination, "src", "main.tsx"), "utf8")).toContain('import "@fraym-ai/ui/fonts.css";');
 		const installedDriver = readFileSync(join(destination, "src", "driver.ts"), "utf8");
 		expect(installedDriver).toContain("const stream = createReplayDriver(codingSessionFixture);");
 		expect(installedDriver).toContain(
 			"export const session: SessionDriver = createEventStreamSessionDriver(stream, {",
 		);
 		const installedApp = readFileSync(join(destination, "src", "App.tsx"), "utf8");
-		expect(installedApp).toContain('import { FraymHost } from "@fraym/host";');
+		expect(installedApp).toContain('import { FraymHost } from "@fraym-ai/host";');
 		expect(installedApp).toContain("drivers={{ session }}");
 
 		expect(() => installTemplate({ id: "web-agent", cwd: consumer, dest: destination, apply: true })).toThrow(

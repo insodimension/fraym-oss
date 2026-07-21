@@ -21,7 +21,7 @@ import type {
 	EngineProviderAccountRecord,
 	EngineProviderAccountSelectionPolicy,
 	EngineProviderRecord,
-} from "@fraym/driver";
+} from "@fraym-ai/driver";
 import { type DragEventHandler, useState } from "react";
 import { Badge } from "../elements/badge";
 import { cn } from "../lib/cn";

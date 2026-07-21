@@ -29,7 +29,7 @@ export const SINGLE_FILE = [
 
 export const ROOT_FILES = [
 	"# package.json",
-	m(2, '\t"name": "@fraym/ui",'),
+	m(2, '\t"name": "@fraym-ai/ui",'),
 	"",
 	"# tsconfig.json",
 	m(9, '\t"types": ["./src/index.ts"],'),

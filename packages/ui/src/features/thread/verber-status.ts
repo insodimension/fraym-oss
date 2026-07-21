@@ -1,11 +1,11 @@
-import type { WorkingStatus } from "@fraym/driver";
+import type { WorkingStatus } from "@fraym-ai/driver";
 import {
 	resolveVerber,
 	type VerberPhase,
 	type VerberProfileId,
 	type VerberState,
 	type VerberToolKind,
-} from "@fraym/verber";
+} from "@fraym-ai/verber";
 import { useRef } from "react";
 import type { ActiveToolCall, VibrMode, VibrState } from "../../hooks/session-types";
 

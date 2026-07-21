@@ -1,4 +1,4 @@
-import { Button, ClickSpark, GradualBlur, Magnet, NoiseOverlay } from "@fraym/ui";
+import { Button, ClickSpark, GradualBlur, Magnet, NoiseOverlay } from "@fraym-ai/ui";
 import { useControls } from "../showcase/controls";
 import { Demo } from "../showcase/demo";
 import type { EntryDocs } from "../showcase/docs";
@@ -37,7 +37,7 @@ function ClickSparkEntry() {
 	return (
 		<Demo
 			summary="Click anywhere in the panel: a ring of short accent strokes bursts from the hit point and eases outward. A pointer-events-none canvas overlays the children, so a wrapped button still clicks through. The rAF loop self-idles the instant the last spark fades."
-			importPath="@fraym/ui"
+			importPath="@fraym-ai/ui"
 			controls={panel}
 			stage="stretch"
 		>
@@ -60,7 +60,7 @@ function ClickSparkEntry() {
 }
 
 const clickSparkDocs: EntryDocs = {
-	import: 'import { ClickSpark } from "@fraym/ui";',
+	import: 'import { ClickSpark } from "@fraym-ai/ui";',
 	anatomy: `<ClickSpark sparkColor="var(--fr-accent)">
   <button>Click me</button>
 </ClickSpark>`,
@@ -112,7 +112,7 @@ function MagnetEntry() {
 	return (
 		<Demo
 			summary="Move the pointer near the pill: it drifts toward the cursor inside a padded activation zone, then eases back to rest. rAF exponential smoothing writes transform directly, with zero React state per frame. Inert under reduced motion and on touch."
-			importPath="@fraym/ui"
+			importPath="@fraym-ai/ui"
 			controls={panel}
 		>
 			<Magnet
@@ -130,7 +130,7 @@ function MagnetEntry() {
 }
 
 const magnetDocs: EntryDocs = {
-	import: 'import { Magnet } from "@fraym/ui";',
+	import: 'import { Magnet } from "@fraym-ai/ui";',
 	anatomy: `<Magnet padding={100} magnetStrength={2}>
   <button>Hover near me</button>
 </Magnet>`,
@@ -185,7 +185,7 @@ function GradualBlurEntry() {
 	return (
 		<Demo
 			summary="A stack of masked backdrop-filter layers ramps blur across one edge, so content fades softly out of focus under a header, footer, or side band. Pure static CSS with no motion. Mount it inside a positioned, clipped container that has content behind it."
-			importPath="@fraym/ui"
+			importPath="@fraym-ai/ui"
 			controls={panel}
 			stage="stretch"
 		>
@@ -214,7 +214,7 @@ function GradualBlurEntry() {
 }
 
 const gradualBlurDocs: EntryDocs = {
-	import: 'import { GradualBlur } from "@fraym/ui";',
+	import: 'import { GradualBlur } from "@fraym-ai/ui";',
 	anatomy: `<div className="relative overflow-hidden">
   {content}
   <GradualBlur position="bottom" strength={2} />
@@ -275,7 +275,7 @@ function NoiseOverlayEntry() {
 	return (
 		<Demo
 			summary="A low-alpha field of random grayscale pixels refreshes every few frames and stretches to fill the parent, adding a subtle film grain over any surface. pointer-events-none and a low default alpha keep it gentle on light backgrounds. Under reduced motion it paints one static frame."
-			importPath="@fraym/ui"
+			importPath="@fraym-ai/ui"
 			controls={panel}
 			stage="stretch"
 		>
@@ -298,7 +298,7 @@ function NoiseOverlayEntry() {
 }
 
 const noiseOverlayDocs: EntryDocs = {
-	import: 'import { NoiseOverlay } from "@fraym/ui";',
+	import: 'import { NoiseOverlay } from "@fraym-ai/ui";',
 	anatomy: `<div className="relative overflow-hidden">
   {content}
   <NoiseOverlay patternAlpha={15} />

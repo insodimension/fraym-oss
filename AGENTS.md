@@ -33,16 +33,16 @@ Tiered, downward-only imports are enforced by
 theme (tokens) -> elements -> components -> features -> pages
 ```
 
-`@fraym/ui` consumes sibling Fraym packages including `@fraym/driver`,
-`@fraym/config`, `@fraym/aethr`, `@fraym/vibr`, and `@fraym/verber`. Session
-data arrives through `@fraym/driver`; `@fraym/driver-acp` and
-`@fraym/driver-codex` adapt real back ends into the same `AgentEventStream`.
+`@fraym-ai/ui` consumes sibling Fraym packages including `@fraym-ai/driver`,
+`@fraym-ai/config`, `@fraym-ai/aethr`, `@fraym-ai/vibr`, and `@fraym-ai/verber`. Session
+data arrives through `@fraym-ai/driver`; `@fraym-ai/driver-acp` and
+`@fraym-ai/driver-codex` adapt real back ends into the same `AgentEventStream`.
 Reusable UI belongs in `packages/ui`; scripted demonstration data belongs in
 `packages/fixtures` and `apps/kitchen-sink`.
 
 ## Conventions
 
-- The eleven `@fraym/*` packages and `@fraym/template-web-agent` are independent
+- The eleven `@fraym-ai/*` packages and `@fraym-ai/template-web-agent` are independent
   publishable artifacts. Development applications are not package artifacts.
 - Kitchen-sink entries should provide controls, anatomy, examples, and API
   information for the component or feature they demonstrate.

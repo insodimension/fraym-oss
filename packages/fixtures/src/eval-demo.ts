@@ -1,5 +1,5 @@
 // Eval demo script — an `eval`-focused conversation expressed as pure session-driver
-// events. Replayed through @fraym/driver/mock so the eval tool renders inside a real
+// events. Replayed through @fraym-ai/driver/mock so the eval tool renders inside a real
 // thread via the production renderer (`renderEval`). Walks the notebook shapes: a
 // multi-cell py session that reads a file (per-cell status tree), summarizes with a
 // `display()` JSON output, and plots an inline figure — STREAMED cell-by-cell via the
@@ -10,8 +10,8 @@
 // figures. details carry `cells[]` / `jsonOutputs[]` / `images[]` / per-cell
 // `statusEvents[]` / `meta.truncation`. Pure data: no JSX, no fraym-ui.
 
-import type { SessionRef, SessionSnapshot, WorkspaceRef } from "@fraym/driver";
-import type { DemoScript, ScriptedEvent, ScriptStep } from "@fraym/driver/mock";
+import type { SessionRef, SessionSnapshot, WorkspaceRef } from "@fraym-ai/driver";
+import type { DemoScript, ScriptedEvent, ScriptStep } from "@fraym-ai/driver/mock";
 
 const NOW = "2026-06-05T12:00:00.000Z";
 const CALL = "eval-metrics";

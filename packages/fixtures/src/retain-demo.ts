@@ -1,5 +1,5 @@
-import type { SessionRef, SessionSnapshot, WorkspaceRef } from "@fraym/driver";
-import type { DemoScript, ScriptStep } from "@fraym/driver/mock";
+import type { SessionRef, SessionSnapshot, WorkspaceRef } from "@fraym-ai/driver";
+import type { DemoScript, ScriptStep } from "@fraym-ai/driver/mock";
 import { RETAIN_DETAILS, RETAIN_INPUT, RETAIN_OUTPUT_TEXT } from "./retain-outputs";
 import { optionalToolResult, toolResult } from "./tool-call-utils";
 

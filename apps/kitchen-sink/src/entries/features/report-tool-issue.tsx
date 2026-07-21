@@ -5,8 +5,8 @@ import {
 	REPORT_TOOL_ISSUE_INPUT,
 	REPORT_TOOL_ISSUE_OUTPUT_TEXT,
 	REPORT_TOOL_ISSUE_VARIATIONS,
-} from "@fraym/fixtures";
-import type { ActiveToolCall } from "@fraym/ui";
+} from "@fraym-ai/fixtures";
+import type { ActiveToolCall } from "@fraym-ai/ui";
 import type { ControlsSchema } from "../../showcase/controls";
 import { Demo } from "../../showcase/demo";
 import type { EntryDocs } from "../../showcase/docs";
@@ -53,7 +53,7 @@ function Entry() {
 	return (
 		<Demo
 			summary="Report tool issue QA card."
-			importPath="@fraym/ui · DEFAULT_TOOL_RENDERERS.report_tool_issue"
+			importPath="@fraym-ai/ui · DEFAULT_TOOL_RENDERERS.report_tool_issue"
 			controls={panel}
 		>
 			<ToolMainPreview keySeed={`${view}-${state}`} call={buildCall(variation, state)} view={view} />
@@ -69,7 +69,7 @@ function Entry() {
 }
 
 const reportToolIssueDocs: EntryDocs = {
-	import: 'import { Thread, DEFAULT_TOOL_RENDERERS } from "@fraym/ui";',
+	import: 'import { Thread, DEFAULT_TOOL_RENDERERS } from "@fraym-ai/ui";',
 	anatomy: JSON.stringify(
 		[
 			"// Tool cards render automatically inside <Thread>: DEFAULT_TOOL_RENDERERS",

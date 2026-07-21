@@ -57,7 +57,7 @@ const directorySymlinksSupported = supportsDirectorySymlinks();
 function createWorkspace(options: WorkspaceOptions = {}): string {
 	const root = makeTemporaryDirectory();
 	writeJsonFixture(root, "packages/ui/package.json", {
-		name: "@fraym/ui",
+		name: "@fraym-ai/ui",
 		version: "1.0.0",
 		exports: {
 			".": "./src/index.ts",
@@ -99,21 +99,21 @@ function createWorkspace(options: WorkspaceOptions = {}): string {
 
 function createConsumerProject(): string {
 	const root = makeTemporaryDirectory();
-	writeJsonFixture(root, "node_modules/@fraym/ui/package.json", {
-		name: "@fraym/ui",
+	writeJsonFixture(root, "node_modules/@fraym-ai/ui/package.json", {
+		name: "@fraym-ai/ui",
 		version: "1.0.0",
 		exports: { "./elements": "./src/elements/index.ts" },
 	});
-	writeFixture(root, "node_modules/@fraym/ui/src/elements/index.ts", 'export { ConsumerButton } from "./button";\n');
-	writeFixture(root, "node_modules/@fraym/ui/src/elements/button.ts", "export const ConsumerButton = {};\n");
-	writeJsonFixture(root, "node_modules/@fraym/vibr/package.json", {
-		name: "@fraym/vibr",
+	writeFixture(root, "node_modules/@fraym-ai/ui/src/elements/index.ts", 'export { ConsumerButton } from "./button";\n');
+	writeFixture(root, "node_modules/@fraym-ai/ui/src/elements/button.ts", "export const ConsumerButton = {};\n");
+	writeJsonFixture(root, "node_modules/@fraym-ai/vibr/package.json", {
+		name: "@fraym-ai/vibr",
 		version: "1.0.0",
 		exports: { ".": "./src/index.ts", "./glow": "./src/avatars/glow.ts" },
 	});
-	writeFixture(root, "node_modules/@fraym/vibr/src/index.ts", 'export * from "./avatars/glow";\n');
-	writeFixture(root, "node_modules/@fraym/vibr/src/avatars/glow.ts", "export const GlowAvatar = {};\n");
-	writeFixture(root, "node_modules/@fraym/vibr/src/registry.ts", 'export const presets = [{ id: "spark" }];\n');
+	writeFixture(root, "node_modules/@fraym-ai/vibr/src/index.ts", 'export * from "./avatars/glow";\n');
+	writeFixture(root, "node_modules/@fraym-ai/vibr/src/avatars/glow.ts", "export const GlowAvatar = {};\n");
+	writeFixture(root, "node_modules/@fraym-ai/vibr/src/registry.ts", 'export const presets = [{ id: "spark" }];\n');
 	mkdirSync(join(root, "src", "nested"), { recursive: true });
 	return root;
 }
@@ -135,7 +135,7 @@ afterEach(() => {
 	for (const directory of temporaryDirectories.splice(0)) rmSync(directory, { force: true, recursive: true });
 });
 
-describe("@fraym/cli public contract", () => {
+describe("@fraym-ai/cli public contract", () => {
 	test("manifest declares every supported command, search option, and stable error code", () => {
 		const manifest = createManifest();
 
@@ -184,9 +184,9 @@ describe("@fraym/cli public contract", () => {
 		expect(catalog.root).toBe(root);
 		expect(catalog.items).toEqual(
 			expect.arrayContaining([
-				expect.objectContaining({ type: "element", name: "Button", package: "@fraym/ui" }),
-				expect.objectContaining({ type: "component", name: "ButtonCard", package: "@fraym/ui" }),
-				expect.objectContaining({ type: "component", name: "ButtonGroup", package: "@fraym/ui" }),
+				expect.objectContaining({ type: "element", name: "Button", package: "@fraym-ai/ui" }),
+				expect.objectContaining({ type: "component", name: "ButtonCard", package: "@fraym-ai/ui" }),
+				expect.objectContaining({ type: "component", name: "ButtonGroup", package: "@fraym-ai/ui" }),
 			]),
 		);
 		expect(search.results.map(result => [result.name, result.score])).toEqual([
@@ -205,7 +205,7 @@ describe("@fraym/cli public contract", () => {
 		const button = catalog.items.filter(item => item.name === "Button");
 
 		expect(rootWidget).toEqual([
-			expect.objectContaining({ type: "component", name: "RootWidget", package: "@fraym/ui" }),
+			expect.objectContaining({ type: "component", name: "RootWidget", package: "@fraym-ai/ui" }),
 		]);
 		expect(button).toEqual([expect.objectContaining({ type: "element", name: "Button" })]);
 	});
@@ -216,9 +216,9 @@ describe("@fraym/cli public contract", () => {
 
 		expect(catalog.items).toEqual(
 			expect.arrayContaining([
-				expect.objectContaining({ type: "element", name: "ConsumerButton", package: "@fraym/ui" }),
-				expect.objectContaining({ type: "avatar", name: "GlowAvatar", package: "@fraym/vibr" }),
-				expect.objectContaining({ type: "wisp-preset", name: "spark", package: "@fraym/vibr" }),
+				expect.objectContaining({ type: "element", name: "ConsumerButton", package: "@fraym-ai/ui" }),
+				expect.objectContaining({ type: "avatar", name: "GlowAvatar", package: "@fraym-ai/vibr" }),
+				expect.objectContaining({ type: "wisp-preset", name: "spark", package: "@fraym-ai/vibr" }),
 			]),
 		);
 		expect(catalog.issues).toEqual([]);
@@ -267,7 +267,7 @@ describe("@fraym/cli public contract", () => {
 	test("rejects non-relative and escaping package export targets without exposing their names", () => {
 		const root = createWorkspace();
 		writeJsonFixture(root, "packages/ui/package.json", {
-			name: "@fraym/ui",
+			name: "@fraym-ai/ui",
 			version: "1.0.0",
 			exports: {
 				"./elements": "outside-package",
@@ -291,7 +291,7 @@ describe("@fraym/cli public contract", () => {
 		"rejects a fake installed UI package whose symlinked barrel canonically escapes its root",
 		() => {
 			const root = createConsumerProject();
-			const packageRoot = join(root, "node_modules", "@fraym/ui");
+			const packageRoot = join(root, "node_modules", "@fraym-ai/ui");
 			const externalBarrel = join(root, "external-barrel");
 			writeFixture(root, "external-barrel/index.ts", "export const ExternalButton = {};\n");
 			rmSync(join(packageRoot, "src", "elements"), { force: true, recursive: true });

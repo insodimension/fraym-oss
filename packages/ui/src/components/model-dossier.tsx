@@ -4,7 +4,7 @@ import type {
 	EngineModelInsight,
 	EngineModelInsightsResult,
 	EngineModelRecord,
-} from "@fraym/driver";
+} from "@fraym-ai/driver";
 import { type ReactNode, useMemo, useState } from "react";
 import { Modal } from "../elements/popover";
 import { Icon } from "../icons/icon";

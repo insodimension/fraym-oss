@@ -72,7 +72,7 @@ boilerplate stripped, content kept.
 
 ## Quick start
 
-Install with \`bun add -d @fraym/cli @fraym/template-web-agent\`, then run
+Install with \`bun add -d @fraym-ai/cli @fraym-ai/template-web-agent\`, then run
 \`bunx fraym template install web-agent --dest ./my-agent --apply\`.
 
 > Reader mode keeps prose, code, and links; it drops nav, ads, and chrome.`;

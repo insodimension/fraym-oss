@@ -1,5 +1,5 @@
 // AST-edit demo script — an `ast_edit`-focused conversation expressed as pure session-driver
-// events. Replayed through @fraym/driver/mock so the ast_edit tool renders inside a real
+// events. Replayed through @fraym-ai/driver/mock so the ast_edit tool renders inside a real
 // thread via the production renderer (`renderAstEdit`). Walks the shapes: a multi-file
 // proposed rewrite (before/after diff + `proposed` badge), a single-file rewrite, and a
 // limit-reached sweep with parse errors.
@@ -9,8 +9,8 @@
 // `applied` / `limitReached` / `parseErrors`. There is NO streaming — ast_edit is a single
 // native rewrite pass (a preview that `resolve` applies). Pure data: no JSX, no fraym-ui.
 
-import type { SessionRef, SessionSnapshot, WorkspaceRef } from "@fraym/driver";
-import type { DemoScript, ScriptedEvent, ScriptStep } from "@fraym/driver/mock";
+import type { SessionRef, SessionSnapshot, WorkspaceRef } from "@fraym-ai/driver";
+import type { DemoScript, ScriptedEvent, ScriptStep } from "@fraym-ai/driver/mock";
 import { assistantDelta as say, queuedMessage, runCompleted, scriptedStep as step, toolFinished as toolDone, toolStarted, workingStatus as verb } from "./scripted-event-utils";
 
 const NOW = "2026-06-05T12:00:00.000Z";

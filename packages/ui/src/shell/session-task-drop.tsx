@@ -15,7 +15,7 @@
 // The card's column-reorder DnD is untouched — this rides the dedicated task
 // mime (task-drag.ts) and only fires for drops that leave the board.
 
-import type { SessionAttachment } from "@fraym/driver";
+import type { SessionAttachment } from "@fraym-ai/driver";
 import { type ReactNode, useEffect, useRef, useState } from "react";
 import { hasTaskDragData, readTaskDragData, type TaskDragData } from "../features/task-board/task-drag";
 import { TaskHandoffDialog } from "../features/task-board/task-handoff-dialog";

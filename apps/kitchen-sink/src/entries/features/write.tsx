@@ -1,5 +1,5 @@
-import { createWriteDemoDriver, genTsContent, toolResult, WRITE_DEMO_SESSION_REF } from "@fraym/fixtures";
-import { type ActiveToolCall, useLineStream } from "@fraym/ui";
+import { createWriteDemoDriver, genTsContent, toolResult, WRITE_DEMO_SESSION_REF } from "@fraym-ai/fixtures";
+import { type ActiveToolCall, useLineStream } from "@fraym-ai/ui";
 import { useState } from "react";
 import type { ControlsSchema } from "../../showcase/controls";
 import { Demo } from "../../showcase/demo";
@@ -20,7 +20,7 @@ import type { ShowcaseEntry } from "../../showcase/types";
 // `write` tool showcase.
 //
 // No bespoke sketch: the card is rendered by the PRODUCTION renderer (`renderWrite`,
-// registered in @fraym/ui's DEFAULT_TOOL_RENDERERS) fed a synthetic `ActiveToolCall`
+// registered in @fraym-ai/ui's DEFAULT_TOOL_RENDERERS) fed a synthetic `ActiveToolCall`
 // built from the knobs. Write shows the NEW file content (line-numbered, highlighted)
 // — NOT a diff. The content lives in `input.content`; while streaming it arrives via
 // the partial-output channel (`output.details.content`). The Demo Dock drives the
@@ -211,7 +211,7 @@ function WriteEntry() {
 }
 
 const writeDocs: EntryDocs = {
-	import: 'import { Thread, DEFAULT_TOOL_RENDERERS } from "@fraym/ui";',
+	import: 'import { Thread, DEFAULT_TOOL_RENDERERS } from "@fraym-ai/ui";',
 	anatomy: JSON.stringify(
 		[
 			"// Tool cards render automatically inside <Thread>: DEFAULT_TOOL_RENDERERS",

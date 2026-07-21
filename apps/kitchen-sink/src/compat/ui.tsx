@@ -4,7 +4,7 @@ import {
 	findThemePreset,
 	themeVariantFor,
 	THEME_VAR_MAP,
-} from "@fraym/ui/theme";
+} from "@fraym-ai/ui/theme";
 import {
 	memo,
 	type CSSProperties,

@@ -1,4 +1,4 @@
-import type { SessionDriver, SessionRef, SessionSnapshot, WorkspaceRef } from "@fraym/driver";
+import type { SessionDriver, SessionRef, SessionSnapshot, WorkspaceRef } from "@fraym-ai/driver";
 import { type MouseEvent, type ReactNode, useEffect, useMemo, useState } from "react";
 import { PopoverDivider, PopoverHeading, PopoverPanel, PopoverRow } from "../elements";
 import {

@@ -1,5 +1,5 @@
-import { createEvalDemoDriver, EVAL_DEMO_SESSION_REF, EVAL_FIGURE_B64 } from "@fraym/fixtures";
-import type { ActiveToolCall } from "@fraym/ui";
+import { createEvalDemoDriver, EVAL_DEMO_SESSION_REF, EVAL_FIGURE_B64 } from "@fraym-ai/fixtures";
+import type { ActiveToolCall } from "@fraym-ai/ui";
 import {
 	CELL_AGENTS,
 	CELL_JS,
@@ -27,7 +27,7 @@ import type { ShowcaseEntry } from "../../showcase/types";
 // `eval` tool showcase.
 //
 // No bespoke sketch: the card is rendered by the PRODUCTION renderer (`renderEval`,
-// registered in @fraym/ui's DEFAULT_TOOL_RENDERERS) fed a synthetic `ActiveToolCall`.
+// registered in @fraym-ai/ui's DEFAULT_TOOL_RENDERERS) fed a synthetic `ActiveToolCall`.
 // eval is a notebook: a cell stack (code + output/markdown + status/duration/exit), a
 // per-cell Status operation tree (file/folder/git/package prelude ops), an `agent()`
 // subagent-progress tree, captured display() JSON outputs, and inline figures. The
@@ -153,7 +153,7 @@ function EvalEntry() {
 }
 
 const evalDocs: EntryDocs = {
-	import: 'import { Thread, DEFAULT_TOOL_RENDERERS } from "@fraym/ui";',
+	import: 'import { Thread, DEFAULT_TOOL_RENDERERS } from "@fraym-ai/ui";',
 	anatomy: JSON.stringify(
 		[
 			"// Tool cards render automatically inside <Thread>: DEFAULT_TOOL_RENDERERS",

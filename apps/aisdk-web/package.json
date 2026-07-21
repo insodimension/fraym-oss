@@ -12,10 +12,10 @@
 	},
 	"dependencies": {
 		"@ai-sdk/openai-compatible": "1",
-		"@fraym/driver": "workspace:*",
-		"@fraym/host": "workspace:*",
-		"@fraym/driver-aisdk": "workspace:*",
-		"@fraym/ui": "workspace:*",
+		"@fraym-ai/driver": "workspace:*",
+		"@fraym-ai/host": "workspace:*",
+		"@fraym-ai/driver-aisdk": "workspace:*",
+		"@fraym-ai/ui": "workspace:*",
 		"ai": "5",
 		"react": "^19.0.0",
 		"react-dom": "^19.0.0"

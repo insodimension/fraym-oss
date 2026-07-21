@@ -1,5 +1,5 @@
-import "@fraym/ui/theme.css";
-import "@fraym/ui/fonts.css";
+import "@fraym-ai/ui/theme.css";
+import "@fraym-ai/ui/fonts.css";
 import { createRoot } from "react-dom/client";
 import { App } from "./App";
 import "./index.css";

@@ -1,4 +1,4 @@
-import type { EngineConfigSettingRecord } from "@fraym/driver";
+import type { EngineConfigSettingRecord } from "@fraym-ai/driver";
 
 const EMPTY_DRAFT = "";
 const JSON_INDENT = 2;

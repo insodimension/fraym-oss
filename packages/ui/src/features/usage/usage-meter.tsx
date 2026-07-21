@@ -1,4 +1,4 @@
-import type { UsageLimitView } from "@fraym/driver";
+import type { UsageLimitView } from "@fraym-ai/driver";
 import { RollingNumber, Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../../elements";
 import { cn } from "../../lib/cn";
 import { formatResetCountdown, formatUsageAmount, formatUsageDetail } from "./usage-format";

@@ -1,4 +1,4 @@
-import type { ContextUsage, SessionDriver, SessionRef } from "@fraym/driver";
+import type { ContextUsage, SessionDriver, SessionRef } from "@fraym-ai/driver";
 import { contextBreakdownPercent } from "../features/context-popover/context-popover";
 import { useContextBreakdown } from "./use-context-breakdown";
 

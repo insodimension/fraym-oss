@@ -1,5 +1,5 @@
 #!/usr/bin/env bun
-// Publishes every public @fraym/* package to npm in dependency order.
+// Publishes every public @fraym-ai/* package to npm in dependency order.
 //
 // Bun rewrites `workspace:*` -> the concrete version at pack time, so internal
 // deps resolve on the registry; `--access public` publishes the scoped packages

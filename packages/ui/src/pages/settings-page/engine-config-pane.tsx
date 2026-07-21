@@ -3,7 +3,7 @@ import type {
 	EngineConfigSettingRecord,
 	EngineConfigSnapshot,
 	EngineConfigValueRecord,
-} from "@fraym/driver";
+} from "@fraym-ai/driver";
 import { useMemo } from "react";
 import { Button } from "../../elements/button";
 import {

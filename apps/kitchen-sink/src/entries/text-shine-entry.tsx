@@ -1,4 +1,4 @@
-import { GradientText, ShinyText } from "@fraym/ui";
+import { GradientText, ShinyText } from "@fraym-ai/ui";
 import { useControls } from "../showcase/controls";
 import { Demo } from "../showcase/demo";
 import type { EntryDocs } from "../showcase/docs";
@@ -18,7 +18,7 @@ function ShinyTextEntry() {
 	return (
 		<Demo
 			summary="A specular highlight sweeps across the text: the letters are painted with a gradient whose bright middle stop slides through them (background-clip:text, animated with the Web Animations API). The base color tracks the theme text token, so it reads on light and dark alike, and the shine defaults to a white-leaning mix that keeps contrast on light surfaces."
-			importPath="@fraym/ui"
+			importPath="@fraym-ai/ui"
 			controls={panel}
 			stage="center"
 		>
@@ -56,7 +56,7 @@ function GradientTextEntry() {
 	return (
 		<Demo
 			summary="Text filled with a multi-stop gradient that flows back and forth. The stops lay out to the right (first color duplicated for a seamless loop) over a 300% background, and the position eases side to side via the Web Animations API. Colors default to the Fraym brand tokens; an optional animated pill rim shares the same flow."
-			importPath="@fraym/ui"
+			importPath="@fraym-ai/ui"
 			controls={panel}
 			stage="center"
 		>
@@ -74,7 +74,7 @@ function GradientTextEntry() {
 }
 
 const shinyTextDocs: EntryDocs = {
-	import: 'import { ShinyText } from "@fraym/ui";',
+	import: 'import { ShinyText } from "@fraym-ai/ui";',
 	anatomy: `<ShinyText speed={5}>Ship it with a little shine</ShinyText>`,
 	examples: [
 		{
@@ -128,7 +128,7 @@ const shinyTextDocs: EntryDocs = {
 };
 
 const gradientTextDocs: EntryDocs = {
-	import: 'import { GradientText } from "@fraym/ui";',
+	import: 'import { GradientText } from "@fraym-ai/ui";',
 	anatomy: `<GradientText speed={8} showBorder>
   Gradient in motion
 </GradientText>`,

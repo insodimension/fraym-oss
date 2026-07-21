@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import type { SessionDriverEvent, SessionQueuedMessage } from "@fraym/driver";
+import type { SessionDriverEvent, SessionQueuedMessage } from "@fraym-ai/driver";
 import { createReplayDriverHarness } from "./index";
 
 function eventsOfType<Type extends SessionDriverEvent["type"]>(

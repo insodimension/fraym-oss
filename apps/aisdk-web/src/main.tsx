@@ -1,12 +1,12 @@
 import { createRoot } from "react-dom/client";
-import { FraymHost } from "@fraym/host";
+import { FraymHost } from "@fraym-ai/host";
 import { resourceDriver } from "./local-resource-driver";
 import { createLocalSessionDriver } from "./local-session-driver";
 import { MODELS_SETTINGS_PANEL } from "./models-panel";
 import { loadConnection, PROVIDERS, workspace } from "./providers";
 
-import "@fraym/ui/theme.css";
-import "@fraym/ui/fonts.css";
+import "@fraym-ai/ui/theme.css";
+import "@fraym-ai/ui/fonts.css";
 import "./styles.css";
 
 const connection = loadConnection();

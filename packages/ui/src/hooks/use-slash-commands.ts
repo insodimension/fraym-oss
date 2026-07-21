@@ -1,5 +1,5 @@
-import type { CompletionItem, EngineCommandRecord, SessionDriver, SessionRef } from "@fraym/driver";
-import { normalizeEngineCommandName } from "@fraym/driver";
+import type { CompletionItem, EngineCommandRecord, SessionDriver, SessionRef } from "@fraym-ai/driver";
+import { normalizeEngineCommandName } from "@fraym-ai/driver";
 import { useEffect, useMemo, useState } from "react";
 import type { SlashCommandOption } from "../features/composer";
 import { useSessionOptional } from "./use-session";

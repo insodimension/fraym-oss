@@ -1,4 +1,4 @@
-import type { EngineModelRecord, EngineProviderRecord, SessionConfig } from "@fraym/driver";
+import type { EngineModelRecord, EngineProviderRecord, SessionConfig } from "@fraym-ai/driver";
 import { useCallback, useMemo } from "react";
 import type { Placement } from "../elements/popover";
 import { buildCategories, modelKey, selectedKey, sortModels } from "./model-category-picker";
