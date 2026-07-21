@@ -2,13 +2,16 @@
 // Publishes every public @fraym-ai/* package to npm in dependency order.
 //
 // Method: `bun pm pack` each package (Bun rewrites `workspace:*` -> the concrete
-// version in the tarball), then publish the tarball with the **npm** client.
-// (`bun publish` is not used: it forces a broken interactive web-auth flow and
-// hangs. `npm publish` handles 2FA/OIDC correctly.)
+// version in the tarball), then publish the tarball with the **npm** client via a
+// TTY-inherited spawn so npm can run its interactive 2FA (security-key browser tap
+// or OTP prompt). Two hard-won reasons for this shape:
+//   * `bun publish` is avoided — it forces a broken web-auth flow that hangs.
+//   * `npm publish` must inherit the terminal (Bun.spawnSync stdio: "inherit").
+//     Running it through Bun's `$` pipes stdio, so npm sees no TTY and fails
+//     immediately with EOTP even inside a real terminal.
 //
-// npm now requires a live 2FA factor at publish time, so run this in a REAL
-// terminal — npm will prompt / open the browser for your security key or OTP on
-// each package. It is resumable: versions already on the registry are skipped.
+// npm requires a live 2FA factor at publish time, so run this from a REAL
+// terminal. It is resumable: versions already on the registry are skipped.
 //
 //   bun run publish:dry     # offline: pack + preview every package, upload nothing
 //   bun run publish:all     # gated real publish (clean tree + tsc -b + bun test)
@@ -79,11 +82,16 @@ for (const rel of ORDER) {
     console.error(`pack produced no tarball: ${rel}`);
     process.exit(1);
   }
-  try {
-    // Inherits the terminal so npm can prompt for 2FA / open the browser.
-    await $`npm publish ${tgz} --access public`.cwd(dir);
-  } finally {
-    rmSync(join(dir, tgz));
+
+  // Inherit the real terminal so npm can prompt for 2FA / open the browser.
+  const result = Bun.spawnSync(["npm", "publish", tgz, "--access", "public"], {
+    cwd: dir,
+    stdio: ["inherit", "inherit", "inherit"],
+  });
+  rmSync(join(dir, tgz));
+  if (result.exitCode !== 0) {
+    console.error(`publish failed: ${spec} (exit ${result.exitCode})`);
+    process.exit(1);
   }
 }
 
