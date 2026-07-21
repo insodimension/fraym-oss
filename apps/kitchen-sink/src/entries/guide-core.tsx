@@ -682,6 +682,29 @@ bun run --cwd templates/web-agent/template dev -- --port 5193
 					<C>0</C>. Every other command exits <C>0</C> on success and <C>1</C> on any error.
 				</p>
 			</Callout>
+			<Section id="cli-skills">skills</Section>
+			<P>
+				<C>fraym skills</C> installs bundled agent skills — like the <C>build-with-fraym</C> guide for coding
+				assistants — into a project’s agent-harness directories. <C>fraym skills list</C> shows what ships with
+				the CLI; <C>fraym skills install &lt;id&gt;</C> writes the skill into <C>.claude/skills/&lt;id&gt;/</C> and{" "}
+				<C>.codex/skills/&lt;id&gt;/</C>.
+			</P>
+			<Code
+				lang="bash"
+				code={`# list bundled skills
+fraym skills list
+
+# dry-run (plan only, writes nothing)
+fraym skills install build-with-fraym --dest . --target both
+
+# apply into .claude/ and .codex/
+fraym skills install build-with-fraym --dest . --target both --apply`}
+			/>
+			<P>
+				<C>--target</C> is <C>claude</C>, <C>codex</C>, or <C>both</C> (default <C>both</C>). Install uses the same
+				transactional engine as <C>template install</C>: a dry-run unless <C>--apply</C>, it refuses to clobber
+				existing files without <C>--overwrite</C>, and it restores every file if any write fails.
+			</P>
 			<Section id="cli-envelope">Envelopes &amp; errors</Section>
 			<P>
 				Under <C>--json</C>, every response is a versioned envelope (currently version <C>"1"</C>). Success carries
@@ -862,8 +885,8 @@ function ArchitectureBody() {
 	return (
 		<>
 			<Lead>
-				<C>@fraym-ai/ui</C> is organized into five tiers. Each tier may import only from the tiers below it — a rule
-				enforced in CI by <C>check-tiers</C>.
+				<C>@fraym-ai/ui</C> is organized into five tiers. Each tier may import only from the tiers below it — a
+				rule enforced by <C>check-tiers</C>, run in <C>bun test</C>.
 			</Lead>
 			<Section id="arch-tiers">The tiers</Section>
 			<Code
@@ -957,6 +980,7 @@ const PAGES: readonly GuidePageMeta[] = [
 			{ id: "cli-templates", label: "template" },
 			{ id: "cli-web-agent", label: "web-agent reference" },
 			{ id: "cli-doctor", label: "doctor" },
+			{ id: "cli-skills", label: "skills" },
 			{ id: "cli-envelope", label: "Envelopes & errors" },
 			{ id: "cli-boundaries", label: "Boundaries" },
 		],

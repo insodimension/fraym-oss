@@ -26,8 +26,8 @@ tool cards, diffs, approvals, and a production composer.
 
 ## Architecture
 
-Tiered, downward-only imports are enforced by
-`packages/ui/scripts/check-tiers.mjs`:
+Tiered, downward-only imports are enforced by `packages/ui/scripts/check-tiers.mjs`
+(a tier imports only from tiers below it), run in `bun test`:
 
 ```text
 theme (tokens) -> elements -> components -> features -> pages
@@ -42,7 +42,7 @@ Reusable UI belongs in `packages/ui`; scripted demonstration data belongs in
 
 ## Conventions
 
-- The eleven `@fraym-ai/*` packages and `@fraym-ai/template-web-agent` are independent
+- The thirteen `@fraym-ai/*` packages and `@fraym-ai/template-web-agent` are independent
   publishable artifacts. Development applications are not package artifacts.
 - Kitchen-sink entries should provide controls, anatomy, examples, and API
   information for the component or feature they demonstrate.

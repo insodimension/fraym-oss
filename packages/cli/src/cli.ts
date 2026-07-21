@@ -9,12 +9,15 @@ import {
 	failure,
 	type InstallResult,
 	type SearchReport,
+	type SkillList,
+	type SkillTarget,
 	success,
 	type TemplateDetail,
 	type TemplateList,
 } from "./contracts";
 import { createManifest, runDoctor } from "./program";
 import { discoverTemplates, installTemplate, showTemplate } from "./templates";
+import { discoverSkills, installSkill } from "./skills";
 
 interface ParsedSearch {
 	readonly query: string;
@@ -31,6 +34,14 @@ interface ParsedTemplateInstall extends ParsedTemplateShow {
 	readonly dest?: string;
 	readonly apply: boolean;
 	readonly overwrite: boolean;
+}
+
+interface ParsedSkillInstall {
+	readonly id: string;
+	readonly dest?: string;
+	readonly apply: boolean;
+	readonly overwrite: boolean;
+	readonly targets?: readonly SkillTarget[];
 }
 
 function help(command?: string): string {
@@ -59,6 +70,20 @@ function help(command?: string): string {
 	if (command === "template install") {
 		return "Usage: fraym template install <id> [--dest <dir>] [--from <dir>] [--apply] [--overwrite] [--json]";
 	}
+	if (command === "skills" || command === "skills list") {
+		return [
+			"Usage: fraym skills <subcommand> [options]",
+			"",
+			"Subcommands:",
+			"  list                      List bundled skills.",
+			"  install <id> [--dest <dir>] [--target claude|codex|both] [--apply] [--overwrite]",
+			"",
+			"Install is a dry-run unless --apply is provided; it writes into .claude/skills/<id> and/or .codex/skills/<id>.",
+		].join("\n");
+	}
+	if (command === "skills install") {
+		return "Usage: fraym skills install <id> [--dest <dir>] [--target claude|codex|both] [--apply] [--overwrite] [--json]";
+	}
 	return [
 		"Usage: fraym <command> [options]",
 		"",
@@ -67,6 +92,7 @@ function help(command?: string): string {
 		"  search <query>           Search public Fraym catalog entries.",
 		"  doctor                   Check runtime and catalog health.",
 		"  template <subcommand>   Discover, inspect, and install templates.",
+		"  skills <subcommand>      Discover and install bundled agent skills.",
 		"",
 		"Global options:",
 		"  --json                   Emit a stable JSON envelope.",
@@ -264,6 +290,75 @@ function parseTemplateInstall(args: readonly string[]): ParsedTemplateInstall {
 	};
 }
 
+function parseTargets(raw: string | undefined): readonly SkillTarget[] {
+	if (!raw || raw.startsWith("--")) {
+		throw new CliError("CLI_MISSING_ARGUMENT", "The --target option requires a value.", {
+			suggestion: "Use --target claude|codex|both.",
+		});
+	}
+	if (raw === "both") return ["claude", "codex"];
+	if (raw === "claude" || raw === "codex") return [raw];
+	throw new CliError("CLI_INVALID_ARGUMENT", `Unknown skills target: ${raw}.`, {
+		suggestion: "Use --target claude|codex|both.",
+	});
+}
+
+function parseSkillInstall(args: readonly string[]): ParsedSkillInstall {
+	const positional: string[] = [];
+	let dest: string | undefined;
+	let apply = false;
+	let overwrite = false;
+	let targets: readonly SkillTarget[] | undefined;
+	for (let index = 0; index < args.length; index += 1) {
+		const argument = args[index];
+		if (!argument) continue;
+		if (argument === "--dest" || argument.startsWith("--dest=")) {
+			const parsed = optionValue(args, index, "--dest");
+			dest = parsed.value;
+			index = parsed.next;
+			continue;
+		}
+		if (argument === "--target" || argument.startsWith("--target=")) {
+			if (argument === "--target") {
+				targets = parseTargets(args[index + 1]);
+				index += 1;
+			} else {
+				targets = parseTargets(argument.slice("--target=".length));
+			}
+			continue;
+		}
+		if (argument === "--apply") {
+			apply = true;
+			continue;
+		}
+		if (argument === "--overwrite") {
+			overwrite = true;
+			continue;
+		}
+		if (argument.startsWith("-")) {
+			throw new CliError("CLI_UNKNOWN_OPTION", `Unknown skills install option: ${argument}.`, {
+				suggestion: "Run fraym skills install --help to see supported options.",
+			});
+		}
+		positional.push(argument);
+	}
+	if (positional.length === 0) {
+		throw new CliError("CLI_MISSING_ARGUMENT", "The skills install command requires a skill id.", {
+			suggestion: "Use fraym skills install <id>.",
+		});
+	}
+	if (positional.length > 1 || !positional[0]?.trim()) {
+		throw new CliError("CLI_INVALID_ARGUMENT", "The skills install command accepts exactly one skill id.");
+	}
+	return {
+		id: positional[0],
+		...(dest === undefined ? {} : { dest }),
+		apply,
+		overwrite,
+		...(targets === undefined ? {} : { targets }),
+	};
+}
+
 function printDoctor(report: DoctorReport): void {
 	for (const check of report.checks) {
 		console.log(`${check.status.toUpperCase().padEnd(5)} ${check.id}: ${check.message}`);
@@ -307,6 +402,17 @@ function printInstall(result: InstallResult): void {
 		console.log(`${entry.action.toUpperCase().padEnd(9)} ${entry.path} (${entry.template})`);
 	if (plan.collisions.length > 0) console.log(`Collisions: ${plan.collisions.join(", ")}`);
 	for (const warning of result.warnings) console.log(`WARNING ${warning}`);
+}
+
+function printSkillList(list: SkillList): void {
+	if (list.skills.length === 0) {
+		console.log("No skills were discovered.");
+	} else {
+		for (const skill of list.skills) {
+			console.log(`${skill.id.padEnd(24)} ${skill.files} files  ${skill.bytes} bytes  ${skill.description ?? ""}`);
+		}
+	}
+	for (const issue of list.issues) console.log(`WARNING ${issue.code}: ${issue.message} (${issue.path})`);
 }
 
 export function main(args = process.argv.slice(2)): number {
@@ -386,6 +492,30 @@ export function main(args = process.argv.slice(2)): number {
 			if (json) printJson(success(report));
 			else printDoctor(report);
 			return report.exitCode;
+		}
+		if (command === "skills") {
+			const subcommand = cleaned[1];
+			if (subcommand === "list") {
+				if (cleaned.length > 2) {
+					throw new CliError("CLI_UNKNOWN_OPTION", `Unknown skills list option: ${cleaned[2]}.`, {
+						suggestion: "Run fraym skills list --help for usage.",
+					});
+				}
+				const list = discoverSkills();
+				if (json) printJson(success(list));
+				else printSkillList(list);
+				return 0;
+			}
+			if (subcommand === "install") {
+				const parsed = parseSkillInstall(cleaned.slice(2));
+				const result = installSkill(parsed);
+				if (json) printJson(success(result));
+				else printInstall(result);
+				return 0;
+			}
+			throw new CliError("CLI_UNKNOWN_COMMAND", `Unknown skills subcommand: ${subcommand ?? ""}.`, {
+				suggestion: "Run fraym skills --help to list skills subcommands.",
+			});
 		}
 		throw new CliError("CLI_UNKNOWN_COMMAND", `Unknown command: ${command}.`, {
 			suggestion: "Run fraym --help to list commands.",

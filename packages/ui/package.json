@@ -74,6 +74,7 @@
     "react-dom": "^19.0.0"
   },
   "scripts": {
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "check-tiers": "node scripts/check-tiers.mjs"
   }
 }

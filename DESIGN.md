@@ -3,8 +3,8 @@ version: alpha
 name: Fraym
 description: A calm, dense, dark-default agent surface with a single violet accent. One React core for rendering live agent sessions.
 colors:
-  primary: "#b78cff"
-  primary-strong: "#a679ff"
+  primary: "#7a60c1"
+  primary-strong: "#6a50b1"
   on-primary: "#0b0b0d"
   bg: "#0b0b0d"
   rail: "#0f0f12"
@@ -167,9 +167,13 @@ components:
 
 The normative values live in the YAML tokens above; this prose explains *why* they
 exist and how to apply them. The runtime source of truth in code is
-`packages/ui/src/styles.css` (the `--fraym-*` custom properties) — those variables
-must mirror these tokens. When the two disagree, this file wins and the CSS gets
-re-synced.
+`packages/ui/src/theme/theme.css` (the `--fr-*` custom properties and their
+Tailwind `*-fr-*` utilities) — that is the layer every component renders from.
+`packages/ui/src/styles.css` exposes a `.fraym-*` BEM class layer whose
+`--fraym-color-*` tokens now ALIAS the live `--fr-*` palette — so the BEM surfaces
+and the Tailwind components draw from ONE color source (no drift; the BEM surfaces
+inherit light mode, presets, and the active accent). When this file and the code
+disagree, reconcile toward the live `--fr-*` values.
 
 ## Overview
 
@@ -192,10 +196,12 @@ separate designs.
 
 The palette is near-monochrome graphite with one reserved accent.
 
-- **Primary / Accent (#b78cff):** "Fraym violet." The sole driver of identity and
-  interaction — focus rings, active state, links, the live/working glow, primary
-  CTAs. Used at full strength sparingly; far more often as a 14%-alpha fill
-  (`accent-dim`) or 34%-alpha hairline (`accent-line`).
+- **Primary / Accent (#7a60c1):** "Fraym violet." The sole driver of identity and
+  interaction — focus rings, active state, links, primary CTAs. The live solid
+  token is `--fr-accent` (#7a60c1); a brighter violet (#b78cff) is reserved for
+  the live/working glow and gradient-accent mode. Used at full strength sparingly;
+  far more often as a 14%-alpha fill (`accent-dim`) or 34%-alpha hairline
+  (`accent-line`).
 - **Canvas & surfaces:** A near-black `bg` (#0b0b0d) under stacked graphite tiers —
   `rail` (#0f0f12), `surface` (#151518), `surface-2` (#1c1c20), `surface-3`
   (#222227). Hierarchy is built by **stepping up a tier**, not by shadow.

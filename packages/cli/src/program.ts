@@ -95,6 +95,43 @@ export const CLI_MANIFEST: CliManifest = {
 				},
 			],
 		},
+		{
+			name: "skills",
+			description: "Discover and install bundled Fraym agent skills into a project.",
+			arguments: [],
+			options: [],
+			response: "CliEnvelope<SkillList | InstallResult>",
+			subcommands: [
+				{
+					name: "list",
+					description: "List bundled skills that can be installed.",
+					arguments: [],
+					options: [],
+					response: "CliEnvelope<SkillList>",
+				},
+				{
+					name: "install",
+					description: "Plan a skill install into .claude/ and/or .codex/; writes only with --apply.",
+					arguments: [{ name: "id", type: "string", description: "Skill identifier." }],
+					options: [
+						{
+							name: "--dest",
+							type: "string",
+							description: "Destination project directory (defaults to current directory).",
+						},
+						{
+							name: "--target",
+							type: "string",
+							description: "Agent harness target: claude, codex, or both (default both).",
+							values: ["claude", "codex", "both"],
+						},
+						{ name: "--apply", type: "boolean", description: "Apply the preflighted install plan." },
+						{ name: "--overwrite", type: "boolean", description: "Replace colliding files during apply." },
+					],
+					response: "CliEnvelope<InstallResult>",
+				},
+			],
+		},
 	],
 	errorCodes: [
 		"CLI_UNKNOWN_COMMAND",
@@ -111,6 +148,8 @@ export const CLI_MANIFEST: CliManifest = {
 		"CLI_TEMPLATE_COLLISION",
 		"CLI_TEMPLATE_PATH_ESCAPE",
 		"CLI_TEMPLATE_APPLY_FAILED",
+		"CLI_SKILL_NOT_FOUND",
+		"CLI_SKILL_COLLISION",
 	],
 };
 

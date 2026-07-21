@@ -44,11 +44,11 @@ interface SourceFile extends TemplateFile {
 	readonly mode?: number;
 }
 
-interface PlanningEntry extends PlanEntry {
+export interface PlanningEntry extends PlanEntry {
 	readonly sourcePath: string;
 }
 
-interface BuiltPlan {
+export interface BuiltPlan {
 	readonly plan: InstallPlan;
 	readonly entries: readonly PlanningEntry[];
 }
@@ -438,7 +438,7 @@ function enumerateSourceFiles(template: LoadedTemplate): SourceFile[] {
 	return files.sort((left, right) => left.path.localeCompare(right.path));
 }
 
-function canonicalDestination(dest: string): string {
+export function canonicalDestination(dest: string): string {
 	const absolute = resolve(dest);
 	let existing = absolute;
 	const remaining: string[] = [];
@@ -589,7 +589,7 @@ interface JournalEntry {
 	readonly backupPath?: string;
 }
 
-function applyTransaction(built: BuiltPlan): InstallResult {
+export function applyTransaction(built: BuiltPlan): InstallResult {
 	assertApplyPreflight(built);
 	if (built.entries.length === 0) {
 		return { plan: built.plan, status: "applied", written: [], backedUp: [], warnings: [] };

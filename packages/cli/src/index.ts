@@ -28,6 +28,11 @@ export {
 	type SearchOptions,
 	type SearchReport,
 	type SearchResult,
+	SKILL_TARGETS,
+	type SkillInstallOptions,
+	type SkillList,
+	type SkillSummary,
+	type SkillTarget,
 	success,
 	type TemplateDetail,
 	type TemplateFile,
@@ -36,3 +41,4 @@ export {
 } from "./contracts";
 export { CLI_MANIFEST, createManifest, runDoctor } from "./program";
 export { discoverTemplates, installTemplate, isTemplateManifest, planInstall, showTemplate } from "./templates";
+export { buildSkillPlan, discoverSkills, installSkill } from "./skills";

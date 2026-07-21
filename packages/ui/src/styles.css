@@ -4,35 +4,40 @@
 @import "@fontsource/ibm-plex-mono/latin-400.css";
 @import "@fontsource/ibm-plex-mono/latin-600.css";
 
-:root,
-[data-fraym-theme="dark"] {
+:root {
   color-scheme: dark;
-  --fraym-color-primary: #b78cff;
-  --fraym-color-primary-strong: #a679ff;
-  --fraym-color-on-primary: #0b0b0d;
-  --fraym-color-bg: #0b0b0d;
-  --fraym-color-rail: #0f0f12;
-  --fraym-color-surface: #151518;
-  --fraym-color-surface-2: #1c1c20;
-  --fraym-color-surface-3: #222227;
-  --fraym-color-border: #27272c;
-  --fraym-color-border-soft: #1b1b1f;
-  --fraym-color-text: #ececee;
-  --fraym-color-text-2: #9a9aa2;
-  --fraym-color-text-3: #65656d;
-  --fraym-color-success: #62c08a;
-  --fraym-color-danger: #e07a86;
-  --fraym-color-warning: #e0b15b;
-  --fraym-color-info: #5b8cff;
-  --fraym-color-iris: #8f7bff;
-  --fraym-color-accent: var(--fraym-color-primary);
-  --fraym-color-muted: var(--fraym-color-text-2);
-  --fraym-color-accent-dim: color-mix(in srgb, var(--fraym-color-accent) 14%, transparent);
-  --fraym-color-accent-line: color-mix(in srgb, var(--fraym-color-accent) 34%, transparent);
-  --fraym-color-diff-added-bg: color-mix(in srgb, var(--fraym-color-success) 10%, var(--fraym-color-surface));
-  --fraym-color-diff-added-text: var(--fraym-color-success);
-  --fraym-color-diff-removed-bg: color-mix(in srgb, var(--fraym-color-danger) 10%, var(--fraym-color-surface));
-  --fraym-color-diff-removed-text: var(--fraym-color-danger);
+  /* The legacy --fraym-color-* names now ALIAS the live --fr-* palette (theme.css)
+     so the BEM surfaces in this file share ONE source of color truth — no drift,
+     and they inherit light mode, theme presets, and the active accent for free.
+     (theme.css is always loaded: the <Fraym> root imports it and hosts import
+     @fraym-ai/ui/theme.css.) Type, space, radius, and motion below are the design
+     ramp and have no --fr-* analogue, so they stay as literals. */
+  --fraym-color-primary: var(--fr-accent);
+  --fraym-color-primary-strong: var(--fr-accent-2);
+  --fraym-color-on-primary: var(--fr-accent-ink);
+  --fraym-color-bg: var(--fr-bg);
+  --fraym-color-rail: var(--fr-rail);
+  --fraym-color-surface: var(--fr-surface);
+  --fraym-color-surface-2: var(--fr-surface-2);
+  --fraym-color-surface-3: var(--fr-surface-3);
+  --fraym-color-border: var(--fr-border);
+  --fraym-color-border-soft: var(--fr-border-soft);
+  --fraym-color-text: var(--fr-text);
+  --fraym-color-text-2: var(--fr-text-2);
+  --fraym-color-text-3: var(--fr-text-3);
+  --fraym-color-success: var(--fr-add);
+  --fraym-color-danger: var(--fr-del);
+  --fraym-color-warning: var(--fr-warn);
+  --fraym-color-info: var(--fr-blue);
+  --fraym-color-iris: var(--fr-iris);
+  --fraym-color-accent: var(--fr-accent);
+  --fraym-color-muted: var(--fr-text-2);
+  --fraym-color-accent-dim: var(--fr-accent-dim);
+  --fraym-color-accent-line: var(--fr-accent-line);
+  --fraym-color-diff-added-bg: var(--fr-add-bg);
+  --fraym-color-diff-added-text: var(--fr-add);
+  --fraym-color-diff-removed-bg: var(--fr-del-bg);
+  --fraym-color-diff-removed-text: var(--fr-del);
 
   --fraym-font-sans: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
   --fraym-font-mono: "IBM Plex Mono", ui-monospace, monospace;
@@ -80,25 +85,6 @@
   --fraym-motion-fast: 120ms;
   --fraym-motion-normal: 180ms;
   --fraym-motion-slow: 600ms;
-}
-
-[data-fraym-theme="light"] {
-  color-scheme: light;
-  --fraym-color-bg: #f7f7f9;
-  --fraym-color-rail: #f1f1f4;
-  --fraym-color-surface: #ffffff;
-  --fraym-color-surface-2: #eeeef2;
-  --fraym-color-surface-3: #e5e5ea;
-  --fraym-color-border: #d5d5dc;
-  --fraym-color-border-soft: #e6e6eb;
-  --fraym-color-text: #1c1c20;
-  --fraym-color-text-2: #55555e;
-  --fraym-color-text-3: #73737d;
-  --fraym-color-success: #267849;
-  --fraym-color-danger: #b84454;
-  --fraym-color-warning: #835900;
-  --fraym-color-info: #315fba;
-  --fraym-color-iris: #6250d6;
 }
 
 .fraym-thread { background: var(--fraym-color-bg); border: 1px solid var(--fraym-color-border); border-radius: var(--fraym-radius-lg); color: var(--fraym-color-text); font-family: var(--fraym-font-sans); min-height: 26rem; }

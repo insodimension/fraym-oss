@@ -14,7 +14,9 @@ export type CliErrorCode =
 	| "CLI_TEMPLATE_DUPLICATE_ID"
 	| "CLI_TEMPLATE_COLLISION"
 	| "CLI_TEMPLATE_PATH_ESCAPE"
-	| "CLI_TEMPLATE_APPLY_FAILED";
+	| "CLI_TEMPLATE_APPLY_FAILED"
+	| "CLI_SKILL_NOT_FOUND"
+	| "CLI_SKILL_COLLISION";
 
 export interface CliSuccess<T> {
 	readonly ok: true;
@@ -122,7 +124,7 @@ export interface ManifestOption {
 }
 
 export interface CommandManifest {
-	readonly name: "manifest" | "search" | "doctor" | "template" | "list" | "show" | "install";
+	readonly name: "manifest" | "search" | "doctor" | "template" | "skills" | "list" | "show" | "install";
 	readonly description: string;
 	readonly arguments: readonly ManifestOption[];
 	readonly options: readonly ManifestOption[];
@@ -215,6 +217,33 @@ export interface InstallOptions {
 	readonly apply?: boolean;
 	readonly overwrite?: boolean;
 	readonly from?: string;
+}
+
+export type SkillTarget = "claude" | "codex";
+
+export const SKILL_TARGETS: readonly SkillTarget[] = ["claude", "codex"] as const;
+
+export interface SkillSummary {
+	readonly id: string;
+	readonly description?: string;
+	readonly source: string;
+	readonly files: number;
+	readonly bytes: number;
+}
+
+export interface SkillList {
+	readonly root: string;
+	readonly skills: readonly SkillSummary[];
+	readonly issues: readonly CatalogIssue[];
+}
+
+export interface SkillInstallOptions {
+	readonly id: string;
+	readonly cwd?: string;
+	readonly dest?: string;
+	readonly apply?: boolean;
+	readonly overwrite?: boolean;
+	readonly targets?: readonly SkillTarget[];
 }
 export class CliError extends Error {
 	readonly code: CliErrorCode;

@@ -15,9 +15,11 @@ Use these terms consistently in source, documentation, and examples.
 | **template** | An installable reference application, currently `@fraym-ai/template-web-agent`, with an explicit driver integration seam. |
 | **kitchen sink** | `apps/kitchen-sink`, the local showcase for components, features, fixtures, controls, and API examples. |
 | **tier** | A layer of `@fraym-ai/ui`: `theme (tokens) -> elements -> components -> features -> pages`. |
-| **downward-only imports** | The tier rule: a tier imports only from tiers below it, enforced by `packages/ui/scripts/check-tiers.mjs`. |
+| **downward-only imports** | The tier rule: a tier imports only from tiers below it, enforced by `packages/ui/scripts/check-tiers.mjs` (run in `bun test`). |
 | **element** | A token-driven primitive in the `elements` tier with no session state. |
 | **feature** | A session-aware composite in the `features` tier that consumes driver state. |
 | **Aethr** | `@fraym-ai/aethr`, the companion-presence and cinematic-text package. |
 | **Vibr** | `@fraym-ai/vibr`, the animated presence-avatar package. |
 | **Verber** | `@fraym-ai/verber`, the configurable working-status language package. |
+| **Host** | `@fraym-ai/host`, the reusable app shell wired to any driver bundle; exports `FraymHost`. |
+| **AI SDK driver** | `@fraym-ai/driver-aisdk`, an `AgentEventStream` backed by the Vercel AI SDK, running in the browser. |

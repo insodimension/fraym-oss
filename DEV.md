@@ -88,7 +88,8 @@ bun run --cwd packages/cli test
 ## Architecture
 
 `packages/ui` uses downward-only tiers, enforced by
-`packages/ui/scripts/check-tiers.mjs`:
+`packages/ui/scripts/check-tiers.mjs` (a tier imports only from tiers below it),
+run in `bun test`:
 
 ```text
 theme (tokens) -> elements -> components -> features -> pages
@@ -102,7 +103,7 @@ public contract.
 
 ## Publishable artifacts
 
-The workspace contains eleven `@fraym-ai/*` packages plus the
+The workspace contains thirteen `@fraym-ai/*` packages plus the
 `@fraym-ai/template-web-agent` template package. Their manifests declare public
 publish configuration; do not infer distribution status from that configuration.
 
@@ -113,9 +114,11 @@ publish configuration; do not infer distribution status from that configuration.
 | `@fraym-ai/config` | Typed display and surface settings. |
 | `@fraym-ai/driver` | Data-only session-driver contract and replay driver. |
 | `@fraym-ai/driver-acp` | Agent Client Protocol adapter. |
+| `@fraym-ai/driver-aisdk` | AgentEventStream backed by the Vercel AI SDK, in-browser. |
 | `@fraym-ai/driver-codex` | Codex CLI driver over the app-server bridge. |
 | `@fraym-ai/driver-test` | Driver conformance utilities. |
 | `@fraym-ai/fixtures` | Scripted session fixtures. |
+| `@fraym-ai/host` | Reusable app shell wired to any driver bundle; exports `FraymHost`. |
 | `@fraym-ai/ui` | React components, theme, shell, hooks, and registries. |
 | `@fraym-ai/verber` | Configurable working-status language. |
 | `@fraym-ai/vibr` | Animated presence avatars. |

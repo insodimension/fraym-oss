@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, test } from "bun:test";
-import { mkdirSync, mkdtempSync, rmSync, symlinkSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, mkdtempSync, rmSync, symlinkSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { type CliError, createManifest, discoverCatalog, runDoctor, searchCatalog } from "./index";
@@ -145,6 +145,7 @@ describe("@fraym-ai/cli public contract", () => {
 			["search", "CliEnvelope<SearchReport>"],
 			["doctor", "CliEnvelope<DoctorReport>"],
 			["template", "CliEnvelope<TemplateList | TemplateDetail | InstallResult>"],
+			["skills", "CliEnvelope<SkillList | InstallResult>"],
 		]);
 		const search = manifest.commands.find(command => command.name === "search");
 		expect(search?.arguments.map(argument => argument.name)).toEqual(["query"]);
@@ -171,6 +172,8 @@ describe("@fraym-ai/cli public contract", () => {
 			"CLI_TEMPLATE_COLLISION",
 			"CLI_TEMPLATE_PATH_ESCAPE",
 			"CLI_TEMPLATE_APPLY_FAILED",
+			"CLI_SKILL_NOT_FOUND",
+			"CLI_SKILL_COLLISION",
 		]);
 	});
 
@@ -509,6 +512,124 @@ describe("@fraym-ai/cli public contract", () => {
 
 			expect(result.exitCode).toBe(1);
 			expect(result.stderr).toBe("");
+			expect(envelope).toMatchObject({ ok: false, version: "1", error: { code: testCase.code } });
+		}
+	});
+});
+describe("@fraym-ai/cli skills command", () => {
+	test("lists the bundled build-with-fraym skill", () => {
+		const root = makeTemporaryDirectory();
+		const result = runCli(root, ["skills", "list", "--json"]);
+		const envelope = JSON.parse(result.stdout) as {
+			readonly ok: boolean;
+			readonly version: string;
+			readonly data: { readonly skills: readonly { readonly id: string; readonly files: number }[] };
+		};
+
+		expect(result.exitCode).toBe(0);
+		expect(envelope).toMatchObject({
+			ok: true,
+			version: "1",
+			data: { skills: expect.arrayContaining([expect.objectContaining({ id: "build-with-fraym", files: 5 })]) },
+		});
+	});
+
+	test("plans both agent targets without writing files until apply", () => {
+		const destination = makeTemporaryDirectory();
+		const result = runCli(destination, [
+			"skills",
+			"install",
+			"build-with-fraym",
+			"--dest",
+			destination,
+			"--target",
+			"both",
+			"--json",
+		]);
+		const envelope = JSON.parse(result.stdout) as {
+			readonly ok: boolean;
+			readonly version: string;
+			readonly data: {
+				readonly status: string;
+				readonly plan: { readonly entries: readonly { readonly action: string; readonly path: string }[] };
+			};
+		};
+		const paths = envelope.data.plan.entries.map(entry => entry.path);
+
+		expect(result.exitCode).toBe(0);
+		expect(envelope).toMatchObject({ ok: true, version: "1", data: { status: "planned" } });
+		expect(envelope.data.plan.entries).toHaveLength(10);
+		expect(envelope.data.plan.entries.every(entry => entry.action === "create")).toBe(true);
+		expect(paths).toEqual(
+			expect.arrayContaining([
+				".claude/skills/build-with-fraym/SKILL.md",
+				".codex/skills/build-with-fraym/SKILL.md",
+			]),
+		);
+		expect(
+			paths.every(
+				path =>
+					path.startsWith(".claude/skills/build-with-fraym/") ||
+					path.startsWith(".codex/skills/build-with-fraym/"),
+			),
+		).toBe(true);
+		expect(existsSync(join(destination, ".claude"))).toBe(false);
+		expect(existsSync(join(destination, ".codex"))).toBe(false);
+	});
+
+	test("applies skill files and requires explicit overwrite for collisions", () => {
+		const destination = makeTemporaryDirectory();
+		const installArgs = ["skills", "install", "build-with-fraym", "--dest", destination, "--target", "both", "--json"];
+		const applied = runCli(destination, [...installArgs, "--apply"]);
+		const appliedEnvelope = JSON.parse(applied.stdout) as {
+			readonly ok: boolean;
+			readonly version: string;
+			readonly data: { readonly status: string };
+		};
+
+		expect(applied.exitCode).toBe(0);
+		expect(appliedEnvelope).toMatchObject({ ok: true, version: "1", data: { status: "applied" } });
+		expect(existsSync(join(destination, ".claude", "skills", "build-with-fraym", "SKILL.md"))).toBe(true);
+		expect(existsSync(join(destination, ".codex", "skills", "build-with-fraym", "SKILL.md"))).toBe(true);
+
+		const collision = runCli(destination, [...installArgs, "--apply"]);
+		const collisionEnvelope = JSON.parse(collision.stdout) as {
+			readonly ok: boolean;
+			readonly version: string;
+			readonly error: { readonly code: string };
+		};
+
+		expect(collision.exitCode).toBe(1);
+		expect(collisionEnvelope).toMatchObject({ ok: false, version: "1", error: { code: "CLI_SKILL_COLLISION" } });
+
+		const overwritten = runCli(destination, [...installArgs, "--apply", "--overwrite"]);
+		const overwrittenEnvelope = JSON.parse(overwritten.stdout) as {
+			readonly ok: boolean;
+			readonly version: string;
+			readonly data: { readonly status: string };
+		};
+
+		expect(overwritten.exitCode).toBe(0);
+		expect(overwrittenEnvelope).toMatchObject({ ok: true, version: "1", data: { status: "applied" } });
+	});
+
+	test("maps invalid skill install requests to stable error codes", () => {
+		const root = makeTemporaryDirectory();
+		const cases = [
+			{ args: ["skills", "install", "build-with-fraym", "--target", "sublime", "--json"], code: "CLI_INVALID_ARGUMENT" },
+			{ args: ["skills", "install", "nope", "--json"], code: "CLI_SKILL_NOT_FOUND" },
+			{ args: ["skills", "install", "--json"], code: "CLI_MISSING_ARGUMENT" },
+		];
+
+		for (const testCase of cases) {
+			const result = runCli(root, testCase.args);
+			const envelope = JSON.parse(result.stdout) as {
+				readonly ok: boolean;
+				readonly version: string;
+				readonly error: { readonly code: string };
+			};
+
+			expect(result.exitCode).toBe(1);
 			expect(envelope).toMatchObject({ ok: false, version: "1", error: { code: testCase.code } });
 		}
 	});
