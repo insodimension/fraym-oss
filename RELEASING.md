@@ -38,22 +38,24 @@ You can also trigger it from **Actions → Release → Run workflow** (manual di
 
 ## One-time setup (required before the first automated release)
 
-1. **Protected environment.** Repo **Settings → Environments → New environment →
-   `npm-release`**. Add **Required reviewers = the owner**. This makes every
-   release wait for an explicit human approval, even when triggered by a tag.
-2. **Trusted publishers on npm.** For **each** of the 13 packages, on
-   npmjs.com → the package → **Settings → Trusted Publisher → GitHub Actions**:
-   - Organization/User: `insodimension`
-   - Repository: `fraym-oss`
-   - Workflow filename: `release.yml`
-   - Environment: `npm-release`
+1. **Protected environment — already configured.** The `npm-release` environment
+   exists with **Required reviewers = the owner** (set via the GitHub API). Every
+   release waits for explicit approval, even when triggered by a tag.
+2. **Trusted publishers on npm — one script, one tap.** Run in a real terminal:
 
-   Packages: `@fraym-ai/`{`config`, `verber`, `driver`, `vibr`, `cli`, `ui`,
-   `host`, `driver-acp`, `driver-codex`, `driver-aisdk`, `fixtures`,
-   `driver-test`, `template-web-agent`}.
+   ```sh
+   bun scripts/trust-publishers.ts
+   ```
 
-Because all 13 were published once manually, each already has a settings page —
-there is no chicken-and-egg.
+   It configures a GitHub Actions trusted publisher (repo `insodimension/fraym-oss`,
+   workflow `release.yml`, environment `npm-release`, allow-publish) for all 13
+   packages. The **first** package prompts 2FA — authenticate with your security
+   key and tick **"skip 2FA for the next 5 minutes"**; the rest configure
+   unattended. Re-runnable — already-configured packages are skipped.
+
+   Prefer the web UI? Per package: npmjs.com → the package → **Settings → Trusted
+   Publisher → GitHub Actions** (org `insodimension`, repo `fraym-oss`, workflow
+   `release.yml`, environment `npm-release`).
 
 ## Manual fallback (no CI)
 
