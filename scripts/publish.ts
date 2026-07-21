@@ -1,23 +1,25 @@
 #!/usr/bin/env bun
 // Publishes every public @fraym-ai/* package to npm in dependency order.
 //
-// Bun rewrites `workspace:*` -> the concrete version at pack time, so internal
-// deps resolve on the registry; `--access public` publishes the scoped packages
-// publicly. The monorepo root stays `private` and is never published.
+// Method: `bun pm pack` each package (Bun rewrites `workspace:*` -> the concrete
+// version in the tarball), then publish the tarball with the **npm** client.
+// (`bun publish` is not used: it forces a broken interactive web-auth flow and
+// hangs. `npm publish` handles 2FA/OIDC correctly.)
 //
-//   bun run publish:dry     # pack + preview every package, upload nothing (offline)
-//   bun run publish:all     # gated real publish (needs `npm login` / NPM_TOKEN)
-//   bun scripts/publish.ts --otp=123456   # pass a 2FA one-time password
+// npm now requires a live 2FA factor at publish time, so run this in a REAL
+// terminal — npm will prompt / open the browser for your security key or OTP on
+// each package. It is resumable: versions already on the registry are skipped.
+//
+//   bun run publish:dry     # offline: pack + preview every package, upload nothing
+//   bun run publish:all     # gated real publish (clean tree + tsc -b + bun test)
 import { $ } from "bun";
-import { existsSync } from "node:fs";
+import { readdirSync, readFileSync, rmSync } from "node:fs";
 import { join } from "node:path";
 
 const ROOT = join(import.meta.dir, "..");
 const dryRun = process.argv.includes("--dry-run");
-const otp = process.argv.find(a => a.startsWith("--otp="))?.slice(6);
 
-// Leaves first, so the registry stays internally consistent as it fills. Every
-// entry depends only on entries above it.
+// Leaves first, so the registry stays internally consistent as it fills.
 const ORDER = [
   "packages/config",
   "packages/verber",
@@ -37,7 +39,6 @@ const ORDER = [
 const bold = (s: string) => `\x1b[1m${s}\x1b[0m`;
 const step = (s: string) => console.log(`\n${bold(s)}`);
 
-// Real publishes are gated; a dry run is a pure offline preview.
 if (dryRun) {
   step("Dry run — packing every package, uploading nothing.");
 } else {
@@ -52,18 +53,38 @@ if (dryRun) {
   await $`bun run test`.cwd(ROOT);
 }
 
-const flags = ["--access", "public"];
-if (dryRun) flags.push("--dry-run");
-if (otp) flags.push("--otp", otp);
-
 for (const rel of ORDER) {
   const dir = join(ROOT, rel);
-  if (!existsSync(join(dir, "package.json"))) {
-    console.error(`Missing package: ${rel}`);
+  const pk = JSON.parse(readFileSync(join(dir, "package.json"), "utf8"));
+  const spec = `${pk.name}@${pk.version}`;
+
+  const seen = await $`npm view ${spec} version`.cwd(dir).nothrow().quiet();
+  if (seen.exitCode === 0) {
+    step(`skip ${spec} — already on npm`);
+    continue;
+  }
+
+  for (const f of readdirSync(dir)) if (f.endsWith(".tgz")) rmSync(join(dir, f));
+
+  if (dryRun) {
+    step(`[dry-run] pack ${rel}`);
+    await $`bun pm pack --dry-run`.cwd(dir);
+    continue;
+  }
+
+  step(`pack + publish ${rel}`);
+  await $`bun pm pack`.cwd(dir).quiet();
+  const tgz = readdirSync(dir).find(f => f.endsWith(".tgz"));
+  if (!tgz) {
+    console.error(`pack produced no tarball: ${rel}`);
     process.exit(1);
   }
-  step(`${dryRun ? "[dry-run] " : ""}publish ${rel}`);
-  await $`bun publish ${flags}`.cwd(dir);
+  try {
+    // Inherits the terminal so npm can prompt for 2FA / open the browser.
+    await $`npm publish ${tgz} --access public`.cwd(dir);
+  } finally {
+    rmSync(join(dir, tgz));
+  }
 }
 
 step(dryRun ? "Dry run complete — nothing was uploaded." : "All packages published to npm.");
