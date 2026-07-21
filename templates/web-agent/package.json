@@ -1,7 +1,7 @@
 {
   "type": "module",
   "name": "@fraym/template-web-agent",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "A self-contained Vite and React Fraym web agent template",
   "license": "MIT",
   "publishConfig": {
@@ -27,6 +27,7 @@
   ],
   "dependencies": {
     "@fraym/driver": "^0.1.0",
+    "@fraym/host": "^0.1.0",
     "@fraym/ui": "^0.1.0",
     "react": "^19.2.5",
     "react-dom": "^19.2.5"

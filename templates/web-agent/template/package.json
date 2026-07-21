@@ -1,9 +1,9 @@
 {
   "name": "fraym-web-agent",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "type": "module",
-  "description": "A Vite and React agent cockpit powered by Fraym",
+  "description": "A Vite and React agent cockpit powered by the full Fraym shell",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@fraym/driver": "^0.1.0",
+    "@fraym/host": "^0.1.0",
     "@fraym/ui": "^0.1.0",
     "react": "^19.2.5",
     "react-dom": "^19.2.5"

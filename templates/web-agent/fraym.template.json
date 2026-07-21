@@ -1,8 +1,8 @@
 {
   "id": "web-agent",
   "name": "Web agent",
-  "version": "0.1.0",
-  "description": "A self-contained Vite and React Fraym agent cockpit",
+  "version": "0.2.0",
+  "description": "A self-contained Vite and React cockpit on the full Fraym shell",
   "package": "@fraym/template-web-agent",
   "source": "template",
   "files": [
