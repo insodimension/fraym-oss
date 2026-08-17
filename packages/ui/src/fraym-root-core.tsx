@@ -49,6 +49,9 @@ export interface FraymProps {
 	readonly planLabel?: string;
 	readonly productLabel?: string;
 	readonly version?: string;
+	/** Host override for the Fraym brand mark in the rail header — pass your own
+	 *  logo URL to white-label the frame instead of patching this package. */
+	readonly brandMarkUrl?: string;
 	readonly defaultShowAvatars?: boolean;
 	/** Master on/off for the Vibr presence avatar (config `vibrEnabled`); default on. */
 	readonly defaultVibrEnabled?: boolean;
@@ -132,6 +135,7 @@ interface NormalizedFraymProps {
 	readonly planLabel: string;
 	readonly productLabel: string;
 	readonly version: string;
+	readonly brandMarkUrl?: string;
 	readonly defaultShowAvatars: boolean;
 	readonly defaultVibrEnabled: boolean;
 	readonly defaultStreamWisp: boolean;
@@ -202,6 +206,7 @@ function normalizeFraymProps({
 	planLabel = "local",
 	productLabel = "fraym",
 	version = "v0.4",
+	brandMarkUrl,
 	defaultShowAvatars = false,
 	defaultVibrEnabled = true,
 	defaultStreamWisp = false,
@@ -258,6 +263,7 @@ function normalizeFraymProps({
 		planLabel,
 		productLabel,
 		version,
+		brandMarkUrl,
 		defaultShowAvatars,
 		defaultVibrEnabled,
 		defaultStreamWisp,
@@ -479,6 +485,7 @@ function FraymFrameHost({ runtime }: { readonly runtime: FraymRuntimeState }) {
 							planLabel={props.planLabel}
 							productLabel={props.productLabel}
 							version={props.version}
+							brandMarkUrl={props.brandMarkUrl}
 							sessionCatalog={props.sessionCatalog}
 							onSessionSelect={props.onSessionSelect}
 							onSessionPopout={props.onSessionPopout}

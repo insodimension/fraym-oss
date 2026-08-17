@@ -1,0 +1,14 @@
+// Publish build: emits JS + declarations (the dev config is declaration-only for
+// `tsc -b`) and keeps tests out of dist/.
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "composite": false,
+    "incremental": false,
+    "emitDeclarationOnly": false,
+    "sourceMap": true,
+    "noEmitOnError": true
+  },
+  "include": ["src"],
+  "exclude": ["src/**/*.test.ts", "src/**/*.test.tsx"]
+}

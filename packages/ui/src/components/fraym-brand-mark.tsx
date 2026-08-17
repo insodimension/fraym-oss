@@ -9,6 +9,10 @@ export interface FraymBrandMarkProps {
 	readonly label?: string;
 	readonly size?: number | string;
 	readonly style?: CSSProperties;
+	/** Override the rendered mark with a host-supplied logo URL; defaults to the
+	 *  bundled {@link fraymBrandMarkUrl}. A consumer that white-labels the frame
+	 *  passes its own asset instead of patching this package. */
+	readonly brandMarkUrl?: string;
 }
 
 export function FraymBrandMark({
@@ -17,10 +21,11 @@ export function FraymBrandMark({
 	label = "Fraym",
 	size = 22,
 	style,
+	brandMarkUrl = fraymBrandMarkUrl,
 }: FraymBrandMarkProps) {
 	return (
 		<img
-			src={fraymBrandMarkUrl}
+			src={brandMarkUrl}
 			alt={decorative ? "" : label}
 			aria-hidden={decorative ? "true" : undefined}
 			draggable={false}

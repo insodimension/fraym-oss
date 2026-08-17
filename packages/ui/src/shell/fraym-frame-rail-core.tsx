@@ -28,6 +28,8 @@ import type { AppMode, MenuState, RailActionDef } from "./types";
 
 export interface FraymFrameRailProps {
 	readonly version: string;
+	/** Host override for the brand mark in the rail header; defaults to the bundled Fraym mark. */
+	readonly brandMarkUrl?: string;
 	readonly appMode: AppMode;
 	readonly railMode: RailMode;
 	readonly onToggleCompact: () => void;
@@ -91,10 +93,12 @@ const FraymRailBrand = memo(function FraymRailBrand({
 	version,
 	compact,
 	onToggle,
+	brandMarkUrl,
 }: {
 	readonly version: string;
 	readonly compact: boolean;
 	readonly onToggle: () => void;
+	readonly brandMarkUrl?: string;
 }) {
 	if (compact) {
 		return (
@@ -105,14 +109,14 @@ const FraymRailBrand = memo(function FraymRailBrand({
 					onClick={onToggle}
 					className="flex size-8 items-center justify-center rounded-md text-fr-text-3 transition-colors duration-[120ms] hover:bg-fr-surface hover:text-fr-text"
 				>
-					<FraymBrandMark size={22} />
+					<FraymBrandMark size={22} brandMarkUrl={brandMarkUrl} />
 				</button>
 			</div>
 		);
 	}
 	return (
 		<div className="flex h-[52px] shrink-0 items-center px-4">
-			<FraymBrandMark size={24} />
+			<FraymBrandMark size={24} brandMarkUrl={brandMarkUrl} />
 			<span
 				className="rail-label ml-auto max-w-[140px] fr-overflow rounded-md border border-fr-border px-1.5 py-px text-fr-2xs text-fr-text-3"
 				title={version}
@@ -699,6 +703,7 @@ function RailGroupAction({
 
 function FraymFrameRailView({
 	version,
+	brandMarkUrl,
 	appMode,
 	railMode,
 	onToggleCompact,
@@ -772,8 +777,8 @@ function FraymFrameRailView({
 		[avatar, vibrState, vibrMode, energy, railVibr, railVibrAllSessions, sessionVibrs],
 	);
 	const brand = useMemo(
-		() => <FraymRailBrand version={version} compact={compact} onToggle={onToggleCompact} />,
-		[version, compact, onToggleCompact],
+		() => <FraymRailBrand version={version} compact={compact} onToggle={onToggleCompact} brandMarkUrl={brandMarkUrl} />,
+		[version, compact, onToggleCompact, brandMarkUrl],
 	);
 	const tabs = useMemo(
 		() => <FraymModeTabs appMode={appMode} spaces={spaces} compact={compact} onAppModeChange={onAppModeChange} />,

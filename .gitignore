@@ -3,4 +3,6 @@ dist/
 .DS_Store
 *.local
 *.tsbuildinfo
+# Written by scripts/publish-manifest.ts between prepack and postpack, never committed.
+package.json.prepack-backup
 

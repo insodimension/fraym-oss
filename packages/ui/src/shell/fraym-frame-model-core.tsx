@@ -80,6 +80,8 @@ export interface FraymFrameModelArgs {
 	readonly planLabel: string;
 	readonly productLabel: string;
 	readonly version: string;
+	/** Host override for the Fraym brand mark rendered in the rail header. */
+	readonly brandMarkUrl?: string;
 	readonly sessionCatalog?: readonly SessionSnapshot[];
 	readonly onSessionSelect?: (sessionRef: SessionRef) => void;
 	readonly onSessionPopout?: (sessionRef: SessionRef, title?: string, workspace?: WorkspaceRef) => void | Promise<void>;
@@ -496,6 +498,7 @@ export function useFraymFrameModel(args: FraymFrameModelArgs): FraymFrameModel {
 		dockWidth: chrome.dockWidth,
 		dockTab: chrome.dockTab,
 		dockTabs: resolveDockTabs(props.dockTabs),
+		topBarActions: props.topBarActions,
 		activeInsight: chrome.activeInsight,
 		sessionRef: props.sessionRef,
 		sessionCatalog: props.sessionCatalog,
@@ -553,6 +556,7 @@ export function useFraymFrameModel(args: FraymFrameModelArgs): FraymFrameModel {
 	} as WorkspaceProps;
 	const railProps: FraymFrameRailProps = {
 		version: props.version,
+		brandMarkUrl: props.brandMarkUrl,
 		appMode: chrome.appMode,
 		railMode: chrome.railMode,
 		onToggleCompact: chrome.toggleRailCompact,

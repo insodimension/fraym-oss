@@ -1,0 +1,15 @@
+// Publish build: same compiler contract as tsconfig.json, but emits JS alongside the
+// declarations (the dev config is declaration-only for `tsc -b`) and keeps tests and
+// test fixtures out of dist/. Non-composite so a fresh dist is emitted every time.
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "composite": false,
+    "incremental": false,
+    "emitDeclarationOnly": false,
+    "sourceMap": true,
+    "noEmitOnError": true
+  },
+  "include": ["src", "src/**/*.json"],
+  "exclude": ["src/**/*.test.ts", "src/**/*.test.tsx", "src/**/__*"]
+}

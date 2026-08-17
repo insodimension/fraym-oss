@@ -12,9 +12,26 @@
       "import": "./src/mock.ts"
     }
   },
-  "files": ["src", "!src/**/*.test.ts", "!src/**/*.test.tsx"],
+  "files": ["dist", "src", "!src/**/*.test.ts", "!src/**/*.test.tsx"],
+  "publishConfig": {
+    "main": "./dist/index.js",
+    "types": "./dist/index.d.ts",
+    "exports": {
+      ".": {
+        "types": "./dist/index.d.ts",
+        "import": "./dist/index.js"
+      },
+      "./mock": {
+        "types": "./dist/mock.d.ts",
+        "import": "./dist/mock.js"
+      }
+    }
+  },
   "scripts": {
     "typecheck": "tsc --noEmit",
+    "build": "bun run ../../scripts/build-package.ts",
+    "prepack": "bun run build && bun run ../../scripts/publish-manifest.ts apply",
+    "postpack": "bun run ../../scripts/publish-manifest.ts restore",
     "test": "bun test"
   }
 }
