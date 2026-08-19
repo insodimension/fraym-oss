@@ -70,5 +70,39 @@ for (const [key, value] of overrides) {
 	delete pkg.publishConfig?.[key];
 }
 if (pkg.publishConfig && Object.keys(pkg.publishConfig).length === 0) delete pkg.publishConfig;
+
+// Resolve `workspace:` ranges to real semver.
+//
+// Measured: a tarball packed with these ranges intact is UNINSTALLABLE — npm has no
+// `workspace:` protocol, so an external consumer gets
+// "error: @fraym-ai/config@workspace:* failed to resolve". pnpm and bun rewrite the
+// protocol when THEY publish; `npm pack`/`npm publish` do not, and this repo packs
+// with npm. Each sibling's own version becomes a caret range, which is what a
+// coordinated release of these packages means.
+const rewritten: string[] = [];
+for (const field of ["dependencies", "peerDependencies", "optionalDependencies"] as const) {
+	const deps = pkg[field];
+	if (typeof deps !== "object" || deps === null) continue;
+	const entries = deps as Record<string, string>;
+	for (const [name, range] of Object.entries(entries)) {
+		if (typeof range !== "string" || !range.startsWith("workspace:")) continue;
+		const siblingManifest = join(pkgDir, "..", name.replace(/^@[^/]+\//, ""), "package.json");
+		if (!existsSync(siblingManifest)) {
+			console.error(`  cannot resolve ${name}@${range}: no manifest at ${siblingManifest}`);
+			await restore();
+			process.exit(1);
+		}
+		const sibling = JSON.parse((await readFile(siblingManifest)).toString()) as { version?: string };
+		if (sibling.version === undefined) {
+			console.error(`  cannot resolve ${name}@${range}: ${siblingManifest} has no version`);
+			await restore();
+			process.exit(1);
+		}
+		entries[name] = `^${sibling.version}`;
+		rewritten.push(`${name}@^${sibling.version}`);
+	}
+}
+
 await writeFile(manifestPath, `${JSON.stringify(pkg, null, 2)}\n`);
 console.log(`  applied publishConfig -> ${overrides.map(([k]) => k).join(", ")}`);
+if (rewritten.length > 0) console.log(`  resolved workspace ranges -> ${rewritten.join(", ")}`);
