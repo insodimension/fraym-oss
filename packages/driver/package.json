@@ -1,6 +1,6 @@
 {
   "name": "@fraym-ai/driver",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "type": "module",
   "exports": {
     ".": {
@@ -12,7 +12,12 @@
       "import": "./src/mock.ts"
     }
   },
-  "files": ["dist", "src", "!src/**/*.test.ts", "!src/**/*.test.tsx"],
+  "files": [
+    "dist",
+    "src",
+    "!src/**/*.test.ts",
+    "!src/**/*.test.tsx"
+  ],
   "publishConfig": {
     "main": "./dist/index.js",
     "types": "./dist/index.d.ts",
