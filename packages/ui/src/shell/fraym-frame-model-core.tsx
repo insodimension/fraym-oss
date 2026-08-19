@@ -752,7 +752,11 @@ function ComposerSessionRightSlot({
 						providerId={visibleModel.providerId ?? ""}
 						providerName={visibleModel.providerName ?? visibleModel.name}
 						logoUrl={visibleModel.logoUrl}
-						className="size-[14px] rounded-[4px] border-0 shadow-none"
+						// The chip's own `gap-1.5` (6px) is tuned for the dot and caret glyphs
+						// it normally holds. A brand mark is a wordmark, not a dot, and at 14px
+						// it reads as glued to the model name — the picker rows give theirs far
+						// more room. `me-1` brings the total to ~10px.
+						className="me-2 size-[14px] rounded-[4px] border-0 shadow-none"
 					/>
 				) : null}
 				{/* Phone posture swaps the full label for the short form (theme.css):
