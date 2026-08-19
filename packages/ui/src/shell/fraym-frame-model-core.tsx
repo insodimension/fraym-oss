@@ -147,14 +147,28 @@ function normalizeArgs(args: FraymFrameModelArgs): FrameArgs {
 	};
 }
 
+/**
+ * `declaredRef` is the HOST's `sessionRef` prop - which session it says is open -
+ * and it wins over the driver's own snapshot for the rail highlight.
+ *
+ * The two disagree for exactly as long as a session takes to open. The snapshot is
+ * reality (it appears once the driver has actually bound the session), while the
+ * prop is intent (a host that swaps sessions sets it the moment the row is
+ * clicked). Highlighting reality meant a click left the rail unchanged until the
+ * load finished - seconds, on a large transcript - so the user could not tell
+ * which session they had opened, or that the click had registered at all. A host
+ * that declares nothing still falls back to the snapshot.
+ */
 function sessionBaseGroups(
 	catalog: readonly SessionSnapshot[],
 	session: FrameSession,
 	fallbackWorkspace: WorkspaceRef | null | undefined,
 	workspaces: readonly WorkspaceRef[],
+	declaredRef: SessionRef | null | undefined,
 ): RepoGroup[] {
 	const workspacesById = new Map(workspaces.map(workspace => [workspace.workspaceId, workspace]));
-	if (catalog.length > 0) return sessionGroupsFromCatalog(catalog, session?.snapshot?.ref, fallbackWorkspace, workspacesById);
+	const activeRef = declaredRef ?? session?.snapshot?.ref;
+	if (catalog.length > 0) return sessionGroupsFromCatalog(catalog, activeRef, fallbackWorkspace, workspacesById);
 	return sessionGroupsFromSnapshot(
 		session?.snapshot?.workspace ?? fallbackWorkspace,
 		session?.snapshot?.ref,
@@ -393,8 +407,8 @@ export function useFraymFrameModel(args: FraymFrameModelArgs): FraymFrameModel {
 		onNewSession: props.onNewSession,
 	});
 	const baseGroups = useMemo(
-		() => sessionBaseGroups(props.sessionCatalog, session, props.workspace, props.workspaces),
-		[props.sessionCatalog, props.workspace, props.workspaces, session],
+		() => sessionBaseGroups(props.sessionCatalog, session, props.workspace, props.workspaces, props.sessionRef),
+		[props.sessionCatalog, props.workspace, props.workspaces, props.sessionRef, session],
 	);
 	const filters = settings.config.sessionFilters;
 	const projectFilters = settings.config.projectSessionFilters;
