@@ -69,6 +69,10 @@ export interface SelectorMenuCategory<TItem> {
 	/** Optional provider identifier for category rows that represent a provider (e.g. "acme").
 	 *  When present, `renderCategoryIcon` can render a provider brand logo instead of a generic glyph. */
 	readonly providerId?: string;
+	/** Optional host-supplied provider logo (absolute or root-relative URL) for a
+	 *  provider category row, so `renderCategoryIcon` can render the host's own
+	 *  mark instead of a built-in brand asset or monogram. */
+	readonly providerLogoUrl?: string;
 }
 
 export interface SelectorMenuProps<TItem> {

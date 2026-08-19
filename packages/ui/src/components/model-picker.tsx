@@ -20,6 +20,9 @@ export interface ModelDef {
 	readonly id?: string;
 	readonly providerId?: string;
 	readonly providerName?: string;
+	/** Host-supplied provider logo (from `EngineModelRecord.logoUrl`). Brands the
+	 *  row's avatar instead of the built-in table / monogram fallback. */
+	readonly providerLogoUrl?: string;
 	readonly name: string;
 	readonly tag?: string;
 	readonly tone?: Tone;
@@ -58,12 +61,22 @@ export interface ModelCategory {
 	readonly label: string;
 	readonly items: readonly ModelDef[];
 	readonly providerId?: string;
+	/** Host-supplied provider logo for a provider category heading (from
+	 *  `EngineModelRecord.logoUrl` / `EngineProviderRecord.logoUrl`). */
+	readonly providerLogoUrl?: string;
 }
 
 export interface ModelSelection {
 	readonly id?: string;
 	readonly name: string;
 	readonly effort: string;
+	/** Host-supplied provider logo (from `EngineModelRecord.logoUrl`). Opt-in: when
+	 *  set, the composer chip renders this mark and a BARE model name; when absent
+	 *  the chip is unchanged (full `provider/model` id, no logo). */
+	readonly logoUrl?: string;
+	/** Provider identity behind `logoUrl`, used to tile/label the chip's avatar. */
+	readonly providerId?: string;
+	readonly providerName?: string;
 }
 
 export interface ModelPickerProps {
@@ -228,6 +241,7 @@ function ModelRow({
 				<ProviderBrandIcon
 					providerId={m.providerId}
 					providerName={m.providerName}
+					logoUrl={m.providerLogoUrl}
 					className="size-[22px] rounded-[7px]"
 				/>
 			) : null}
@@ -267,6 +281,7 @@ function CategoryIcon({ category }: { readonly category: SelectorMenuCategory<Mo
 			<ProviderBrandIcon
 				providerId={category.providerId}
 				providerName={category.label}
+				logoUrl={category.providerLogoUrl}
 				className="size-[20px] rounded-[6px]"
 			/>
 		);
@@ -391,7 +406,14 @@ export function ModelPicker(props: ModelPickerProps) {
 	const place = props.place ?? "above-right";
 
 	const pick = (next: ModelDef) => {
-		props.onSelect({ ...props.model, id: next.id, name: next.name });
+		props.onSelect({
+			...props.model,
+			id: next.id,
+			name: next.name,
+			logoUrl: next.providerLogoUrl,
+			providerId: next.providerId,
+			providerName: next.providerName,
+		});
 		props.onClose();
 	};
 

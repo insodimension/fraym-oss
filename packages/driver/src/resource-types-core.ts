@@ -74,6 +74,12 @@ export interface EngineProviderRecord {
 	readonly authFailed?: boolean;
 	readonly accountSelectionPolicy?: EngineProviderAccountSelectionPolicy;
 	readonly accounts?: readonly EngineProviderAccountRecord[];
+	/** Host-supplied provider logo: an absolute (`https://…`) or root-relative
+	 *  (`/logo.svg`) URL. When present it replaces the built-in brand asset and
+	 *  the monogram/hash-palette fallback wherever this provider's avatar is
+	 *  rendered. Omit for engine-provided providers — they keep the built-in
+	 *  brand table. */
+	readonly logoUrl?: string;
 }
 
 export interface EngineModelCost {
@@ -102,6 +108,12 @@ export interface EngineModelRecord {
 	readonly supportsTools?: boolean;
 	/** USD per million tokens. Absent when the catalog does not price the model. */
 	readonly cost?: EngineModelCost;
+	/** Host-supplied provider logo for this model's provider: an absolute
+	 *  (`https://…`) or root-relative (`/logo.svg`) URL. Carried on the model
+	 *  record so the model menu can brand rows and category headings without a
+	 *  provider lookup, and so the composer chip can show the mark. Omit to keep
+	 *  the built-in brand table + monogram fallback. */
+	readonly logoUrl?: string;
 }
 
 // --- model insights (deterministic benchmark/usage feed; optional lane) -------

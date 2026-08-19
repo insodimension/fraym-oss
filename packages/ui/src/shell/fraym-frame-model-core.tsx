@@ -1,5 +1,6 @@
 import type {
 	AgentChoice,
+	EngineModelRecord,
 	SessionAttachment,
 	SessionDriver,
 	SessionMessageInput,
@@ -11,7 +12,7 @@ import type {
 } from "@fraym-ai/driver";
 import type { AvatarId, AvatarMode, AvatarState } from "@fraym-ai/vibr";
 import { type ComponentProps, type MouseEvent, type ReactNode, useCallback, useEffect, useMemo, useRef, useState } from "react";
-import type { ModelSelection, PaletteCategory } from "../components";
+import { type ModelSelection, type PaletteCategory, ProviderBrandIcon } from "../components";
 import type { RailMode } from "../components/app-shell";
 import { ComposerChip, type ComposerChipProps, ContextRadial } from "../features/composer/composer";
 import { Icon } from "../icons";
@@ -450,7 +451,11 @@ export function useFraymFrameModel(args: FraymFrameModelArgs): FraymFrameModel {
 	const effectiveFilter = scopedProject ? effectiveFilters(filters, projectFilters, scopedProject) : filters;
 	const context = contextModel(session);
 	const ident = identity(props);
-	const model: ModelSelection = modelSelectionFromConfig(session?.snapshot?.config) ?? { name: "Model", effort: "default" };
+	const snapshotModels = props.resources.snapshot?.models;
+	const model: ModelSelection = modelSelectionFromConfig(session?.snapshot?.config, snapshotModels) ?? {
+		name: "Model",
+		effort: "default",
+	};
 	const permObj = PERMS.find(permission => permission.id === chrome.permission) ?? PERMS[0];
 	const openPermissionMenu = useCallback(
 		(event: MouseEvent<HTMLButtonElement>) =>
@@ -482,11 +487,12 @@ export function useFraymFrameModel(args: FraymFrameModelArgs): FraymFrameModel {
 		() => (
 			<ComposerSessionRightSlot
 				localModel={model}
+				models={snapshotModels}
 				onOpenContext={openContextMenu}
 				onOpenModel={openModelMenu}
 			/>
 		),
-		[model.name, model.effort, openContextMenu, openModelMenu],
+		[model.name, model.effort, model.logoUrl, snapshotModels, openContextMenu, openModelMenu],
 	);
 	const workspaceProps = {
 		className: props.className,
@@ -707,15 +713,18 @@ function permissionTone(permission: string): NonNullable<ComposerChipProps["tone
 
 function ComposerSessionRightSlot({
 	localModel,
+	models,
 	onOpenContext,
 	onOpenModel,
 }: {
 	readonly localModel: ModelSelection;
+	/** Resource-snapshot model records — the source of a host-supplied `logoUrl`. */
+	readonly models?: readonly EngineModelRecord[];
 	readonly onOpenContext: (event: MouseEvent<HTMLButtonElement>) => void;
 	readonly onOpenModel: (event: MouseEvent<HTMLButtonElement>) => void;
 }) {
 	const session = useSessionOptional();
-	const visibleModel = modelSelectionFromConfig(session?.snapshot?.config) ?? localModel;
+	const visibleModel = modelSelectionFromConfig(session?.snapshot?.config, models) ?? localModel;
 	const contextPercent = useLiveContextPercent(session) ?? 0;
 	return (
 		<>
@@ -726,6 +735,14 @@ function ComposerSessionRightSlot({
 				onClick={onOpenModel}
 				title="Switch model for this session"
 			>
+				{visibleModel.logoUrl ? (
+					<ProviderBrandIcon
+						providerId={visibleModel.providerId ?? ""}
+						providerName={visibleModel.providerName ?? visibleModel.name}
+						logoUrl={visibleModel.logoUrl}
+						className="size-[14px] rounded-[4px] border-0 shadow-none"
+					/>
+				) : null}
 				{/* Phone posture swaps the full label for the short form (theme.css):
 				    vendor prefix + effort dropped so narrow widths read the model name
 				    without clipping. */}

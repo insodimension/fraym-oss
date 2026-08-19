@@ -1,5 +1,5 @@
 import { DEFAULT_SESSION_FILTERS, type SessionFilters } from "@fraym-ai/config";
-import type { SessionConfig } from "@fraym-ai/driver";
+import type { EngineModelRecord, SessionConfig } from "@fraym-ai/driver";
 import type { AvatarId } from "@fraym-ai/vibr";
 import type { ModelSelection, PaletteCategory } from "../components";
 import type { DockTab } from "../features/right-dock";
@@ -104,11 +104,36 @@ export const PERMS: PermissionDef[] = [
 	},
 ];
 
-export function modelSelectionFromConfig(config?: SessionConfig): ModelSelection | null {
+/**
+ * The composer model chip's content. Pass `models` (the resource snapshot's model
+ * records) to opt into host branding: when the record bound to this session
+ * carries a `logoUrl`, the chip shows that mark plus the BARE model name (the
+ * segment after the last `/`), keeping the reasoning-effort segment. Without a
+ * `logoUrl` — every existing consumer — the chip is unchanged: the full
+ * `provider/model` id and no logo.
+ */
+export function modelSelectionFromConfig(
+	config?: SessionConfig,
+	models?: readonly EngineModelRecord[],
+): ModelSelection | null {
 	if (!config?.modelId && !config?.thinkingLevel) return null;
+	const name = config?.modelId ?? "engine model";
+	const effort = config?.thinkingLevel ?? "default";
+	const branded = config?.modelId
+		? models?.find(
+				model =>
+					Boolean(model.logoUrl) &&
+					(model.modelId === config.modelId || `${model.providerId}/${model.modelId}` === config.modelId) &&
+					(!config.provider || model.providerId === config.provider),
+			)
+		: undefined;
+	if (!branded?.logoUrl) return { name, effort };
 	return {
-		name: config?.modelId ?? "engine model",
-		effort: config?.thinkingLevel ?? "default",
+		name: name.slice(name.lastIndexOf("/") + 1),
+		effort,
+		logoUrl: branded.logoUrl,
+		providerId: branded.providerId,
+		providerName: branded.providerName,
 	};
 }
 

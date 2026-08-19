@@ -348,13 +348,22 @@ export function providerDisplayName(name: string, custom?: CustomProviderBrand):
  * user-supplied branding (from `FraymUiConfig.customProviderBrands`) for a
  * runtime-configured custom provider: a non-empty `logoUrl` replaces the built-in
  * asset (and its monochrome filter), and `displayName` drives the monogram
- * fallback. Built-in providers (no `custom`) are unchanged.
+ * fallback. `hostLogoUrl` is the host-supplied logo carried on the resource
+ * snapshot (`EngineProviderRecord.logoUrl` / `EngineModelRecord.logoUrl`): it
+ * outranks the built-in brand table and the monogram/hash-palette fallback, and
+ * yields to an explicit user `custom.logoUrl`. Built-in providers (no `custom`,
+ * no `hostLogoUrl`) are unchanged.
  */
-export function providerBrand(id: string, name = id, custom?: CustomProviderBrand): ProviderBrand {
+export function providerBrand(
+	id: string,
+	name = id,
+	custom?: CustomProviderBrand,
+	hostLogoUrl?: string,
+): ProviderBrand {
 	const displayName = providerDisplayName(name, custom);
 	const base = builtInBrand(id, displayName);
-	const customLogo = custom?.logoUrl?.trim();
-	if (customLogo) return { ...base, logoUrl: customLogo, logoFilter: undefined };
+	const suppliedLogo = custom?.logoUrl?.trim() || hostLogoUrl?.trim();
+	if (suppliedLogo) return { ...base, logoUrl: suppliedLogo, logoFilter: undefined };
 	return base;
 }
 

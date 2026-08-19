@@ -8,6 +8,10 @@ export interface ProviderBrandIconProps {
 	readonly providerName: string;
 	/** Optional user-supplied branding (custom-provider display name + logo). */
 	readonly brand?: CustomProviderBrand;
+	/** Host-supplied provider logo (absolute or root-relative URL, e.g. from
+	 *  `EngineProviderRecord.logoUrl`). Takes precedence over the built-in brand
+	 *  table and the monogram fallback; yields to `brand.logoUrl`. */
+	readonly logoUrl?: string;
 	readonly size?: "sm" | "md";
 	readonly className?: string;
 }
@@ -21,10 +25,11 @@ export function ProviderBrandIcon({
 	providerId,
 	providerName,
 	brand: override,
+	logoUrl,
 	size = "md",
 	className,
 }: ProviderBrandIconProps) {
-	const brand = providerBrand(providerId, providerName, override);
+	const brand = providerBrand(providerId, providerName, override, logoUrl);
 	const hasLogo = Boolean(brand.logoUrl);
 	const style = {
 		"--provider-bg": brand.tileBg,
