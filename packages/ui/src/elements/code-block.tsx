@@ -1,4 +1,4 @@
-import { code, type HighlightResult } from "@streamdown/code";
+import type { HighlightResult } from "@streamdown/code";
 import { useEffect, useState } from "react";
 import { cn } from "../lib/cn";
 import { CopyButton } from "./copy-button";
@@ -22,6 +22,40 @@ function toLineHtml(result: HighlightResult): string[] {
 			})
 			.join(""),
 	);
+}
+
+/**
+ * The Shiki engine, loaded on the first code block instead of at boot.
+ *
+ * A static import cannot work here: this IS the code-split boundary. Measured on
+ * the Yarin build, `@streamdown/code` pulls Shiki's grammars and themes as three
+ * eager chunks - 3.85MB + 3.53MB + 1.36MB - which the app downloaded and compiled
+ * on every launch. Yarin renders inside Unreal's embedded CEF browser, where that
+ * is the lag felt when opening the dock, and a session with no fenced code never
+ * needs any of it.
+ *
+ * Only the members this file calls are declared, so the module type never leaks
+ * into signatures. Highlighting is already async and already falls back to plain
+ * text until it resolves (`useShikiLineHtml` returns null), so waiting for the
+ * chunk costs nothing but color on the first block.
+ */
+interface ShikiEngine {
+	supportsLanguage(language: string): boolean;
+	getThemes(): unknown;
+	highlight(
+		options: { readonly code: string; readonly language: string; readonly themes: unknown },
+		onReady: (result: HighlightResult) => void,
+	): HighlightResult | undefined;
+}
+
+let shikiEngine: ShikiEngine | null = null;
+let shikiLoad: Promise<ShikiEngine> | null = null;
+function loadShiki(): Promise<ShikiEngine> {
+	shikiLoad ??= import("@streamdown/code").then(module => {
+		shikiEngine = module.code as unknown as ShikiEngine;
+		return shikiEngine;
+	});
+	return shikiLoad;
 }
 
 // Tokenized line-HTML cache keyed by (lang, text). Shiki tokenization is synchronous
@@ -86,7 +120,7 @@ export function canSyntaxHighlight(text: string, language: string, maxChars: num
  */
 export function useShikiLineHtml(lines: readonly string[], language: string): readonly string[] | null {
 	const text = lines.join("\n");
-	const lang = language.toLowerCase() as Parameters<typeof code.supportsLanguage>[0];
+	const lang = language.toLowerCase();
 	const key = `${lang}\u0000${text}`;
 	const [html, setHtml] = useState<readonly string[] | null>(() => hlCacheGet(key) ?? null);
 
@@ -96,20 +130,27 @@ export function useShikiLineHtml(lines: readonly string[], language: string): re
 			setHtml(cached);
 			return;
 		}
-		if (!code.supportsLanguage(lang)) {
-			setHtml(null);
-			return;
-		}
 		let active = true;
 		const apply = (r: HighlightResult): void => {
 			const lineHtml = toLineHtml(r);
 			hlCacheSet(key, lineHtml);
 			if (active) setHtml(lineHtml);
 		};
+		// Tokenize through the engine once it is here; the first block on screen pays
+		// the chunk load and renders plain until then.
+		const tokenize = (engine: ShikiEngine): void => {
+			if (!active) return;
+			if (!engine.supportsLanguage(lang)) {
+				setHtml(null);
+				return;
+			}
+			const result = engine.highlight({ code: text, language: lang, themes: engine.getThemes() }, apply);
+			if (result) apply(result);
+		};
 		const handle = scheduleIdle(() => {
 			if (!active) return;
-			const result = code.highlight({ code: text, language: lang, themes: code.getThemes() }, apply);
-			if (result) apply(result);
+			if (shikiEngine) tokenize(shikiEngine);
+			else void loadShiki().then(tokenize);
 		});
 		return () => {
 			active = false;
