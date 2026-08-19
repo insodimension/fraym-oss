@@ -46,6 +46,12 @@ export interface EventStreamSessionDriverOptions {
 	readonly workspace?: WorkspaceRef;
 	readonly title?: string;
 	readonly model?: string;
+	/**
+	 * The session's real id, when the host has one. Omitted, the adapter invents a
+	 * synthetic `stream-N`, which cannot match a session catalog entry — so the rail
+	 * never highlights the open session.
+	 */
+	readonly sessionId?: string;
 	readonly provider?: string;
 }
 
@@ -331,5 +337,9 @@ export function createEventStreamSessionDriver(
 	options: EventStreamSessionDriverOptions = {},
 ): EventStreamSessionDriverHandle {
 	adapterCount += 1;
-	return new EventStreamSessionDriver(`stream-${adapterCount}`, stream, options);
+	// A host with REAL session ids — an engine that persists and lists sessions —
+	// must be able to say so. The rail marks the active session by matching its
+	// catalog entry's ref against the live one, and a synthetic `stream-N` matches
+	// nothing, so the session a user just clicked never highlighted.
+	return new EventStreamSessionDriver(options.sessionId ?? `stream-${adapterCount}`, stream, options);
 }

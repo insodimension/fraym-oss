@@ -39,7 +39,11 @@ export function ProviderBrandIcon({
 	return (
 		<span
 			className={cn(
-				"flex shrink-0 items-center justify-center overflow-hidden border shadow-[inset_0_1px_0_rgba(255,255,255,0.32)]",
+				// `inline-flex`, not `flex`: a bare `flex` container is BLOCK-level, so in
+				// any non-flex context — the composer's model chip — it claimed its own
+				// line and the logo rendered ABOVE the model name instead of beside it.
+				// Inside a flex parent the two are equivalent, so the tiles are unaffected.
+				"inline-flex shrink-0 items-center justify-center overflow-hidden border shadow-[inset_0_1px_0_rgba(255,255,255,0.32)]",
 				hasLogo
 					? "border-fr-border-soft bg-transparent text-fr-text shadow-none"
 					: "border-white/10 bg-[var(--provider-bg)] text-[var(--provider-fg)]",
