@@ -402,7 +402,11 @@ export function ModelPicker(props: ModelPickerProps) {
 	const efforts = props.efforts ?? DEFAULT_EFFORTS;
 	const selectedId = selectionIdentity(props.model);
 	const allModels = allModelsFromCategories(props.categories);
-	const cats = categoriesWithAll(props.categories, props.allLabel ?? "All", allModels);
+	// `??` defeats the whole point: `allLabel={null}` MEANS "no aggregate row", and
+	// nullish-coalescing turned that explicit null straight back into "All", so the
+	// suppression check in `categoriesWithAll` never saw it. Only `undefined` (the
+	// prop omitted) takes the default.
+	const cats = categoriesWithAll(props.categories, props.allLabel === undefined ? "All" : props.allLabel, allModels);
 	const place = props.place ?? "above-right";
 
 	const pick = (next: ModelDef) => {
