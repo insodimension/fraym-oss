@@ -11,6 +11,7 @@ export { Fraym, type FraymProps, type FraymSettingsPanel } from "./fraym-root-co
 // Prop-shape types a host needs to configure the frame it mounts. `FraymProps`
 // references these, so a consumer cannot build a `railActions` array without them.
 export type { AppMode, RailActionDef, RailActionTarget } from "./shell/types";
+export type { ModelPickerGroups } from "./deployment-gates";
 export type { DockTab } from "./features/right-dock";
 export { SessionProvider, type SessionProviderProps } from "./hooks/session-provider";
 export { useSession, useSessionOptional, useVibr } from "./hooks/use-session";

@@ -10,7 +10,7 @@ import type {
 } from "@fraym-ai/driver";
 import type { AvatarId } from "@fraym-ai/vibr";
 import { useMemo } from "react";
-import { DeploymentGatesProvider } from "./deployment-gates";
+import { DeploymentGatesProvider, type ModelPickerGroups } from "./deployment-gates";
 import type { ToolDefaultOpen } from "./features";
 import { UsageDriverProvider, UsageStateProvider } from "./features/command-dock";
 import { SessionProvider } from "./hooks/session-provider";
@@ -112,6 +112,18 @@ export interface FraymProps {
 	/** Allowlist of model-provider ids shown in Connections + the model picker;
 	 *  default all. Filters the engine resource snapshot the shell renders. */
 	readonly visibleProviderIds?: readonly string[];
+	/** How the model picker groups models; default `"all"`. A host that ships a
+	 *  SINGLE provider passes `"providers-only"` so the picker shows just that
+	 *  provider's group — the "Current" and "All available" aggregates only
+	 *  restate rows the provider group already shows (checkmark included). */
+	readonly modelPickerGroups?: ModelPickerGroups;
+	/**
+	 * Collapse the session rail when a session is selected. Default `true` (the
+	 * shell's long-standing behaviour). Hosts docked in a narrow panel, where the
+	 * rail is the only navigation, pass `false` so the list does not vanish under
+	 * the click.
+	 */
+	readonly collapseRailOnSessionSelect?: boolean;
 	readonly onAppModeChange?: (mode: AppMode) => void;
 	/** Reveal a mention's absolute path in the OS's native file manager (desktop
 	 *  only). Absent → the file-mention pill's right-click menu drops the row. */
@@ -174,6 +186,14 @@ interface NormalizedFraymProps {
 	readonly apiKeyOnlyProviderIds?: readonly string[];
 	readonly enterpriseGatewaySetup?: boolean;
 	readonly visibleProviderIds?: readonly string[];
+	readonly modelPickerGroups?: ModelPickerGroups;
+	/**
+	 * Collapse the session rail when a session is selected. Default `true` (the
+	 * shell's long-standing behaviour). Hosts docked in a narrow panel, where the
+	 * rail is the only navigation, pass `false` so the list does not vanish under
+	 * the click.
+	 */
+	readonly collapseRailOnSessionSelect?: boolean;
 	readonly onAppModeChange?: (mode: AppMode) => void;
 	readonly onRevealPath?: (path: string) => void;
 }
@@ -245,6 +265,8 @@ function normalizeFraymProps({
 	apiKeyOnlyProviderIds,
 	enterpriseGatewaySetup,
 	visibleProviderIds,
+	modelPickerGroups,
+	collapseRailOnSessionSelect,
 	onAppModeChange,
 	onRevealPath,
 }: FraymProps): NormalizedFraymProps {
@@ -302,6 +324,8 @@ function normalizeFraymProps({
 		apiKeyOnlyProviderIds,
 		enterpriseGatewaySetup,
 		visibleProviderIds,
+		modelPickerGroups,
+		collapseRailOnSessionSelect,
 		onAppModeChange,
 		onRevealPath,
 	};
@@ -513,6 +537,7 @@ function FraymFrameHost({ runtime }: { readonly runtime: FraymRuntimeState }) {
 							surfaceFills={props.surfaceFills}
 							dockTabs={props.dockTabs}
 							topBarActions={props.topBarActions}
+							collapseRailOnSessionSelect={props.collapseRailOnSessionSelect}
 							onAppModeChange={props.onAppModeChange}
 							onRevealPath={props.onRevealPath}
 						/>
@@ -533,6 +558,7 @@ export function Fraym(props: FraymProps) {
 				enabledWisps: normalized.enabledWisps,
 				apiKeyOnlyProviderIds: normalized.apiKeyOnlyProviderIds,
 				enterpriseGatewaySetup: normalized.enterpriseGatewaySetup,
+				modelPickerGroups: normalized.modelPickerGroups,
 			}}
 		>
 			<FraymProviders runtime={runtime} />

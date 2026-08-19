@@ -1,6 +1,20 @@
 import { createContext, type ReactNode, use } from "react";
 
 /**
+ * How the model picker groups its models. `"all"` (default) keeps the aggregate
+ * categories — a "Current" group for the active model and an "All available"
+ * capability group — beside one group per provider. `"providers-only"` drops
+ * both aggregates so the picker shows nothing but provider groups.
+ *
+ * A host that ships exactly ONE provider gets no information from the
+ * aggregates: "Current" restates a row that is already visible (and already
+ * checkmarked) inside its provider group, and "All available" restates that
+ * provider's whole list. For such a deployment the two extra headings are pure
+ * noise, so it opts into `"providers-only"`.
+ */
+export type ModelPickerGroups = "all" | "providers-only";
+
+/**
  * Deployment-wide appearance gates: allowlists that narrow the in-app galleries
  * to a curated subset, so a white-label / embedded deployment can ship (say) a
  * single Vibr and a single wisp. `undefined` ⇒ no gate (the full gallery shows).
@@ -22,6 +36,8 @@ export interface DeploymentGates {
 	/** Show the "bring your own company gateway" setup card on the Connections page.
 	 *  `undefined`/`true` ⇒ shown; `false` hides it for a curated/white-label deployment. */
 	readonly enterpriseGatewaySetup?: boolean;
+	/** How the model picker groups models; `undefined` ⇒ `"all"`. See {@link ModelPickerGroups}. */
+	readonly modelPickerGroups?: ModelPickerGroups;
 }
 
 const EMPTY_GATES: DeploymentGates = {};

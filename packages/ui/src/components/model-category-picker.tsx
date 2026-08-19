@@ -1,6 +1,7 @@
 import type { EngineModelRecord, EngineProviderRecord } from "@fraym-ai/driver";
 import {
 	buildCategories,
+	type BuildCategoriesOptions,
 	type EngineModelChoice,
 	modelCapabilities,
 	modelKey,
@@ -11,7 +12,16 @@ import {
 import { useModelCategoryPickerState } from "./model-category-picker-state";
 import { ModelCategoryMenu, ModelCategoryTrigger } from "./model-category-picker-view";
 
-export { buildCategories, type EngineModelChoice, modelCapabilities, modelKey, modelMeta, selectedKey, sortModels };
+export {
+	buildCategories,
+	type BuildCategoriesOptions,
+	type EngineModelChoice,
+	modelCapabilities,
+	modelKey,
+	modelMeta,
+	selectedKey,
+	sortModels,
+};
 
 export interface ModelCategoryPickerProps {
 	readonly models: readonly EngineModelRecord[];

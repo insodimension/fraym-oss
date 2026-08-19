@@ -1,5 +1,6 @@
 import type { EngineModelRecord, EngineProviderRecord } from "@fraym-ai/driver";
 import { useCallback, useMemo, useState } from "react";
+import { useDeploymentGates } from "../deployment-gates";
 import { buildCategories, type EngineModelChoice, modelKey, selectedKey, sortModels } from "./model-category-data";
 import type { ModelCategory, ModelSelection } from "./model-picker";
 
@@ -17,6 +18,8 @@ interface UseModelCategoryPickerArgs {
 export interface ModelCategoryPickerState {
 	readonly anchorRect: DOMRect | null | undefined;
 	readonly categories: readonly ModelCategory[];
+	/** Label for ModelPicker's synthetic "all models" tab; `null` omits it. */
+	readonly allLabel: string | null;
 	readonly isDisabled: boolean;
 	readonly pickerSelection: ModelSelection;
 	readonly triggerText: string;
@@ -39,15 +42,19 @@ export function useModelCategoryPickerState({
 	const availableModels = useAvailableModels(models);
 	const currentKey = selectedKey(selected);
 	const selectedModel = useSelectedModel(availableModels, currentKey);
+	// A single-provider deployment opts out of the aggregate groups: no "Current"
+	// category, and no synthetic "All available" tab from ModelPicker.
+	const providerGroupsOnly = useDeploymentGates().modelPickerGroups === "providers-only";
 	const categories = useMemo(
-		() => buildCategories(availableModels, selected, providers),
-		[availableModels, providers, selected],
+		() => buildCategories(availableModels, selected, providers, { providerGroupsOnly }),
+		[availableModels, providers, selected, providerGroupsOnly],
 	);
 	const pickerSelection = usePickerSelection(currentKey, selectedModel, selectedLabel, placeholder);
 
 	return {
 		anchorRect,
 		categories,
+		allLabel: providerGroupsOnly ? null : "All available",
 		isDisabled: disabled || loading || availableModels.length === 0,
 		pickerSelection,
 		triggerText: loading ? "Loading models" : triggerLabel(selectedModel, selectedLabel, placeholder),

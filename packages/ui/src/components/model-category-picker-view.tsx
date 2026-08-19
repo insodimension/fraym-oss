@@ -48,7 +48,7 @@ export function ModelCategoryMenu({ state }: ModelCategoryMenuProps) {
 			onSelect={state.selectModel}
 			categories={state.categories}
 			efforts={[]}
-			allLabel="All available"
+			allLabel={state.allLabel}
 			onClose={state.close}
 			anchorRect={state.anchorRect}
 			place="below"

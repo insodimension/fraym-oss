@@ -1,5 +1,6 @@
 import type { EngineModelRecord, EngineProviderRecord, SessionConfig } from "@fraym-ai/driver";
 import { useCallback, useMemo } from "react";
+import { useDeploymentGates } from "../deployment-gates";
 import type { Placement } from "../elements/popover";
 import { buildCategories, modelKey, selectedKey, sortModels } from "./model-category-picker";
 import { ModelPicker, type ModelSelection } from "./model-picker";
@@ -126,7 +127,14 @@ export function EngineModelMenu({
 
 	const selected = useMemo(() => selectionFromRecord(selectedRecord), [selectedRecord]);
 
-	const categories = useMemo(() => buildCategories(available, selected, providers), [available, selected, providers]);
+	// A single-provider deployment opts out of the aggregate groups: no "Current"
+	// category, and no synthetic "All available" tab from ModelPicker.
+	const providerGroupsOnly = useDeploymentGates().modelPickerGroups === "providers-only";
+
+	const categories = useMemo(
+		() => buildCategories(available, selected, providers, { providerGroupsOnly }),
+		[available, selected, providers, providerGroupsOnly],
+	);
 
 	const currentKey = selectedKey(selected);
 	const currentThinking = sessionConfig?.thinkingLevel ?? "";
@@ -144,7 +152,7 @@ export function EngineModelMenu({
 			model={pickerModel}
 			categories={categories}
 			efforts={efforts}
-			allLabel="All available"
+			allLabel={providerGroupsOnly ? null : "All available"}
 			anchorRect={anchorRect}
 			place={place}
 			onClose={onClose}

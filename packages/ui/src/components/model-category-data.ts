@@ -57,17 +57,23 @@ function compareModels(a: EngineModelRecord, b: EngineModelRecord): number {
 	return provider || a.label.localeCompare(b.label);
 }
 
+export interface BuildCategoriesOptions {
+	/** Return ONLY the per-provider groups, dropping the "Current" and "All available"
+	 *  aggregates. For a single-provider deployment those two restate rows the provider
+	 *  group already shows. Absent/false ⇒ the full three-part list (unchanged default). */
+	readonly providerGroupsOnly?: boolean;
+}
+
 export function buildCategories(
 	availableModels: readonly EngineModelRecord[],
 	selected: EngineModelChoice | null | undefined,
 	providers: readonly EngineProviderRecord[] | undefined,
+	options?: BuildCategoriesOptions,
 ): ModelCategory[] {
 	const sorted = sortModels(availableModels);
-	return [
-		...currentCategory(sorted, selected),
-		...providerCategories(sorted, providers),
-		...capabilityCategories(sorted),
-	];
+	const providerGroups = providerCategories(sorted, providers);
+	if (options?.providerGroupsOnly) return providerGroups;
+	return [...currentCategory(sorted, selected), ...providerGroups, ...capabilityCategories(sorted)];
 }
 
 function currentCategory(

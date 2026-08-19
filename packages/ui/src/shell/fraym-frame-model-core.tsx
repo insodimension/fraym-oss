@@ -110,6 +110,14 @@ export interface FraymFrameModelArgs {
 	readonly surfaceFills?: WorkspaceSurfaceFills<WorkspaceSurfaceHostProps>;
 	readonly dockTabs?: readonly string[];
 	readonly topBarActions?: readonly string[];
+	/**
+	 * Collapse the session rail when a session is selected. Default `true`, which
+	 * suits a full IDE window where the thread wants the room. A host docked in a
+	 * narrow panel, with the rail as its only navigation, wants `false`: otherwise
+	 * the list the user just clicked vanishes and reads as the sidebar closing by
+	 * itself.
+	 */
+	readonly collapseRailOnSessionSelect?: boolean;
 	readonly onAppModeChange?: (mode: AppMode) => void;
 	readonly onRevealPath?: (path: string) => void;
 }
@@ -407,10 +415,14 @@ export function useFraymFrameModel(args: FraymFrameModelArgs): FraymFrameModel {
 		(item: SessionItem) => {
 			if (!item.sessionRef) return;
 			chrome.dispatch({ t: "mount", surface: SURFACE.session });
-			chrome.setRailMode("compact");
+			// Collapsing the rail on selection suits a full IDE window, where the
+			// thread wants the room. It is wrong for a host docked in a narrow panel
+			// with the rail as its only navigation: the list the user just clicked
+			// disappears, which reads as the sidebar closing by itself.
+			if (props.collapseRailOnSessionSelect !== false) chrome.setRailMode("compact");
 			props.onSessionSelect?.(item.sessionRef);
 		},
-		[chrome, props.onSessionSelect],
+		[chrome, props.collapseRailOnSessionSelect, props.onSessionSelect],
 	);
 	const submit = useCallback(
 		(text: string, attachments: readonly SessionAttachment[] = []): boolean => {
