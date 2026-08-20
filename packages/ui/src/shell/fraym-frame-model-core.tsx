@@ -642,6 +642,10 @@ export function useFraymFrameModel(args: FraymFrameModelArgs): FraymFrameModel {
 		userName: ident.name,
 		userEmail: ident.email,
 		userAvatarUrl: ident.avatarUrl,
+		// The profile pane's analytics card needs a connected analytics driver behind
+		// it; without one it renders an empty activity grid over "not connected".
+		// Derived from the driver's own availability, so a host cannot get it wrong.
+		profileAnalytics: props.analytics.available,
 		theme: theme.mode,
 		accent: theme.accent,
 		avatar: chrome.avatarChoice,

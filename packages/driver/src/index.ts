@@ -103,6 +103,22 @@ export interface SessionDoneEvent extends AgentEventBase {
   type: "session.done";
 }
 
+/**
+ * The engine's live context-window meter for this session.
+ *
+ * ACP pushes this as `usage_update` on every turn. Without it a host that speaks
+ * the flat event stream can report progress and tool calls but never how full the
+ * context is, so the composer's context ring sits at zero for the whole session.
+ */
+export interface ContextUsageStreamEvent extends AgentEventBase {
+  type: "context.usage";
+  /** Estimated context tokens in use, or null when the engine cannot say. */
+  tokens: number | null;
+  contextWindow: number;
+  /** Spend so far on this session, when the engine reports it. */
+  cost?: { readonly amount: number; readonly currency: string };
+}
+
 export interface SessionErrorEvent extends AgentEventBase {
   type: "session.error";
   message: string;
@@ -118,6 +134,7 @@ export type AgentEvent =
   | ToolCallEndEvent
   | ApprovalRequestEvent
   | ApprovalResponseEvent
+  | ContextUsageStreamEvent
   | SessionDoneEvent
   | SessionErrorEvent;
 

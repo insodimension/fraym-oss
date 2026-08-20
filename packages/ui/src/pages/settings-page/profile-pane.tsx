@@ -1,6 +1,8 @@
 import type { AnalyticsRange, AnalyticsSnapshot } from "@fraym-ai/driver";
 import { useState } from "react";
 import { AnalyticsProfileSections, AnalyticsWorkspaceSummaryCard } from "../../features/analytics";
+import { useUsageStateContext } from "../../features/command-dock/usage-state";
+import { UsageGlance } from "../../features/usage/usage-glance";
 import { Icon } from "../../icons";
 import { cn } from "../../lib/cn";
 
@@ -28,6 +30,15 @@ export interface ProfilePaneProps {
 	readonly activityCaption?: string;
 	readonly showHero?: boolean;
 	readonly showActions?: boolean;
+	/**
+	 * Render the analytics summary (and its activity grid). Default true.
+	 *
+	 * A host with no analytics driver has nothing to put in that card: it draws an
+	 * empty activity grid over "Analytics driver is not connected.", which reads as
+	 * a broken page rather than an absent feature. Such a host passes false and the
+	 * pane shows the profile plus live plan usage instead.
+	 */
+	readonly showAnalytics?: boolean;
 	readonly className?: string;
 }
 
@@ -141,6 +152,7 @@ export function ProfilePane({
 	activityCaption,
 	showHero = true,
 	showActions = true,
+	showAnalytics = true,
 	className,
 }: ProfilePaneProps) {
 	const { range, analyticsForRange, overviewError, overviewLoading } = profileAnalyticsState({
@@ -152,6 +164,10 @@ export function ProfilePane({
 		analyticsRange,
 	});
 	const resolvedInitials = initials ?? profileInitials(name);
+	// The frame mounts `UsageStateProvider`, so the pane can read live plan usage
+	// without the host threading it through. `UsageGlance` renders nothing when the
+	// host has no usage driver, so this stays invisible rather than empty.
+	const usageLimits = useUsageStateContext()?.snapshot?.limits ?? [];
 
 	return (
 		<div data-slot="profile-pane" className={cn("relative mx-auto max-w-[980px]", className)}>
@@ -161,20 +177,26 @@ export function ProfilePane({
 				<ProfileHero name={name} handle={handle} plan={plan} initials={resolvedInitials} avatarUrl={avatarUrl} />
 			)}
 
-			<AnalyticsWorkspaceSummaryCard
-				className="my-6"
-				range={range}
-				onRangeChange={onAnalyticsRangeChange}
-				stats={stats}
-				snapshot={analytics}
-				available={analyticsAvailable}
-				loading={overviewLoading}
-				error={overviewError}
-				activityTitle={activityTitle}
-				activityCaption={activityCaption}
-				cells={activityCells}
-			/>
-			{analyticsForRange && <AnalyticsProfileSections snapshot={analyticsForRange} onRefresh={onAnalyticsRefresh} />}
+			{usageLimits.length > 0 && <UsageGlance className="my-6" limits={usageLimits} title="Plan usage" />}
+
+			{showAnalytics && (
+				<AnalyticsWorkspaceSummaryCard
+					className="my-6"
+					range={range}
+					onRangeChange={onAnalyticsRangeChange}
+					stats={stats}
+					snapshot={analytics}
+					available={analyticsAvailable}
+					loading={overviewLoading}
+					error={overviewError}
+					activityTitle={activityTitle}
+					activityCaption={activityCaption}
+					cells={activityCells}
+				/>
+			)}
+			{showAnalytics && analyticsForRange && (
+				<AnalyticsProfileSections snapshot={analyticsForRange} onRefresh={onAnalyticsRefresh} />
+			)}
 		</div>
 	);
 }

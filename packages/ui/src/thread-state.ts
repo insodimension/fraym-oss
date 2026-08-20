@@ -279,5 +279,11 @@ export function reduceThreadEvent(
         ),
         waiting: true,
       };
+
+    // The context meter is not thread content — it lives on the driver snapshot.
+    // Returning `state` rather than `current` on purpose: a usage frame that lands
+    // mid-reasoning must not settle the open reasoning block.
+    case "context.usage":
+      return state;
   }
 }

@@ -202,6 +202,22 @@ class EventStreamSessionDriver implements EventStreamSessionDriverHandle {
 				break;
 			case "approval.response":
 				break;
+			case "context.usage": {
+				// The context ring reads `snapshot.contextUsage`; percent is derived here
+				// so every consumer agrees on the arithmetic. `tokens: null` (the engine
+				// cannot say, e.g. straight after compaction) must stay null rather than
+				// collapsing to a confident 0%.
+				const contextWindow = event.contextWindow;
+				const tokens = event.tokens;
+				this.#patch({
+					contextUsage: {
+						tokens,
+						contextWindow,
+						percent: tokens === null || contextWindow <= 0 ? null : (tokens / contextWindow) * 100,
+					},
+				});
+				break;
+			}
 			case "session.done":
 				this.#settleAgentMessage();
 				this.#emit({ type: "turnEnded", final: true });
