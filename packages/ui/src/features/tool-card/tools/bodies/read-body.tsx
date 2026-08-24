@@ -21,18 +21,22 @@ export interface ReadCodeBodyProps {
 	readonly lineNumbers?: boolean;
 	/** First gutter line number (for `:range` reads). Default 1. */
 	readonly startLine?: number;
+	/** The content is still ARRIVING (a streaming `write`/`read`): stay plain while it
+	 *  grows, then highlight once — see `useShikiLineHtml`'s `live`. */
+	readonly live?: boolean;
 }
 
 /**
  * Code rendering for read / write tool bodies. Known-language content under the size cap
  * highlights via Shiki (`HighlightedCode`): it paints plain first and swaps in highlighting
  * off an idle callback backed by a cached (lang, text) result — so the first paint never
- * blocks and history remounts / scrollback never re-tokenize. The idle tokenize is
- * cancel-on-change, so STREAMING content (a `write` whose args are still arriving) highlights
- * during idle gaps too — matching the edit/diff card — instead of staying flat grey. Oversized
- * or unknown-language content stays plain.
+ * blocks and history remounts / scrollback never re-tokenize. STREAMING content (a `write`
+ * whose args are still arriving) passes `live`: the cache is keyed on the whole text, so
+ * highlighting each chunk re-tokenized the entire growing block (O(n²) over the turn). It
+ * now stays flat while it grows and tokenizes ONCE when the stream settles. Oversized or
+ * unknown-language content stays plain.
  */
-export function ReadCodeBody({ text, language, lineNumbers = true, startLine = 1 }: ReadCodeBodyProps) {
+export function ReadCodeBody({ text, language, lineNumbers = true, startLine = 1, live = false }: ReadCodeBodyProps) {
 	if (!canSyntaxHighlight(text, language)) {
 		return (
 			<PlainCodeBlock
@@ -50,6 +54,7 @@ export function ReadCodeBody({ text, language, lineNumbers = true, startLine = 1
 			language={language}
 			lineNumbers={lineNumbers}
 			startLine={startLine}
+			live={live}
 			className="text-fr-xs"
 		/>
 	);

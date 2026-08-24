@@ -108,6 +108,9 @@ export function canSyntaxHighlight(text: string, language: string, maxChars: num
 	return language !== "" && language !== "text" && text.length <= maxChars;
 }
 
+/** Placeholder for the `live` path, which never looks at the lines at all. */
+const NO_LINES: readonly string[] = [];
+
 /**
  * Shiki-highlight `lines` (joined, for cross-line grammar context) → per-line HTML,
  * matching the read/write Streamdown path. Returns `null` until the async highlighter
@@ -117,14 +120,30 @@ export function canSyntaxHighlight(text: string, language: string, maxChars: num
  * remounts / scrollback never re-tokenize; a miss defers tokenization to idle time so
  * many cards mounting at once never block a frame. Exported so the whole library uses
  * one Shiki engine, one theme config, one cache.
+ *
+ * `live` = this content is STILL GROWING (a streaming `write`, an edit diff arriving
+ * chunk by chunk). The cache is keyed on the WHOLE text, so every delta is a fresh key:
+ * tokenizing on each one re-does the entire block and costs O(n²) across a streamed
+ * answer. While `live` the hook returns `null` (the caller renders plain) and does not
+ * even join the lines; the block tokenizes ONCE, on the render where `live` goes false.
  */
-export function useShikiLineHtml(lines: readonly string[], language: string): readonly string[] | null {
-	const text = lines.join("\n");
+export function useShikiLineHtml(
+	lines: readonly string[],
+	language: string,
+	live = false,
+): readonly string[] | null {
+	// Skipping the join while live keeps the per-delta cost O(1) instead of O(n), and
+	// pins the effect deps so a growing block does not re-run the effect per chunk.
+	const text = live ? "" : lines.join("\n");
 	const lang = language.toLowerCase();
-	const key = `${lang}\u0000${text}`;
-	const [html, setHtml] = useState<readonly string[] | null>(() => hlCacheGet(key) ?? null);
+	const key = live ? "" : `${lang}\u0000${text}`;
+	const [html, setHtml] = useState<readonly string[] | null>(() => (live ? null : hlCacheGet(key) ?? null));
 
 	useEffect(() => {
+		if (live) {
+			setHtml(null);
+			return;
+		}
 		const cached = hlCacheGet(key);
 		if (cached) {
 			setHtml(cached);
@@ -156,7 +175,7 @@ export function useShikiLineHtml(lines: readonly string[], language: string): re
 			active = false;
 			cancelIdle(handle);
 		};
-	}, [key, lang, text]);
+	}, [key, lang, text, live]);
 
 	return html;
 }
@@ -169,6 +188,9 @@ export interface HighlightedCodeProps {
 	readonly startLine?: number;
 	readonly className?: string;
 	readonly codeClassName?: string;
+	/** This code is still GROWING (streaming): render plain and tokenize once it
+	 *  settles, instead of re-tokenizing the whole block on every chunk. */
+	readonly live?: boolean;
 }
 
 /**
@@ -184,8 +206,9 @@ export function HighlightedCode({
 	startLine = 1,
 	className,
 	codeClassName,
+	live = false,
 }: HighlightedCodeProps) {
-	const lineHtml = useShikiLineHtml(source.split("\n"), language);
+	const lineHtml = useShikiLineHtml(live ? NO_LINES : source.split("\n"), language, live);
 	if (!lineHtml) {
 		return (
 			<PlainCodeBlock

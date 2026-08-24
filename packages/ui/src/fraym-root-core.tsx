@@ -53,6 +53,9 @@ export interface FraymProps {
 	 *  logo URL to white-label the frame instead of patching this package. */
 	readonly brandMarkUrl?: string;
 	readonly defaultShowAvatars?: boolean;
+	/** Initial `showReasoning`. Defaults TRUE (config-core.ts:236) — a host whose
+	 *  surface is too small for a thinking block per turn passes false. */
+	readonly defaultShowReasoning?: boolean;
 	/** Master on/off for the Vibr presence avatar (config `vibrEnabled`); default on. */
 	readonly defaultVibrEnabled?: boolean;
 	/** Enable the physics stream-wisp caret for this instance (config `streamWisp`). */
@@ -149,6 +152,7 @@ interface NormalizedFraymProps {
 	readonly version: string;
 	readonly brandMarkUrl?: string;
 	readonly defaultShowAvatars: boolean;
+	readonly defaultShowReasoning: boolean;
 	readonly defaultVibrEnabled: boolean;
 	readonly defaultStreamWisp: boolean;
 	readonly defaultStreamWispPreset: StreamWispPreset;
@@ -228,6 +232,7 @@ function normalizeFraymProps({
 	version = "v0.4",
 	brandMarkUrl,
 	defaultShowAvatars = false,
+	defaultShowReasoning = true,
 	defaultVibrEnabled = true,
 	defaultStreamWisp = false,
 	defaultStreamWispPreset = "auto",
@@ -287,6 +292,7 @@ function normalizeFraymProps({
 		version,
 		brandMarkUrl,
 		defaultShowAvatars,
+		defaultShowReasoning,
 		defaultVibrEnabled,
 		defaultStreamWisp,
 		defaultStreamWispPreset,
@@ -404,6 +410,7 @@ function useFraymRuntimeState(props: NormalizedFraymProps): FraymRuntimeState {
 		settingsPanels,
 		defaultToolOpen,
 		defaultShowAvatars,
+		defaultShowReasoning,
 		defaultVibrEnabled,
 		defaultStreamWisp,
 		defaultStreamWispPreset,
@@ -429,6 +436,7 @@ function useFraymRuntimeState(props: NormalizedFraymProps): FraymRuntimeState {
 		() => ({
 			toolOutputDefault: defaultToolOpen,
 			showAvatars: defaultShowAvatars,
+			showReasoning: defaultShowReasoning,
 			vibrEnabled: defaultVibrEnabled,
 			avatar: defaultAvatar,
 			streamWisp: defaultStreamWisp,
@@ -438,6 +446,7 @@ function useFraymRuntimeState(props: NormalizedFraymProps): FraymRuntimeState {
 		[
 			defaultToolOpen,
 			defaultShowAvatars,
+			defaultShowReasoning,
 			defaultVibrEnabled,
 			defaultAvatar,
 			defaultStreamWisp,

@@ -22,9 +22,20 @@ export interface WriteContentBodyProps {
 	readonly followTail?: boolean;
 	/** Show the line-number gutter. Default true. */
 	readonly lineNumbers?: boolean;
+	/** The content is still ARRIVING: stay plain while it grows and highlight once it
+	 *  settles (see `useShikiLineHtml`'s `live`). Defaults to `followTail`, which the
+	 *  tool renderers already set from the call's streaming state. */
+	readonly live?: boolean;
 }
 
-export function WriteContentBody({ text, language, maxHeight, followTail, lineNumbers = true }: WriteContentBodyProps) {
+export function WriteContentBody({
+	text,
+	language,
+	maxHeight,
+	followTail,
+	lineNumbers = true,
+	live = followTail,
+}: WriteContentBodyProps) {
 	const scrollRef = useRef<HTMLDivElement>(null);
 	// biome-ignore lint/correctness/useExhaustiveDependencies: re-scroll to the tail as content grows.
 	useEffect(() => {
@@ -40,7 +51,7 @@ export function WriteContentBody({ text, language, maxHeight, followTail, lineNu
 			className="overflow-auto"
 			style={maxHeight != null ? { maxHeight, scrollbarGutter: "stable" } : undefined}
 		>
-			<ReadCodeBody text={text} language={language} lineNumbers={lineNumbers} />
+			<ReadCodeBody text={text} language={language} lineNumbers={lineNumbers} live={live ?? false} />
 		</div>
 	);
 }

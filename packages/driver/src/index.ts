@@ -119,6 +119,21 @@ export interface ContextUsageStreamEvent extends AgentEventBase {
   cost?: { readonly amount: number; readonly currency: string };
 }
 
+/**
+ * A message from the engine that is not part of the answer: a slash command that
+ * failed, an extension's notification, a status line.
+ *
+ * These arrive on their own lane (ACP's `_inso/session/event`), and a host with no
+ * event for them drops them entirely - a failed `/command` then looks exactly like
+ * one that did nothing. Distinct from `session.error`, which also marks the turn
+ * failed; a notice leaves the turn alone.
+ */
+export interface SessionNoticeEvent extends AgentEventBase {
+  type: "session.notice";
+  level: "info" | "warning" | "error";
+  message: string;
+}
+
 export interface SessionErrorEvent extends AgentEventBase {
   type: "session.error";
   message: string;
@@ -135,6 +150,7 @@ export type AgentEvent =
   | ApprovalRequestEvent
   | ApprovalResponseEvent
   | ContextUsageStreamEvent
+  | SessionNoticeEvent
   | SessionDoneEvent
   | SessionErrorEvent;
 

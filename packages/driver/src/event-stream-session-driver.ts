@@ -202,6 +202,19 @@ class EventStreamSessionDriver implements EventStreamSessionDriverHandle {
 				break;
 			case "approval.response":
 				break;
+			case "session.notice":
+				// Stands alone on purpose: settling here would cut an in-flight reply in
+				// half just because the engine mentioned something.
+				this.#transcript.push({
+					id: `${this.#snapshot.ref.sessionId}-notice-${this.#transcript.length}`,
+					role: "agent",
+					blocks: [{ type: "notice", level: event.level, message: event.message }],
+					timestamp: new Date().toISOString(),
+					settled: true,
+					final: true,
+				});
+				this.#journal();
+				break;
 			case "context.usage": {
 				// The context ring reads `snapshot.contextUsage`; percent is derived here
 				// so every consumer agrees on the arithmetic. `tokens: null` (the engine
