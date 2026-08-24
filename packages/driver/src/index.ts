@@ -120,6 +120,25 @@ export interface ContextUsageStreamEvent extends AgentEventBase {
 }
 
 /**
+ * The engine's per-session model configuration, as it changes.
+ *
+ * The reasoning-effort list is a PER-MODEL fact, not a constant: measured against
+ * the Yarin engine, `deepseek-v4-flash` offers `off/auto/low/high/max` while a model
+ * the catalog cannot resolve offers only `off/auto`. So the levels have to travel
+ * with each change rather than being read once at construction - switching model
+ * changes which efforts exist, and a host that cached the first answer would offer
+ * levels the engine silently drops.
+ */
+export interface SessionConfigStreamEvent extends AgentEventBase {
+  type: "session.config";
+  modelId?: string;
+  /** The engine's current thinking level (e.g. `off`, `auto`, `low`). */
+  thinkingLevel?: string;
+  /** Exactly the levels THIS model accepts; anything else is ignored upstream. */
+  thinkingLevels?: readonly string[];
+}
+
+/**
  * A message from the engine that is not part of the answer: a slash command that
  * failed, an extension's notification, a status line.
  *
@@ -150,6 +169,7 @@ export type AgentEvent =
   | ApprovalRequestEvent
   | ApprovalResponseEvent
   | ContextUsageStreamEvent
+  | SessionConfigStreamEvent
   | SessionNoticeEvent
   | SessionDoneEvent
   | SessionErrorEvent;

@@ -15,11 +15,13 @@ import { type ComponentProps, type MouseEvent, type ReactNode, useCallback, useE
 import { type ModelSelection, type PaletteCategory, ProviderBrandIcon } from "../components";
 import type { RailMode } from "../components/app-shell";
 import { ComposerChip, type ComposerChipProps, ContextRadial } from "../features/composer/composer";
+import { resolveThreadVerber, useStickyToolIntent } from "../features/thread/verber-status";
 import { Icon } from "../icons";
 import type { RepoGroup, SessionItem } from "../features/session-rail/session-rail";
 import type { ToolDefaultOpen } from "../features/tool-card/tool-display-settings-model";
 import { useLiveContextPercent } from "../hooks/use-live-context-percent";
 import { type RailVibr, useLiveSessionVibrs } from "../hooks/use-live-session-vibrs";
+import type { ActiveToolCall } from "../hooks/session-types";
 import { useSessionOptional } from "../hooks/use-session";
 import type { UsageState } from "../hooks/use-usage";
 import type { WorkspaceAnalyticsState } from "../hooks/use-workspace-analytics";
@@ -60,6 +62,7 @@ type ContextBreakdown = FraymFrameOverlaysProps["contextBreakdown"];
 
 const EMPTY_SURFACE_FILLS: WorkspaceSurfaceFills<WorkspaceSurfaceHostProps> = {};
 const EMPTY_SESSION_REFS: readonly SessionRef[] = [];
+const EMPTY_ACTIVE_TOOLS: readonly ActiveToolCall[] = [];
 
 export interface FraymFrameModelArgs {
 	readonly sessionRef?: SessionRef | null;
@@ -463,6 +466,24 @@ export function useFraymFrameModel(args: FraymFrameModelArgs): FraymFrameModel {
 		mode: session?.vibrMode ?? (session?.isStreaming ? "think" : ""),
 		energy: session?.energy ?? 0,
 	};
+	const activeTools = session?.activeTools ?? EMPTY_ACTIVE_TOOLS;
+	// The tail's whole job is naming the current action ("Reading", "Editing"), so
+	// resolve it through the same verber lane the connected thread uses instead of
+	// leaving the shell mute: a host that docks this shell with presence chrome off
+	// (no orb, no vibr, no wisp) has this text as its ONLY "the agent is busy" cue.
+	// `undefined` — never "" — because the thread's own fallback chain is nullish
+	// coalescing and an empty string would silently win it.
+	const tailToolIntent = useStickyToolIntent(activeTools, Boolean(session?.isStreaming));
+	const tailVerber = resolveThreadVerber({
+		profile: settings.config.verberProfile,
+		isStreaming: Boolean(session?.isStreaming),
+		vibrState: activeVibr.state,
+		vibrMode: activeVibr.mode,
+		activeTools,
+		workingStatus: session?.workingStatus ?? null,
+		toolCount: session?.toolCount,
+		toolIntent: tailToolIntent,
+	});
 	const inventory = {
 		toolDisplaySettings: toolSettings(settings.config),
 		settingsNavItems: settingsItems(props.settingsPanels, props.visibleSettingsPanelIds),
@@ -557,7 +578,10 @@ export function useFraymFrameModel(args: FraymFrameModelArgs): FraymFrameModel {
 		vibrState: activeVibr.state,
 		vibrMode: activeVibr.mode,
 		energy: activeVibr.energy,
-		tailVerb: "",
+		tailVerb: tailVerber.visible ? tailVerber.text : undefined,
+		// Gates the presence ORB only. Whether the working row itself renders is the
+		// thread's call (streaming / reconnecting / a presence node), so an
+		// avatar-less host still gets the verb and the reconnect status.
 		showTailPresence: chrome.avatar !== "none",
 		showAvatars: settings.config.showAvatars,
 		agentMeta: `${model.name} - ${model.effort}`,

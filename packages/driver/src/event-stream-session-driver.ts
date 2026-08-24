@@ -43,6 +43,14 @@ export interface EventStreamSessionDriverOptions {
 	/** Switch the model the underlying harness uses for the next turn. When set,
 	 *  the shell's model menu becomes live; absent, `setSessionModel` is a no-op. */
 	readonly setModel?: (selection: SessionModelSelection) => void | Promise<void>;
+	/** Change the engine's reasoning effort for this session. Absent, the shell's
+	 *  effort control is inert - which is what it was: `setSessionThinkingLevel`
+	 *  shipped as an empty method, so every selection was silently discarded. */
+	readonly setThinkingLevel?: (level: string) => void | Promise<void>;
+	/** The engine's thinking state at construction: its current level, and exactly
+	 *  the levels THIS model accepts. Both change with the model, so the live values
+	 *  arrive later on the `session.config` event. */
+	readonly thinking?: { readonly level?: string; readonly levels?: readonly string[] };
 	readonly workspace?: WorkspaceRef;
 	readonly title?: string;
 	readonly model?: string;
@@ -90,6 +98,8 @@ class EventStreamSessionDriver implements EventStreamSessionDriverHandle {
 			config: {
 				...(options.provider ? { provider: options.provider } : {}),
 				...(options.model ? { modelId: options.model } : {}),
+				...(options.thinking?.level === undefined ? {} : { thinkingLevel: options.thinking.level }),
+				...(options.thinking?.levels === undefined ? {} : { thinkingLevels: options.thinking.levels }),
 			},
 		};
 	}
@@ -215,6 +225,20 @@ class EventStreamSessionDriver implements EventStreamSessionDriverHandle {
 				});
 				this.#journal();
 				break;
+			case "session.config": {
+				// Merge, never replace: the engine reports the model and the thinking row
+				// on the same lane but not always together, so a config frame carrying
+				// only a new thinking level must not erase the known model id.
+				this.#patch({
+					config: {
+						...this.#snapshot.config,
+						...(event.modelId === undefined ? {} : { modelId: event.modelId }),
+						...(event.thinkingLevel === undefined ? {} : { thinkingLevel: event.thinkingLevel }),
+						...(event.thinkingLevels === undefined ? {} : { thinkingLevels: event.thinkingLevels }),
+					},
+				});
+				break;
+			}
 			case "context.usage": {
 				// The context ring reads `snapshot.contextUsage`; percent is derived here
 				// so every consumer agrees on the arithmetic. `tokens: null` (the engine
@@ -294,7 +318,12 @@ class EventStreamSessionDriver implements EventStreamSessionDriverHandle {
 			config: { ...this.#snapshot.config, provider: selection.provider, modelId: selection.modelId },
 		});
 	}
-	async setSessionThinkingLevel(): Promise<void> {}
+	async setSessionThinkingLevel(_ref: SessionRef, thinkingLevel: string): Promise<void> {
+		// Patch AFTER the host call, and only the level: the option list belongs to the
+		// model, so a level change must not be read as a change to what is available.
+		await this.#options.setThinkingLevel?.(thinkingLevel);
+		this.#patch({ config: { ...this.#snapshot.config, thinkingLevel } });
+	}
 	async setSessionApprovalMode(): Promise<void> {}
 	async setSessionEphemeral(): Promise<void> {}
 	async compactSession(): Promise<void> {}

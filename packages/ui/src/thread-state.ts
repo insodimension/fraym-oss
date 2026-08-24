@@ -291,5 +291,12 @@ export function reduceThreadEvent(
     // mid-reasoning must not settle the open reasoning block.
     case "context.usage":
       return state;
+
+    // Model/effort configuration is driver-snapshot state, not transcript content.
+    // `state` for the same reason as above: the engine reports config changes on the
+    // same lane as everything else, and one landing mid-reasoning must not settle
+    // the open block.
+    case "session.config":
+      return state;
   }
 }

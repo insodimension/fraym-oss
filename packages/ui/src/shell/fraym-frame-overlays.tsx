@@ -26,6 +26,15 @@ type McpServers = ComponentProps<typeof McpModal>["servers"];
 type EngineModelSelection = Parameters<NonNullable<ComponentProps<typeof EngineModelMenu>["onSelectModel"]>>[0];
 type ThinkingLevel = Parameters<NonNullable<ComponentProps<typeof EngineModelMenu>["onSelectThinking"]>>[0];
 
+/**
+ * Used only when the host reports no `thinkingLevels`. A host that stays silent has not
+ * told us which levels its model accepts, so any graded scale named here is invented —
+ * engines ignore levels they do not have, and the picker would offer notches that change
+ * nothing. `off` / `auto` is the pair every engine honours, and at two values the picker
+ * renders pills rather than a gradient we cannot back.
+ */
+const FALLBACK_THINKING_LEVELS = ["off", "auto"] as const;
+
 interface FilterOverlayProps {
 	readonly menu: MenuState;
 	readonly filters: SessionFilters;
@@ -92,7 +101,7 @@ function ModelOverlay({
 				models={models}
 				providers={providers}
 				sessionConfig={sessionConfig}
-				efforts={sessionConfig?.thinkingLevels ?? ["off", "minimal", "low", "medium", "high", "xhigh"]}
+				efforts={sessionConfig?.thinkingLevels ?? FALLBACK_THINKING_LEVELS}
 				anchorRect={menu.rect}
 				place="above-right"
 				onSelectModel={onEngineModelSelect}
