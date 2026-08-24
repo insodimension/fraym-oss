@@ -117,8 +117,11 @@ export function modelSelectionFromConfig(
 	models?: readonly EngineModelRecord[],
 ): ModelSelection | null {
 	if (!config?.modelId && !config?.thinkingLevel) return null;
-	const name = config?.modelId ?? "engine model";
-	const effort = config?.thinkingLevel ?? "default";
+	// `||`, matching the truthiness test above. With `??` an empty-string modelId
+	// passed the guard (a set thinkingLevel kept it alive) and then survived the
+	// fallback, so the composer chip rendered a nameless model.
+	const name = config?.modelId || "engine model";
+	const effort = config?.thinkingLevel || "default";
 	const branded = config?.modelId
 		? models?.find(
 				model =>
