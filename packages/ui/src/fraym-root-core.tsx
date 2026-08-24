@@ -56,6 +56,16 @@ export interface FraymProps {
 	/** Initial `showReasoning`. Defaults TRUE (config-core.ts:236) — a host whose
 	 *  surface is too small for a thinking block per turn passes false. */
 	readonly defaultShowReasoning?: boolean;
+	/**
+	 * Initial motion preference. Defaults `"system"`.
+	 *
+	 * `"reduced"` is the honest setting for a host rendering in a weak compositor:
+	 * the global clamp (theme.css) zeroes every animation and transition, including
+	 * the text shimmer whose gradient is clipped to glyphs and therefore repaints
+	 * per frame with no cheaper equivalent. The user can turn it back on in
+	 * Appearance → "Reduce motion".
+	 */
+	readonly defaultMotion?: "system" | "full" | "reduced";
 	/** Master on/off for the Vibr presence avatar (config `vibrEnabled`); default on. */
 	readonly defaultVibrEnabled?: boolean;
 	/** Enable the physics stream-wisp caret for this instance (config `streamWisp`). */
@@ -153,6 +163,7 @@ interface NormalizedFraymProps {
 	readonly brandMarkUrl?: string;
 	readonly defaultShowAvatars: boolean;
 	readonly defaultShowReasoning: boolean;
+	readonly defaultMotion: "system" | "full" | "reduced";
 	readonly defaultVibrEnabled: boolean;
 	readonly defaultStreamWisp: boolean;
 	readonly defaultStreamWispPreset: StreamWispPreset;
@@ -233,6 +244,7 @@ function normalizeFraymProps({
 	brandMarkUrl,
 	defaultShowAvatars = false,
 	defaultShowReasoning = true,
+	defaultMotion = "system",
 	defaultVibrEnabled = true,
 	defaultStreamWisp = false,
 	defaultStreamWispPreset = "auto",
@@ -293,6 +305,7 @@ function normalizeFraymProps({
 		brandMarkUrl,
 		defaultShowAvatars,
 		defaultShowReasoning,
+		defaultMotion,
 		defaultVibrEnabled,
 		defaultStreamWisp,
 		defaultStreamWispPreset,
@@ -411,6 +424,7 @@ function useFraymRuntimeState(props: NormalizedFraymProps): FraymRuntimeState {
 		defaultToolOpen,
 		defaultShowAvatars,
 		defaultShowReasoning,
+		defaultMotion,
 		defaultVibrEnabled,
 		defaultStreamWisp,
 		defaultStreamWispPreset,
@@ -437,6 +451,7 @@ function useFraymRuntimeState(props: NormalizedFraymProps): FraymRuntimeState {
 			toolOutputDefault: defaultToolOpen,
 			showAvatars: defaultShowAvatars,
 			showReasoning: defaultShowReasoning,
+			motion: defaultMotion,
 			vibrEnabled: defaultVibrEnabled,
 			avatar: defaultAvatar,
 			streamWisp: defaultStreamWisp,
@@ -447,6 +462,7 @@ function useFraymRuntimeState(props: NormalizedFraymProps): FraymRuntimeState {
 			defaultToolOpen,
 			defaultShowAvatars,
 			defaultShowReasoning,
+			defaultMotion,
 			defaultVibrEnabled,
 			defaultAvatar,
 			defaultStreamWisp,
