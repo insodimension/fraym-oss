@@ -138,6 +138,16 @@ export interface FraymProps {
 	/** The empty-session line above the composer; `false` removes it. */
 	readonly startHeading?: string | false;
 	/**
+	 * The permission options the composer's permission menu offers, as an
+	 * allow-list of option ids (`"yolo"`, `"write"`, `"always-ask"`). Omitted —
+	 * every existing host — offers all three.
+	 *
+	 * A host passes this when its engine cannot honour an option. Only the
+	 * shell's own ids are accepted and the surviving options keep their order,
+	 * labels and tones: this filters the menu, it never redefines a mode.
+	 */
+	readonly permissionModes?: readonly string[];
+	/**
 	 * Collapse the session rail when a session is selected. Default `true` (the
 	 * shell's long-standing behaviour). Hosts docked in a narrow panel, where the
 	 * rail is the only navigation, pass `false` so the list does not vanish under
@@ -211,6 +221,7 @@ interface NormalizedFraymProps {
 	readonly modelPickerGroups?: ModelPickerGroups;
 	readonly composerVoice?: boolean;
 	readonly startHeading?: string | false;
+	readonly permissionModes?: readonly string[];
 	/**
 	 * Collapse the session rail when a session is selected. Default `true` (the
 	 * shell's long-standing behaviour). Hosts docked in a narrow panel, where the
@@ -294,6 +305,7 @@ function normalizeFraymProps({
 	modelPickerGroups,
 	composerVoice,
 	startHeading,
+	permissionModes,
 	collapseRailOnSessionSelect,
 	onAppModeChange,
 	onRevealPath,
@@ -357,6 +369,7 @@ function normalizeFraymProps({
 		modelPickerGroups,
 		composerVoice,
 		startHeading,
+		permissionModes,
 		collapseRailOnSessionSelect,
 		onAppModeChange,
 		onRevealPath,
@@ -577,6 +590,7 @@ function FraymFrameHost({ runtime }: { readonly runtime: FraymRuntimeState }) {
 							topBarActions={props.topBarActions}
 							composerVoice={props.composerVoice}
 			startHeading={props.startHeading}
+							permissionModes={props.permissionModes}
 							collapseRailOnSessionSelect={props.collapseRailOnSessionSelect}
 							onAppModeChange={props.onAppModeChange}
 							onRevealPath={props.onRevealPath}

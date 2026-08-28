@@ -105,6 +105,20 @@ export const PERMS: PermissionDef[] = [
 ];
 
 /**
+ * The permission options a host is willing to offer, in `PERMS` order.
+ *
+ * `modes` is the host's `permissionModes` prop: an allow-list of `PERMS` ids.
+ * Omitted (or empty after filtering) means every option — the shell's default.
+ * This only ever filters; it never reorders, relabels or invents an option, so
+ * a host cannot use it to describe a mode the shell does not implement.
+ */
+export function resolvePermissions(modes?: readonly string[]): PermissionDef[] {
+	if (!modes) return PERMS;
+	const allowed = PERMS.filter(permission => modes.includes(permission.id));
+	return allowed.length > 0 ? allowed : PERMS;
+}
+
+/**
  * The composer model chip's content. Pass `models` (the resource snapshot's model
  * records) to opt into host branding: when the record bound to this session
  * carries a `logoUrl`, the chip shows that mark plus the BARE model name (the

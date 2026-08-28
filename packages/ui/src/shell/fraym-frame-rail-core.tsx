@@ -580,7 +580,7 @@ const FraymRailFooter = memo(function FraymRailFooter({
 		<div className="border-t border-fr-border-soft p-2">
 			<button
 				type="button"
-				aria-label={compact ? `${userName} — ${productLabel} ${planLabel}` : undefined}
+				aria-label={compact ? `${userName} — ${[productLabel, planLabel].filter(Boolean).join(" ")}` : undefined}
 				className={cn(
 					"flex w-full items-center gap-2.5 rounded-[9px] px-2 py-1.5 text-left transition-colors hover:bg-fr-surface",
 					compact && "justify-center gap-0 px-0",
@@ -590,8 +590,11 @@ const FraymRailFooter = memo(function FraymRailFooter({
 				<UserAvatar userName={userName} userAvatarUrl={userAvatarUrl} className="size-7" fallback="A" />
 				<div className="rail-label min-w-0">
 					<div className="fr-overflow text-fr-sm font-medium">{userName}</div>
+					{/* A host whose product name is already the whole window passes an empty
+					    `productLabel`, and the line carries the plan alone rather than
+					    repeating the brand back at the user ("Yarin - Yarin"). */}
 					<div className="fr-overflow text-fr-2xs text-fr-text-3">
-						{productLabel} - {planLabel}
+						{productLabel ? `${productLabel} - ${planLabel}` : planLabel}
 					</div>
 				</div>
 				<Icon name="caretD" size={14} strokeWidth={2} className="rail-label ml-auto text-fr-text-3" />
