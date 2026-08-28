@@ -22,7 +22,9 @@ import type {
 	SessionModelSelection,
 	SessionRef,
 	SessionSnapshot,
+	SessionTranscriptBlock,
 	SessionTranscriptMessage,
+	SessionTranscriptToolCall,
 	SessionTreeSnapshot,
 	Unsubscribe,
 	WorkspaceRef,
@@ -80,8 +82,19 @@ class EventStreamSessionDriver implements EventStreamSessionDriverHandle {
 	#transcript: SessionTranscriptMessage[] = [];
 	#seq = 0;
 	#turn = 0;
-	#agentText = "";
-	#agentReasoning = "";
+	/**
+	 * The current turn's blocks, IN THE ORDER THEY HAPPENED.
+	 *
+	 * Reasoning, prose and tool calls interleave in a real turn, and a settled
+	 * message has to reproduce that: keeping only two text buffers meant every tool
+	 * call was ephemeral - rendered live from `toolStarted`/`toolFinished`, then
+	 * dropped on the floor when the turn settled, because nothing ever wrote it to
+	 * the transcript. Measured: six tool cards on screen during a turn, zero the
+	 * instant it finished, and none at all on resume.
+	 */
+	#pending: SessionTranscriptBlock[] = [];
+	/** Where each in-flight tool call sits in {@link #pending}, by call id. */
+	#toolBlocks = new Map<string, number>();
 	#listener: SessionEventListener | null = null;
 	#streamUnsubscribe: AgentUnsubscribe | null = null;
 
@@ -132,11 +145,30 @@ class EventStreamSessionDriver implements EventStreamSessionDriverHandle {
 		});
 	}
 
+	/** Extend the trailing text/reasoning block, or open a new one. Keeping deltas
+	 *  merged means a turn's prose is one block per run of prose, with tool calls
+	 *  sitting between the runs exactly where they happened. */
+	#appendProse(type: "text" | "reasoning", delta: string): void {
+		const last = this.#pending.at(-1);
+		if (last !== undefined && last.type === type) {
+			this.#pending[this.#pending.length - 1] = { type, text: last.text + delta };
+			return;
+		}
+		this.#pending.push({ type, text: delta });
+	}
+
+	/** Patch a recorded tool call in place, by call id. */
+	#patchToolBlock(callId: string, patch: Partial<SessionTranscriptToolCall>): void {
+		const at = this.#toolBlocks.get(callId);
+		if (at === undefined) return;
+		const block = this.#pending[at];
+		if (block === undefined || block.type !== "tool") return;
+		this.#pending[at] = { type: "tool", call: { ...block.call, ...patch } };
+	}
+
 	/** Settle the streamed agent segment into a durable transcript message. */
 	#settleAgentMessage(extra?: SessionTranscriptMessage["blocks"][number]): void {
-		const blocks: SessionTranscriptMessage["blocks"][number][] = [];
-		if (this.#agentReasoning.length > 0) blocks.push({ type: "reasoning", text: this.#agentReasoning });
-		if (this.#agentText.length > 0) blocks.push({ type: "text", text: this.#agentText });
+		const blocks: SessionTranscriptMessage["blocks"][number][] = [...this.#pending];
 		if (extra) blocks.push(extra);
 		if (blocks.length > 0) {
 			this.#transcript.push({
@@ -149,8 +181,8 @@ class EventStreamSessionDriver implements EventStreamSessionDriverHandle {
 			});
 			this.#journal();
 		}
-		this.#agentText = "";
-		this.#agentReasoning = "";
+		this.#pending = [];
+		this.#toolBlocks.clear();
 	}
 
 	#onAgentEvent(event: AgentEvent): void {
@@ -169,14 +201,26 @@ class EventStreamSessionDriver implements EventStreamSessionDriverHandle {
 				this.#patch({ status: "running", preview: event.content.slice(0, 120) });
 				break;
 			case "assistant.message.delta":
-				this.#agentText += event.delta;
+				this.#appendProse("text", event.delta);
 				this.#emit({ type: "assistantDelta", text: event.delta });
 				break;
 			case "reasoning.delta":
-				this.#agentReasoning += event.delta;
+				this.#appendProse("reasoning", event.delta);
 				this.#emit({ type: "thinkingDelta", text: event.delta });
 				break;
 			case "tool_call.start":
+				// Recorded in the turn's block order, not just streamed: this is what
+				// keeps the card in the thread once the turn settles.
+				this.#toolBlocks.set(event.toolCallId, this.#pending.length);
+				this.#pending.push({
+					type: "tool",
+					call: {
+						callId: event.toolCallId,
+						toolName: event.toolName,
+						status: "running",
+						...(event.input === undefined ? {} : { input: event.input }),
+					},
+				});
 				this.#emit({
 					type: "toolStarted",
 					toolName: event.toolName,
@@ -185,20 +229,30 @@ class EventStreamSessionDriver implements EventStreamSessionDriverHandle {
 				});
 				break;
 			case "tool_call.update":
+				this.#patchToolBlock(
+					event.toolCallId,
+					typeof event.output === "string" ? { text: event.output } : { output: event.output },
+				);
 				this.#emit({
 					type: "toolUpdated",
 					callId: event.toolCallId,
 					...(typeof event.output === "string" ? { text: event.output } : { partialResult: event.output }),
 				});
 				break;
-			case "tool_call.end":
+			case "tool_call.end": {
+				const success = event.status !== "failed" && event.status !== "cancelled";
+				this.#patchToolBlock(event.toolCallId, {
+					status: success ? "success" : "error",
+					...(event.output === undefined ? {} : { output: event.output }),
+				});
 				this.#emit({
 					type: "toolFinished",
 					callId: event.toolCallId,
-					success: event.status !== "failed" && event.status !== "cancelled",
+					success,
 					output: event.output,
 				});
 				break;
+			}
 			case "approval.request":
 				this.#emit({
 					type: "hostUiRequest",
