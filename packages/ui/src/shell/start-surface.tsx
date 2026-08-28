@@ -33,6 +33,8 @@ export interface StartSurfaceProps {
 	readonly disabled?: boolean;
 	readonly leftSlot?: ReactNode;
 	readonly rightSlot?: ReactNode;
+	/** `false` removes the composer's built-in dictation mic; see FraymProps. */
+	readonly composerVoice?: boolean;
 	readonly sessionDriver: SessionDriver | null | undefined;
 	readonly sessionRef: SessionRef | null | undefined;
 	readonly onWorkspaceSelect?: (workspace: WorkspaceRef) => void;
@@ -269,6 +271,7 @@ function StartComposer({
 				showTips
 				leftSlot={props.leftSlot}
 				rightSlot={props.rightSlot}
+				voice={props.composerVoice === false ? false : undefined}
 				className="bg-transparent px-0 pb-0 pt-0"
 				footerSlot={
 					<StartControlStrip
