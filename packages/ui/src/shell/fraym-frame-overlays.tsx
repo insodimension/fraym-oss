@@ -15,7 +15,7 @@ import type { RepoGroup, SessionItem } from "../features/session-rail/session-ra
 import { useContextBreakdown } from "../hooks/use-context-breakdown";
 import { useSessionOptional } from "../hooks/use-session";
 import { FilterMenu, ProjectContextMenu, SessionContextMenu, SessionMultiContextMenu, UserMenu } from "./menus";
-import { PERMS } from "./shell-data";
+import { resolvePermissions } from "./shell-data";
 import type { MenuState, SessionFilters } from "./types";
 
 type PaletteCategories = ComponentProps<typeof CommandPalette>["categories"];
@@ -125,15 +125,17 @@ function ModelOverlay({
 interface PermissionOverlayProps {
 	readonly menu: MenuState;
 	readonly selected: string;
+	/** Host allow-list of `PERMS` ids; omitted means every option. */
+	readonly permissionModes?: readonly string[];
 	readonly onSelect: (value: string) => void;
 	readonly onClose: () => void;
 }
 
-function PermissionOverlay({ menu, selected, onSelect, onClose }: PermissionOverlayProps) {
+function PermissionOverlay({ menu, selected, permissionModes, onSelect, onClose }: PermissionOverlayProps) {
 	if (menu.type !== "perm") return null;
 	return (
 		<PermissionMenu
-			permissions={PERMS}
+			permissions={resolvePermissions(permissionModes)}
 			selected={selected}
 			onSelect={onSelect}
 			onClose={onClose}
@@ -456,6 +458,7 @@ export interface FraymFrameOverlaysProps {
 	readonly providers: readonly Provider[] | undefined;
 	readonly sessionConfig: SessionConfig | undefined;
 	readonly permission: string;
+	readonly permissionModes?: readonly string[];
 	readonly contextUsed: number;
 	readonly contextMax: number;
 	readonly contextBreakdown: ContextBreakdown;
@@ -544,6 +547,7 @@ export const FraymFrameOverlays = memo(function FraymFrameOverlays(props: FraymF
 			<PermissionOverlay
 				menu={props.menu}
 				selected={props.permission}
+				permissionModes={props.permissionModes}
 				onSelect={props.onPermissionSelect}
 				onClose={props.onClose}
 			/>

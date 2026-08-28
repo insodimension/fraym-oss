@@ -44,7 +44,15 @@ import {
 	sessionRefKey,
 	setProjectOverride,
 } from "./session-groups";
-import { DEFAULT_FILTERS, modelSelectionFromConfig, PALETTE_CMDS, PERMS, resolveDockTabs, SET_NAV } from "./shell-data";
+import {
+	DEFAULT_FILTERS,
+	modelSelectionFromConfig,
+	PALETTE_CMDS,
+	PERMS,
+	resolveDockTabs,
+	resolvePermissions,
+	SET_NAV,
+} from "./shell-data";
 import { executeIntent } from "./space/executor";
 import type { WorkspaceSurfaceFills } from "./space/fills";
 import type { ShellIntent } from "./space/intents";
@@ -116,6 +124,8 @@ export interface FraymFrameModelArgs {
 	/** `false` removes the composer's built-in dictation mic; see FraymProps. */
 	readonly composerVoice?: boolean;
 	readonly startHeading?: string | false;
+	/** Host allow-list of permission-menu ids; see FraymProps.permissionModes. */
+	readonly permissionModes?: readonly string[];
 	/**
 	 * Collapse the session rail when a session is selected. Default `true`, which
 	 * suits a full IDE window where the thread wants the room. A host docked in a
@@ -506,7 +516,11 @@ export function useFraymFrameModel(args: FraymFrameModelArgs): FraymFrameModel {
 		name: "Model",
 		effort: "default",
 	};
-	const permObj = PERMS.find(permission => permission.id === chrome.permission) ?? PERMS[0];
+	// The chip labels the mode the ENGINE is actually in, so it keeps naming a
+	// mode the host has filtered out of the menu rather than going blank; only
+	// the fallback for an unknown id narrows to the host's allowed options.
+	const permObj =
+		PERMS.find(permission => permission.id === chrome.permission) ?? resolvePermissions(props.permissionModes)[0];
 	const openPermissionMenu = useCallback(
 		(event: MouseEvent<HTMLButtonElement>) =>
 			chrome.setMenu({ type: "perm", rect: event.currentTarget.getBoundingClientRect() }),
@@ -702,6 +716,7 @@ export function useFraymFrameModel(args: FraymFrameModelArgs): FraymFrameModel {
 		providers: props.resources.snapshot?.providers,
 		sessionConfig: session?.snapshot?.config,
 		permission: chrome.permission,
+		permissionModes: props.permissionModes,
 		contextUsed: context.used,
 		contextMax: context.max,
 		contextBreakdown: context.breakdown,
