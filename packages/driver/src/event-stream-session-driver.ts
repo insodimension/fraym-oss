@@ -166,9 +166,23 @@ class EventStreamSessionDriver implements EventStreamSessionDriverHandle {
 		this.#pending[at] = { type: "tool", call: { ...block.call, ...patch } };
 	}
 
-	/** Settle the streamed agent segment into a durable transcript message. */
+	/**
+	 * Settle the streamed agent segment into a durable transcript message.
+	 *
+	 * A tool still marked `running` here never got its `tool_call.end` — the turn
+	 * errored, the engine went away mid-call, or a replayed journal recorded a call
+	 * the original session was killed during. Recording it verbatim would freeze a
+	 * spinner into permanent history: the index is cleared below, so a late
+	 * `tool_call.end` can no longer reach the block, and a consumer's own repair is
+	 * undone by the next journal rebuild. An unfinished call ENDED, and the only
+	 * honest outcome for one that never reported success is failure.
+	 */
 	#settleAgentMessage(extra?: SessionTranscriptMessage["blocks"][number]): void {
-		const blocks: SessionTranscriptMessage["blocks"][number][] = [...this.#pending];
+		const blocks: SessionTranscriptMessage["blocks"][number][] = this.#pending.map((block) =>
+			block.type === "tool" && block.call.status === "running"
+				? { type: "tool", call: { ...block.call, status: "error" } }
+				: block,
+		);
 		if (extra) blocks.push(extra);
 		if (blocks.length > 0) {
 			this.#transcript.push({
@@ -211,16 +225,28 @@ class EventStreamSessionDriver implements EventStreamSessionDriverHandle {
 			case "tool_call.start":
 				// Recorded in the turn's block order, not just streamed: this is what
 				// keeps the card in the thread once the turn settles.
-				this.#toolBlocks.set(event.toolCallId, this.#pending.length);
-				this.#pending.push({
-					type: "tool",
-					call: {
-						callId: event.toolCallId,
+				//
+				// A REPEATED start for one call id is normal — an adapter re-announces a
+				// call when the engine retitles it — so patch the block that is already
+				// there. Pushing a second one leaves the first unreachable by call id and
+				// therefore spinning forever, and renders the same call twice.
+				if (this.#toolBlocks.has(event.toolCallId)) {
+					this.#patchToolBlock(event.toolCallId, {
 						toolName: event.toolName,
-						status: "running",
 						...(event.input === undefined ? {} : { input: event.input }),
-					},
-				});
+					});
+				} else {
+					this.#toolBlocks.set(event.toolCallId, this.#pending.length);
+					this.#pending.push({
+						type: "tool",
+						call: {
+							callId: event.toolCallId,
+							toolName: event.toolName,
+							status: "running",
+							...(event.input === undefined ? {} : { input: event.input }),
+						},
+					});
+				}
 				this.#emit({
 					type: "toolStarted",
 					toolName: event.toolName,
@@ -229,10 +255,15 @@ class EventStreamSessionDriver implements EventStreamSessionDriverHandle {
 				});
 				break;
 			case "tool_call.update":
-				this.#patchToolBlock(
-					event.toolCallId,
-					typeof event.output === "string" ? { text: event.output } : { output: event.output },
-				);
+				// An update frame carrying no output is routine (a status flip, a retitle).
+				// Spreading `output: undefined` over the block would ERASE output an
+				// earlier frame already recorded, so only write when there is something.
+				if (event.output !== undefined) {
+					this.#patchToolBlock(
+						event.toolCallId,
+						typeof event.output === "string" ? { text: event.output } : { output: event.output },
+					);
+				}
 				this.#emit({
 					type: "toolUpdated",
 					callId: event.toolCallId,
@@ -362,6 +393,11 @@ class EventStreamSessionDriver implements EventStreamSessionDriverHandle {
 
 	async cancelCurrentRun(): Promise<void> {
 		this.#options.cancel?.();
+		// Settle what the cancelled turn produced. Without this its buffered prose and
+		// tool blocks stay pending and surface inside the NEXT agent message, so a
+		// cancelled turn's cards visibly migrate below the following user bubble — and
+		// the tool index grows across every cancel.
+		this.#settleAgentMessage();
 		this.#patch({ status: "idle" });
 		this.#emit({ type: "runCompleted", snapshot: this.#snapshot });
 	}
