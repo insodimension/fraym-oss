@@ -82,6 +82,10 @@ export interface WorkspaceSessionChrome {
 	readonly showAvatars: boolean;
 	readonly agentMeta: string;
 	readonly placeholder: string;
+	/** `false` removes the composer's built-in dictation mic. Hosts embedded where
+	 *  no voice input exists (an editor tab) opt out so the button is not dead
+	 *  chrome; anything else keeps today's mic. */
+	readonly composerVoice?: boolean;
 	readonly leftSlot?: ReactNode;
 	readonly rightSlot?: ReactNode;
 	readonly onSlash?: () => void;
@@ -94,6 +98,7 @@ export interface WorkspaceSessionChromeSource {
 	readonly showAvatars: boolean;
 	readonly agentMeta: string;
 	readonly placeholder: string;
+	readonly composerVoice?: boolean;
 	readonly leftSlot?: ReactNode;
 	readonly renderRightSlot: () => ReactNode;
 	readonly onSlash?: () => void;
@@ -106,6 +111,7 @@ export function workspaceSessionChrome(source: WorkspaceSessionChromeSource): Wo
 		showAvatars: source.showAvatars,
 		agentMeta: source.agentMeta,
 		placeholder: source.placeholder,
+		composerVoice: source.composerVoice,
 		leftSlot: source.leftSlot,
 		rightSlot: source.renderRightSlot(),
 		onSlash: source.onSlash,
@@ -294,6 +300,7 @@ function WorkspaceSessionComposer({
 				topSlot={goalTopSlot}
 				leftSlot={chrome.leftSlot}
 				rightSlot={chrome.rightSlot}
+				voice={chrome.composerVoice === false ? false : undefined}
 				onSlash={chrome.onSlash}
 				slashCommands={slashCommands}
 				fileCompletionSource={fileCompletionSource}

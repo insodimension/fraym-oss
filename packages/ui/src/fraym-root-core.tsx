@@ -130,6 +130,11 @@ export interface FraymProps {
 	 *  provider's group — the "Current" and "All available" aggregates only
 	 *  restate rows the provider group already shows (checkmark included). */
 	readonly modelPickerGroups?: ModelPickerGroups;
+	/** Keep the composer's built-in dictation mic. Default `true`. A host embedded
+	 *  where no voice input exists — Yarin inside an Unreal editor tab — passes
+	 *  `false` so the button is not dead chrome. Opt-out only: `undefined` and
+	 *  `true` are today's behaviour. */
+	readonly composerVoice?: boolean;
 	/**
 	 * Collapse the session rail when a session is selected. Default `true` (the
 	 * shell's long-standing behaviour). Hosts docked in a narrow panel, where the
@@ -202,6 +207,7 @@ interface NormalizedFraymProps {
 	readonly enterpriseGatewaySetup?: boolean;
 	readonly visibleProviderIds?: readonly string[];
 	readonly modelPickerGroups?: ModelPickerGroups;
+	readonly composerVoice?: boolean;
 	/**
 	 * Collapse the session rail when a session is selected. Default `true` (the
 	 * shell's long-standing behaviour). Hosts docked in a narrow panel, where the
@@ -283,6 +289,7 @@ function normalizeFraymProps({
 	enterpriseGatewaySetup,
 	visibleProviderIds,
 	modelPickerGroups,
+	composerVoice,
 	collapseRailOnSessionSelect,
 	onAppModeChange,
 	onRevealPath,
@@ -344,6 +351,7 @@ function normalizeFraymProps({
 		enterpriseGatewaySetup,
 		visibleProviderIds,
 		modelPickerGroups,
+		composerVoice,
 		collapseRailOnSessionSelect,
 		onAppModeChange,
 		onRevealPath,
@@ -562,6 +570,7 @@ function FraymFrameHost({ runtime }: { readonly runtime: FraymRuntimeState }) {
 							surfaceFills={props.surfaceFills}
 							dockTabs={props.dockTabs}
 							topBarActions={props.topBarActions}
+							composerVoice={props.composerVoice}
 							collapseRailOnSessionSelect={props.collapseRailOnSessionSelect}
 							onAppModeChange={props.onAppModeChange}
 							onRevealPath={props.onRevealPath}

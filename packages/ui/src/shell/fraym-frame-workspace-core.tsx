@@ -353,6 +353,7 @@ interface StartSurfaceStageProps {
 	readonly onMoveToWorktree?: (sessionRef: SessionRef) => void;
 	readonly sessionDriver: SessionDriver | null | undefined;
 	readonly sessionRef: SessionRef | null | undefined;
+	readonly composerVoice?: boolean;
 }
 
 function StartSurfaceStage(props: StartSurfaceStageProps) {
@@ -376,6 +377,7 @@ function StartSurfaceStage(props: StartSurfaceStageProps) {
 			disabled={props.disabled}
 			leftSlot={props.leftSlot}
 			rightSlot={props.rightSlot}
+			composerVoice={props.composerVoice}
 			onWorkspaceSelect={props.onWorkspaceSelect}
 			onAddProject={props.onAddProject}
 			onBranchSelect={props.onBranchSelect}
@@ -465,6 +467,7 @@ export interface WorkspaceSurfaceHostProps {
 	readonly composer: string;
 	readonly streaming?: boolean;
 	readonly placeholder: string;
+	readonly composerVoice?: boolean;
 	readonly leftSlot: ReactNode;
 	readonly rightSlot: ReactNode;
 	readonly renderRightSlot: () => ReactNode;
@@ -697,6 +700,7 @@ interface ComposerSlotProps {
 	readonly streaming?: boolean;
 	readonly disabled: boolean;
 	readonly placeholder: string;
+	readonly composerVoice?: boolean;
 	readonly leftSlot: ReactNode;
 	readonly rightSlot: ReactNode;
 	readonly sessionDriver: SessionDriver | null | undefined;
@@ -713,6 +717,7 @@ function ComposerSlot({
 	streaming,
 	disabled,
 	placeholder,
+	composerVoice,
 	leftSlot,
 	rightSlot,
 	sessionDriver,
@@ -848,6 +853,7 @@ function ComposerSlot({
 			streaming={streaming}
 			disabled={disabled}
 			placeholder={placeholder}
+			voice={composerVoice === false ? false : undefined}
 			contextTag={contextTag}
 			primedSkills={seededContext?.skills}
 			showTips
@@ -1077,6 +1083,7 @@ export interface FraymFrameWorkspaceProps {
 	readonly rightSlot: ReactNode;
 	readonly renderRightSlot: () => ReactNode;
 	readonly placeholder: string;
+	readonly composerVoice?: boolean;
 	readonly avatar: AvatarId;
 	readonly vibrState: ThreadStageProps["vibrState"];
 	readonly vibrMode: string;
@@ -1684,6 +1691,7 @@ function WorkspaceChrome({
 											streaming={frame.streaming}
 											disabled={frame.isOpeningSession}
 											placeholder={frame.placeholder}
+											composerVoice={frame.composerVoice}
 											leftSlot={frame.leftSlot}
 											rightSlot={frame.rightSlot}
 											sessionDriver={frame.sessionDriver}
