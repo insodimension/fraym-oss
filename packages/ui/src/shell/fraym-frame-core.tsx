@@ -2,7 +2,7 @@ import { type ReactNode, useLayoutEffect, useRef, useState } from "react";
 import { LiquidGlassRuntime } from "../components/liquid-glass-runtime";
 import { ToolDisplaySettingsProvider } from "../features";
 import { SessionNavigationProvider } from "../hooks/session-navigation";
-import { FraymFrameModel, type FraymFrameModelArgs, useFraymFrameModel } from "./fraym-frame-model";
+import { type FraymFrameModel, type FraymFrameModelArgs, useFraymFrameModel } from "./fraym-frame-model";
 import { FraymFrameOverlays } from "./fraym-frame-overlays";
 import { FraymFrameSettingsView } from "./fraym-frame-settings";
 import { FraymFrameWorkspace } from "./fraym-frame-workspace";

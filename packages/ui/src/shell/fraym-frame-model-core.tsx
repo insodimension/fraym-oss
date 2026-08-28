@@ -115,6 +115,7 @@ export interface FraymFrameModelArgs {
 	readonly topBarActions?: readonly string[];
 	/** `false` removes the composer's built-in dictation mic; see FraymProps. */
 	readonly composerVoice?: boolean;
+	readonly startHeading?: string | false;
 	/**
 	 * Collapse the session rail when a session is selected. Default `true`, which
 	 * suits a full IDE window where the thread wants the room. A host docked in a
@@ -573,6 +574,7 @@ export function useFraymFrameModel(args: FraymFrameModelArgs): FraymFrameModel {
 		composer: chrome.composer,
 		placeholder: "Message the agent",
 		composerVoice: props.composerVoice,
+		startHeading: props.startHeading,
 		streaming: session?.isStreaming,
 		leftSlot,
 		rightSlot: renderRightSlot(),
