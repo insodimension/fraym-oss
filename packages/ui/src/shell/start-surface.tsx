@@ -35,6 +35,15 @@ export interface StartSurfaceProps {
 	readonly rightSlot?: ReactNode;
 	/** `false` removes the composer's built-in dictation mic; see FraymProps. */
 	readonly composerVoice?: boolean;
+	/**
+	 * The line above the composer on an empty session. `false` removes it.
+	 *
+	 * "What should we build in <workspace>?" is a good opening for a general coding
+	 * shell, but a host embedded in one project's editor already says where it is,
+	 * in its own chrome — there, the line is a question nobody asked, on every new
+	 * session, forever.
+	 */
+	readonly startHeading?: string | false;
 	readonly sessionDriver: SessionDriver | null | undefined;
 	readonly sessionRef: SessionRef | null | undefined;
 	readonly onWorkspaceSelect?: (workspace: WorkspaceRef) => void;
@@ -249,9 +258,13 @@ function StartComposer({
 	}, [props.sessionRef]);
 	return (
 		<div className="flex w-full max-w-[760px] flex-col">
-			<div className="mb-8 text-center">
-				<h1 className="text-fr-2xl font-semibold text-fr-text">What should we build in {workspaceNameLabel}?</h1>
-			</div>
+			{props.startHeading !== false && (
+				<div className="mb-8 text-center">
+					<h1 className="text-fr-2xl font-semibold text-fr-text">
+						{props.startHeading ?? `What should we build in ${workspaceNameLabel}?`}
+					</h1>
+				</div>
+			)}
 			<Composer
 				value={composerDraft.value}
 				onChange={composerDraft.onChange}

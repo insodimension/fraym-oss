@@ -354,6 +354,7 @@ interface StartSurfaceStageProps {
 	readonly sessionDriver: SessionDriver | null | undefined;
 	readonly sessionRef: SessionRef | null | undefined;
 	readonly composerVoice?: boolean;
+	readonly startHeading?: string | false;
 }
 
 function StartSurfaceStage(props: StartSurfaceStageProps) {
@@ -378,6 +379,7 @@ function StartSurfaceStage(props: StartSurfaceStageProps) {
 			leftSlot={props.leftSlot}
 			rightSlot={props.rightSlot}
 			composerVoice={props.composerVoice}
+			startHeading={props.startHeading}
 			onWorkspaceSelect={props.onWorkspaceSelect}
 			onAddProject={props.onAddProject}
 			onBranchSelect={props.onBranchSelect}
@@ -468,6 +470,7 @@ export interface WorkspaceSurfaceHostProps {
 	readonly streaming?: boolean;
 	readonly placeholder: string;
 	readonly composerVoice?: boolean;
+	readonly startHeading?: string | false;
 	readonly leftSlot: ReactNode;
 	readonly rightSlot: ReactNode;
 	readonly renderRightSlot: () => ReactNode;
@@ -701,6 +704,7 @@ interface ComposerSlotProps {
 	readonly disabled: boolean;
 	readonly placeholder: string;
 	readonly composerVoice?: boolean;
+	readonly startHeading?: string | false;
 	readonly leftSlot: ReactNode;
 	readonly rightSlot: ReactNode;
 	readonly sessionDriver: SessionDriver | null | undefined;
@@ -1084,6 +1088,7 @@ export interface FraymFrameWorkspaceProps {
 	readonly renderRightSlot: () => ReactNode;
 	readonly placeholder: string;
 	readonly composerVoice?: boolean;
+	readonly startHeading?: string | false;
 	readonly avatar: AvatarId;
 	readonly vibrState: ThreadStageProps["vibrState"];
 	readonly vibrMode: string;
