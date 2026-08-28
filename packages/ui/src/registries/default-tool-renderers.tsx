@@ -1,8 +1,10 @@
 // Default tool renderers shipped with fraym-ui.
 
 import type { ReactNode } from "react";
+import type { ToolView } from "./tool-renderer-types";
 import { DataInspectorBody } from "../features/tool-card/tools/data-inspector-body";
 import { ToolBodyTerm } from "../features/tool-card/tool-card";
+import { dimChip } from "../features/tool-card/tools/chip";
 import { renderAsk } from "../features/tool-card/tools/ask-render";
 import { renderAstEdit } from "../features/tool-card/tools/ast-edit-render";
 import { renderAstGrep } from "../features/tool-card/tools/ast-grep-render";
@@ -41,21 +43,53 @@ import { renderWrite } from "./write-renderer";
 
 // --- tool renderers ---------------------------------------------------------
 
-const renderGeneric = (call: ActiveToolCall): ReactNode => {
-	// Structured (non-string) output — INCLUDING the partial result while streaming, so a
-	// long/streaming tool (any unmapped or MCP/custom tool) shows its live output rather than a
-	// frozen "Running…" card until it finishes.
-	if (call.output !== undefined && typeof call.output !== "string") {
-		return <DataInspectorBody value={call.output} />;
-	}
-	const text = call.text ?? asText(call.output);
-	if (text) return <ToolBodyTerm lines={toTermLines(text)} />;
-	// Nothing has streamed yet: minimal pending indicator while the tool runs.
-	if (call.status === "running") {
-		return <div className="px-1 py-2 font-secondary text-fr-xs text-fr-text-3">Running…</div>;
-	}
-	if (call.input !== undefined) return <DataInspectorBody value={call.input} label="input" />;
-	return null;
+/**
+ * Fallback renderer: every tool the registry does not know by name.
+ *
+ * It returns a ToolView, not a bare body, so an unrecognised tool gets the SAME
+ * compact strip chrome as a bespoke one (icon + label + inline badges) instead of
+ * the verbose two-line card. That matters far beyond a stray tool: an ACP client
+ * receives only a coarse `kind` ("execute", "search") and a title — no engine tool
+ * name — so EVERY MCP tool lands here, and a docked host showed a wall of
+ * "TOOL / execute" blocks next to properly rendered strips.
+ *
+ * The one-line summary an ACP agent sends (`$ echo hello`, `find DEV.md`) becomes
+ * the badge when it adds something the label does not already say.
+ */
+const renderGeneric = (call: ActiveToolCall): ToolView => {
+	const label = call.displayName ?? call.toolName;
+	// The one-line summary an ACP agent sends (`$ echo hello`, `find DEV.md`) arrives
+	// on the input, since ACP carries no engine tool name to key a bespoke renderer
+	// off. Shown as a chip when it says something the label does not.
+	const summary = ((): string | undefined => {
+		if (call.input === null || typeof call.input !== "object") return undefined;
+		for (const key of ["title", "command", "pattern", "path", "query", "url"]) {
+			if (!(key in call.input)) continue;
+			const value = (call.input as Record<string, unknown>)[key];
+			if (typeof value === "string" && value.trim().length > 0) return value.trim();
+		}
+		return undefined;
+	})();
+	const badges = summary !== undefined && summary !== label ? dimChip("", summary) : undefined;
+
+	const body = ((): ReactNode => {
+		// Structured (non-string) output — INCLUDING the partial result while streaming, so a
+		// long/streaming tool (any unmapped or MCP/custom tool) shows its live output rather than a
+		// frozen "Running…" card until it finishes.
+		if (call.output !== undefined && typeof call.output !== "string") {
+			return <DataInspectorBody value={call.output} />;
+		}
+		const text = call.text ?? asText(call.output);
+		if (text) return <ToolBodyTerm lines={toTermLines(text)} />;
+		// Nothing has streamed yet: minimal pending indicator while the tool runs.
+		if (call.status === "running") {
+			return <div className="px-1 py-2 font-secondary text-fr-xs text-fr-text-3">Running…</div>;
+		}
+		if (call.input !== undefined) return <DataInspectorBody value={call.input} label="input" />;
+		return null;
+	})();
+
+	return { label, badges, body };
 };
 
 /** Built-in tool renderers, keyed by normalized tool name. `"*"` is the fallback. */

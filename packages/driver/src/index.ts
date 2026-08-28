@@ -103,6 +103,56 @@ export interface SessionDoneEvent extends AgentEventBase {
   type: "session.done";
 }
 
+/**
+ * The engine's live context-window meter for this session.
+ *
+ * ACP pushes this as `usage_update` on every turn. Without it a host that speaks
+ * the flat event stream can report progress and tool calls but never how full the
+ * context is, so the composer's context ring sits at zero for the whole session.
+ */
+export interface ContextUsageStreamEvent extends AgentEventBase {
+  type: "context.usage";
+  /** Estimated context tokens in use, or null when the engine cannot say. */
+  tokens: number | null;
+  contextWindow: number;
+  /** Spend so far on this session, when the engine reports it. */
+  cost?: { readonly amount: number; readonly currency: string };
+}
+
+/**
+ * The engine's per-session model configuration, as it changes.
+ *
+ * The reasoning-effort list is a PER-MODEL fact, not a constant: measured against
+ * the Yarin engine, `deepseek-v4-flash` offers `off/auto/low/high/max` while a model
+ * the catalog cannot resolve offers only `off/auto`. So the levels have to travel
+ * with each change rather than being read once at construction - switching model
+ * changes which efforts exist, and a host that cached the first answer would offer
+ * levels the engine silently drops.
+ */
+export interface SessionConfigStreamEvent extends AgentEventBase {
+  type: "session.config";
+  modelId?: string;
+  /** The engine's current thinking level (e.g. `off`, `auto`, `low`). */
+  thinkingLevel?: string;
+  /** Exactly the levels THIS model accepts; anything else is ignored upstream. */
+  thinkingLevels?: readonly string[];
+}
+
+/**
+ * A message from the engine that is not part of the answer: a slash command that
+ * failed, an extension's notification, a status line.
+ *
+ * These arrive on their own lane (ACP's `_inso/session/event`), and a host with no
+ * event for them drops them entirely - a failed `/command` then looks exactly like
+ * one that did nothing. Distinct from `session.error`, which also marks the turn
+ * failed; a notice leaves the turn alone.
+ */
+export interface SessionNoticeEvent extends AgentEventBase {
+  type: "session.notice";
+  level: "info" | "warning" | "error";
+  message: string;
+}
+
 export interface SessionErrorEvent extends AgentEventBase {
   type: "session.error";
   message: string;
@@ -118,6 +168,9 @@ export type AgentEvent =
   | ToolCallEndEvent
   | ApprovalRequestEvent
   | ApprovalResponseEvent
+  | ContextUsageStreamEvent
+  | SessionConfigStreamEvent
+  | SessionNoticeEvent
   | SessionDoneEvent
   | SessionErrorEvent;
 

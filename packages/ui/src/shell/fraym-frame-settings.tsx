@@ -25,6 +25,9 @@ export interface FraymFrameSettingsViewProps {
 	readonly activeSettingsPanel: FraymSettingsPanel | undefined;
 	readonly userName: string;
 	readonly userEmail: string;
+	/** False when the host has no analytics driver — the profile pane then shows
+	 *  live plan usage instead of an empty activity grid. */
+	readonly profileAnalytics?: boolean;
 	readonly userAvatarUrl?: string;
 	readonly theme: AppearanceProps["theme"];
 	readonly accent: AppearanceProps["accent"];
@@ -106,7 +109,14 @@ function SettingsPaneContent(props: FraymFrameSettingsViewProps) {
 				/>
 			);
 		case "profile":
-			return <ProfilePane name={props.userName} handle={props.userEmail} avatarUrl={props.userAvatarUrl} />;
+			return (
+				<ProfilePane
+					name={props.userName}
+					handle={props.userEmail}
+					avatarUrl={props.userAvatarUrl}
+					showAnalytics={props.profileAnalytics ?? true}
+				/>
+			);
 		case "appearance":
 			return <AppearanceSettingsPane {...props} />;
 		case "keyboard":

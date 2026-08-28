@@ -12,17 +12,34 @@
 // our own — only Fraym-token theming. This is the stack the design canon picked
 // (docs/design/02-fraym-stack.md).
 
-import { code } from "@streamdown/code";
-import { memo, useMemo } from "react";
-import { Streamdown } from "streamdown";
-import "streamdown/styles.css";
+import { lazy, memo, Suspense, useMemo } from "react";
 import "./streaming-markdown.css";
 import { cn } from "../lib/cn";
-import { MermaidDiagram } from "./mermaid-diagram";
 import { StaticMarkdownLite } from "./static-markdown-lite";
 
-/** Shiki highlighting plugin (github-light / github-dark), referenced once. */
-const STREAMDOWN_PLUGINS = { code } as const;
+/**
+ * Mermaid is loaded ONLY when a ```mermaid fence actually renders.
+ *
+ * A static import cannot work here: this IS the code-split boundary.
+ * `mermaid-diagram-core` already defers the library with a dynamic
+ * `import("mermaid")`, but statically importing the COMPONENT pulled that dynamic
+ * edge into this module's graph, so the bundler hoisted mermaid's core - every
+ * diagram type plus marked, katex, d3, dagre and js-yaml, 3.0MB - into the chunk
+ * the app preloads at boot. Yarin runs in Unreal's CEF browser, where that is
+ * megabytes of parse work on every dock open for a fence most sessions never hold.
+ */
+const MermaidDiagram = lazy(async () => ({ default: (await import("./mermaid-diagram")).MermaidDiagram }));
+
+/**
+ * The live renderer, loaded on the first streaming turn rather than at boot.
+ *
+ * A static import cannot work here: this IS the code-split boundary. See
+ * `streamdown-live.tsx` for what rides along (mermaid 3.0MB + Shiki) and why that
+ * is unaffordable in Unreal's CEF browser. While the chunk is in flight the
+ * Suspense fallback renders the same text through the lite parser, so prose is
+ * never missing - only the incomplete-fence tolerance is, for that moment.
+ */
+const StreamdownLive = lazy(() => import("./streamdown-live"));
 
 /** Prose styling mapped onto Fraym tokens — covers the common markdown elements. */
 const PROSE = cn(
@@ -166,15 +183,9 @@ export const StreamingMarkdown = memo(function StreamingMarkdown({
 				data-slot="streaming-markdown"
 				className={cn(PROSE, "fr-streaming-markdown", lineNumbers && "fr-code-lines", className)}
 			>
-				<Streamdown
-					plugins={STREAMDOWN_PLUGINS}
-					controls={false}
-					lineNumbers={lineNumbers}
-					animated={animate}
-					isAnimating={animate}
-				>
-					{text}
-				</Streamdown>
+				<Suspense fallback={<StaticMarkdownLite text={text} />}>
+					<StreamdownLive text={text} animate={animate} lineNumbers={lineNumbers} />
+				</Suspense>
 			</div>
 		);
 	}
@@ -186,12 +197,16 @@ export const StreamingMarkdown = memo(function StreamingMarkdown({
 		<div data-slot="streaming-markdown" className={cn(PROSE, "fr-streaming-markdown", className)}>
 			{segments.map((seg, index) =>
 				seg.kind === "mermaid" ? (
-					<MermaidDiagram key={`mmd-${index}`} code={seg.code} />
+					// The chunk arrives on demand; the component draws its own skeleton
+					// once mounted, so this only covers the fetch itself.
+					<Suspense key={`mmd-${index}`} fallback={null}>
+						<MermaidDiagram code={seg.code} />
+					</Suspense>
 				) : seg.text.trim() ? (
 					streaming ? (
-						<Streamdown key={`md-${index}`} plugins={STREAMDOWN_PLUGINS} controls={false}>
-							{seg.text}
-						</Streamdown>
+						<Suspense key={`md-${index}`} fallback={<StaticMarkdownLite text={seg.text} />}>
+							<StreamdownLive text={seg.text} />
+						</Suspense>
 					) : (
 						<StaticMarkdownLite key={`md-${index}`} text={seg.text} />
 					)

@@ -337,10 +337,26 @@ export function skillSlashCommand(name: string): string {
 	return engineCommandToken(skillCommandName(name));
 }
 
+/**
+ * The engine's own default thinking level, as a plain string.
+ *
+ * NOT a closed union. The level vocabulary belongs to the ENGINE and varies by
+ * model: measured against a shipped engine, one model offers
+ * `off/auto/low/high/max` and another only `off/auto`. The union this replaced
+ * (`off|minimal|low|medium|high|xhigh`) could not express `auto` — the level a
+ * reasoning model commonly sits at — so a host reporting the truth had to either
+ * lie or drop it, and dropping it made the settings pane claim no level was set.
+ *
+ * A host that wants to constrain the choice does so where it renders the choice
+ * (see `THINKING_LEVEL_OPTIONS` in the model settings pane), not in the type that
+ * carries what the engine said.
+ */
+export type EngineThinkingLevel = string;
+
 export interface EngineResourceSettingsSnapshot {
 	readonly defaultProvider?: string;
 	readonly defaultModelId?: string;
-	readonly defaultThinkingLevel?: "off" | "minimal" | "low" | "medium" | "high" | "xhigh";
+	readonly defaultThinkingLevel?: EngineThinkingLevel;
 	readonly enableSkillCommands: boolean;
 	readonly enabledModelPatterns: readonly string[];
 }
@@ -348,7 +364,7 @@ export interface EngineResourceSettingsSnapshot {
 export interface ModelSettingsSnapshot {
 	readonly defaultProvider?: string;
 	readonly defaultModelId?: string;
-	readonly defaultThinkingLevel?: "off" | "minimal" | "low" | "medium" | "high" | "xhigh";
+	readonly defaultThinkingLevel?: EngineThinkingLevel;
 	readonly enabledModelPatterns: readonly string[];
 }
 

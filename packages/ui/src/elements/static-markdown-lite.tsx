@@ -1,4 +1,4 @@
-import { memo, type ReactNode, useMemo } from "react";
+import { memo, type ReactNode, useMemo, useRef } from "react";
 import { cn } from "../lib/cn";
 import { canSyntaxHighlight, HighlightedCode } from "./code-block";
 import { CopyButton } from "./copy-button";
@@ -395,12 +395,54 @@ function isBlockquote(block: string): boolean {
 	return lines.length > 0 && lines.every(line => QUOTE_PATTERN.test(line));
 }
 
-function splitBlocks(text: string): readonly string[] {
-	const blocks: string[] = [];
+/**
+ * A resumable point in the block scan, plus the blocks and ReactNodes it produced.
+ *
+ * A streaming turn re-renders this parser with the WHOLE accumulated message on every
+ * delta, so a scan from byte 0 each time is O(n²) per answer. The scan's entire state is
+ * `(blocks, current, fence)`, and at any line where `current` is empty and no fence is
+ * open the last two are trivial — so restarting there reproduces the rest byte for byte.
+ * Blocks already pushed are never revisited by any branch below, which is what makes the
+ * head reusable at all.
+ */
+interface ParseCheckpoint {
+	/** The source text this checkpoint was produced from. */
+	readonly text: string;
+	/** Leading whitespace `trim()` removed — must match for the bodies to share a prefix. */
+	readonly lead: number;
+	/** Every block of `text`, in order. */
+	readonly blocks: readonly string[];
+	/** `blocks` rendered, 1:1 by position. Carried forward so the settled head keeps the
+	 *  SAME element objects and React bails out of those subtrees. */
+	readonly nodes: readonly ReactNode[];
+	/** How many of `blocks` were already final at `offset`. */
+	readonly settled: number;
+	/** Offset into the trimmed body where a later append may resume the scan. */
+	readonly offset: number;
+}
+
+/** Walk the trimmed `body` from `start`, appending blocks. Returns the last boundary the
+ *  scan passed through, so an appended delta can resume from there. */
+function scanBlocks(
+	body: string,
+	start: number,
+	blocks: string[],
+): { readonly settled: number; readonly offset: number } {
 	const current: string[] = [];
 	let fence: string | null = null;
+	let settled = blocks.length;
+	let offset = start;
+	let cursor = start;
 
-	for (const line of text.trim().split("\n")) {
+	for (const line of body.slice(start).split("\n")) {
+		// Nothing pending and no open fence: everything pushed so far is final and this
+		// line is a clean restart point for the next delta.
+		if (current.length === 0 && fence === null) {
+			settled = blocks.length;
+			offset = cursor;
+		}
+		cursor += line.length + 1;
+
 		const fenceStart = FENCE_START_PATTERN.exec(line);
 		if (fenceStart && !fence) {
 			// A fence may interrupt a paragraph (no blank line before it) — flush the
@@ -472,7 +514,44 @@ function splitBlocks(text: string): readonly string[] {
 	}
 
 	if (current.length > 0) blocks.push(current.join("\n"));
-	return blocks;
+	return { settled, offset };
+}
+
+/**
+ * Split `text` into blocks and render them, resuming from `prev` when `text` merely
+ * APPENDS to it (the streaming case).
+ *
+ * Reuse needs the two trimmed bodies to share a prefix through `prev.offset`. That holds
+ * exactly when `text` starts with `prev.text` and the leading trim is unchanged: the
+ * trailing trim only ever removes characters at the very end, which is at or after the
+ * last block boundary. Any other change (an edit, a reset, a different message) fails the
+ * guard and falls back to a full parse, so the output is always what a cold parse produces.
+ *
+ * The reused head keeps its EXISTING element objects — React skips a child whose element
+ * is reference-identical (`oldProps === newProps`), so the settled part of a streaming
+ * message costs nothing to re-render after its first paint. Elements are immutable
+ * descriptors, so holding them across renders is safe.
+ */
+function parseBlocks(text: string, prev: ParseCheckpoint | null): ParseCheckpoint {
+	const lead = text.length - text.trimStart().length;
+	const body = text.trim();
+	let blocks: string[] = [];
+	let nodes: ReactNode[] = [];
+	let start = 0;
+	if (
+		prev !== null &&
+		prev.text.length > 0 &&
+		prev.lead === lead &&
+		prev.offset <= body.length &&
+		text.startsWith(prev.text)
+	) {
+		blocks = prev.blocks.slice(0, prev.settled);
+		nodes = prev.nodes.slice(0, prev.settled);
+		start = prev.offset;
+	}
+	const { settled, offset } = scanBlocks(body, start, blocks);
+	for (let i = nodes.length; i < blocks.length; i++) nodes.push(renderBlock(blocks[i] as string, i));
+	return { text, lead, blocks, nodes, settled, offset };
 }
 
 function codeFence(block: string): { readonly code: string; readonly language: string } | null {
@@ -599,7 +678,20 @@ function staticMarkdownLitePropsEqual(prev: StaticMarkdownLiteProps, next: Stati
 }
 
 export const StaticMarkdownLite = memo(function StaticMarkdownLite({ text, className }: StaticMarkdownLiteProps) {
-	const blocks = useMemo(() => splitBlocks(text).map(renderBlock), [text]);
+	// Streaming re-renders this with the whole accumulated message per delta. The
+	// checkpoint resumes the block scan at the last completed block instead of rescanning
+	// from byte 0 and carries the head's already-rendered elements forward, so React skips
+	// those subtrees — per-delta work is the tail, not the message.
+	//
+	// Writing the ref from the memo is safe: every checkpoint is derived purely from its
+	// own `text` and is only reused when the new text APPENDS to it, so a StrictMode
+	// double-render (or a render of stale text) still yields a cold-parse-identical result.
+	const checkpoint = useRef<ParseCheckpoint | null>(null);
+	const blocks = useMemo(() => {
+		const next = parseBlocks(text, checkpoint.current);
+		checkpoint.current = next;
+		return next.nodes;
+	}, [text]);
 	return (
 		<div
 			className={cn(

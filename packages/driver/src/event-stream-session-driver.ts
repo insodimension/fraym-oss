@@ -22,7 +22,9 @@ import type {
 	SessionModelSelection,
 	SessionRef,
 	SessionSnapshot,
+	SessionTranscriptBlock,
 	SessionTranscriptMessage,
+	SessionTranscriptToolCall,
 	SessionTreeSnapshot,
 	Unsubscribe,
 	WorkspaceRef,
@@ -43,6 +45,14 @@ export interface EventStreamSessionDriverOptions {
 	/** Switch the model the underlying harness uses for the next turn. When set,
 	 *  the shell's model menu becomes live; absent, `setSessionModel` is a no-op. */
 	readonly setModel?: (selection: SessionModelSelection) => void | Promise<void>;
+	/** Change the engine's reasoning effort for this session. Absent, the shell's
+	 *  effort control is inert - which is what it was: `setSessionThinkingLevel`
+	 *  shipped as an empty method, so every selection was silently discarded. */
+	readonly setThinkingLevel?: (level: string) => void | Promise<void>;
+	/** The engine's thinking state at construction: its current level, and exactly
+	 *  the levels THIS model accepts. Both change with the model, so the live values
+	 *  arrive later on the `session.config` event. */
+	readonly thinking?: { readonly level?: string; readonly levels?: readonly string[] };
 	readonly workspace?: WorkspaceRef;
 	readonly title?: string;
 	readonly model?: string;
@@ -72,8 +82,19 @@ class EventStreamSessionDriver implements EventStreamSessionDriverHandle {
 	#transcript: SessionTranscriptMessage[] = [];
 	#seq = 0;
 	#turn = 0;
-	#agentText = "";
-	#agentReasoning = "";
+	/**
+	 * The current turn's blocks, IN THE ORDER THEY HAPPENED.
+	 *
+	 * Reasoning, prose and tool calls interleave in a real turn, and a settled
+	 * message has to reproduce that: keeping only two text buffers meant every tool
+	 * call was ephemeral - rendered live from `toolStarted`/`toolFinished`, then
+	 * dropped on the floor when the turn settled, because nothing ever wrote it to
+	 * the transcript. Measured: six tool cards on screen during a turn, zero the
+	 * instant it finished, and none at all on resume.
+	 */
+	#pending: SessionTranscriptBlock[] = [];
+	/** Where each in-flight tool call sits in {@link #pending}, by call id. */
+	#toolBlocks = new Map<string, number>();
 	#listener: SessionEventListener | null = null;
 	#streamUnsubscribe: AgentUnsubscribe | null = null;
 
@@ -90,6 +111,8 @@ class EventStreamSessionDriver implements EventStreamSessionDriverHandle {
 			config: {
 				...(options.provider ? { provider: options.provider } : {}),
 				...(options.model ? { modelId: options.model } : {}),
+				...(options.thinking?.level === undefined ? {} : { thinkingLevel: options.thinking.level }),
+				...(options.thinking?.levels === undefined ? {} : { thinkingLevels: options.thinking.levels }),
 			},
 		};
 	}
@@ -122,11 +145,44 @@ class EventStreamSessionDriver implements EventStreamSessionDriverHandle {
 		});
 	}
 
-	/** Settle the streamed agent segment into a durable transcript message. */
+	/** Extend the trailing text/reasoning block, or open a new one. Keeping deltas
+	 *  merged means a turn's prose is one block per run of prose, with tool calls
+	 *  sitting between the runs exactly where they happened. */
+	#appendProse(type: "text" | "reasoning", delta: string): void {
+		const last = this.#pending.at(-1);
+		if (last !== undefined && last.type === type) {
+			this.#pending[this.#pending.length - 1] = { type, text: last.text + delta };
+			return;
+		}
+		this.#pending.push({ type, text: delta });
+	}
+
+	/** Patch a recorded tool call in place, by call id. */
+	#patchToolBlock(callId: string, patch: Partial<SessionTranscriptToolCall>): void {
+		const at = this.#toolBlocks.get(callId);
+		if (at === undefined) return;
+		const block = this.#pending[at];
+		if (block === undefined || block.type !== "tool") return;
+		this.#pending[at] = { type: "tool", call: { ...block.call, ...patch } };
+	}
+
+	/**
+	 * Settle the streamed agent segment into a durable transcript message.
+	 *
+	 * A tool still marked `running` here never got its `tool_call.end` — the turn
+	 * errored, the engine went away mid-call, or a replayed journal recorded a call
+	 * the original session was killed during. Recording it verbatim would freeze a
+	 * spinner into permanent history: the index is cleared below, so a late
+	 * `tool_call.end` can no longer reach the block, and a consumer's own repair is
+	 * undone by the next journal rebuild. An unfinished call ENDED, and the only
+	 * honest outcome for one that never reported success is failure.
+	 */
 	#settleAgentMessage(extra?: SessionTranscriptMessage["blocks"][number]): void {
-		const blocks: SessionTranscriptMessage["blocks"][number][] = [];
-		if (this.#agentReasoning.length > 0) blocks.push({ type: "reasoning", text: this.#agentReasoning });
-		if (this.#agentText.length > 0) blocks.push({ type: "text", text: this.#agentText });
+		const blocks: SessionTranscriptMessage["blocks"][number][] = this.#pending.map((block) =>
+			block.type === "tool" && block.call.status === "running"
+				? { type: "tool", call: { ...block.call, status: "error" } }
+				: block,
+		);
 		if (extra) blocks.push(extra);
 		if (blocks.length > 0) {
 			this.#transcript.push({
@@ -139,8 +195,8 @@ class EventStreamSessionDriver implements EventStreamSessionDriverHandle {
 			});
 			this.#journal();
 		}
-		this.#agentText = "";
-		this.#agentReasoning = "";
+		this.#pending = [];
+		this.#toolBlocks.clear();
 	}
 
 	#onAgentEvent(event: AgentEvent): void {
@@ -159,14 +215,38 @@ class EventStreamSessionDriver implements EventStreamSessionDriverHandle {
 				this.#patch({ status: "running", preview: event.content.slice(0, 120) });
 				break;
 			case "assistant.message.delta":
-				this.#agentText += event.delta;
+				this.#appendProse("text", event.delta);
 				this.#emit({ type: "assistantDelta", text: event.delta });
 				break;
 			case "reasoning.delta":
-				this.#agentReasoning += event.delta;
+				this.#appendProse("reasoning", event.delta);
 				this.#emit({ type: "thinkingDelta", text: event.delta });
 				break;
 			case "tool_call.start":
+				// Recorded in the turn's block order, not just streamed: this is what
+				// keeps the card in the thread once the turn settles.
+				//
+				// A REPEATED start for one call id is normal — an adapter re-announces a
+				// call when the engine retitles it — so patch the block that is already
+				// there. Pushing a second one leaves the first unreachable by call id and
+				// therefore spinning forever, and renders the same call twice.
+				if (this.#toolBlocks.has(event.toolCallId)) {
+					this.#patchToolBlock(event.toolCallId, {
+						toolName: event.toolName,
+						...(event.input === undefined ? {} : { input: event.input }),
+					});
+				} else {
+					this.#toolBlocks.set(event.toolCallId, this.#pending.length);
+					this.#pending.push({
+						type: "tool",
+						call: {
+							callId: event.toolCallId,
+							toolName: event.toolName,
+							status: "running",
+							...(event.input === undefined ? {} : { input: event.input }),
+						},
+					});
+				}
 				this.#emit({
 					type: "toolStarted",
 					toolName: event.toolName,
@@ -175,20 +255,35 @@ class EventStreamSessionDriver implements EventStreamSessionDriverHandle {
 				});
 				break;
 			case "tool_call.update":
+				// An update frame carrying no output is routine (a status flip, a retitle).
+				// Spreading `output: undefined` over the block would ERASE output an
+				// earlier frame already recorded, so only write when there is something.
+				if (event.output !== undefined) {
+					this.#patchToolBlock(
+						event.toolCallId,
+						typeof event.output === "string" ? { text: event.output } : { output: event.output },
+					);
+				}
 				this.#emit({
 					type: "toolUpdated",
 					callId: event.toolCallId,
 					...(typeof event.output === "string" ? { text: event.output } : { partialResult: event.output }),
 				});
 				break;
-			case "tool_call.end":
+			case "tool_call.end": {
+				const success = event.status !== "failed" && event.status !== "cancelled";
+				this.#patchToolBlock(event.toolCallId, {
+					status: success ? "success" : "error",
+					...(event.output === undefined ? {} : { output: event.output }),
+				});
 				this.#emit({
 					type: "toolFinished",
 					callId: event.toolCallId,
-					success: event.status !== "failed" && event.status !== "cancelled",
+					success,
 					output: event.output,
 				});
 				break;
+			}
 			case "approval.request":
 				this.#emit({
 					type: "hostUiRequest",
@@ -202,6 +297,49 @@ class EventStreamSessionDriver implements EventStreamSessionDriverHandle {
 				break;
 			case "approval.response":
 				break;
+			case "session.notice":
+				// Stands alone on purpose: settling here would cut an in-flight reply in
+				// half just because the engine mentioned something.
+				this.#transcript.push({
+					id: `${this.#snapshot.ref.sessionId}-notice-${this.#transcript.length}`,
+					role: "agent",
+					blocks: [{ type: "notice", level: event.level, message: event.message }],
+					timestamp: new Date().toISOString(),
+					settled: true,
+					final: true,
+				});
+				this.#journal();
+				break;
+			case "session.config": {
+				// Merge, never replace: the engine reports the model and the thinking row
+				// on the same lane but not always together, so a config frame carrying
+				// only a new thinking level must not erase the known model id.
+				this.#patch({
+					config: {
+						...this.#snapshot.config,
+						...(event.modelId === undefined ? {} : { modelId: event.modelId }),
+						...(event.thinkingLevel === undefined ? {} : { thinkingLevel: event.thinkingLevel }),
+						...(event.thinkingLevels === undefined ? {} : { thinkingLevels: event.thinkingLevels }),
+					},
+				});
+				break;
+			}
+			case "context.usage": {
+				// The context ring reads `snapshot.contextUsage`; percent is derived here
+				// so every consumer agrees on the arithmetic. `tokens: null` (the engine
+				// cannot say, e.g. straight after compaction) must stay null rather than
+				// collapsing to a confident 0%.
+				const contextWindow = event.contextWindow;
+				const tokens = event.tokens;
+				this.#patch({
+					contextUsage: {
+						tokens,
+						contextWindow,
+						percent: tokens === null || contextWindow <= 0 ? null : (tokens / contextWindow) * 100,
+					},
+				});
+				break;
+			}
 			case "session.done":
 				this.#settleAgentMessage();
 				this.#emit({ type: "turnEnded", final: true });
@@ -255,6 +393,11 @@ class EventStreamSessionDriver implements EventStreamSessionDriverHandle {
 
 	async cancelCurrentRun(): Promise<void> {
 		this.#options.cancel?.();
+		// Settle what the cancelled turn produced. Without this its buffered prose and
+		// tool blocks stay pending and surface inside the NEXT agent message, so a
+		// cancelled turn's cards visibly migrate below the following user bubble — and
+		// the tool index grows across every cancel.
+		this.#settleAgentMessage();
 		this.#patch({ status: "idle" });
 		this.#emit({ type: "runCompleted", snapshot: this.#snapshot });
 	}
@@ -265,7 +408,12 @@ class EventStreamSessionDriver implements EventStreamSessionDriverHandle {
 			config: { ...this.#snapshot.config, provider: selection.provider, modelId: selection.modelId },
 		});
 	}
-	async setSessionThinkingLevel(): Promise<void> {}
+	async setSessionThinkingLevel(_ref: SessionRef, thinkingLevel: string): Promise<void> {
+		// Patch AFTER the host call, and only the level: the option list belongs to the
+		// model, so a level change must not be read as a change to what is available.
+		await this.#options.setThinkingLevel?.(thinkingLevel);
+		this.#patch({ config: { ...this.#snapshot.config, thinkingLevel } });
+	}
 	async setSessionApprovalMode(): Promise<void> {}
 	async setSessionEphemeral(): Promise<void> {}
 	async compactSession(): Promise<void> {}

@@ -279,5 +279,24 @@ export function reduceThreadEvent(
         ),
         waiting: true,
       };
+
+    // A notice is rendered from the driver's transcript, not from this reducer's
+    // item list, so the thread state is unaffected. `state`, not `current`: a
+    // notice must not settle an open reasoning block either.
+    case "session.notice":
+      return state;
+
+    // The context meter is not thread content — it lives on the driver snapshot.
+    // Returning `state` rather than `current` on purpose: a usage frame that lands
+    // mid-reasoning must not settle the open reasoning block.
+    case "context.usage":
+      return state;
+
+    // Model/effort configuration is driver-snapshot state, not transcript content.
+    // `state` for the same reason as above: the engine reports config changes on the
+    // same lane as everything else, and one landing mid-reasoning must not settle
+    // the open block.
+    case "session.config":
+      return state;
   }
 }

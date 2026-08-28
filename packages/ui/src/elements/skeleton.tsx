@@ -1,11 +1,14 @@
 import type { CSSProperties } from "react";
 import { cn } from "../lib/cn";
 
-// Block-level loading placeholder. Reuses the same `fr-shimmer-sweep` keyframe as
-// the text `Shimmer`, but sweeps a surface-tier gradient *background* (not clipped
-// text). Token-driven, so theme / accent / density all follow for free. Under
-// reduced motion the global `[data-fr-motion]` / `prefers-reduced-motion` rules
-// freeze the sweep, leaving a static muted block that still reads as a placeholder.
+// Block-level loading placeholder. Sweeps a surface-tier gradient *layer* across a
+// clipped box (`.fr-shimmer-block` in theme.css) — a composited `transform`, not the
+// paint-bound `background-position` of the text `Shimmer`, because skeletons animate
+// for the whole time an answer streams and this app runs in software compositing.
+// Token-driven, so theme / accent / density all follow for free. Under reduced motion
+// the global `[data-fr-motion]` / `prefers-reduced-motion` rules (which cover
+// `*::after`) freeze the sweep, leaving a static muted block that still reads as a
+// placeholder.
 
 const ROUNDED = {
 	sm: "rounded-[6px]",
@@ -14,9 +17,9 @@ const ROUNDED = {
 	full: "rounded-full",
 } as const;
 
-// surface-2 → surface-3 → surface-2 sweep; same 220% track + keyframe as Shimmer.
-const SWEEP =
-	"bg-[linear-gradient(100deg,var(--fr-surface-2)_30%,var(--fr-surface-3)_50%,var(--fr-surface-2)_70%)] bg-[length:220%_100%] animate-[fr-shimmer-sweep_1.5s_linear_infinite]";
+// surface-2 → surface-3 → surface-2 sweep; same 220% band period, direction and
+// speed as Shimmer, driven by a translated layer instead of a repainted background.
+const SWEEP = "fr-shimmer-block";
 
 function dim(value?: number | string): string | undefined {
 	if (value == null) return undefined;

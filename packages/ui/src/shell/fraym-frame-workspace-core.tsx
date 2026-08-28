@@ -393,7 +393,8 @@ interface ThreadStageProps {
 	readonly vibrState: PresenceState;
 	readonly vibrMode: string;
 	readonly energy: number;
-	readonly verb: string;
+	readonly verb?: string;
+	/** Render the presence orb. Never suppresses the working row itself. */
 	readonly showPresence: boolean;
 	readonly showAvatar: boolean;
 	readonly agentMeta: string;
@@ -402,16 +403,21 @@ interface ThreadStageProps {
 const ThreadStage = memo(function ThreadStage(props: ThreadStageProps) {
 	return (
 		<Thread
+			// A host with avatars off wants no orb — but it still needs the working
+			// verb and the "Reconnecting to engine…" status, and `showPresence={false}`
+			// would kill the whole row. Drop the node instead and let the thread show
+			// the row whenever there is something to say.
 			presence={
-				<Presence
-					avatar={props.avatar}
-					state={props.vibrState}
-					mode={presenceMode(props.vibrMode)}
-					energy={props.energy}
-				/>
+				props.showPresence ? (
+					<Presence
+						avatar={props.avatar}
+						state={props.vibrState}
+						mode={presenceMode(props.vibrMode)}
+						energy={props.energy}
+					/>
+				) : undefined
 			}
 			verb={props.verb}
-			showPresence={props.showPresence}
 			showAvatar={props.showAvatar}
 			agentMetaFallback={props.agentMeta}
 			emptyState={props.isOpeningSession ? <OpeningThreadSkeleton /> : undefined}
@@ -468,7 +474,7 @@ export interface WorkspaceSurfaceHostProps {
 	readonly vibrState: ThreadStageProps["vibrState"];
 	readonly vibrMode: string;
 	readonly energy: number;
-	readonly tailVerb: string;
+	readonly tailVerb?: string;
 	readonly showTailPresence: boolean;
 	readonly showAvatars: boolean;
 	readonly agentMeta: string;
@@ -1075,7 +1081,7 @@ export interface FraymFrameWorkspaceProps {
 	readonly vibrState: ThreadStageProps["vibrState"];
 	readonly vibrMode: string;
 	readonly energy: number;
-	readonly tailVerb: string;
+	readonly tailVerb?: string;
 	readonly showTailPresence: boolean;
 	readonly showAvatars: boolean;
 	readonly agentMeta: string;

@@ -72,10 +72,18 @@ function diffFilePath(file: DiffViewerFile): string {
 	return file.newPath ?? file.oldPath ?? "untitled";
 }
 
-function useDiffLineHtmlMap(file: DiffViewerFile, path: string): ReadonlyMap<DiffViewerLine, string> {
+/** Placeholder for the `live` path, which never tokenizes — skips the per-chunk map. */
+const NO_LINES: readonly string[] = [];
+
+function useDiffLineHtmlMap(file: DiffViewerFile, path: string, live: boolean): ReadonlyMap<DiffViewerLine, string> {
+	// `live`: an edit/write diff whose hunks are still arriving. The line-HTML cache is
+	// keyed on the whole joined text, so every chunk was a fresh key that re-tokenized
+	// the entire growing file (O(n²) over the turn). It stays plain while it grows and
+	// tokenizes ONCE when the stream settles.
 	const lineHtml = useShikiLineHtml(
-		file.lines.map(line => line.content),
+		live ? NO_LINES : file.lines.map(line => line.content),
 		detectLanguage(path),
+		live,
 	);
 	return useMemo(() => {
 		const m = new Map<DiffViewerLine, string>();
@@ -204,7 +212,9 @@ export function DiffFileBlock({
 }: DiffFileBlockProps) {
 	const splitPairs = useMemo(() => (viewMode === "split" ? pairForSplit(file.lines) : null), [viewMode, file.lines]);
 	const path = diffFilePath(file);
-	const htmlByLine = useDiffLineHtmlMap(file, path);
+	// `followTail` is set from the call's streaming state (and only for the file that is
+	// still growing), so it doubles as the "do not re-tokenize per chunk" signal.
+	const htmlByLine = useDiffLineHtmlMap(file, path, followTail === true);
 	return (
 		<ToolBodySection
 			title={path}

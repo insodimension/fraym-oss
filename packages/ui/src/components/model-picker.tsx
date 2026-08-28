@@ -338,7 +338,9 @@ function effortLabel(value: string): string {
 	return EFFORT_LABEL[value] ?? value;
 }
 
-function ModelEffortPicker({
+/** Exported for its co-located tests: it is hook-free by design, so a test can call it
+ *  as a plain function and inspect the element tree it returns without a DOM. */
+export function ModelEffortPicker({
 	efforts,
 	model,
 	onSelect,
@@ -356,6 +358,15 @@ function ModelEffortPicker({
 	if (steps.length === 0 && !hasAuto) return null;
 	const current = model.effort ?? "";
 	const isAuto = current === "auto";
+	// A slider only expresses a choice across a real gradient, and the notches carry no
+	// labels of their own — just "Faster"/"Smarter" at the ends. Real engines report a
+	// per-model list, and most accept nothing but `off` / `auto`: one graded step, a thumb
+	// that can never move. Anything short of three graded steps is rendered as pills
+	// instead, so every value the engine accepts is visible, named, and one click away.
+	const segmented = steps.length < 3;
+	const pills: readonly SliderStep[] = segmented
+		? [...steps, ...(hasAuto ? [{ value: "auto", label: effortLabel("auto") }] : [])]
+		: [];
 	return (
 		<>
 			<div className="mx-2 my-[5px] h-px bg-fr-border-soft" />
@@ -363,13 +374,19 @@ function ModelEffortPicker({
 				<div className="flex items-center justify-between gap-2">
 					<div className="flex min-w-0 items-baseline gap-2">
 						<span className="fr-eyebrow">Reasoning effort</span>
-						{!isAuto && current && (
+						{/* The eyebrow alone above a drawn thumb reads as "something is selected, we
+						    won't say what". Name the active value always — including `auto`, which is an
+						    ordinary engine value — and admit it when the host reported none. */}
+						{current ? (
 							<span className="font-secondary text-fr-xs font-medium text-fr-accent">
 								{effortLabel(current)}
 							</span>
+						) : (
+							<span className="font-secondary text-fr-xs font-medium text-fr-text-3">Not set</span>
 						)}
 					</div>
-					{hasAuto && (
+					{/* In segmented form `Auto` is one of the pills, so the corner badge would double it. */}
+					{hasAuto && !segmented && (
 						<Badge asChild variant="code" tone={isAuto ? "accent" : "mute"} className="shrink-0 cursor-pointer">
 							<button type="button" onClick={() => onSelect({ ...model, effort: "auto" })}>
 								Auto
@@ -377,7 +394,27 @@ function ModelEffortPicker({
 						</Badge>
 					)}
 				</div>
-				{steps.length > 0 && (
+				{segmented ? (
+					<div className="flex flex-wrap items-center gap-1.5 pt-2.5">
+						{pills.map(pill => (
+							<Badge
+								key={pill.value}
+								asChild
+								variant="code"
+								tone={current === pill.value ? "accent" : "mute"}
+								className="cursor-pointer"
+							>
+								<button
+									type="button"
+									aria-pressed={current === pill.value}
+									onClick={() => onSelect({ ...model, effort: pill.value })}
+								>
+									{pill.label}
+								</button>
+							</Badge>
+						))}
+					</div>
+				) : (
 					<div className="pt-2.5">
 						<Slider
 							steps={steps}

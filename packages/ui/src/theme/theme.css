@@ -514,6 +514,53 @@
 	to { background-position: -200% 0; }
 }
 
+/* Block/skeleton shimmer — a gradient LAYER translated across a clipped box.
+ *
+ * `fr-shimmer-sweep` above animates `background-position`, a PAINT property: every
+ * frame repaints the whole element. Yarin renders inside Unreal's embedded CEF
+ * browser (software compositing) and skeletons shimmer continuously for the whole
+ * time an answer streams, so that repaint ran at frame rate for the entire turn.
+ * A `transform` on a child layer is composited instead — rasterized once, then
+ * only re-offset. (`fr-shimmer-sweep` stays for the two surfaces that cannot use
+ * this: `Shimmer`'s `bg-clip-text` gradient, which has no separate layer to move,
+ * and the liquid-glass one-shot sheen.)
+ *
+ * Geometry reproduces the old sweep exactly: band period stays 220% of the element
+ * width, direction stays left→right, speed stays 3.2 widths/second (the old
+ * keyframe travelled 4.8 widths in 1.5s). The layer is 320% wide and starts one
+ * period (220%) to the left, so the box is covered at both ends of the travel; one
+ * period is 220/320 = 68.75% of the layer, so translating by that advances exactly
+ * one period — a seamless loop where the old keyframe wrapped mid-period.
+ */
+.fr-shimmer-block {
+	position: relative;
+	overflow: hidden;
+	background-color: var(--fr-surface-2);
+}
+
+.fr-shimmer-block::after {
+	content: "";
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: -220%;
+	width: 320%;
+	background-image: linear-gradient(
+		100deg,
+		var(--fr-surface-2) 30%,
+		var(--fr-surface-3) 50%,
+		var(--fr-surface-2) 70%
+	);
+	background-size: 68.75% 100%;
+	will-change: transform;
+	animation: fr-shimmer-slide 0.6875s linear infinite;
+}
+
+@keyframes fr-shimmer-slide {
+	from { transform: translate3d(0, 0, 0); }
+	to { transform: translate3d(68.75%, 0, 0); }
+}
+
 @keyframes fr-bounce {
 	0%, 80%, 100% { opacity: 0.3; transform: translateY(0); }
 	40% { opacity: 1; transform: translateY(-3px); }
