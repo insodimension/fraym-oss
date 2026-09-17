@@ -10,7 +10,7 @@ import {
 } from "../features/context-popover";
 import { DockSwitchMenu, type DockTab } from "../features/right-dock";
 import { McpModal } from "../features/mcp-modal/mcp-modal";
-import { PermissionMenu } from "../features/permission-menu/permission-menu";
+import { PermissionMenu, type PermissionActionDef } from "../features/permission-menu/permission-menu";
 import type { RepoGroup, SessionItem } from "../features/session-rail/session-rail";
 import { useContextBreakdown } from "../hooks/use-context-breakdown";
 import { useSessionOptional } from "../hooks/use-session";
@@ -127,17 +127,30 @@ interface PermissionOverlayProps {
 	readonly selected: string;
 	/** Host allow-list of `PERMS` ids; omitted means every option. */
 	readonly permissionModes?: readonly string[];
+	/** Host-declared non-mode rows (e.g. Yarin's "Chat"); omitted renders none. */
+	readonly permissionActions?: readonly PermissionActionDef[];
 	readonly onSelect: (value: string) => void;
+	readonly onAction?: (action: PermissionActionDef) => void;
 	readonly onClose: () => void;
 }
 
-function PermissionOverlay({ menu, selected, permissionModes, onSelect, onClose }: PermissionOverlayProps) {
+function PermissionOverlay({
+	menu,
+	selected,
+	permissionModes,
+	permissionActions,
+	onSelect,
+	onAction,
+	onClose,
+}: PermissionOverlayProps) {
 	if (menu.type !== "perm") return null;
 	return (
 		<PermissionMenu
 			permissions={resolvePermissions(permissionModes)}
+			actions={permissionActions}
 			selected={selected}
 			onSelect={onSelect}
+			onAction={onAction}
 			onClose={onClose}
 			anchorRect={menu.rect}
 			place="above"
@@ -459,6 +472,7 @@ export interface FraymFrameOverlaysProps {
 	readonly sessionConfig: SessionConfig | undefined;
 	readonly permission: string;
 	readonly permissionModes?: readonly string[];
+	readonly permissionActions?: readonly PermissionActionDef[];
 	readonly contextUsed: number;
 	readonly contextMax: number;
 	readonly contextBreakdown: ContextBreakdown;
@@ -481,6 +495,7 @@ export interface FraymFrameOverlaysProps {
 	readonly onEngineModelSelect: (selection: EngineModelSelection) => void;
 	readonly onThinkingSelect: (level: ThinkingLevel) => void;
 	readonly onPermissionSelect: (permission: string) => void;
+	readonly onPermissionAction?: (action: PermissionActionDef) => void;
 	readonly onSessionMenuClose: () => void;
 	readonly onSessionMultiMenuClose: () => void;
 	readonly onGroupMenuClose: () => void;
@@ -548,7 +563,9 @@ export const FraymFrameOverlays = memo(function FraymFrameOverlays(props: FraymF
 				menu={props.menu}
 				selected={props.permission}
 				permissionModes={props.permissionModes}
+				permissionActions={props.permissionActions}
 				onSelect={props.onPermissionSelect}
+				onAction={props.onPermissionAction}
 				onClose={props.onClose}
 			/>
 			<ContextOverlay
