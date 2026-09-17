@@ -476,10 +476,17 @@ export function useFraymFrameModel(args: FraymFrameModelArgs): FraymFrameModel {
 	// whichever one they are typing in.
 	const applyPermissionAction = useCallback(
 		(action: PermissionActionDef) => {
-			chrome.setComposer(action.composerPrefill);
-			if (currentRef) seedSessionComposerDraft(sessionRefKey(currentRef), action.composerPrefill);
+			// PREPEND, never replace. `chrome.setComposer` is the same setter every
+			// keystroke writes, so assigning the prefill discarded whatever the user
+			// had already typed — and the dropdown's placement invites exactly that
+			// order: type the question, then pick Chat. Idempotent, so picking the
+			// row twice does not stack the prefix.
+			const typed = chrome.composer;
+			const next = typed.startsWith(action.composerPrefill) ? typed : `${action.composerPrefill}${typed}`;
+			chrome.setComposer(next);
+			if (currentRef) seedSessionComposerDraft(sessionRefKey(currentRef), next);
 		},
-		[chrome.setComposer, currentRef],
+		[chrome, currentRef],
 	);
 	const palettePick = useCallback(
 		(command: string) => {
