@@ -41,6 +41,24 @@ The same provider pattern powers message blocks, host-request/custom-message sur
 
 Reusable renderer-facing components are available from `@fraym-ai/ui/components`: `DiffBlock`, `Collapsible`, coordinated menus, `ConfirmDialog`, `PageHeader`, filter pills, `InputGroup`, responsive `SelectorMenu`, `BottomSheet`, and `DockSplit`.
 
+`MarketplaceCard` and `MarketplaceGrid` are available from the root `@fraym-ai/ui`
+entry point for compact connection, runtime, and catalog pickers. Cards accept
+`icon`, `name`, `status`, and `action` slots; optional `badge` and `statusDot`
+decorate the identity. `onOpen` makes the identity a keyboard-accessible detail
+button separate from the primary action. The grid adapts to its container width,
+so the same cards work in full pages and narrow settings panes.
+
+```tsx
+<MarketplaceGrid>
+  <MarketplaceCard
+    icon={<ProviderBrandIcon providerId="example" providerName="Example" />}
+    name="Example"
+    status="Available"
+    action={<button onClick={connect}>Connect</button>}
+  />
+</MarketplaceGrid>
+```
+
 ## Chat feature modules
 
 The `@fraym-ai/ui/features` entry point contains the complete host-neutral chat surface contract. Thread and message modules compose typed blocks through the renderer registries, preserve scroll position while a turn streams or collapses, group adjacent work traces, and expose message actions without binding to a session store. Tool-card and tool-metadata modules provide the shared body, expansion, grouping, and density policies consumed by registry renderers.
