@@ -1,6 +1,7 @@
 // Pages tier — full screens assembled from features.
 
 export { ModelsHome, type ModelsHomeProps } from "./models-page";
+export { MarketplaceCard, MarketplaceGrid, type MarketplaceCardProps } from "./marketplace-card";
 export {
 	AdvancedConfigExplorer,
 	type AdvancedConfigExplorerProps,
