@@ -101,6 +101,10 @@ export const DEFAULT_TOOL_RENDERERS: ToolRendererMap = Object.freeze({
 	exec: renderBash,
 	eval: renderEval,
 	terminal: renderBash,
+	// Claude Code's Windows shell tool. Without these keys it resolved to the
+	// generic renderer and printed its raw input blob instead of a command card.
+	powershell: renderBash,
+	pwsh: renderBash,
 	ssh: renderSsh,
 	edit: renderEdit,
 	edit_file: renderEdit,

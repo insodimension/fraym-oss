@@ -15,6 +15,8 @@ import { type ComponentProps, type MouseEvent, type ReactNode, useCallback, useE
 import { type ModelSelection, type PaletteCategory, ProviderBrandIcon } from "../components";
 import type { RailMode } from "../components/app-shell";
 import { ComposerChip, type ComposerChipProps, ContextRadial } from "../features/composer/composer";
+import { seedSessionComposerDraft } from "../features/composer/session-composer-draft";
+import type { PermissionActionDef } from "../features/permission-menu/permission-menu";
 import { resolveThreadVerber, useStickyToolIntent } from "../features/thread/verber-status";
 import { Icon } from "../icons";
 import type { RepoGroup, SessionItem } from "../features/session-rail/session-rail";
@@ -126,6 +128,8 @@ export interface FraymFrameModelArgs {
 	readonly startHeading?: string | false;
 	/** Host allow-list of permission-menu ids; see FraymProps.permissionModes. */
 	readonly permissionModes?: readonly string[];
+	/** Host-declared non-mode rows for the permission menu; see FraymProps.permissionActions. */
+	readonly permissionActions?: readonly PermissionActionDef[];
 	/**
 	 * Collapse the session rail when a session is selected. Default `true`, which
 	 * suits a full IDE window where the thread wants the room. A host docked in a
@@ -465,6 +469,25 @@ export function useFraymFrameModel(args: FraymFrameModelArgs): FraymFrameModel {
 		},
 		[chrome, session],
 	);
+	// A permission-menu ACTION is not a mode: it prefills the composer and leaves the
+	// engine's approval policy alone. Both stores are written because two composers
+	// can be bound to this session — the docked frame reads `chrome.composer`, a split
+	// pane reads the session-keyed draft store — and the user must see the text in
+	// whichever one they are typing in.
+	const applyPermissionAction = useCallback(
+		(action: PermissionActionDef) => {
+			// PREPEND, never replace. `chrome.setComposer` is the same setter every
+			// keystroke writes, so assigning the prefill discarded whatever the user
+			// had already typed — and the dropdown's placement invites exactly that
+			// order: type the question, then pick Chat. Idempotent, so picking the
+			// row twice does not stack the prefix.
+			const typed = chrome.composer;
+			const next = typed.startsWith(action.composerPrefill) ? typed : `${action.composerPrefill}${typed}`;
+			chrome.setComposer(next);
+			if (currentRef) seedSessionComposerDraft(sessionRefKey(currentRef), next);
+		},
+		[chrome, currentRef],
+	);
 	const palettePick = useCallback(
 		(command: string) => {
 			chrome.setMenu({ type: null, rect: null });
@@ -717,6 +740,7 @@ export function useFraymFrameModel(args: FraymFrameModelArgs): FraymFrameModel {
 		sessionConfig: session?.snapshot?.config,
 		permission: chrome.permission,
 		permissionModes: props.permissionModes,
+		permissionActions: props.permissionActions,
 		contextUsed: context.used,
 		contextMax: context.max,
 		contextBreakdown: context.breakdown,
@@ -745,6 +769,7 @@ export function useFraymFrameModel(args: FraymFrameModelArgs): FraymFrameModel {
 			chrome.setPermission(mode);
 			void session?.setApprovalMode?.(mode);
 		},
+		onPermissionAction: applyPermissionAction,
 		onSessionMenuClose: () => sessionMenus.setSessionMenu(null),
 		onSessionMultiMenuClose: () => sessionMenus.setSessionMultiMenu(null),
 		onGroupMenuClose: () => sessionMenus.setGroupMenu(null),

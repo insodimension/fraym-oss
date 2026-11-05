@@ -12,6 +12,7 @@ import type { AvatarId } from "@fraym-ai/vibr";
 import { useMemo } from "react";
 import { DeploymentGatesProvider, type ModelPickerGroups } from "./deployment-gates";
 import type { ToolDefaultOpen } from "./features";
+import type { PermissionActionDef } from "./features/permission-menu/permission-menu";
 import { UsageDriverProvider, UsageStateProvider } from "./features/command-dock";
 import { SessionProvider } from "./hooks/session-provider";
 import { type UsageState, useUsage } from "./hooks/use-usage";
@@ -148,6 +149,17 @@ export interface FraymProps {
 	 */
 	readonly permissionModes?: readonly string[];
 	/**
+	 * Extra rows under the permission modes that are NOT approval modes: picking
+	 * one writes `composerPrefill` into the composer and leaves the engine's
+	 * policy untouched.
+	 *
+	 * A host passes this when it ships a read-only way of working the ENGINE has
+	 * no mode for — Yarin's "Chat" row seeds `/chat `, a slash command whose skill
+	 * forbids every writing tool. The mode chip keeps naming the real approval
+	 * mode, so this never misreports what the agent is allowed to do.
+	 */
+	readonly permissionActions?: readonly PermissionActionDef[];
+	/**
 	 * Collapse the session rail when a session is selected. Default `true` (the
 	 * shell's long-standing behaviour). Hosts docked in a narrow panel, where the
 	 * rail is the only navigation, pass `false` so the list does not vanish under
@@ -222,6 +234,7 @@ interface NormalizedFraymProps {
 	readonly composerVoice?: boolean;
 	readonly startHeading?: string | false;
 	readonly permissionModes?: readonly string[];
+	readonly permissionActions?: readonly PermissionActionDef[];
 	/**
 	 * Collapse the session rail when a session is selected. Default `true` (the
 	 * shell's long-standing behaviour). Hosts docked in a narrow panel, where the
@@ -306,6 +319,7 @@ function normalizeFraymProps({
 	composerVoice,
 	startHeading,
 	permissionModes,
+	permissionActions,
 	collapseRailOnSessionSelect,
 	onAppModeChange,
 	onRevealPath,
@@ -370,6 +384,7 @@ function normalizeFraymProps({
 		composerVoice,
 		startHeading,
 		permissionModes,
+		permissionActions,
 		collapseRailOnSessionSelect,
 		onAppModeChange,
 		onRevealPath,
@@ -591,6 +606,7 @@ function FraymFrameHost({ runtime }: { readonly runtime: FraymRuntimeState }) {
 							composerVoice={props.composerVoice}
 			startHeading={props.startHeading}
 							permissionModes={props.permissionModes}
+							permissionActions={props.permissionActions}
 							collapseRailOnSessionSelect={props.collapseRailOnSessionSelect}
 							onAppModeChange={props.onAppModeChange}
 							onRevealPath={props.onRevealPath}

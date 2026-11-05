@@ -13,7 +13,7 @@ import type { ReactNode } from "react";
 import { Badge } from "../../../elements/badge";
 import type { ActiveToolCall } from "../../../hooks/session-types";
 import { readField, readStringField } from "../../../registries/default-renderer-utils";
-import type { ToolRenderer, ToolView } from "../../../registries/tool-renderer-registry";
+import { normalizeToolName, type ToolRenderer, type ToolView } from "../../../registries/tool-renderer-registry";
 import { ToolBodyCard, ToolBodySection } from "../tool-body-card";
 import { ToolBodyTerm, type ToolStatus } from "../tool-card";
 import { parseAnsi } from "./bodies/ansi";
@@ -235,18 +235,35 @@ function renderBashBody(ctx: BashRenderContext): ReactNode {
 	);
 }
 
+/** What this shell call is CALLED. The renderer is registered for a family of
+ *  shell-ish tools, and hardcoding "Bash" mislabels every one of them that is not
+ *  bash — measured with Claude Code on Windows, whose `PowerShell` tool rendered
+ *  as an unlabelled generic card because nothing claimed the name. Unknown members
+ *  of the family keep "Bash", which is what they rendered as before. */
+const SHELL_LABEL: Record<string, string> = {
+	bash: "Bash",
+	shell: "Shell",
+	command: "Command",
+	run: "Run",
+	exec: "Exec",
+	terminal: "Terminal",
+	powershell: "PowerShell",
+	pwsh: "PowerShell",
+};
+
 const renderBash: ToolRenderer = (call: ActiveToolCall): ToolView => {
 	const ctx = readBashContext(call);
+	const label = SHELL_LABEL[normalizeToolName(call.toolName)] ?? "Bash";
 
 	if (ctx.streaming && !ctx.command) {
-		return { label: "Bash", kind: "command", status: "pending", stat: "running…", body: null };
+		return { label, kind: "command", status: "pending", stat: "running…", body: null };
 	}
 
 	const status: ToolStatus = ctx.streaming ? "pending" : ctx.isError ? "error" : "success";
 	const stat = ctx.streaming ? "running…" : ctx.isError ? "failed" : undefined;
 
 	return {
-		label: "Bash",
+		label,
 		badges: buildBashBadges(ctx),
 		kind: "command",
 		status,

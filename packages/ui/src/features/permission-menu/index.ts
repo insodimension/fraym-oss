@@ -1,1 +1,6 @@
-export { type PermissionDef, PermissionMenu, type PermissionMenuProps } from "./permission-menu";
+export {
+	type PermissionActionDef,
+	type PermissionDef,
+	PermissionMenu,
+	type PermissionMenuProps,
+} from "./permission-menu";
